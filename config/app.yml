@@ -6,8 +6,8 @@ all:
 
   paypal:
     api_username: "dvds_api1.collectorsquest.com"
-    api_password: 7XDP2KD5WPTZMRLX
-    api_signature: "AFcWxV21C7fd0v3bYYYRCpSSRl31A6NhuD4EARHUuWnwb9OPdCGC8x8U"
+    api_password: ""
+    api_signature: ""
     api_url: "https://api-3t.paypal.com/nvp"
     is_online: true
     payment_method: doDirectPayment
@@ -29,15 +29,15 @@ all:
     multimedia_domain: "http://multimedia.collectorsquest.com"
 
   api:
-    amazon:      "0Q4JCH5ZFJ3WBVP7N9R2"
-    yahoo:       "hbaTeUTV34GucRooge4L.uEQiK_wcbb2eMx6yUWAEUoQrdOPCIdj_2yTAbvt1QVryEc8WFUbu00X4hyEbUKLwg--"
-    akismet:     "8fd3f2fddbaa"
-    google_maps: "ABQIAAAAFWhrOd_LZ8oN4w-vkUWughQAU-WnqYQCO7zppSGvHR51tCrN4xRY0TaQWDhMG_uhoslQtMZplJu3gg"
-    disqus_user_key:    "rCJyPA1GJlX3hoF3tdSdrGbbeGBeI7I9G1Qspd5QuR6AiCscBxREmoo1SLBnlJyf"
-    disqus_forum_key:   "nqopSzGkkro8tc53AgA3DNW56WSYBbZRetdoNPE8whwKY7b7dvELc05Nm9Yq5nMD"
+    amazon: ""
+    yahoo: ""
+    akismet: ""
+    google_maps: ""
+    disqus_user_key: ""
+    disqus_forum_key: ""
     recaptcha:
-      public_key:  "6LdACwsAAAAAAE5tZTcYG47Lth2jzxxZeXAbll-Z"
-      private_key: "6LdACwsAAAAAAM19l6G0lFk4F560SWvBM2k5M9L0"
+      public_key: ""
+      private_key: ""
 
 stg:
   cq:
@@ -47,11 +47,11 @@ stg:
 
   paypal:
     ## Setting for Pay Via PayPal Pro SANDBOX Account.
-    api_username: vijay._1222841690_biz_api1.gmail.com
-    api_password: 1222841695
-    api_signature: ACOYGdaFOWqBq16ZAlxyTYaGj3ajAh4eB7hNcAWzNU6tuGf6Qe2Hd08C
+    api_username: ""
+    api_password: ""
+    api_signature: ""
     api_url: https://api-3t.sandbox.paypal.com/nvp
-    is_online: FALSE
+    is_online: false
 
     payment_action: Sale
     currency_code: USD

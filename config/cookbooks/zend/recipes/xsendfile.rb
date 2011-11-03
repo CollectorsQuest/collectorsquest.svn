@@ -17,23 +17,22 @@
 # limitations under the License.
 #
 
-include_recipe "apt"
+include_recipe "zend"
+package "apache2-prefork-dev"
 
-apt_repository "zend" do
-  uri "http://repos.zend.com/zend-server/deb"
-  distribution "server"
-  components [ "non-free" ]
-  key "http://repos.zend.com/zend.key"
-  action :add
+remote_file "/tmp/mod_xsendfile-0.12.tar.gz" do
+  source "https://tn123.org/mod_xsendfile/mod_xsendfile-0.12.tar.gz"
+  not_if { ::File.exists?("/tmp/mod_xsendfile-0.12.tar.gz") }
 end
 
-package "zend-server-ce-php-#{node[:zend][:php][:version]}"
-
-service "zend" do
-  service_name "zend-server"
-  supports :status => true, :restart => true
-  action [ :enable, :start ]
+execute "Extract mod_xsendfile source" do
+  cwd "/tmp"
+  command "tar -zxf /tmp/mod_xsendfile-0.12.tar.gz"
+  not_if { ::File.exists?("/tmp/mod_xsendfile-0.12") }
 end
 
-package "php-5.3-memcache-zend-server"
-package "php-5.3-imagick-zend-server"
+bash "Build and Install mod_xsendfile" do
+  cwd "/tmp/mod_xsendfile-0.12"
+  code "apxs2 -cia mod_xsendfile.c"
+  not_if { ::File.exists?("/usr/lib/apache2/modules/mod_xsendfile.so") }
+end

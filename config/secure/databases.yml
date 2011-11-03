@@ -1,0 +1,41 @@
+all:
+  propel:
+    param:
+      username:  collectorsquest
+      password:  rM6aKxoKKwUX4r
+
+  blog:
+    param:
+      username:  collectorsquest
+      password:  rM6aKxoKKwUX4r
+
+  calendar:
+    param:
+      username:  collectorsquest
+      password:  rM6aKxoKKwUX4r
+
+  queue:
+    param:
+      username:  collectorsquest
+      password:  rM6aKxoKKwUX4r
+
+stg:
+  propel:
+    param:
+      username:  staging
+      password:  24QU2FJGLmA9vf
+
+  blog:
+    param:
+      username:  staging
+      password:  24QU2FJGLmA9vf
+
+  calendar:
+    param:
+      username:  staging
+      password:  24QU2FJGLmA9vf
+
+  queue:
+    param:
+      username:  staging
+      password:  24QU2FJGLmA9vf

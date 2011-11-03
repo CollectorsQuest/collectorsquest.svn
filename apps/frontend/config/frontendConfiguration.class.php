@@ -1,6 +1,6 @@
 <?php
 
-class frontendConfiguration extends sfApplicationConfiguration
+class frontendConfiguration extends cqApplicationConfiguration
 {
   public function configure()
   {

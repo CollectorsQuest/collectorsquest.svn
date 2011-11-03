@@ -16,3 +16,9 @@ end
 template "/etc/phpmyadmin/config.inc.php" do
   mode "0644"
 end
+
+link "/www/etc/apache2/sites-available/collectorsquest.dev.conf" do
+  to "/etc/apache2/sites-enabled/collectorsquest.dev.conf"
+  not_if "test -L /etc/apache2/sites-enabled/collectorsquest.dev.conf"
+  notifies :restart, "service[zend]"
+end

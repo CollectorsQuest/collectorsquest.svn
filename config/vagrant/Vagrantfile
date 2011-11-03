@@ -8,7 +8,7 @@ Vagrant::Config.run do |config|
 
   if platform == 'windows'
     config.vm.forward_port("web", 80, 9458, :auto => true)
-    config.vm.share_folder("collectorsquest", "/mnt/collectorsquest.com", "../../", :nfs => false)
+    config.vm.share_folder("collectorsquest", "/mnt/collectorsquest.com", "../../", :nfs => false, :owner => "www-data", :group => "www-data")
     config.vm.share_folder("tmp", "/mnt/tmp", "c:/Windows/Temp", :nfs => false)
   elsif platform == 'darwin'
     config.vm.network "172.16.183.128"
