@@ -1,0 +1,36 @@
+generator:
+  class: sfPropelGenerator
+  param:
+    model_class:           Collector
+    theme:                 admin15
+    non_verbose_templates: true
+    with_show:             false
+    singular:              Collector
+    plural:                Collectors
+    route_prefix:          collector
+    with_propel_route:     1
+    actions_base_class:    sfActions
+    css:                   backend/empty.css
+
+    config:
+      actions: ~
+      fields:
+        id: { label: ID }
+        display_name: { label: Display Name }
+        list_count_collections: { label: Collections }
+        created_at: { label: Since, date_format: 'MM/yyyy' }
+        is_public: { label: "Public?" }
+      list:
+        display: [id, =username, display_name, email, _list_count_collections, created_at, _auto_login]
+        actions: {}
+      filter:
+        #display: [username, display_name, email, created_at]
+      form:
+        class: CollectorEditForm
+      edit:
+        fields:
+          password: { label: Password, help: "If you do not want to change the password, leave the field empty" }
+        title: Edit Collector
+        display: [display_name, email, password, photo, is_public]
+
+      new:     ~

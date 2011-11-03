@@ -1,0 +1,32 @@
+all:
+  stylesheets: [frontend/collections.css]
+  javascripts: [frontend/disqus.js, jquery/bt.js]
+  components:
+    sidebar: [collection, sidebar]
+
+collectibleSuccess:
+  stylesheets: [frontend/scrollable.css, jquery/imgbox.css]
+  javascripts: [jquery/mousewheel.js, jquery/carousel.js, jquery/imgbox.js]
+  components:
+    sidebar: [collection, sidebarCollectible]
+
+itemSuccess:
+  stylesheets: [frontend/scrollable.css, jquery/imgbox.css]
+  javascripts: [jquery/mousewheel.js, jquery/carousel.js, jquery/imgbox.js]
+  components:
+    sidebar: [collection, sidebarCollectible]
+
+createStep1:
+  stylesheets: [frontend/forms.css]
+  components:
+    sidebar: [general, sidebar]
+
+createStep2:
+  stylesheets: [jquery/tags.css, frontend/forms.css]
+  components:
+    sidebar: [general, sidebar]
+
+createStep3:
+  stylesheets: [frontend/forms.css]
+  components:
+    sidebar: [general, sidebar]

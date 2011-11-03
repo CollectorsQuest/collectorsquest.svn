@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package packagerversion="1.0.0" version="1.0" xmlns="http://pear.php.net/dtd/package-2.0" xmlns:tasks="http://pear.php.net/dtd/tasks-1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://pear.php.net/dtd/tasks-1.0 http://pear.php.net/dtd/tasks-1.0.xsd http://pear.php.net/dtd/package-2.0 http://pear.php.net/dtd/package-2.0.xsd">
+ <name>sfRequestHistoryPlugin</name>
+ <channel>pear.symfony-project.com</channel>
+ <summary>Symfony Request History Plugin</summary>
+ <description>Interface for request history similar to the Javascript history object.</description>
+ <lead>
+  <name>Jonathan H. Wage</name>
+  <user>jwage</user>
+  <email>jwage@centresource.com</email>
+  <active>yes</active>
+ </lead>
+ <maintainer>
+  <name>Jonathan H. Wage</name>
+  <user>jwage</user>
+  <email>jwage@centresource.com</email>
+  <active>yes</active>
+ </maintainer>
+ <date>2007-08-01</date>
+ <time>15:54:35</time>
+ <release>
+  <version>0.0.1</version>
+  <state>beta</state>
+ </release>
+ <stability>
+  <release>beta</release>
+  <api>beta</api>
+ </stability>
+ <license uri="http://www.symfony-project.com/license">MIT license</license>
+ <notes></notes>
+ <contents>
+  <dir name="/">
+    <file role="data" name="LICENSE" />
+    <file role="data" name="README" />
+    <dir name="lib">
+      <dir name="helper">
+        <file role="data" name="RequestHistoryHelper.php" />
+      </dir>
+      <file role="data" name="BasesfRequestHistory.class.php" />
+      <file role="data" name="sfRequestHistory.class.php" />
+      <file role="data" name="sfRequestHistoryFilter.class.php" />
+    </dir>
+  </dir>
+ </contents>
+ <dependencies>
+  <required>
+   <php>
+    <min>5.1.0</min>
+   </php>
+   <pearinstaller>
+    <min>1.4.1</min>
+   </pearinstaller>
+   <package>
+    <name>sfRequestHistoryPlugin</name>
+    <channel>pear.symfony-project.com</channel>
+    <min>0.8.1</min>
+    <max>1.1.0</max>
+    <exclude>1.1.0</exclude>
+   </package>
+  </required>
+ </dependencies>
+ <phprelease />
+ <changelog />
+</package>

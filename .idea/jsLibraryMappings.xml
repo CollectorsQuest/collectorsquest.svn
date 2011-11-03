@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <file url="file://$PROJECT_DIR$/apps/frontend/templates/_ad_slots.php" libraries="{google_service}" />
+    <file url="file://$PROJECT_DIR$/apps/frontend/templates/_analytics_js.php" libraries="{s_code, woopra.v2}" />
+    <file url="file://$PROJECT_DIR$/apps/frontend/templates/_layout-header.php" libraries="{buttons}" />
+    <file url="file://$PROJECT_DIR$/apps/frontend/templates/layout.php" libraries="{jquery.min}" />
+  </component>
+</project>
+

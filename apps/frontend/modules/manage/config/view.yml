@@ -1,0 +1,35 @@
+all:
+  stylesheets: [frontend/forms.css]
+
+profileSuccess:
+  javascripts: [jquery/pstrength.js]
+  components:
+    sidebar: [manage, sidebarProfile]
+
+friendsSuccess:
+  components:
+    sidebar: [manage, sidebarFriends]
+
+collectionsSuccess:
+  stylesheets: [frontend/collections.css]
+  components:
+    sidebar: [manage, sidebarCollections]
+
+collectionSuccess:
+  stylesheets: [frontend/collections.css, jquery/tags.css]
+  components:
+    sidebar: [manage, sidebarCollection]
+
+collectibleSuccess:
+  stylesheets: [frontend/collections.css, jquery/tags.css]
+  components:
+    sidebar: [manage, sidebarCollectible]
+
+collectiblesSuccess:
+  stylesheets: [frontend/collections.css, jquery/tags.css]
+  components:
+    sidebar: [manage, sidebarCollectibles]
+
+marketplaceEmpty:
+  components:
+    sidebar: [manage, sidebarMarketplaceEmpty]

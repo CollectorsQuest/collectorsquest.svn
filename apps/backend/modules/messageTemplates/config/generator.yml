@@ -1,0 +1,35 @@
+generator:
+  class: sfPropelGenerator
+  param:
+    model_class:           MessageTemplate
+    theme:                 admin15
+    non_verbose_templates: true
+    with_show:             false
+    singular:              MessageTemplate
+    plural:                MessageTemplates
+    route_prefix:          message_template
+    with_propel_route:     1
+    actions_base_class:    sfActions
+    css:                   backend/empty.css
+
+    config:
+      actions: ~
+      fields:
+        id: { label: ID }
+      list:
+        title: Message Templates
+        display: [id, =subject, description]
+        batch_actions: []
+        object_actions:
+          _edit: ~
+      filter:
+        display: [subject, body]
+      form:
+        display: [subject, body]
+        fields:
+          subject:
+            attributes: { size: 80 }
+      edit:
+        title: Edit Message Template
+      new:
+        title: Mew Message Template

@@ -1,0 +1,6 @@
+rendering: ~
+security:  ~
+sfRequestHistory:
+  class: sfRequestHistoryFilter
+cache:     ~
+execution: ~

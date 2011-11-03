@@ -1,0 +1,67 @@
+all:
+  sf_admin_dash:
+    web_dir:        "/backend"
+    image_dir:      "/backend/images/icons/"
+    default_image:  "config.png"
+    resize_mode:    "thumbnail"
+    logout:         true
+    site:           "Collectors Quest"
+    include_path:   true
+    login_route:    "@login"
+    logout_route:   "@logout"
+
+    categories:
+      Collectors:
+        items:
+          Collectors:
+            url: collector
+            image: users.png
+          Messages:
+            url: private_message
+            image: messaging.png
+          Templates:
+            url: message_template
+            image: message_config.png
+
+      Collections:
+        items:
+          Collections:
+            url: collection
+            image: mediamanager.png
+          Collectibles:
+            url: collectible
+            image: mediamanager.png
+          Categories:
+            url: collection_category
+            image: categories.png
+
+      Videos:
+        items:
+          Videos:
+            url: video
+          Playlists:
+            url: playlist
+
+      Marketplace Info:
+        items:
+          Marketplace:
+            url: marketplace_list
+            image: menu.png
+          Promotion:
+            url: promotion
+            image: generic.png
+          Promotion Transactions:
+            url: promotion_transaction
+            image: backup.png
+          Packages:
+            url: package
+            image: install.png
+          Package Transactions:
+            url: package_transaction
+            image: backup.png
+
+      Everything Else:
+        items:
+          Comments:
+            url: comment
+            image: language.png

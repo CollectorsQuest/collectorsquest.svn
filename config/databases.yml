@@ -1,0 +1,125 @@
+all:
+  propel:
+    class:        sfPropelDatabase
+    param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_com;host=mysql
+      username:   collectorsquest
+      password:   rM6aKxoKKwUX4r
+      encoding:   utf8
+      persistent: true
+      pooling:    true
+
+  blog:
+    class:        sfPropelDatabase
+    param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_blog;host=mysql
+      username:   collectorsquest
+      password:   rM6aKxoKKwUX4r
+      encoding:   utf8
+      persistent: true
+      pooling:    true
+
+  calendar:
+    class:        sfPropelDatabase
+    param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_calendar;host=mysql
+      username:   collectorsquest
+      password:   rM6aKxoKKwUX4r
+      encoding:   utf8
+      persistent: true
+      pooling:    true
+
+  queue:
+    class:        sfPropelDatabase
+    param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_queue;host=mysql
+      username:   collectorsquest
+      password:   rM6aKxoKKwUX4r
+      encoding:   utf8
+      persistent: true
+      pooling:    true
+
+stg:
+  propel:
+    class:        sfPropelDatabase
+    param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_com;host=mysql
+
+  blog:
+    class:        sfPropelDatabase
+    param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_blog;host=mysql
+
+  calendar:
+    class:        sfPropelDatabase
+    param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_calendar;host=mysql
+
+  queue:
+    class:        sfPropelDatabase
+    param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_queue;host=mysql
+
+dev:
+  propel:
+    param:
+      classname:  DebugPDO
+      dsn:        mysql:dbname=collectorsquest_com;host=127.0.0.1
+      username:   root
+      password:
+      encoding:   utf8
+      persistent: true
+      pooling:    true
+
+      debug:
+        realmemoryusage: true
+        details:
+          time:
+            enabled: true
+          slow:
+            enabled: true
+            threshold: 0.01
+          memdelta:
+            enabled: true
+          mempeak:
+            enabled: true
+          method:
+            enabled: true
+          mem:
+            enabled: true
+          querycount:
+            enabled: true
+
+  blog:
+    param:
+      classname:  DebugPDO
+      username:   root
+      password:
+
+  calendar:
+    param:
+      classname:  DebugPDO
+      username:   root
+      password:
+
+  queue:
+    param:
+      classname:  DebugPDO
+      username:   root
+      password:
+
+test:
+  propel:
+    param:
+      classname:  DebugPDO
+      dsn:        mysql:dbname=collectorsquest_test;host=127.0.0.1
+      username:   root
+      password:

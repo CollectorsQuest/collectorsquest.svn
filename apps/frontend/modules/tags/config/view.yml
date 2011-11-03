@@ -1,0 +1,4 @@
+all:
+  stylesheets: [frontend/tags.css]
+  components:
+    sidebar: [tags, sidebar]

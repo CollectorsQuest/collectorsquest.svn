@@ -1,0 +1,41 @@
+= sfRequestHistoryPlugin =
+
+This plugin was created to fulfill a common need: The ability to redirect user's back to previous pages without relying on the browser's (often unreliable) referer header. If you use sessions on your site, you can use this plugin. The plugin consists of 3 files: A filter, library, and a helper.
+
+== The Filter ==
+
+On each request, the filter simply stores request uri into the 'request_history' session attribute. You can then use the supplied convenience methods to access this attribute. Be sure to active this filter in your filters.yml:
+
+{{{
+...
+security:  ~
+# generally, you will want to insert your own filters here
+sfRequestHistory:
+  class: sfRequestHistoryFilter
+...
+}}}
+
+== The Library ==
+
+To access the uri stack you can use any of the following static methods from anywhere in your application:
+
+  * sfRequestHistory::getHistory()
+  * sfRequestHistory::getCurrentRequestKey()
+  * sfRequestHistory::getHistorySize()
+  * sfRequestHistory::getRequestKeyUri($key)
+  * sfRequestHistory::getCurrentUri()
+  * sfRequestHistory::getRequestUriFromCurrent($num)
+  * sfRequestHistory::goUrl($num)
+  * sfRequestHistory::canGo($num)
+  * sfRequestHistory::go($num)
+  * sfRequestHistory::back($num = 1)
+  * sfRequestHistory::forward($num = 1)
+
+== The Helper ==
+
+Currently the helper contains one function that outputs a "Go Back" button. It is used in the following way:
+
+{{{
+<?php use_helper('RequestHistory') ?>
+<?php echo get_go_back_button($label = 'Go Back', $num = 1) ?>
+}}}

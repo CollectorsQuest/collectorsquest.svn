@@ -1,0 +1,17 @@
+default:
+  http_metas:
+    content-type: text/html
+
+  metas:
+    title:        "Backend - Collectors Quest"
+    language:     en
+    robots:       noindex, nofollow
+
+  stylesheets:    [backend/yui.css, backend/default.css, backend/main.css]
+  javascripts:
+    - jquery.js
+    - tiny_mce/tiny_mce.js
+    - backend/main.js
+
+  has_layout:     true
+  layout:         layout

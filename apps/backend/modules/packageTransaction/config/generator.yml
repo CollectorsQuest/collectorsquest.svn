@@ -1,0 +1,38 @@
+generator:
+  class: sfPropelGenerator
+  param:
+    model_class:           PackageTransaction
+    theme:                 admin15
+    non_verbose_templates: true
+    with_show:             false
+    singular:              PackageTransaction
+    plural:                PackageTransactions
+    route_prefix:          package_transaction
+    with_propel_route:     1
+    actions_base_class:    sfActions
+    css:                   backend/empty.css
+
+    config:
+      actions: ~
+      fields:
+        collector: { label: Seller Name}
+        package_id: { label: Package Name, renderer: [Package, packageName]}
+        max_items_for_sale: { label: Max Items }
+        package_price: { label: Package Price }
+        expiry_date: { label: Expiry Date }
+        payment_status: { label: Payment Status }
+        created_at: { label: 'Ordered at' }
+      list:
+        title: List of Package Transaction
+        display: [collector, package_id, max_items_for_sale, package_price, created_at, payment_status, expiry_date]
+        hide: [id]
+        sort: [id, desc]
+        object_actions: { }
+        batch_actions: { }
+        actions: { }
+      filter:
+        display: [collector_id, package_id, expiry_date]
+      form: ~
+      edit: ~
+      new:             
+        actions:  { _list: ~, _save: ~ }

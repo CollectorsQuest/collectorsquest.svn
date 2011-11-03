@@ -1,0 +1,94 @@
+connection: blog
+noXsd: false
+defaultIdMethod: native
+package: lib.model.blog
+
+classes:
+  wpPost:
+    tableName: wp_posts
+    skipSql: true
+    columns:
+      id:                     ~
+      post_author:            { type: integer, required: true, foreignClass: wpUser, foreignReference: id }
+      post_date:              { type: timestamp, required: true }
+      post_date_gmt:          { type: timestamp, required: true }
+      post_content:           longvarchar
+      post_title:             longvarchar
+      post_excerpt:           longvarchar
+      post_category:          tinyint
+      post_status:            varchar(50)
+      comment_status:         varchar(50)
+      ping_status:            varchar(50)
+      post_password:          varchar(20)
+      post_name:              varchar(200)
+      to_ping:                longvarchar
+      pinged:                 longvarchar
+      post_modified:          timestamp
+      post_modified_gmt:      timestamp
+      post_content_filtered:  longvarchar
+      post_parent:            integer
+      guid:                   varchar(255)
+      menu_order:             integer
+      post_type:              varchar(100)
+      post_mime_type:         varchar(100)
+      comment_count:          integer
+
+  wpPostMeta:
+    tableName: wp_postmeta
+    skipSql: true
+    columns:
+      meta_id:     { type: integer, required: true, primaryKey: true, autoIncrement: true }
+      post_id:     { type: integer, required: true, foreignClass: wpPost, foreignReference: id }
+      meta_key:    varchar(255)
+      meta_value:  longvarchar
+
+  wpUser:
+    tableName: wp_users
+    skipSql: true
+    columns:
+      id:                   ~
+      user_login:           varchar(60)
+      user_pass:            varchar(64)
+      user_nicename:        varchar(50)
+      user_email:           varchar(100)
+      user_url:             varchar(100)
+      user_registered:      timestamp
+      user_activation_key:  varchar(60)
+      user_status:          integer
+      display_name:         varchar(255)
+
+  wpTerm:
+    tableName: wp_terms
+    skipSql: true
+    columns:
+      term_id:     { type: integer, required: true, primaryKey: true, autoIncrement: true }
+      name:        varchar(55)
+      slug:        varchar(200)
+      term_group:  integer
+
+  wpTermRelationship:
+    tableName: wp_term_relationships
+    skipSql: true
+    columns:
+      object_id:         { type: integer, primaryKey: true }
+      term_taxonomy_id:  { type: integer, primaryKey: true }
+
+  wpTermTaxonomy:
+    tableName: wp_term_taxonomy
+    skipSql: true
+    columns:
+      term_taxonomy_id:  { type: integer, required: true, primaryKey: true, autoIncrement: true }
+      term_id:           integer
+      taxonomy:          varchar(32)
+      description:       longvarchar
+      parent:            integer
+      count:             integer
+
+  wpComment:
+    tableName: wp_comments
+    skipSql: true
+    columns:
+      comment_id:            { type: integer, required: true, primaryKey: true, autoIncrement: true }
+      comment_author:        varchar(100)
+      comment_author_email:  varchar(100)
+      comment_date:          timestamp

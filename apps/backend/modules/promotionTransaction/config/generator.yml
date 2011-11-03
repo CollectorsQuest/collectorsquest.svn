@@ -1,0 +1,34 @@
+generator:
+  class: sfPropelGenerator
+  param:
+    model_class:           PromotionTransaction
+    theme:                 admin15
+    non_verbose_templates: true
+    with_show:             false
+    singular:              PromotionTransaction
+    plural:                PromotionTransactions
+    route_prefix:          promotion_transaction
+    with_propel_route:     1
+    actions_base_class:    sfActions
+    css:                   backend/empty.css
+
+    config:
+      actions: ~
+      fields:
+        collector_id: { label: Collector Name }
+        promotion_id: { label: Promotion Name }
+        amount: { label: Amount }
+        amount_type: { label: Amount Type }
+      list:
+        title: List of Promotion Transaction
+        display: [collector, promotion, amount, amount_type]
+        hide: [id]
+        sort: [id, desc]
+        object_actions: { }
+        batch_actions: { }
+        actions: { }
+      filter:
+        display: [collector_id, promotion_id, amount]
+      form:    ~
+      edit:    ~
+      new:     ~

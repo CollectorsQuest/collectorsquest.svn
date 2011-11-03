@@ -1,0 +1,13 @@
+indexSuccess:
+  stylesheets: [frontend/homepage.css, frontend/tags.css]
+  components:
+    slot_1: [general, indexSlot1]
+  layout: layout-open
+
+loginSuccess:
+  stylesheets: [frontend/forms.css]
+  components:
+    sidebar: [general, sidebar]
+
+landingSuccess:
+  stylesheets: [frontend/aetn.css]

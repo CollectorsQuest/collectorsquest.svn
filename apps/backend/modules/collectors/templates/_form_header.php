@@ -1,0 +1,1 @@
+<div style="float: right; margin-left: 20px;"><?= image_tag_collector($Collector, '235x315'); ?></div>

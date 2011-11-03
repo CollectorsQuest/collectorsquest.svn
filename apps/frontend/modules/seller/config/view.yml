@@ -1,0 +1,5 @@
+signupSuccess:
+  javascripts: [jquery/pstrength.js]
+  stylesheets: [frontend/forms.css]
+  components:
+    sidebar: [general, sidebar]

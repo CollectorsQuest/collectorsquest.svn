@@ -1,0 +1,27 @@
+generator:
+  class: sfPropelGenerator
+  param:
+    model_class:           Collectible
+    theme:                 admin15
+    non_verbose_templates: true
+    with_show:             false
+    singular:              Collectible
+    plural:                Collectibles
+    route_prefix:          collectible
+    with_propel_route:     1
+    actions_base_class:    sfActions
+    css:                   backend/empty.css
+
+    config:
+      actions: ~
+      fields:
+        id: { label: ID }
+        created_at: { label: Date, date_format: 'MM/dd/yyyy' }
+      list:
+        title: Collectibles
+        display: [id, collector, collection, =name, score, created_at]
+      filter:
+        display: [name]
+      form:    ~
+      edit:    ~
+      new:     ~

@@ -1,0 +1,37 @@
+generator:
+  class: sfPropelGenerator
+  param:
+    model_class:           Promotion
+    theme:                 admin15
+    non_verbose_templates: true
+    with_show:             false
+    singular:              Promotion
+    plural:                Promotions
+    route_prefix:          promotion
+    with_propel_route:     1
+    actions_base_class:    sfActions
+    css:                   backend/empty.css
+
+    config:
+      actions: ~
+      fields:
+        promotion_name: { label: Promotion Name }
+        promotion_code: { label: Promotion Code }
+        amount: { label: Amount }
+        amount_type: { label: Amount Type }
+        no_of_time_used: { label: No of Times Used }
+        created_at: { label: Publish Date }
+        expiry_date: { label: Expiry Date }
+      list:
+        title: List of Promotion
+        display: [id, =promotion_name, promotion_code, amount, amount_type, no_of_time_used, created_at, expiry_date]
+      filter:
+        display: [promotion_name, amount, amount_type, expiry_date]
+      form:
+        display:
+          "Promotion":          [promotion_name, promotion_desc, promotion_code, amount, amount_type, no_of_time_used, expiry_date]
+      edit:
+        title: Edit Promotion
+      new:
+        title: Add Promotion
+        actions:  { _list: ~, _save: ~ }

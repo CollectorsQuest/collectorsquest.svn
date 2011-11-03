@@ -1,0 +1,5 @@
+all:
+  stylesheets: [frontend/collections.css, frontend/collectors.css]
+  javascripts: [jquery/infinitescroll.js]
+  components:
+    sidebar: [search, sidebar]

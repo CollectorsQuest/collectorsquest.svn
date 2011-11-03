@@ -1,0 +1,9 @@
+all:
+  stylesheets: [frontend/collectors.css, frontend/collections.css]
+
+signupSuccess:
+  javascripts: [jquery/pstrength.js]
+  stylesheets: [frontend/forms.css]
+  components:
+    sidebar: [general, sidebar]
+

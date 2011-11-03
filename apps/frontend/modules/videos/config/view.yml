@@ -1,0 +1,3 @@
+all:
+  stylesheets: [frontend/videos.css]
+  javascripts: [swfobject.js, frontend/videos.js]
