@@ -11,10 +11,10 @@ class CollectionPeer extends BaseCollectionPeer
   {
     $c = ($criteria instanceof Criteria) ? clone $criteria : new Criteria();
 
-    $c->add(TagPeer::NAME, 'CHAR_LENGTH('.TagPeer::NAME.') > 2', Criteria::CUSTOM);
+    $c->add(iceModelTagPeer::NAME, 'CHAR_LENGTH('. iceModelTagPeer::NAME .') > 2', Criteria::CUSTOM);
     $c->setLimit($limit);
 
-    return TagPeer::getPopulars($c, array('model' => 'Collection'));
+    return iceModelTagPeer::getPopulars($c, array('model' => 'Collection'));
   }
 
   public static function getPopularByTag($tags, $limit = 10, Criteria $criteria = null)

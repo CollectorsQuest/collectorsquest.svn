@@ -1,9 +1,6 @@
 <?php
 
-include dirname(__FILE__).'/../vendor/Basecamp.class.php';
-include dirname(__FILE__).'/../vendor/SphinxClient.class.php';
-
-class cqStatic
+class cqStatic extends IceStatic
 {
   static private $_browser = array();
   static private $_browser_recycle = array();
@@ -28,34 +25,22 @@ class cqStatic
    */
   static public function getBasecampClient()
   {
+    include dirname(__FILE__).'/../vendor/Basecamp.class.php';
+
     return new Basecamp('http://collectorsquest.basecamphq.com/', 'api-access', '2sRqqP7HElFCjM');
   }
 
   /**
-   * Get a SphinxClient() object
+   * Get an IceSphinxClient object
    *
-   * @param string $culture
+   * @param  string  $hostname
+   * @param  string  $culture
    *
-   * @return SphinxClient
+   * @return IceSphinxClient
    */
-  static public function getSphinxClient()
+  static public function getSphinxClient($hostname = 'cq-sphinx', $culture = 'en_US')
   {
-    $sphinx = new SphinxClient();
-    $sphinx->setServer('searchd', 9312);
-
-    return $sphinx;
-  }
-
-  static public function getAkismetClient()
-  {
-    include_once sfConfig::get('sf_lib_dir').'/vendor/Akismet.class.php';
-
-    $api_key = sfConfig::get('app_api_akismet');
-    $website = sfConfig::get('app_cq_www_domain');
-
-    var_dump($api_key, $website);
-
-    return new Akismet($website, $api_key);
+    return parent::getSphinxClient($hostname, $culture);
   }
 
   static public function weight_tags($tags, $steps = 6)
@@ -191,70 +176,6 @@ class cqStatic
         'deny_attribute' => 'on', 'tidy' => $tidy
       )
     );
-  }
-
-  /**
-   * Truncates $text to the length of $length and replaces the last three characters with the $truncate_string
-   * if the $text is longer than $length.
-   */
-  static public function truncateText($text, $length = 30, $truncate_string = '...', $truncate_lastspace = false)
-  {
-    if (empty($text))
-    {
-      return $text;
-    }
-
-    $mbstring = extension_loaded('mbstring');
-    if($mbstring)
-    {
-      @mb_internal_encoding(mb_detect_encoding($text));
-    }
-    $strlen = ($mbstring) ? 'mb_strlen' : 'strlen';
-    $substr = ($mbstring) ? 'mb_substr' : 'substr';
-
-    if ($strlen($text) > $length)
-    {
-      $truncate_text = $substr($text, 0, $length - $strlen($truncate_string));
-      if ($truncate_lastspace)
-      {
-        $truncate_text = preg_replace('/\s+?(\S+)?$/', '', $truncate_text);
-      }
-
-      return $truncate_text . $truncate_string;
-    }
-    else
-    {
-      return $text;
-    }
-  }
-
-  static public function reduceText($text, $length = 30, $reduce_string = '...')
-  {
-    if (empty($text))
-    {
-      return $text;
-    }
-
-    $mbstring = extension_loaded('mbstring');
-    if ($mbstring)
-    {
-      @mb_internal_encoding(mb_detect_encoding($text));
-    }
-    $strlen = ($mbstring) ? 'mb_strlen' : 'strlen';
-    $substr = ($mbstring) ? 'mb_substr' : 'substr';
-
-    if ($strlen($text) > $length)
-    {
-      $truncate_text = $substr($text, 0, ceil($length / 2) - ceil($strlen($reduce_string)/2)) .
-                       $reduce_string .
-                       $substr($text, -1 * (ceil($length / 2) - ceil($strlen($reduce_string)/2)));
-
-      return $truncate_text;
-    }
-    else
-    {
-      return $text;
-    }
   }
 
   public static function generatePassword()
@@ -446,11 +367,6 @@ class cqStatic
     return null;
   }
 
-  static public function getUserIpAddress()
-  {
-    return $_SERVER['REMOTE_ADDR'] != getenv('SERVER_ADDR') ? $_SERVER['REMOTE_ADDR'] : getenv('HTTP_X_FORWARDED_FOR');
-  }
-
   /**
    * Used for sending email when an exception occurs on the site
    */
@@ -582,33 +498,5 @@ class cqStatic
     }
 
     return($status);
-  }
-
-  static public function loadZendFramework()
-  {
-    // Integrate Zend Framework
-    sfToolkit::addIncludePath(dirname(__FILE__).'/../vendor/zend', 'back');
-    require_once('Zend/Loader.php');
-    spl_autoload_register(array('cqStatic', 'zendFrameworkAutoload'));
-
-    Zend_Registry::set('Zend_Locale', new Zend_Locale('en_US'));
-  }
-
- /**
-  * @see Zend_Loader
-  */
-  static public function zendFrameworkAutoload($class)
-  {
-    if (substr($class, 0, 2) == 'sf' || substr($class, 0, 2) == 'cq')
-    {
-      return false;
-    }
-
-    // supress include_once errors
-    $err = error_reporting(0);
-    $ret = Zend_Loader::autoload($class);
-    error_reporting($err);
-
-    return $ret;
   }
 }

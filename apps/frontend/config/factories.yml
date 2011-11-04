@@ -23,7 +23,7 @@ all:
       cache_key_use_host_name:    true
 
   storage:
-    class: IceSessionStorage
+    class: cqSessionStorage
     param:
       session_name: frontend
 

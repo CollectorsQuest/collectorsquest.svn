@@ -12,18 +12,22 @@ class autocompleteAction extends cqAjaxAction
     return $this->$method($request);
   }
 
+  /**
+   * @param  sfWebRequest  $request
+   * @return string
+   */
   protected function executeTags($request)
   {
     $tags = array();
 
     $c = new Criteria();
-    $c->addSelectColumn(TagPeer::ID);
-    $c->addSelectColumn(TagPeer::NAME);
-    $c->add(TagPeer::IS_TRIPLE, false);
-    $c->add(TagPeer::NAME,'%'.$request->getParameter('tag').'%', Criteria::LIKE);
+    $c->addSelectColumn(iceModelTagPeer::ID);
+    $c->addSelectColumn(iceModelTagPeer::NAME);
+    $c->add(iceModelTagPeer::IS_TRIPLE, false);
+    $c->add(iceModelTagPeer::NAME,'%'.$request->getParameter('tag').'%', Criteria::LIKE);
     $c->setLimit(10);
 
-    $stmt = TagPeer::doSelectStmt($c);
+    $stmt = iceModelTagPeer::doSelectStmt($c);
     while ($row = $stmt->fetch(PDO::FETCH_NUM))
     {
       $tags[] = array('caption' => $row[1], 'value' => $row[1]);

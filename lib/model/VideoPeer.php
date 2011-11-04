@@ -18,14 +18,14 @@ class VideoPeer extends BaseVideoPeer
     $c = new Criteria();
     $c->setDistinct();
     $c->add(VideoPeer::IS_PUBLISHED, true);
-    $c->addJoin(VideoPeer::ID, TaggingPeer::TAGGABLE_ID);
-    $c->addJoin(TaggingPeer::TAG_ID, TagPeer::ID);
+    $c->addJoin(VideoPeer::ID, iceModelTaggingPeer::TAGGABLE_ID);
+    $c->addJoin(iceModelTaggingPeer::TAG_ID, iceModelTagPeer::ID);
     if (is_array($tags)) {
-      $c->add(TagPeer::NAME, $tags, Criteria::IN);
+      $c->add(iceModelTagPeer::NAME, $tags, Criteria::IN);
     } else {
-      $c->add(TagPeer::NAME, $tags);
+      $c->add(iceModelTagPeer::NAME, $tags);
     }
-    $c->add(TaggingPeer::TAGGABLE_MODEL, 'Video');
+    $c->add(iceModelTaggingPeer::TAGGABLE_MODEL, 'Video');
     $c->addAscendingOrderByColumn('RAND()');
     $c->setLimit($limit);
 

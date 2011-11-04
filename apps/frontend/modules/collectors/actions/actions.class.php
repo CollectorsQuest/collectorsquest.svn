@@ -35,7 +35,7 @@ class collectorsActions extends cqActions
     if ($filter = $request->getParameter('filter'))
     {
       $c->filterByUserType($filter == 'sellers' ? 'Seller' : 'Collector', Criteria::EQUAL);
-      
+
       switch ($filter)
       {
         case "most-popular":
@@ -88,9 +88,9 @@ class collectorsActions extends cqActions
     }
     else if ($tag = $request->getParameter('tag'))
     {
-      $c->add(TagPeer::NAME, $tag);
-      $c->addJoin(CollectorPeer::ID, TaggingPeer::TAGGABLE_ID, Criteria::LEFT_JOIN);
-      $c->addJoin(TaggingPeer::TAG_ID, TagPeer::ID, Criteria::LEFT_JOIN);
+      $c->add(iceModelTagPeer::NAME, $tag);
+      $c->addJoin(CollectorPeer::ID, iceModelTaggingPeer::TAGGABLE_ID, Criteria::LEFT_JOIN);
+      $c->addJoin(iceModelTaggingPeer::TAG_ID, iceModelTagPeer::ID, Criteria::LEFT_JOIN);
 
       $this->addBreadcrumb(ucwords(strtolower($tag)), '@collectors_by_tag?tag=' . $tag);
     }

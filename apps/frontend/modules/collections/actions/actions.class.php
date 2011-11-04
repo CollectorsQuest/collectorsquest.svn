@@ -70,9 +70,9 @@ class collectionsActions extends cqActions
     }
     else if ($tag = $request->getParameter('tag'))
     {
-      $c->add(TagPeer::NAME, $tag);
-      $c->addJoin(CollectionPeer::ID, TaggingPeer::TAGGABLE_ID, Criteria::LEFT_JOIN);
-      $c->addJoin(TaggingPeer::TAG_ID, TagPeer::ID, Criteria::LEFT_JOIN);
+      $c->add(iceModelTagPeer::NAME, $tag);
+      $c->addJoin(CollectionPeer::ID, iceModelTaggingPeer::TAGGABLE_ID, Criteria::LEFT_JOIN);
+      $c->addJoin(iceModelTaggingPeer::TAG_ID, iceModelTagPeer::ID, Criteria::LEFT_JOIN);
 
       $this->addBreadcrumb(ucwords(strtolower($tag)), '@collections_by_tag='. $tag);
       $this->prependTitle(ucwords(strtolower($tag)));

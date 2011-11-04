@@ -23,26 +23,26 @@ class CollectionItemPeer extends BaseCollectionItemPeer
     $item->setPhoto($data['fileName']);
     $item->addTag($data['tags']);
     $item->save();
-    
+
     return $item;
   }
-  
+
   public static function getPopularTags($limit = 50)
   {
     $c = new Criteria();
-    $c->add(TagPeer::NAME, 'CHAR_LENGTH('.TagPeer::NAME.') > 2', Criteria::CUSTOM);
+    $c->add(iceModelTagPeer::NAME, 'CHAR_LENGTH('. iceModelTagPeer::NAME .') > 2', Criteria::CUSTOM);
     $c->setLimit($limit);
-    
-    return TagPeer::getPopulars($c, array('model' => 'CollectionItem'));
+
+    return iceModelTagPeer::getPopulars($c, array('model' => 'CollectionItem'));
   }
 
   public static function getPopularByTag($tag, $limit = 6)
   {
     $c = new Criteria();
-    $c->add(TagPeer::NAME, $tag);
-    $c->addJoin(TaggingPeer::TAG_ID, TagPeer::ID);
-    $c->add(TaggingPeer::TAGGABLE_MODEL, 'CollectionItem');
-    $c->addJoin(CollectionItemPeer::ID, TaggingPeer::TAGGABLE_ID, Criteria::LEFT_JOIN);
+    $c->add(iceModelTagPeer::NAME, $tag);
+    $c->addJoin(iceModelTaggingPeer::TAG_ID, iceModelTagPeer::ID);
+    $c->add(iceModelTaggingPeer::TAGGABLE_MODEL, 'CollectionItem');
+    $c->addJoin(CollectionItemPeer::ID, iceModelTaggingPeer::TAGGABLE_ID, Criteria::LEFT_JOIN);
     $c->setLimit($limit);
 
     $items = CollectionItemPeer::doSelect($c);
@@ -55,20 +55,20 @@ class CollectionItemPeer extends BaseCollectionItemPeer
     $c = new Criteria();
     $c->addDescendingOrderByColumn(CollectionItemPeer::ID);
     $c->setLimit($limit);
-    
+
     return CollectionItemPeer::doSelect($c);
   }
-  
+
   public static function search($search = array(), $only_pks = false)
   {
     $search_index = new cqSearchIndex('CollectionItem');
 
     $index = $search_index->getLuceneSearchIndex();
     $query = '';
-    if (!empty($search['term'])) 
+    if (!empty($search['term']))
     {
       $query .= ' +"'.$search['term'].'"';
-      if (is_numeric($search['term'])) 
+      if (is_numeric($search['term']))
       {
         $query .= ' -collection_id:"'.$search['term'].'"';
         $query .= ' -collector_id:"'.$search['term'].'"';
@@ -99,7 +99,7 @@ class CollectionItemPeer extends BaseCollectionItemPeer
 
     return $results;
   }
-  
+
 	/* added by Prakash Panchal 29-3-2011
 	 * getCollectionAsPerCollector function.
 	 * return object
@@ -110,9 +110,9 @@ class CollectionItemPeer extends BaseCollectionItemPeer
 		$oCriteria->addSelectColumn(CollectionItemPeer::ID);
 		$oCriteria->addSelectColumn(CollectionItemPeer::NAME);
 		$oCriteria->add(CollectionItemPeer::COLLECTION_ID, $snIdCollection);
-		$oCriteria->add(CollectionItemPeer::ID, CollectionItemPeer::ID.' NOT IN (SELECT item_id FROM collection_item_for_sale)', Criteria::CUSTOM);		
+		$oCriteria->add(CollectionItemPeer::ID, CollectionItemPeer::ID.' NOT IN (SELECT item_id FROM collection_item_for_sale)', Criteria::CUSTOM);
 		$oCriteria->addAscendingOrderByColumn(CollectionItemPeer::NAME);
-		
+
 		return $omResultStatement = CollectionItemPeer::doSelectStmt($oCriteria);
 	}
 	/* added by Prakash Panchal 5-4-2011
@@ -129,13 +129,13 @@ class CollectionItemPeer extends BaseCollectionItemPeer
 			$c = clone $c;
 		}
 		$c->addJoin(CustomFieldPeer::ID, CustomValuePeer::FIELD_ID);
-		$c->addAscendingOrderByColumn(CustomValuePeer::FIELD_ID);		
+		$c->addAscendingOrderByColumn(CustomValuePeer::FIELD_ID);
 		$omCustomValue = CustomValuePeer::doSelect($c);
 		$custom_values = array();
 		foreach ($omCustomValue as $value)
 		{
 			$custom_values[$value->getFieldId()] = $value;
-		}	
+		}
 		return $custom_values;
 	}
 	/* added by Prakash Panchal 5th-May-2011
@@ -148,7 +148,7 @@ class CollectionItemPeer extends BaseCollectionItemPeer
 		$oCriteria->add(CollectionItemPeer::COLLECTIBLE_ID, $snCollectibleId);
 		$oCriteria->add(CollectionItemPeer::COLLECTION_ID, $snCollectionId);
 
-		$omCollectionItem = CollectionItemPeer::doSelectOne($oCriteria);		
+		$omCollectionItem = CollectionItemPeer::doSelectOne($oCriteria);
 		return ($omCollectionItem) ? $omCollectionItem : false;
 	}
 }

@@ -1,6 +1,9 @@
 all:
   domain_name: "http://www.collectorsquest.com/"
+  www_domain: "http://www.collectorsquest.com/"
+  static_domain: "http://static.collectorsquest.com/"
   static_domain_name: "http://www.collectorsquest.com/"
+  multimedia_domain: "http://multimedia.collectorsquest.com"
   shopify_domain_name: "collectorsquest.myshopify.com"
   admin_email_id: no-reply@collectorsquest.com
 
@@ -45,6 +48,10 @@ all:
       notify: 'developers@collectorsquest.com'
 
 stg:
+  www_domain: "http://www.collectorsquest.stg"
+  static_domain: "http://static.collectorsquest.stg"
+  multimedia_domain: "http://multimedia.collectorsquest.stg"
+
   cq:
     www_domain: "http://www.collectorsquest.stg"
     static_domain: "http://static.collectorsquest.stg"
@@ -72,6 +79,10 @@ stg:
     notify_url: http://www.collectorsquest.stg/collector/callbackIPN
 
 dev:
+  www_domain: "http://www.collectorsquest.dev/"
+  static_domain: "http://static.collectorsquest.dev/"
+  multimedia_domain: "http://multimedia.collectorsquest.dev"
+
   cq:
     www_domain: "http://www.collectorsquest.dev/"
     static_domain: "http://static.collectorsquest.dev/"

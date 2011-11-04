@@ -57,11 +57,11 @@ class Video extends BaseVideo
     $c = !($criteria instanceof Criteria) ? new Criteria() : clone $criteria;
 
     $c->setDistinct();
-    $c->addJoin(VideoPeer::ID, TaggingPeer::TAGGABLE_ID);
-    $c->addJoin(TaggingPeer::TAG_ID, TagPeer::ID);
+    $c->addJoin(VideoPeer::ID, iceModelTaggingPeer::TAGGABLE_ID);
+    $c->addJoin(iceModelTaggingPeer::TAG_ID, iceModelTagPeer::ID);
     $c->add(VideoPeer::ID, $this->getId(), Criteria::NOT_EQUAL);
-    $c->add(TaggingPeer::TAGGABLE_MODEL, 'Video');
-    $c->add(TagPeer::NAME, $tags, Criteria::IN);
+    $c->add(iceModelTaggingPeer::TAGGABLE_MODEL, 'Video');
+    $c->add(iceModelTagPeer::NAME, $tags, Criteria::IN);
     $c->addDescendingOrderByColumn(VideoPeer::PUBLISHED_AT);
     $c->setLimit($limit);
 
