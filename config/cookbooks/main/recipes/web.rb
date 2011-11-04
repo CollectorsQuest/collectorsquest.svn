@@ -13,5 +13,5 @@ execute "Checkout /www from subversion" do
 end
 
 execute "Update /www from subversion" do
-  command "svn up -q --non-interactive --no-auth-cache --trust-server-cert --username=development --password=hmBiv9799qEgvN /www"
+  command "svn up -q --ignore-externals --non-interactive --no-auth-cache --trust-server-cert --username=development --password=hmBiv9799qEgvN /www"
 end

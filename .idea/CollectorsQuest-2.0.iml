@@ -48,6 +48,8 @@
       <excludeFolder url="file://$MODULE_DIR$/lib/vendor/symfony/plugins" />
       <excludeFolder url="file://$MODULE_DIR$/lib/vendor/symfony/task/generator/skeleton" />
       <excludeFolder url="file://$MODULE_DIR$/log" />
+      <excludeFolder url="file://$MODULE_DIR$/plugins/sfPropelORMPlugin/test" />
+      <excludeFolder url="file://$MODULE_DIR$/plugins/sfTaskExtraPlugin/lib/task/generator/skeleton" />
       <excludeFolder url="file://$MODULE_DIR$/web/uploads" />
     </content>
     <orderEntry type="inheritedJdk" />

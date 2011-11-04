@@ -2,7 +2,7 @@
 
 date_default_timezone_set('America/New_York');
 
-require_once dirname(__FILE__).'/../lib/vendor/symfony/autoload/sfCoreAutoload.class.php';
+require_once '/www/libs/symfony-1.3.x/lib/autoload/sfCoreAutoload.class.php';
 sfCoreAutoload::register();
 
 class ProjectConfiguration extends sfProjectConfiguration
@@ -17,12 +17,11 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->dispatcher->connect('application.throw_exception', array('cqStatic', 'exceptionNotifier'));
 
     $this->enablePlugins(
-      'sfPropel15Plugin', 'sfPropelMigrationsLightPlugin',
-      'sfPropelActAsSluggableBehaviorPlugin', 'sfPropelActAsTaggableBehaviorPlugin',
-      'sfWebBrowserPlugin', 'sfRequestHistoryPlugin', 'sfGravatarPlugin'
+      'sfPropelORMPlugin', 'sfPropelMigrationsLightPlugin',
+      'sfFormExtraPlugin', 'sfGuardPlugin', 'sfGravatarPlugin'
     );
-
-    $this->enablePlugins('sfFormExtraPlugin');
-    $this->enablePlugins('sfGuardPlugin');
+    $this->enablePlugins(
+      'iceBehaviorsPlugin', 'iceLibsPlugin', 'iceTaggablePlugin'
+    );
   }
 }

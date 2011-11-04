@@ -19,9 +19,9 @@ link "/usr/local/zend/etc/conf.d/development.ini" do
   notifies :restart, "service[zend]"
 end
 
-link "/www/etc/apache2/sites-available/collectorsquest.dev.conf" do
-  to "/etc/apache2/sites-enabled/collectorsquest.dev.conf"
-  not_if "test -L /etc/apache2/sites-enabled/collectorsquest.dev.conf"
+link "/etc/apache2/sites-enabled/collectorsquest.dev" do
+  to "/www/etc/apache2/sites-available/collectorsquest.dev"
+  not_if "test -L /etc/apache2/sites-enabled/collectorsquest.dev"
   notifies :restart, "service[zend]"
 end
 
