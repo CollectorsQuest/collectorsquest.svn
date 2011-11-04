@@ -26,7 +26,7 @@ abstract class BaseCollectionItemForSaleForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'                  => new sfValidatorPropelChoice(array('model' => 'CollectionItemForSale', 'column' => 'id', 'required' => false)),
+      'id'                  => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'item_id'             => new sfValidatorPropelChoice(array('model' => 'CollectionItem', 'column' => 'id')),
       'price'               => new sfValidatorNumber(array('required' => false)),
       'condition'           => new sfValidatorString(),

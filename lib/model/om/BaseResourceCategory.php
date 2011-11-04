@@ -254,56 +254,20 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
   /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     ResourceCategory The current object (for fluent API support)
    */
   public function setCreatedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->created_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->created_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->created_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->created_at = $newDateAsString;
         $this->modifiedColumns[] = ResourceCategoryPeer::CREATED_AT;
       }
     }
@@ -358,7 +322,7 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 5; // 5 = ResourceCategoryPeer::NUM_COLUMNS - ResourceCategoryPeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 5; // 5 = ResourceCategoryPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -455,6 +419,8 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
     $con->beginTransaction();
     try
     {
+      $deleteQuery = ResourceCategoryQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseResourceCategory:delete:pre') as $callable)
@@ -468,9 +434,7 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
 
       if ($ret)
       {
-        ResourceCategoryQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BaseResourceCategory:delete:post') as $callable)
@@ -533,8 +497,6 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
         }
       }
 
-      // symfony_timestampable behavior
-      
       if ($isInsert)
       {
         $ret = $ret && $this->preInsert($con);
@@ -793,11 +755,18 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+   * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
   {
+    if (isset($alreadyDumpedObjects['ResourceCategory'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['ResourceCategory'][$this->getPrimaryKey()] = true;
     $keys = ResourceCategoryPeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
@@ -806,6 +775,13 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
       $keys[3] => $this->getThumbnail(),
       $keys[4] => $this->getCreatedAt(),
     );
+    if ($includeForeignObjects)
+    {
+      if (null !== $this->collResourceEntrys)
+      {
+        $result['ResourceEntrys'] = $this->collResourceEntrys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+    }
     return $result;
   }
 
@@ -954,14 +930,15 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
    *
    * @param      object $copyObj An object of ResourceCategory (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setName($this->name);
-    $copyObj->setSlug($this->slug);
-    $copyObj->setThumbnail($this->thumbnail);
-    $copyObj->setCreatedAt($this->created_at);
+    $copyObj->setName($this->getName());
+    $copyObj->setSlug($this->getSlug());
+    $copyObj->setThumbnail($this->getThumbnail());
+    $copyObj->setCreatedAt($this->getCreatedAt());
 
     if ($deepCopy)
     {
@@ -978,9 +955,11 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
 
     }
 
-
-    $copyObj->setNew(true);
-    $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -1022,6 +1001,23 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
     return self::$peer;
   }
 
+
+  /**
+   * Initializes a collection based on the name of a relation.
+   * Avoids crafting an 'init[$relationName]s' method name
+   * that wouldn't work when StandardEnglishPluralizer is used.
+   *
+   * @param      string $relationName The name of the relation to initialize
+   * @return     void
+   */
+  public function initRelation($relationName)
+  {
+    if ('ResourceEntry' == $relationName)
+    {
+      return $this->initResourceEntrys();
+    }
+  }
+
   /**
    * Clears out the collResourceEntrys collection
    *
@@ -1043,10 +1039,17 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initResourceEntrys()
+  public function initResourceEntrys($overrideExisting = true)
   {
+    if (null !== $this->collResourceEntrys && !$overrideExisting)
+    {
+      return;
+    }
     $this->collResourceEntrys = new PropelObjectCollection();
     $this->collResourceEntrys->setModel('ResourceEntry');
   }
@@ -1129,8 +1132,7 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
    * through the ResourceEntry foreign key attribute.
    *
    * @param      ResourceEntry $l ResourceEntry
-   * @return     void
-   * @throws     PropelException
+   * @return     ResourceCategory The current object (for fluent API support)
    */
   public function addResourceEntry(ResourceEntry $l)
   {
@@ -1142,6 +1144,8 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
       $this->collResourceEntrys[]= $l;
       $l->setResourceCategory($this);
     }
+
+    return $this;
   }
 
   /**
@@ -1163,13 +1167,13 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -1177,14 +1181,28 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
     {
       if ($this->collResourceEntrys)
       {
-        foreach ((array) $this->collResourceEntrys as $o)
+        foreach ($this->collResourceEntrys as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
     }
 
+    if ($this->collResourceEntrys instanceof PropelCollection)
+    {
+      $this->collResourceEntrys->clearIterator();
+    }
     $this->collResourceEntrys = null;
+  }
+
+  /**
+   * Return the string representation of this object
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    return (string) $this->exportTo(ResourceCategoryPeer::DEFAULT_STRING_FORMAT);
   }
 
   /**
@@ -1192,6 +1210,7 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BaseResourceCategory:' . $name))
     {
@@ -1199,20 +1218,6 @@ abstract class BaseResourceCategory extends BaseObject  implements Persistent
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

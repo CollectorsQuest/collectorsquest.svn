@@ -23,7 +23,7 @@ abstract class BasePromotionTransactionForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'           => new sfValidatorPropelChoice(array('model' => 'PromotionTransaction', 'column' => 'id', 'required' => false)),
+      'id'           => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'promotion_id' => new sfValidatorPropelChoice(array('model' => 'Promotion', 'column' => 'id')),
       'collector_id' => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id')),
       'amount'       => new sfValidatorNumber(array('required' => false)),

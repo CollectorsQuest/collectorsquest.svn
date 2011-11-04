@@ -42,12 +42,13 @@ class CollectibleTableMap extends TableMap
     $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
     $this->addForeignKey('COLLECTION_ID', 'CollectionId', 'INTEGER', 'collection', 'ID', true, null, null);
     $this->addColumn('NAME', 'Name', 'VARCHAR', true, 64, null);
+    $this->getColumn('NAME', false)->setPrimaryString(true);
     $this->addColumn('SLUG', 'Slug', 'VARCHAR', false, 128, null);
     $this->addColumn('DESCRIPTION', 'Description', 'LONGVARCHAR', true, null, null);
     $this->addColumn('NUM_COMMENTS', 'NumComments', 'INTEGER', false, null, 0);
     $this->addColumn('SCORE', 'Score', 'INTEGER', false, null, 0);
     $this->addColumn('POSITION', 'Position', 'TINYINT', false, null, null);
-    $this->addColumn('IS_NAME_AUTOMATIC', 'IsNameAutomatic', 'BOOLEAN', false, null, false);
+    $this->addColumn('IS_NAME_AUTOMATIC', 'IsNameAutomatic', 'BOOLEAN', false, 1, false);
     $this->addColumn('DELETED_AT', 'DeletedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
@@ -61,16 +62,16 @@ class CollectibleTableMap extends TableMap
   {
     $this->addRelation('Collector', 'Collector', RelationMap::MANY_TO_ONE, array('collector_id' => 'id', ), 'CASCADE', null);
     $this->addRelation('Collection', 'Collection', RelationMap::MANY_TO_ONE, array('collection_id' => 'id', ), 'CASCADE', null);
-    $this->addRelation('CollectibleForSale', 'CollectibleForSale', RelationMap::ONE_TO_MANY, array('id' => 'collectible_id', ), 'CASCADE', null);
-    $this->addRelation('CollectibleOffer', 'CollectibleOffer', RelationMap::ONE_TO_MANY, array('id' => 'collectible_id', ), 'CASCADE', null);
-    $this->addRelation('Comment', 'Comment', RelationMap::ONE_TO_MANY, array('id' => 'collectible_id', ), 'SET NULL', null);
-    $this->addRelation('CustomValue', 'CustomValue', RelationMap::ONE_TO_MANY, array('id' => 'collectible_id', ), 'CASCADE', null);
+    $this->addRelation('CollectibleForSale', 'CollectibleForSale', RelationMap::ONE_TO_MANY, array('id' => 'collectible_id', ), 'CASCADE', null, 'CollectibleForSales');
+    $this->addRelation('CollectibleOffer', 'CollectibleOffer', RelationMap::ONE_TO_MANY, array('id' => 'collectible_id', ), 'CASCADE', null, 'CollectibleOffers');
+    $this->addRelation('Comment', 'Comment', RelationMap::ONE_TO_MANY, array('id' => 'collectible_id', ), 'SET NULL', null, 'Comments');
+    $this->addRelation('CustomValue', 'CustomValue', RelationMap::ONE_TO_MANY, array('id' => 'collectible_id', ), 'CASCADE', null, 'CustomValues');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

@@ -25,12 +25,15 @@ abstract class BaseResourceEntryPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'ResourceEntryTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 12;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 12;
 
   /** the column name for the ID field */
   const ID = 'resource_entry.ID';
@@ -68,6 +71,9 @@ abstract class BaseResourceEntryPeer
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'resource_entry.CREATED_AT';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of ResourceEntry objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -77,20 +83,13 @@ abstract class BaseResourceEntryPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'CategoryId', 'Type', 'Name', 'Slug', 'Description', 'Url', 'Rss', 'Thumbnail', 'Blogger', 'Email', 'CreatedAt', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'categoryId', 'type', 'name', 'slug', 'description', 'url', 'rss', 'thumbnail', 'blogger', 'email', 'createdAt', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::CATEGORY_ID, self::TYPE, self::NAME, self::SLUG, self::DESCRIPTION, self::URL, self::RSS, self::THUMBNAIL, self::BLOGGER, self::EMAIL, self::CREATED_AT, ),
@@ -105,7 +104,7 @@ abstract class BaseResourceEntryPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CategoryId' => 1, 'Type' => 2, 'Name' => 3, 'Slug' => 4, 'Description' => 5, 'Url' => 6, 'Rss' => 7, 'Thumbnail' => 8, 'Blogger' => 9, 'Email' => 10, 'CreatedAt' => 11, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'categoryId' => 1, 'type' => 2, 'name' => 3, 'slug' => 4, 'description' => 5, 'url' => 6, 'rss' => 7, 'thumbnail' => 8, 'blogger' => 9, 'email' => 10, 'createdAt' => 11, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::CATEGORY_ID => 1, self::TYPE => 2, self::NAME => 3, self::SLUG => 4, self::DESCRIPTION => 5, self::URL => 6, self::RSS => 7, self::THUMBNAIL => 8, self::BLOGGER => 9, self::EMAIL => 10, self::CREATED_AT => 11, ),
@@ -272,7 +271,7 @@ abstract class BaseResourceEntryPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -292,7 +291,7 @@ abstract class BaseResourceEntryPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -354,7 +353,7 @@ abstract class BaseResourceEntryPeer
    * @param      ResourceEntry $value A ResourceEntry object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(ResourceEntry $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -460,7 +459,7 @@ abstract class BaseResourceEntryPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -525,7 +524,7 @@ abstract class BaseResourceEntryPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + ResourceEntryPeer::NUM_COLUMNS;
+      $col = $startcol + ResourceEntryPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -536,6 +535,7 @@ abstract class BaseResourceEntryPeer
     }
     return array($obj, $col);
   }
+
 
   /**
    * Returns the number of rows matching criteria, joining the related ResourceCategory table
@@ -565,9 +565,9 @@ abstract class BaseResourceEntryPeer
     {
       ResourceEntryPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -619,7 +619,7 @@ abstract class BaseResourceEntryPeer
     }
 
     ResourceEntryPeer::addSelectColumns($criteria);
-    $startcol = (ResourceEntryPeer::NUM_COLUMNS - ResourceEntryPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol = ResourceEntryPeer::NUM_HYDRATE_COLUMNS;
     ResourceCategoryPeer::addSelectColumns($criteria);
 
     $criteria->addJoin(ResourceEntryPeer::CATEGORY_ID, ResourceCategoryPeer::ID, $join_behavior);
@@ -706,9 +706,9 @@ abstract class BaseResourceEntryPeer
     {
       ResourceEntryPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -760,10 +760,10 @@ abstract class BaseResourceEntryPeer
     }
 
     ResourceEntryPeer::addSelectColumns($criteria);
-    $startcol2 = (ResourceEntryPeer::NUM_COLUMNS - ResourceEntryPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = ResourceEntryPeer::NUM_HYDRATE_COLUMNS;
 
     ResourceCategoryPeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + (ResourceCategoryPeer::NUM_COLUMNS - ResourceCategoryPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol3 = $startcol2 + ResourceCategoryPeer::NUM_HYDRATE_COLUMNS;
 
     $criteria->addJoin(ResourceEntryPeer::CATEGORY_ID, ResourceCategoryPeer::ID, $join_behavior);
 
@@ -861,7 +861,7 @@ abstract class BaseResourceEntryPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a ResourceEntry or Criteria object.
+   * Performs an INSERT on the database, given a ResourceEntry or Criteria object.
    *
    * @param      mixed $values Criteria or ResourceEntry object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -912,7 +912,7 @@ abstract class BaseResourceEntryPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a ResourceEntry or Criteria object.
+   * Performs an UPDATE on the database, given a ResourceEntry or Criteria object.
    *
    * @param      mixed $values Criteria or ResourceEntry object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -956,11 +956,12 @@ abstract class BaseResourceEntryPeer
   }
 
   /**
-   * Method to DELETE all rows from the resource_entry table.
+   * Deletes all rows from the resource_entry table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -989,7 +990,7 @@ abstract class BaseResourceEntryPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a ResourceEntry or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a ResourceEntry or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or ResourceEntry object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -1064,7 +1065,7 @@ abstract class BaseResourceEntryPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(ResourceEntry $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

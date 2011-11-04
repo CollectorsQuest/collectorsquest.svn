@@ -298,15 +298,15 @@ class CollectionItem extends BaseCollectionItem
 	$oCriteria = new Criteria();
 	$oCriteria->add(CollectionItemForSalePeer::ITEM_ID,$this->getId());
 	$oCriteria->add(CollectionItemForSalePeer::IS_SOLD,true);
-	$snCount = CollectionItemForSalePeer::doCount($oCriteria);	
-    
+	$snCount = CollectionItemForSalePeer::doCount($oCriteria);
+
 	return $snCount;
   }
 
   public function getForSaleInformation()
   {
     //return sfPropelFinder::from('CollectionItemForSale')->findOneBy('ItemId', $this->getId());
-	// Replace above line by Prakash Panchal 5-APR-2011	
+	// Replace above line by Prakash Panchal 5-APR-2011
 	$oCriteria =new Criteria();
 	$oCriteria->add(CollectionItemForSalePeer::ITEM_ID,$this->getId());
 	return CollectionItemForSalePeer::doSelectOne($oCriteria);
@@ -342,12 +342,12 @@ class CollectionItem extends BaseCollectionItem
   }
 }
 
-sfPropelBehavior::add('CollectionItem', array('sfPropelActAsTaggableBehavior'));
+sfPropelBehavior::add('CollectionItem', array('IceTaggableBehavior'));
 
 sfPropelBehavior::add(
   'CollectionItem',
   array(
-    'sfPropelActAsSluggableBehavior' => array(
+    'PropelActAsSluggableBehavior' => array(
       'columns' => array(
         'from' => CollectionItemPeer::NAME,
         'to' => CollectionItemPeer::SLUG

@@ -37,237 +37,248 @@
  */
 abstract class BasewpCommentQuery extends ModelCriteria
 {
-
-  /**
-   * Initializes internal state of BasewpCommentQuery object.
-   *
-   * @param     string $dbName The dabase name
-   * @param     string $modelName The phpName of a model, e.g. 'Book'
-   * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
-   */
-  public function __construct($dbName = 'blog', $modelName = 'wpComment', $modelAlias = null)
-  {
-    parent::__construct($dbName, $modelName, $modelAlias);
-  }
-
-  /**
-   * Returns a new wpCommentQuery object.
-   *
-   * @param     string $modelAlias The alias of a model in the query
-   * @param     Criteria $criteria Optional Criteria to build the query from
-   *
-   * @return    wpCommentQuery
-   */
-  public static function create($modelAlias = null, $criteria = null)
-  {
-    if ($criteria instanceof wpCommentQuery)
-    {
-      return $criteria;
-    }
-    $query = new wpCommentQuery();
-    if (null !== $modelAlias)
-    {
-      $query->setModelAlias($modelAlias);
-    }
-    if ($criteria instanceof Criteria)
-    {
-      $query->mergeWith($criteria);
-    }
-    return $query;
-  }
-
-  /**
-   * Find object by primary key
-   * Use instance pooling to avoid a database query if the object exists
-   * <code>
-   * $obj  = $c->findPk(12, $con);
-   * </code>
-   * @param     mixed $key Primary key to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    wpComment|array|mixed the result, formatted by the current formatter
-   */
-  public function findPk($key, $con = null)
-  {
-    if ((null !== ($obj = wpCommentPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter())
-    {
-      // the object is alredy in the instance pool
-      return $obj;
-    }
-    else
-    {
-      // the object has not been requested yet, or the formatter is not an object formatter
-      $criteria = $this->isKeepQuery() ? clone $this : $this;
-      $stmt = $criteria
-        ->filterByPrimaryKey($key)
-        ->getSelectStatement($con);
-      return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
-    }
-  }
-
-  /**
-   * Find objects by primary key
-   * <code>
-   * $objs = $c->findPks(array(12, 56, 832), $con);
-   * </code>
-   * @param     array $keys Primary keys to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
-   */
-  public function findPks($keys, $con = null)
-  {  
-    $criteria = $this->isKeepQuery() ? clone $this : $this;
-    return $this
-      ->filterByPrimaryKeys($keys)
-      ->find($con);
-  }
-
-  /**
-   * Filter the query by primary key
-   *
-   * @param     mixed $key Primary key to use for the query
-   *
-   * @return    wpCommentQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKey($key)
-  {
-    return $this->addUsingAlias(wpCommentPeer::COMMENT_ID, $key, Criteria::EQUAL);
-  }
-
-  /**
-   * Filter the query by a list of primary keys
-   *
-   * @param     array $keys The list of primary key to use for the query
-   *
-   * @return    wpCommentQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKeys($keys)
-  {
-    return $this->addUsingAlias(wpCommentPeer::COMMENT_ID, $keys, Criteria::IN);
-  }
-
-  /**
-   * Filter the query on the comment_id column
-   * 
-   * @param     int|array $commentId The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    wpCommentQuery The current query, for fluid interface
-   */
-  public function filterByCommentId($commentId = null, $comparison = null)
-  {
-    if (is_array($commentId) && null === $comparison)
-    {
-      $comparison = Criteria::IN;
-    }
-    return $this->addUsingAlias(wpCommentPeer::COMMENT_ID, $commentId, $comparison);
-  }
-
-  /**
-   * Filter the query on the comment_author column
-   * 
-   * @param     string $commentAuthor The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    wpCommentQuery The current query, for fluid interface
-   */
-  public function filterByCommentAuthor($commentAuthor = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($commentAuthor))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $commentAuthor))
-      {
-        $commentAuthor = str_replace('*', '%', $commentAuthor);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(wpCommentPeer::COMMENT_AUTHOR, $commentAuthor, $comparison);
-  }
-
-  /**
-   * Filter the query on the comment_author_email column
-   * 
-   * @param     string $commentAuthorEmail The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    wpCommentQuery The current query, for fluid interface
-   */
-  public function filterByCommentAuthorEmail($commentAuthorEmail = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($commentAuthorEmail))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $commentAuthorEmail))
-      {
-        $commentAuthorEmail = str_replace('*', '%', $commentAuthorEmail);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(wpCommentPeer::COMMENT_AUTHOR_EMAIL, $commentAuthorEmail, $comparison);
-  }
-
-  /**
-   * Filter the query on the comment_date column
-   * 
-   * @param     string|array $commentDate The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    wpCommentQuery The current query, for fluid interface
-   */
-  public function filterByCommentDate($commentDate = null, $comparison = null)
-  {
-    if (is_array($commentDate))
-    {
-      $useMinMax = false;
-      if (isset($commentDate['min']))
-      {
-        $this->addUsingAlias(wpCommentPeer::COMMENT_DATE, $commentDate['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($commentDate['max']))
-      {
-        $this->addUsingAlias(wpCommentPeer::COMMENT_DATE, $commentDate['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
-        return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
-    }
-    return $this->addUsingAlias(wpCommentPeer::COMMENT_DATE, $commentDate, $comparison);
-  }
-
-  /**
-   * Exclude object from result
-   *
-   * @param     wpComment $wpComment Object to remove from the list of results
-   *
-   * @return    wpCommentQuery The current query, for fluid interface
-   */
-  public function prune($wpComment = null)
-  {
-    if ($wpComment)
-    {
-      $this->addUsingAlias(wpCommentPeer::COMMENT_ID, $wpComment->getCommentId(), Criteria::NOT_EQUAL);
-    }
     
-    return $this;
-  }
+    /**
+     * Initializes internal state of BasewpCommentQuery object.
+     *
+     * @param     string $dbName The dabase name
+     * @param     string $modelName The phpName of a model, e.g. 'Book'
+     * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+     */
+    public function __construct($dbName = 'blog', $modelName = 'wpComment', $modelAlias = null)
+    {
+        parent::__construct($dbName, $modelName, $modelAlias);
+    }
+
+    /**
+     * Returns a new wpCommentQuery object.
+     *
+     * @param     string $modelAlias The alias of a model in the query
+     * @param     Criteria $criteria Optional Criteria to build the query from
+     *
+     * @return    wpCommentQuery
+     */
+    public static function create($modelAlias = null, $criteria = null)
+    {
+        if ($criteria instanceof wpCommentQuery) {
+            return $criteria;
+        }
+        $query = new wpCommentQuery();
+        if (null !== $modelAlias) {
+            $query->setModelAlias($modelAlias);
+        }
+        if ($criteria instanceof Criteria) {
+            $query->mergeWith($criteria);
+        }
+        return $query;
+    }
+
+    /**
+     * Find object by primary key
+     * Use instance pooling to avoid a database query if the object exists
+     * <code>
+     * $obj  = $c->findPk(12, $con);
+     * </code>
+     * @param     mixed $key Primary key to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    wpComment|array|mixed the result, formatted by the current formatter
+     */
+    public function findPk($key, $con = null)
+    {
+        if ((null !== ($obj = wpCommentPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
+            // the object is alredy in the instance pool
+            return $obj;
+        } else {
+            // the object has not been requested yet, or the formatter is not an object formatter
+            $criteria = $this->isKeepQuery() ? clone $this : $this;
+            $stmt = $criteria
+                ->filterByPrimaryKey($key)
+                ->getSelectStatement($con);
+            return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+        }
+    }
+
+    /**
+     * Find objects by primary key
+     * <code>
+     * $objs = $c->findPks(array(12, 56, 832), $con);
+     * </code>
+     * @param     array $keys Primary keys to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
+     */
+    public function findPks($keys, $con = null)
+    {
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        return $this
+            ->filterByPrimaryKeys($keys)
+            ->find($con);
+    }
+
+    /**
+     * Filter the query by primary key
+     *
+     * @param     mixed $key Primary key to use for the query
+     *
+     * @return    wpCommentQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKey($key)
+    {
+        return $this->addUsingAlias(wpCommentPeer::COMMENT_ID, $key, Criteria::EQUAL);
+    }
+
+    /**
+     * Filter the query by a list of primary keys
+     *
+     * @param     array $keys The list of primary key to use for the query
+     *
+     * @return    wpCommentQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKeys($keys)
+    {
+        return $this->addUsingAlias(wpCommentPeer::COMMENT_ID, $keys, Criteria::IN);
+    }
+
+    /**
+     * Filter the query on the comment_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCommentId(1234); // WHERE comment_id = 1234
+     * $query->filterByCommentId(array(12, 34)); // WHERE comment_id IN (12, 34)
+     * $query->filterByCommentId(array('min' => 12)); // WHERE comment_id > 12
+     * </code>
+     *
+     * @param     mixed $commentId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    wpCommentQuery The current query, for fluid interface
+     */
+    public function filterByCommentId($commentId = null, $comparison = null)
+    {
+        if (is_array($commentId) && null === $comparison) {
+            $comparison = Criteria::IN;
+        }
+        return $this->addUsingAlias(wpCommentPeer::COMMENT_ID, $commentId, $comparison);
+    }
+
+    /**
+     * Filter the query on the comment_author column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCommentAuthor('fooValue');   // WHERE comment_author = 'fooValue'
+     * $query->filterByCommentAuthor('%fooValue%'); // WHERE comment_author LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $commentAuthor The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    wpCommentQuery The current query, for fluid interface
+     */
+    public function filterByCommentAuthor($commentAuthor = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($commentAuthor)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $commentAuthor)) {
+                $commentAuthor = str_replace('*', '%', $commentAuthor);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(wpCommentPeer::COMMENT_AUTHOR, $commentAuthor, $comparison);
+    }
+
+    /**
+     * Filter the query on the comment_author_email column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCommentAuthorEmail('fooValue');   // WHERE comment_author_email = 'fooValue'
+     * $query->filterByCommentAuthorEmail('%fooValue%'); // WHERE comment_author_email LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $commentAuthorEmail The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    wpCommentQuery The current query, for fluid interface
+     */
+    public function filterByCommentAuthorEmail($commentAuthorEmail = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($commentAuthorEmail)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $commentAuthorEmail)) {
+                $commentAuthorEmail = str_replace('*', '%', $commentAuthorEmail);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(wpCommentPeer::COMMENT_AUTHOR_EMAIL, $commentAuthorEmail, $comparison);
+    }
+
+    /**
+     * Filter the query on the comment_date column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCommentDate('2011-03-14'); // WHERE comment_date = '2011-03-14'
+     * $query->filterByCommentDate('now'); // WHERE comment_date = '2011-03-14'
+     * $query->filterByCommentDate(array('max' => 'yesterday')); // WHERE comment_date > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $commentDate The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    wpCommentQuery The current query, for fluid interface
+     */
+    public function filterByCommentDate($commentDate = null, $comparison = null)
+    {
+        if (is_array($commentDate)) {
+            $useMinMax = false;
+            if (isset($commentDate['min'])) {
+                $this->addUsingAlias(wpCommentPeer::COMMENT_DATE, $commentDate['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($commentDate['max'])) {
+                $this->addUsingAlias(wpCommentPeer::COMMENT_DATE, $commentDate['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(wpCommentPeer::COMMENT_DATE, $commentDate, $comparison);
+    }
+
+    /**
+     * Exclude object from result
+     *
+     * @param     wpComment $wpComment Object to remove from the list of results
+     *
+     * @return    wpCommentQuery The current query, for fluid interface
+     */
+    public function prune($wpComment = null)
+    {
+        if ($wpComment) {
+            $this->addUsingAlias(wpCommentPeer::COMMENT_ID, $wpComment->getCommentId(), Criteria::NOT_EQUAL);
+        }
+
+        return $this;
+    }
 
 }

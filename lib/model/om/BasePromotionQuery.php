@@ -65,501 +65,541 @@
  */
 abstract class BasePromotionQuery extends ModelCriteria
 {
-
-  /**
-   * Initializes internal state of BasePromotionQuery object.
-   *
-   * @param     string $dbName The dabase name
-   * @param     string $modelName The phpName of a model, e.g. 'Book'
-   * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
-   */
-  public function __construct($dbName = 'propel', $modelName = 'Promotion', $modelAlias = null)
-  {
-    parent::__construct($dbName, $modelName, $modelAlias);
-  }
-
-  /**
-   * Returns a new PromotionQuery object.
-   *
-   * @param     string $modelAlias The alias of a model in the query
-   * @param     Criteria $criteria Optional Criteria to build the query from
-   *
-   * @return    PromotionQuery
-   */
-  public static function create($modelAlias = null, $criteria = null)
-  {
-    if ($criteria instanceof PromotionQuery)
-    {
-      return $criteria;
-    }
-    $query = new PromotionQuery();
-    if (null !== $modelAlias)
-    {
-      $query->setModelAlias($modelAlias);
-    }
-    if ($criteria instanceof Criteria)
-    {
-      $query->mergeWith($criteria);
-    }
-    return $query;
-  }
-
-  /**
-   * Find object by primary key
-   * Use instance pooling to avoid a database query if the object exists
-   * <code>
-   * $obj  = $c->findPk(12, $con);
-   * </code>
-   * @param     mixed $key Primary key to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    Promotion|array|mixed the result, formatted by the current formatter
-   */
-  public function findPk($key, $con = null)
-  {
-    if ((null !== ($obj = PromotionPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter())
-    {
-      // the object is alredy in the instance pool
-      return $obj;
-    }
-    else
-    {
-      // the object has not been requested yet, or the formatter is not an object formatter
-      $criteria = $this->isKeepQuery() ? clone $this : $this;
-      $stmt = $criteria
-        ->filterByPrimaryKey($key)
-        ->getSelectStatement($con);
-      return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
-    }
-  }
-
-  /**
-   * Find objects by primary key
-   * <code>
-   * $objs = $c->findPks(array(12, 56, 832), $con);
-   * </code>
-   * @param     array $keys Primary keys to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
-   */
-  public function findPks($keys, $con = null)
-  {  
-    $criteria = $this->isKeepQuery() ? clone $this : $this;
-    return $this
-      ->filterByPrimaryKeys($keys)
-      ->find($con);
-  }
-
-  /**
-   * Filter the query by primary key
-   *
-   * @param     mixed $key Primary key to use for the query
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKey($key)
-  {
-    return $this->addUsingAlias(PromotionPeer::ID, $key, Criteria::EQUAL);
-  }
-
-  /**
-   * Filter the query by a list of primary keys
-   *
-   * @param     array $keys The list of primary key to use for the query
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKeys($keys)
-  {
-    return $this->addUsingAlias(PromotionPeer::ID, $keys, Criteria::IN);
-  }
-
-  /**
-   * Filter the query on the id column
-   * 
-   * @param     int|array $id The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterById($id = null, $comparison = null)
-  {
-    if (is_array($id) && null === $comparison)
-    {
-      $comparison = Criteria::IN;
-    }
-    return $this->addUsingAlias(PromotionPeer::ID, $id, $comparison);
-  }
-
-  /**
-   * Filter the query on the promotion_name column
-   * 
-   * @param     string $promotionName The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterByPromotionName($promotionName = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($promotionName))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $promotionName))
-      {
-        $promotionName = str_replace('*', '%', $promotionName);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(PromotionPeer::PROMOTION_NAME, $promotionName, $comparison);
-  }
-
-  /**
-   * Filter the query on the promotion_desc column
-   * 
-   * @param     string $promotionDesc The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterByPromotionDesc($promotionDesc = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($promotionDesc))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $promotionDesc))
-      {
-        $promotionDesc = str_replace('*', '%', $promotionDesc);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(PromotionPeer::PROMOTION_DESC, $promotionDesc, $comparison);
-  }
-
-  /**
-   * Filter the query on the promotion_code column
-   * 
-   * @param     string $promotionCode The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterByPromotionCode($promotionCode = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($promotionCode))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $promotionCode))
-      {
-        $promotionCode = str_replace('*', '%', $promotionCode);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(PromotionPeer::PROMOTION_CODE, $promotionCode, $comparison);
-  }
-
-  /**
-   * Filter the query on the amount column
-   * 
-   * @param     double|array $amount The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterByAmount($amount = null, $comparison = null)
-  {
-    if (is_array($amount))
-    {
-      $useMinMax = false;
-      if (isset($amount['min']))
-      {
-        $this->addUsingAlias(PromotionPeer::AMOUNT, $amount['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($amount['max']))
-      {
-        $this->addUsingAlias(PromotionPeer::AMOUNT, $amount['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
-        return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
-    }
-    return $this->addUsingAlias(PromotionPeer::AMOUNT, $amount, $comparison);
-  }
-
-  /**
-   * Filter the query on the amount_type column
-   * 
-   * @param     string $amountType The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterByAmountType($amountType = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($amountType))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $amountType))
-      {
-        $amountType = str_replace('*', '%', $amountType);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(PromotionPeer::AMOUNT_TYPE, $amountType, $comparison);
-  }
-
-  /**
-   * Filter the query on the no_of_time_used column
-   * 
-   * @param     int|array $noOfTimeUsed The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterByNoOfTimeUsed($noOfTimeUsed = null, $comparison = null)
-  {
-    if (is_array($noOfTimeUsed))
-    {
-      $useMinMax = false;
-      if (isset($noOfTimeUsed['min']))
-      {
-        $this->addUsingAlias(PromotionPeer::NO_OF_TIME_USED, $noOfTimeUsed['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($noOfTimeUsed['max']))
-      {
-        $this->addUsingAlias(PromotionPeer::NO_OF_TIME_USED, $noOfTimeUsed['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
-        return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
-    }
-    return $this->addUsingAlias(PromotionPeer::NO_OF_TIME_USED, $noOfTimeUsed, $comparison);
-  }
-
-  /**
-   * Filter the query on the expiry_date column
-   * 
-   * @param     string|array $expiryDate The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterByExpiryDate($expiryDate = null, $comparison = null)
-  {
-    if (is_array($expiryDate))
-    {
-      $useMinMax = false;
-      if (isset($expiryDate['min']))
-      {
-        $this->addUsingAlias(PromotionPeer::EXPIRY_DATE, $expiryDate['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($expiryDate['max']))
-      {
-        $this->addUsingAlias(PromotionPeer::EXPIRY_DATE, $expiryDate['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
-        return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
-    }
-    return $this->addUsingAlias(PromotionPeer::EXPIRY_DATE, $expiryDate, $comparison);
-  }
-
-  /**
-   * Filter the query on the updated_at column
-   * 
-   * @param     string|array $updatedAt The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterByUpdatedAt($updatedAt = null, $comparison = null)
-  {
-    if (is_array($updatedAt))
-    {
-      $useMinMax = false;
-      if (isset($updatedAt['min']))
-      {
-        $this->addUsingAlias(PromotionPeer::UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($updatedAt['max']))
-      {
-        $this->addUsingAlias(PromotionPeer::UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
-        return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
-    }
-    return $this->addUsingAlias(PromotionPeer::UPDATED_AT, $updatedAt, $comparison);
-  }
-
-  /**
-   * Filter the query on the created_at column
-   * 
-   * @param     string|array $createdAt The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterByCreatedAt($createdAt = null, $comparison = null)
-  {
-    if (is_array($createdAt))
-    {
-      $useMinMax = false;
-      if (isset($createdAt['min']))
-      {
-        $this->addUsingAlias(PromotionPeer::CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($createdAt['max']))
-      {
-        $this->addUsingAlias(PromotionPeer::CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
-        return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
-    }
-    return $this->addUsingAlias(PromotionPeer::CREATED_AT, $createdAt, $comparison);
-  }
-
-  /**
-   * Filter the query by a related PromotionTransaction object
-   *
-   * @param     PromotionTransaction $promotionTransaction  the related object to use as filter
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function filterByPromotionTransaction($promotionTransaction, $comparison = null)
-  {
-    return $this
-      ->addUsingAlias(PromotionPeer::ID, $promotionTransaction->getPromotionId(), $comparison);
-  }
-
-  /**
-   * Adds a JOIN clause to the query using the PromotionTransaction relation
-   * 
-   * @param     string $relationAlias optional alias for the relation
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function joinPromotionTransaction($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-  {
-    $tableMap = $this->getTableMap();
-    $relationMap = $tableMap->getRelation('PromotionTransaction');
     
-    // create a ModelJoin object for this join
-    $join = new ModelJoin();
-    $join->setJoinType($joinType);
-    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-    if ($previousJoin = $this->getPreviousJoin())
+    /**
+     * Initializes internal state of BasePromotionQuery object.
+     *
+     * @param     string $dbName The dabase name
+     * @param     string $modelName The phpName of a model, e.g. 'Book'
+     * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+     */
+    public function __construct($dbName = 'propel', $modelName = 'Promotion', $modelAlias = null)
     {
-      $join->setPreviousJoin($previousJoin);
+        parent::__construct($dbName, $modelName, $modelAlias);
     }
-    
-    // add the ModelJoin to the current object
-    if($relationAlias)
-    {
-      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-      $this->addJoinObject($join, $relationAlias);
-    }
-    else
-    {
-      $this->addJoinObject($join, 'PromotionTransaction');
-    }
-    
-    return $this;
-  }
 
-  /**
-   * Use the PromotionTransaction relation PromotionTransaction object
-   *
-   * @see       useQuery()
-   * 
-   * @param     string $relationAlias optional alias for the relation,
-   *                                   to be used as main alias in the secondary query
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    PromotionTransactionQuery A secondary query class using the current class as primary query
-   */
-  public function usePromotionTransactionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-  {
-    return $this
-      ->joinPromotionTransaction($relationAlias, $joinType)
-      ->useQuery($relationAlias ? $relationAlias : 'PromotionTransaction', 'PromotionTransactionQuery');
-  }
-
-  /**
-   * Exclude object from result
-   *
-   * @param     Promotion $promotion Object to remove from the list of results
-   *
-   * @return    PromotionQuery The current query, for fluid interface
-   */
-  public function prune($promotion = null)
-  {
-    if ($promotion)
+    /**
+     * Returns a new PromotionQuery object.
+     *
+     * @param     string $modelAlias The alias of a model in the query
+     * @param     Criteria $criteria Optional Criteria to build the query from
+     *
+     * @return    PromotionQuery
+     */
+    public static function create($modelAlias = null, $criteria = null)
     {
-      $this->addUsingAlias(PromotionPeer::ID, $promotion->getId(), Criteria::NOT_EQUAL);
+        if ($criteria instanceof PromotionQuery) {
+            return $criteria;
+        }
+        $query = new PromotionQuery();
+        if (null !== $modelAlias) {
+            $query->setModelAlias($modelAlias);
+        }
+        if ($criteria instanceof Criteria) {
+            $query->mergeWith($criteria);
+        }
+        return $query;
     }
-    
-    return $this;
-  }
+
+    /**
+     * Find object by primary key
+     * Use instance pooling to avoid a database query if the object exists
+     * <code>
+     * $obj  = $c->findPk(12, $con);
+     * </code>
+     * @param     mixed $key Primary key to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    Promotion|array|mixed the result, formatted by the current formatter
+     */
+    public function findPk($key, $con = null)
+    {
+        if ((null !== ($obj = PromotionPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
+            // the object is alredy in the instance pool
+            return $obj;
+        } else {
+            // the object has not been requested yet, or the formatter is not an object formatter
+            $criteria = $this->isKeepQuery() ? clone $this : $this;
+            $stmt = $criteria
+                ->filterByPrimaryKey($key)
+                ->getSelectStatement($con);
+            return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+        }
+    }
+
+    /**
+     * Find objects by primary key
+     * <code>
+     * $objs = $c->findPks(array(12, 56, 832), $con);
+     * </code>
+     * @param     array $keys Primary keys to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
+     */
+    public function findPks($keys, $con = null)
+    {
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        return $this
+            ->filterByPrimaryKeys($keys)
+            ->find($con);
+    }
+
+    /**
+     * Filter the query by primary key
+     *
+     * @param     mixed $key Primary key to use for the query
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKey($key)
+    {
+        return $this->addUsingAlias(PromotionPeer::ID, $key, Criteria::EQUAL);
+    }
+
+    /**
+     * Filter the query by a list of primary keys
+     *
+     * @param     array $keys The list of primary key to use for the query
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKeys($keys)
+    {
+        return $this->addUsingAlias(PromotionPeer::ID, $keys, Criteria::IN);
+    }
+
+    /**
+     * Filter the query on the id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterById(1234); // WHERE id = 1234
+     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
+     * $query->filterById(array('min' => 12)); // WHERE id > 12
+     * </code>
+     *
+     * @param     mixed $id The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterById($id = null, $comparison = null)
+    {
+        if (is_array($id) && null === $comparison) {
+            $comparison = Criteria::IN;
+        }
+        return $this->addUsingAlias(PromotionPeer::ID, $id, $comparison);
+    }
+
+    /**
+     * Filter the query on the promotion_name column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPromotionName('fooValue');   // WHERE promotion_name = 'fooValue'
+     * $query->filterByPromotionName('%fooValue%'); // WHERE promotion_name LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $promotionName The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterByPromotionName($promotionName = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($promotionName)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $promotionName)) {
+                $promotionName = str_replace('*', '%', $promotionName);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(PromotionPeer::PROMOTION_NAME, $promotionName, $comparison);
+    }
+
+    /**
+     * Filter the query on the promotion_desc column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPromotionDesc('fooValue');   // WHERE promotion_desc = 'fooValue'
+     * $query->filterByPromotionDesc('%fooValue%'); // WHERE promotion_desc LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $promotionDesc The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterByPromotionDesc($promotionDesc = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($promotionDesc)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $promotionDesc)) {
+                $promotionDesc = str_replace('*', '%', $promotionDesc);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(PromotionPeer::PROMOTION_DESC, $promotionDesc, $comparison);
+    }
+
+    /**
+     * Filter the query on the promotion_code column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPromotionCode('fooValue');   // WHERE promotion_code = 'fooValue'
+     * $query->filterByPromotionCode('%fooValue%'); // WHERE promotion_code LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $promotionCode The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterByPromotionCode($promotionCode = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($promotionCode)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $promotionCode)) {
+                $promotionCode = str_replace('*', '%', $promotionCode);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(PromotionPeer::PROMOTION_CODE, $promotionCode, $comparison);
+    }
+
+    /**
+     * Filter the query on the amount column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByAmount(1234); // WHERE amount = 1234
+     * $query->filterByAmount(array(12, 34)); // WHERE amount IN (12, 34)
+     * $query->filterByAmount(array('min' => 12)); // WHERE amount > 12
+     * </code>
+     *
+     * @param     mixed $amount The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterByAmount($amount = null, $comparison = null)
+    {
+        if (is_array($amount)) {
+            $useMinMax = false;
+            if (isset($amount['min'])) {
+                $this->addUsingAlias(PromotionPeer::AMOUNT, $amount['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($amount['max'])) {
+                $this->addUsingAlias(PromotionPeer::AMOUNT, $amount['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(PromotionPeer::AMOUNT, $amount, $comparison);
+    }
+
+    /**
+     * Filter the query on the amount_type column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByAmountType('fooValue');   // WHERE amount_type = 'fooValue'
+     * $query->filterByAmountType('%fooValue%'); // WHERE amount_type LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $amountType The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterByAmountType($amountType = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($amountType)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $amountType)) {
+                $amountType = str_replace('*', '%', $amountType);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(PromotionPeer::AMOUNT_TYPE, $amountType, $comparison);
+    }
+
+    /**
+     * Filter the query on the no_of_time_used column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByNoOfTimeUsed(1234); // WHERE no_of_time_used = 1234
+     * $query->filterByNoOfTimeUsed(array(12, 34)); // WHERE no_of_time_used IN (12, 34)
+     * $query->filterByNoOfTimeUsed(array('min' => 12)); // WHERE no_of_time_used > 12
+     * </code>
+     *
+     * @param     mixed $noOfTimeUsed The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterByNoOfTimeUsed($noOfTimeUsed = null, $comparison = null)
+    {
+        if (is_array($noOfTimeUsed)) {
+            $useMinMax = false;
+            if (isset($noOfTimeUsed['min'])) {
+                $this->addUsingAlias(PromotionPeer::NO_OF_TIME_USED, $noOfTimeUsed['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($noOfTimeUsed['max'])) {
+                $this->addUsingAlias(PromotionPeer::NO_OF_TIME_USED, $noOfTimeUsed['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(PromotionPeer::NO_OF_TIME_USED, $noOfTimeUsed, $comparison);
+    }
+
+    /**
+     * Filter the query on the expiry_date column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByExpiryDate('2011-03-14'); // WHERE expiry_date = '2011-03-14'
+     * $query->filterByExpiryDate('now'); // WHERE expiry_date = '2011-03-14'
+     * $query->filterByExpiryDate(array('max' => 'yesterday')); // WHERE expiry_date > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $expiryDate The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterByExpiryDate($expiryDate = null, $comparison = null)
+    {
+        if (is_array($expiryDate)) {
+            $useMinMax = false;
+            if (isset($expiryDate['min'])) {
+                $this->addUsingAlias(PromotionPeer::EXPIRY_DATE, $expiryDate['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($expiryDate['max'])) {
+                $this->addUsingAlias(PromotionPeer::EXPIRY_DATE, $expiryDate['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(PromotionPeer::EXPIRY_DATE, $expiryDate, $comparison);
+    }
+
+    /**
+     * Filter the query on the updated_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByUpdatedAt('2011-03-14'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt('now'); // WHERE updated_at = '2011-03-14'
+     * $query->filterByUpdatedAt(array('max' => 'yesterday')); // WHERE updated_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $updatedAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterByUpdatedAt($updatedAt = null, $comparison = null)
+    {
+        if (is_array($updatedAt)) {
+            $useMinMax = false;
+            if (isset($updatedAt['min'])) {
+                $this->addUsingAlias(PromotionPeer::UPDATED_AT, $updatedAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($updatedAt['max'])) {
+                $this->addUsingAlias(PromotionPeer::UPDATED_AT, $updatedAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(PromotionPeer::UPDATED_AT, $updatedAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the created_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCreatedAt('2011-03-14'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt('now'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $createdAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterByCreatedAt($createdAt = null, $comparison = null)
+    {
+        if (is_array($createdAt)) {
+            $useMinMax = false;
+            if (isset($createdAt['min'])) {
+                $this->addUsingAlias(PromotionPeer::CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($createdAt['max'])) {
+                $this->addUsingAlias(PromotionPeer::CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(PromotionPeer::CREATED_AT, $createdAt, $comparison);
+    }
+
+    /**
+     * Filter the query by a related PromotionTransaction object
+     *
+     * @param     PromotionTransaction $promotionTransaction  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function filterByPromotionTransaction($promotionTransaction, $comparison = null)
+    {
+        if ($promotionTransaction instanceof PromotionTransaction) {
+            return $this
+                ->addUsingAlias(PromotionPeer::ID, $promotionTransaction->getPromotionId(), $comparison);
+        } elseif ($promotionTransaction instanceof PropelCollection) {
+            return $this
+                ->usePromotionTransactionQuery()
+                ->filterByPrimaryKeys($promotionTransaction->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByPromotionTransaction() only accepts arguments of type PromotionTransaction or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the PromotionTransaction relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function joinPromotionTransaction($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('PromotionTransaction');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'PromotionTransaction');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the PromotionTransaction relation PromotionTransaction object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    PromotionTransactionQuery A secondary query class using the current class as primary query
+     */
+    public function usePromotionTransactionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinPromotionTransaction($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'PromotionTransaction', 'PromotionTransactionQuery');
+    }
+
+    /**
+     * Exclude object from result
+     *
+     * @param     Promotion $promotion Object to remove from the list of results
+     *
+     * @return    PromotionQuery The current query, for fluid interface
+     */
+    public function prune($promotion = null)
+    {
+        if ($promotion) {
+            $this->addUsingAlias(PromotionPeer::ID, $promotion->getId(), Criteria::NOT_EQUAL);
+        }
+
+        return $this;
+    }
 
 }

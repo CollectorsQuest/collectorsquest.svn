@@ -25,12 +25,15 @@ abstract class BaseCollectibleForSalePeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'CollectibleForSaleTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 12;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 12;
 
   /** the column name for the ID field */
   const ID = 'collectible_for_sale.ID';
@@ -68,6 +71,9 @@ abstract class BaseCollectibleForSalePeer
   /** the column name for the UPDATED_AT field */
   const UPDATED_AT = 'collectible_for_sale.UPDATED_AT';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of CollectibleForSale objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -77,20 +83,13 @@ abstract class BaseCollectibleForSalePeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'CollectibleId', 'Price', 'Condition', 'IsPriceNegotiable', 'IsShippingFree', 'IsSold', 'IsReady', 'Quantity', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectibleId', 'price', 'condition', 'isPriceNegotiable', 'isShippingFree', 'isSold', 'isReady', 'quantity', 'deletedAt', 'createdAt', 'updatedAt', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTIBLE_ID, self::PRICE, self::CONDITION, self::IS_PRICE_NEGOTIABLE, self::IS_SHIPPING_FREE, self::IS_SOLD, self::IS_READY, self::QUANTITY, self::DELETED_AT, self::CREATED_AT, self::UPDATED_AT, ),
@@ -105,7 +104,7 @@ abstract class BaseCollectibleForSalePeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectibleId' => 1, 'Price' => 2, 'Condition' => 3, 'IsPriceNegotiable' => 4, 'IsShippingFree' => 5, 'IsSold' => 6, 'IsReady' => 7, 'Quantity' => 8, 'DeletedAt' => 9, 'CreatedAt' => 10, 'UpdatedAt' => 11, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectibleId' => 1, 'price' => 2, 'condition' => 3, 'isPriceNegotiable' => 4, 'isShippingFree' => 5, 'isSold' => 6, 'isReady' => 7, 'quantity' => 8, 'deletedAt' => 9, 'createdAt' => 10, 'updatedAt' => 11, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTIBLE_ID => 1, self::PRICE => 2, self::CONDITION => 3, self::IS_PRICE_NEGOTIABLE => 4, self::IS_SHIPPING_FREE => 5, self::IS_SOLD => 6, self::IS_READY => 7, self::QUANTITY => 8, self::DELETED_AT => 9, self::CREATED_AT => 10, self::UPDATED_AT => 11, ),
@@ -281,7 +280,7 @@ abstract class BaseCollectibleForSalePeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -301,7 +300,7 @@ abstract class BaseCollectibleForSalePeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -372,7 +371,7 @@ abstract class BaseCollectibleForSalePeer
    * @param      CollectibleForSale $value A CollectibleForSale object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(CollectibleForSale $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -455,7 +454,7 @@ abstract class BaseCollectibleForSalePeer
    */
   public static function clearRelatedInstancePool()
   {
-    // Invalidate objects in CollectibleOfferPeer instance pool, 
+    // Invalidate objects in CollectibleOfferPeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     CollectibleOfferPeer::clearInstancePool();
   }
@@ -481,7 +480,7 @@ abstract class BaseCollectibleForSalePeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -546,7 +545,7 @@ abstract class BaseCollectibleForSalePeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + CollectibleForSalePeer::NUM_COLUMNS;
+      $col = $startcol + CollectibleForSalePeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -557,6 +556,7 @@ abstract class BaseCollectibleForSalePeer
     }
     return array($obj, $col);
   }
+
 
   /**
    * Returns the number of rows matching criteria, joining the related Collectible table
@@ -586,9 +586,9 @@ abstract class BaseCollectibleForSalePeer
     {
       CollectibleForSalePeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -649,7 +649,7 @@ abstract class BaseCollectibleForSalePeer
     }
 
     CollectibleForSalePeer::addSelectColumns($criteria);
-    $startcol = (CollectibleForSalePeer::NUM_COLUMNS - CollectibleForSalePeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol = CollectibleForSalePeer::NUM_HYDRATE_COLUMNS;
     CollectiblePeer::addSelectColumns($criteria);
 
     $criteria->addJoin(CollectibleForSalePeer::COLLECTIBLE_ID, CollectiblePeer::ID, $join_behavior);
@@ -745,9 +745,9 @@ abstract class BaseCollectibleForSalePeer
     {
       CollectibleForSalePeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -808,10 +808,10 @@ abstract class BaseCollectibleForSalePeer
     }
 
     CollectibleForSalePeer::addSelectColumns($criteria);
-    $startcol2 = (CollectibleForSalePeer::NUM_COLUMNS - CollectibleForSalePeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = CollectibleForSalePeer::NUM_HYDRATE_COLUMNS;
 
     CollectiblePeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + (CollectiblePeer::NUM_COLUMNS - CollectiblePeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol3 = $startcol2 + CollectiblePeer::NUM_HYDRATE_COLUMNS;
 
     $criteria->addJoin(CollectibleForSalePeer::COLLECTIBLE_ID, CollectiblePeer::ID, $join_behavior);
 
@@ -918,7 +918,7 @@ abstract class BaseCollectibleForSalePeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a CollectibleForSale or Criteria object.
+   * Performs an INSERT on the database, given a CollectibleForSale or Criteria object.
    *
    * @param      mixed $values Criteria or CollectibleForSale object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -969,7 +969,7 @@ abstract class BaseCollectibleForSalePeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a CollectibleForSale or Criteria object.
+   * Performs an UPDATE on the database, given a CollectibleForSale or Criteria object.
    *
    * @param      mixed $values Criteria or CollectibleForSale object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -1013,11 +1013,12 @@ abstract class BaseCollectibleForSalePeer
   }
 
   /**
-   * Method to DELETE all rows from the collectible_for_sale table.
+   * Deletes all rows from the collectible_for_sale table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doForceDeleteAll($con = null)
+  public static function doForceDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -1047,7 +1048,7 @@ abstract class BaseCollectibleForSalePeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a CollectibleForSale or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a CollectibleForSale or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or CollectibleForSale object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -1163,7 +1164,7 @@ abstract class BaseCollectibleForSalePeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(CollectibleForSale $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 
@@ -1292,24 +1293,29 @@ abstract class BaseCollectibleForSalePeer
    */
   public static function doSoftDelete($values, PropelPDO $con = null)
   {
+    if ($con === null)
+    {
+      $con = Propel::getConnection(CollectibleForSalePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+    }
     if ($values instanceof Criteria)
     {
       // rename for clarity
-      $criteria = clone $values;
-    }
-    elseif ($values instanceof CollectibleForSale)
-    {
+      $selectCriteria = clone $values;
+     } elseif ($values instanceof CollectibleForSale) {
       // create criteria based on pk values
-      $criteria = $values->buildPkeyCriteria();
+      $selectCriteria = $values->buildPkeyCriteria();
     }
     else
     {
       // it must be the primary key
-      $criteria = new Criteria(self::DATABASE_NAME);
-      $criteria->add(CollectibleForSalePeer::ID, (array) $values, Criteria::IN);
+      $selectCriteria = new Criteria(self::DATABASE_NAME);
+       $selectCriteria->add(CollectibleForSalePeer::ID, (array) $values, Criteria::IN);
     }
-    $criteria->add(CollectibleForSalePeer::DELETED_AT, time());
-    return CollectibleForSalePeer::doUpdate($criteria, $con);
+    // Set the correct dbName
+    $selectCriteria->setDbName(CollectibleForSalePeer::DATABASE_NAME);
+    $updateCriteria = new Criteria(self::DATABASE_NAME);
+      $updateCriteria->add(CollectibleForSalePeer::DELETED_AT, time());
+     return BasePeer::doUpdate($selectCriteria, $updateCriteria, $con);
   }
   
   /**
@@ -1331,7 +1337,7 @@ abstract class BaseCollectibleForSalePeer
     else
     {
       return CollectibleForSalePeer::doForceDelete($values, $con);
-    } 
+    }
   }
   /**
    * Method to soft delete all rows from the collectible_for_sale table.
@@ -1372,7 +1378,7 @@ abstract class BaseCollectibleForSalePeer
     else
     {
       return CollectibleForSalePeer::doForceDeleteAll($con);
-    } 
+    }
   }
 
   // symfony behavior

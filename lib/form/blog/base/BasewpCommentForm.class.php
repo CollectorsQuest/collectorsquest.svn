@@ -21,7 +21,7 @@ abstract class BasewpCommentForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'comment_id'           => new sfValidatorPropelChoice(array('model' => 'wpComment', 'column' => 'comment_id', 'required' => false)),
+      'comment_id'           => new sfValidatorChoice(array('choices' => array($this->getObject()->getCommentId()), 'empty_value' => $this->getObject()->getCommentId(), 'required' => false)),
       'comment_author'       => new sfValidatorString(array('max_length' => 100, 'required' => false)),
       'comment_author_email' => new sfValidatorString(array('max_length' => 100, 'required' => false)),
       'comment_date'         => new sfValidatorDateTime(array('required' => false)),

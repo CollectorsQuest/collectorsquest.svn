@@ -45,393 +45,424 @@
  */
 abstract class BaseCollectorFriendQuery extends ModelCriteria
 {
-
-  /**
-   * Initializes internal state of BaseCollectorFriendQuery object.
-   *
-   * @param     string $dbName The dabase name
-   * @param     string $modelName The phpName of a model, e.g. 'Book'
-   * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
-   */
-  public function __construct($dbName = 'propel', $modelName = 'CollectorFriend', $modelAlias = null)
-  {
-    parent::__construct($dbName, $modelName, $modelAlias);
-  }
-
-  /**
-   * Returns a new CollectorFriendQuery object.
-   *
-   * @param     string $modelAlias The alias of a model in the query
-   * @param     Criteria $criteria Optional Criteria to build the query from
-   *
-   * @return    CollectorFriendQuery
-   */
-  public static function create($modelAlias = null, $criteria = null)
-  {
-    if ($criteria instanceof CollectorFriendQuery)
+    
+    /**
+     * Initializes internal state of BaseCollectorFriendQuery object.
+     *
+     * @param     string $dbName The dabase name
+     * @param     string $modelName The phpName of a model, e.g. 'Book'
+     * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+     */
+    public function __construct($dbName = 'propel', $modelName = 'CollectorFriend', $modelAlias = null)
     {
-      return $criteria;
+        parent::__construct($dbName, $modelName, $modelAlias);
     }
-    $query = new CollectorFriendQuery();
-    if (null !== $modelAlias)
+
+    /**
+     * Returns a new CollectorFriendQuery object.
+     *
+     * @param     string $modelAlias The alias of a model in the query
+     * @param     Criteria $criteria Optional Criteria to build the query from
+     *
+     * @return    CollectorFriendQuery
+     */
+    public static function create($modelAlias = null, $criteria = null)
     {
-      $query->setModelAlias($modelAlias);
+        if ($criteria instanceof CollectorFriendQuery) {
+            return $criteria;
+        }
+        $query = new CollectorFriendQuery();
+        if (null !== $modelAlias) {
+            $query->setModelAlias($modelAlias);
+        }
+        if ($criteria instanceof Criteria) {
+            $query->mergeWith($criteria);
+        }
+        return $query;
     }
-    if ($criteria instanceof Criteria)
+
+    /**
+     * Find object by primary key
+     * Use instance pooling to avoid a database query if the object exists
+     * <code>
+     * $obj  = $c->findPk(12, $con);
+     * </code>
+     * @param     mixed $key Primary key to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    CollectorFriend|array|mixed the result, formatted by the current formatter
+     */
+    public function findPk($key, $con = null)
     {
-      $query->mergeWith($criteria);
+        if ((null !== ($obj = CollectorFriendPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
+            // the object is alredy in the instance pool
+            return $obj;
+        } else {
+            // the object has not been requested yet, or the formatter is not an object formatter
+            $criteria = $this->isKeepQuery() ? clone $this : $this;
+            $stmt = $criteria
+                ->filterByPrimaryKey($key)
+                ->getSelectStatement($con);
+            return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+        }
     }
-    return $query;
-  }
 
-  /**
-   * Find object by primary key
-   * Use instance pooling to avoid a database query if the object exists
-   * <code>
-   * $obj  = $c->findPk(12, $con);
-   * </code>
-   * @param     mixed $key Primary key to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    CollectorFriend|array|mixed the result, formatted by the current formatter
-   */
-  public function findPk($key, $con = null)
-  {
-    if ((null !== ($obj = CollectorFriendPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter())
+    /**
+     * Find objects by primary key
+     * <code>
+     * $objs = $c->findPks(array(12, 56, 832), $con);
+     * </code>
+     * @param     array $keys Primary keys to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
+     */
+    public function findPks($keys, $con = null)
     {
-      // the object is alredy in the instance pool
-      return $obj;
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        return $this
+            ->filterByPrimaryKeys($keys)
+            ->find($con);
     }
-    else
+
+    /**
+     * Filter the query by primary key
+     *
+     * @param     mixed $key Primary key to use for the query
+     *
+     * @return    CollectorFriendQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKey($key)
     {
-      // the object has not been requested yet, or the formatter is not an object formatter
-      $criteria = $this->isKeepQuery() ? clone $this : $this;
-      $stmt = $criteria
-        ->filterByPrimaryKey($key)
-        ->getSelectStatement($con);
-      return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+        return $this->addUsingAlias(CollectorFriendPeer::ID, $key, Criteria::EQUAL);
     }
-  }
 
-  /**
-   * Find objects by primary key
-   * <code>
-   * $objs = $c->findPks(array(12, 56, 832), $con);
-   * </code>
-   * @param     array $keys Primary keys to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
-   */
-  public function findPks($keys, $con = null)
-  {  
-    $criteria = $this->isKeepQuery() ? clone $this : $this;
-    return $this
-      ->filterByPrimaryKeys($keys)
-      ->find($con);
-  }
-
-  /**
-   * Filter the query by primary key
-   *
-   * @param     mixed $key Primary key to use for the query
-   *
-   * @return    CollectorFriendQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKey($key)
-  {
-    return $this->addUsingAlias(CollectorFriendPeer::ID, $key, Criteria::EQUAL);
-  }
-
-  /**
-   * Filter the query by a list of primary keys
-   *
-   * @param     array $keys The list of primary key to use for the query
-   *
-   * @return    CollectorFriendQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKeys($keys)
-  {
-    return $this->addUsingAlias(CollectorFriendPeer::ID, $keys, Criteria::IN);
-  }
-
-  /**
-   * Filter the query on the id column
-   * 
-   * @param     int|array $id The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorFriendQuery The current query, for fluid interface
-   */
-  public function filterById($id = null, $comparison = null)
-  {
-    if (is_array($id) && null === $comparison)
+    /**
+     * Filter the query by a list of primary keys
+     *
+     * @param     array $keys The list of primary key to use for the query
+     *
+     * @return    CollectorFriendQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKeys($keys)
     {
-      $comparison = Criteria::IN;
+        return $this->addUsingAlias(CollectorFriendPeer::ID, $keys, Criteria::IN);
     }
-    return $this->addUsingAlias(CollectorFriendPeer::ID, $id, $comparison);
-  }
 
-  /**
-   * Filter the query on the collector_id column
-   * 
-   * @param     int|array $collectorId The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorFriendQuery The current query, for fluid interface
-   */
-  public function filterByCollectorId($collectorId = null, $comparison = null)
-  {
-    if (is_array($collectorId))
+    /**
+     * Filter the query on the id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterById(1234); // WHERE id = 1234
+     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
+     * $query->filterById(array('min' => 12)); // WHERE id > 12
+     * </code>
+     *
+     * @param     mixed $id The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorFriendQuery The current query, for fluid interface
+     */
+    public function filterById($id = null, $comparison = null)
     {
-      $useMinMax = false;
-      if (isset($collectorId['min']))
-      {
-        $this->addUsingAlias(CollectorFriendPeer::COLLECTOR_ID, $collectorId['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($collectorId['max']))
-      {
-        $this->addUsingAlias(CollectorFriendPeer::COLLECTOR_ID, $collectorId['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
+        if (is_array($id) && null === $comparison) {
+            $comparison = Criteria::IN;
+        }
+        return $this->addUsingAlias(CollectorFriendPeer::ID, $id, $comparison);
+    }
+
+    /**
+     * Filter the query on the collector_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCollectorId(1234); // WHERE collector_id = 1234
+     * $query->filterByCollectorId(array(12, 34)); // WHERE collector_id IN (12, 34)
+     * $query->filterByCollectorId(array('min' => 12)); // WHERE collector_id > 12
+     * </code>
+     *
+     * @see       filterByCollectorRelatedByCollectorId()
+     *
+     * @param     mixed $collectorId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorFriendQuery The current query, for fluid interface
+     */
+    public function filterByCollectorId($collectorId = null, $comparison = null)
+    {
+        if (is_array($collectorId)) {
+            $useMinMax = false;
+            if (isset($collectorId['min'])) {
+                $this->addUsingAlias(CollectorFriendPeer::COLLECTOR_ID, $collectorId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($collectorId['max'])) {
+                $this->addUsingAlias(CollectorFriendPeer::COLLECTOR_ID, $collectorId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CollectorFriendPeer::COLLECTOR_ID, $collectorId, $comparison);
+    }
+
+    /**
+     * Filter the query on the friend_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByFriendId(1234); // WHERE friend_id = 1234
+     * $query->filterByFriendId(array(12, 34)); // WHERE friend_id IN (12, 34)
+     * $query->filterByFriendId(array('min' => 12)); // WHERE friend_id > 12
+     * </code>
+     *
+     * @see       filterByCollectorRelatedByFriendId()
+     *
+     * @param     mixed $friendId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorFriendQuery The current query, for fluid interface
+     */
+    public function filterByFriendId($friendId = null, $comparison = null)
+    {
+        if (is_array($friendId)) {
+            $useMinMax = false;
+            if (isset($friendId['min'])) {
+                $this->addUsingAlias(CollectorFriendPeer::FRIEND_ID, $friendId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($friendId['max'])) {
+                $this->addUsingAlias(CollectorFriendPeer::FRIEND_ID, $friendId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CollectorFriendPeer::FRIEND_ID, $friendId, $comparison);
+    }
+
+    /**
+     * Filter the query on the created_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCreatedAt('2011-03-14'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt('now'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $createdAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorFriendQuery The current query, for fluid interface
+     */
+    public function filterByCreatedAt($createdAt = null, $comparison = null)
+    {
+        if (is_array($createdAt)) {
+            $useMinMax = false;
+            if (isset($createdAt['min'])) {
+                $this->addUsingAlias(CollectorFriendPeer::CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($createdAt['max'])) {
+                $this->addUsingAlias(CollectorFriendPeer::CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CollectorFriendPeer::CREATED_AT, $createdAt, $comparison);
+    }
+
+    /**
+     * Filter the query by a related Collector object
+     *
+     * @param     Collector|PropelCollection $collector The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorFriendQuery The current query, for fluid interface
+     */
+    public function filterByCollectorRelatedByCollectorId($collector, $comparison = null)
+    {
+        if ($collector instanceof Collector) {
+            return $this
+                ->addUsingAlias(CollectorFriendPeer::COLLECTOR_ID, $collector->getId(), $comparison);
+        } elseif ($collector instanceof PropelCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+            return $this
+                ->addUsingAlias(CollectorFriendPeer::COLLECTOR_ID, $collector->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByCollectorRelatedByCollectorId() only accepts arguments of type Collector or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the CollectorRelatedByCollectorId relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CollectorFriendQuery The current query, for fluid interface
+     */
+    public function joinCollectorRelatedByCollectorId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('CollectorRelatedByCollectorId');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'CollectorRelatedByCollectorId');
+        }
+
         return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
     }
-    return $this->addUsingAlias(CollectorFriendPeer::COLLECTOR_ID, $collectorId, $comparison);
-  }
 
-  /**
-   * Filter the query on the friend_id column
-   * 
-   * @param     int|array $friendId The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorFriendQuery The current query, for fluid interface
-   */
-  public function filterByFriendId($friendId = null, $comparison = null)
-  {
-    if (is_array($friendId))
+    /**
+     * Use the CollectorRelatedByCollectorId relation Collector object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CollectorQuery A secondary query class using the current class as primary query
+     */
+    public function useCollectorRelatedByCollectorIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
-      $useMinMax = false;
-      if (isset($friendId['min']))
-      {
-        $this->addUsingAlias(CollectorFriendPeer::FRIEND_ID, $friendId['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($friendId['max']))
-      {
-        $this->addUsingAlias(CollectorFriendPeer::FRIEND_ID, $friendId['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
+        return $this
+            ->joinCollectorRelatedByCollectorId($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'CollectorRelatedByCollectorId', 'CollectorQuery');
+    }
+
+    /**
+     * Filter the query by a related Collector object
+     *
+     * @param     Collector|PropelCollection $collector The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorFriendQuery The current query, for fluid interface
+     */
+    public function filterByCollectorRelatedByFriendId($collector, $comparison = null)
+    {
+        if ($collector instanceof Collector) {
+            return $this
+                ->addUsingAlias(CollectorFriendPeer::FRIEND_ID, $collector->getId(), $comparison);
+        } elseif ($collector instanceof PropelCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+            return $this
+                ->addUsingAlias(CollectorFriendPeer::FRIEND_ID, $collector->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByCollectorRelatedByFriendId() only accepts arguments of type Collector or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the CollectorRelatedByFriendId relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CollectorFriendQuery The current query, for fluid interface
+     */
+    public function joinCollectorRelatedByFriendId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('CollectorRelatedByFriendId');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'CollectorRelatedByFriendId');
+        }
+
         return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
     }
-    return $this->addUsingAlias(CollectorFriendPeer::FRIEND_ID, $friendId, $comparison);
-  }
 
-  /**
-   * Filter the query on the created_at column
-   * 
-   * @param     string|array $createdAt The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorFriendQuery The current query, for fluid interface
-   */
-  public function filterByCreatedAt($createdAt = null, $comparison = null)
-  {
-    if (is_array($createdAt))
+    /**
+     * Use the CollectorRelatedByFriendId relation Collector object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CollectorQuery A secondary query class using the current class as primary query
+     */
+    public function useCollectorRelatedByFriendIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
-      $useMinMax = false;
-      if (isset($createdAt['min']))
-      {
-        $this->addUsingAlias(CollectorFriendPeer::CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($createdAt['max']))
-      {
-        $this->addUsingAlias(CollectorFriendPeer::CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
+        return $this
+            ->joinCollectorRelatedByFriendId($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'CollectorRelatedByFriendId', 'CollectorQuery');
+    }
+
+    /**
+     * Exclude object from result
+     *
+     * @param     CollectorFriend $collectorFriend Object to remove from the list of results
+     *
+     * @return    CollectorFriendQuery The current query, for fluid interface
+     */
+    public function prune($collectorFriend = null)
+    {
+        if ($collectorFriend) {
+            $this->addUsingAlias(CollectorFriendPeer::ID, $collectorFriend->getId(), Criteria::NOT_EQUAL);
+        }
+
         return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
     }
-    return $this->addUsingAlias(CollectorFriendPeer::CREATED_AT, $createdAt, $comparison);
-  }
-
-  /**
-   * Filter the query by a related Collector object
-   *
-   * @param     Collector $collector  the related object to use as filter
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorFriendQuery The current query, for fluid interface
-   */
-  public function filterByCollectorRelatedByCollectorId($collector, $comparison = null)
-  {
-    return $this
-      ->addUsingAlias(CollectorFriendPeer::COLLECTOR_ID, $collector->getId(), $comparison);
-  }
-
-  /**
-   * Adds a JOIN clause to the query using the CollectorRelatedByCollectorId relation
-   * 
-   * @param     string $relationAlias optional alias for the relation
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CollectorFriendQuery The current query, for fluid interface
-   */
-  public function joinCollectorRelatedByCollectorId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-  {
-    $tableMap = $this->getTableMap();
-    $relationMap = $tableMap->getRelation('CollectorRelatedByCollectorId');
-    
-    // create a ModelJoin object for this join
-    $join = new ModelJoin();
-    $join->setJoinType($joinType);
-    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-    if ($previousJoin = $this->getPreviousJoin())
-    {
-      $join->setPreviousJoin($previousJoin);
-    }
-    
-    // add the ModelJoin to the current object
-    if($relationAlias)
-    {
-      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-      $this->addJoinObject($join, $relationAlias);
-    }
-    else
-    {
-      $this->addJoinObject($join, 'CollectorRelatedByCollectorId');
-    }
-    
-    return $this;
-  }
-
-  /**
-   * Use the CollectorRelatedByCollectorId relation Collector object
-   *
-   * @see       useQuery()
-   * 
-   * @param     string $relationAlias optional alias for the relation,
-   *                                   to be used as main alias in the secondary query
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CollectorQuery A secondary query class using the current class as primary query
-   */
-  public function useCollectorRelatedByCollectorIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-  {
-    return $this
-      ->joinCollectorRelatedByCollectorId($relationAlias, $joinType)
-      ->useQuery($relationAlias ? $relationAlias : 'CollectorRelatedByCollectorId', 'CollectorQuery');
-  }
-
-  /**
-   * Filter the query by a related Collector object
-   *
-   * @param     Collector $collector  the related object to use as filter
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorFriendQuery The current query, for fluid interface
-   */
-  public function filterByCollectorRelatedByFriendId($collector, $comparison = null)
-  {
-    return $this
-      ->addUsingAlias(CollectorFriendPeer::FRIEND_ID, $collector->getId(), $comparison);
-  }
-
-  /**
-   * Adds a JOIN clause to the query using the CollectorRelatedByFriendId relation
-   * 
-   * @param     string $relationAlias optional alias for the relation
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CollectorFriendQuery The current query, for fluid interface
-   */
-  public function joinCollectorRelatedByFriendId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-  {
-    $tableMap = $this->getTableMap();
-    $relationMap = $tableMap->getRelation('CollectorRelatedByFriendId');
-    
-    // create a ModelJoin object for this join
-    $join = new ModelJoin();
-    $join->setJoinType($joinType);
-    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-    if ($previousJoin = $this->getPreviousJoin())
-    {
-      $join->setPreviousJoin($previousJoin);
-    }
-    
-    // add the ModelJoin to the current object
-    if($relationAlias)
-    {
-      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-      $this->addJoinObject($join, $relationAlias);
-    }
-    else
-    {
-      $this->addJoinObject($join, 'CollectorRelatedByFriendId');
-    }
-    
-    return $this;
-  }
-
-  /**
-   * Use the CollectorRelatedByFriendId relation Collector object
-   *
-   * @see       useQuery()
-   * 
-   * @param     string $relationAlias optional alias for the relation,
-   *                                   to be used as main alias in the secondary query
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CollectorQuery A secondary query class using the current class as primary query
-   */
-  public function useCollectorRelatedByFriendIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-  {
-    return $this
-      ->joinCollectorRelatedByFriendId($relationAlias, $joinType)
-      ->useQuery($relationAlias ? $relationAlias : 'CollectorRelatedByFriendId', 'CollectorQuery');
-  }
-
-  /**
-   * Exclude object from result
-   *
-   * @param     CollectorFriend $collectorFriend Object to remove from the list of results
-   *
-   * @return    CollectorFriendQuery The current query, for fluid interface
-   */
-  public function prune($collectorFriend = null)
-  {
-    if ($collectorFriend)
-    {
-      $this->addUsingAlias(CollectorFriendPeer::ID, $collectorFriend->getId(), Criteria::NOT_EQUAL);
-    }
-    
-    return $this;
-  }
 
 }

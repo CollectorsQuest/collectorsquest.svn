@@ -4,7 +4,7 @@ Vagrant::Config.run do |config|
 
   # If you want to specify the host OS, create a file 'platform'
   # in the same directory as the .vagrant file.
-  platform = (File.exists? 'platform') ? File.read('platform') : :detect
+  platform = (File.exists? 'platform') ? File.read('platform').strip : :detect
 
   if platform == 'windows'
     config.vm.forward_port("web", 80, 9458, :auto => true)

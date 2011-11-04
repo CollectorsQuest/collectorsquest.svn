@@ -8,7 +8,7 @@ require_once dirname(__FILE__) .'/cqMarkdownException.class.php';
 /**
  * @see Markdown_Parser
  */
-require_once sfConfig::get('sf_lib_dir').'/vendor/Markdown/Markdown.php';
+require_once dirname(__FILE__).'/../vendor/Markdown/Markdown.php';
 
 class cqMarkdown extends Markdown_Parser
 {
@@ -51,7 +51,7 @@ class cqMarkdown extends Markdown_Parser
     static $class = __CLASS__;
 
     // get parser instance
-    if (!($parser instanceof $class)) 
+    if (!($parser instanceof $class))
     {
       $parser = new $class;
     }

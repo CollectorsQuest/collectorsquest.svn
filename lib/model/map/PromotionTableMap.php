@@ -56,13 +56,13 @@ class PromotionTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('PromotionTransaction', 'PromotionTransaction', RelationMap::ONE_TO_MANY, array('id' => 'promotion_id', ), 'CASCADE', null);
+    $this->addRelation('PromotionTransaction', 'PromotionTransaction', RelationMap::ONE_TO_MANY, array('id' => 'promotion_id', ), 'CASCADE', null, 'PromotionTransactions');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

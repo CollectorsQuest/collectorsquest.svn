@@ -21,7 +21,7 @@ abstract class BaseVideoCollectionCategoryForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'                     => new sfValidatorPropelChoice(array('model' => 'VideoCollectionCategory', 'column' => 'id', 'required' => false)),
+      'id'                     => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'video_id'               => new sfValidatorPropelChoice(array('model' => 'Video', 'column' => 'id', 'required' => false)),
       'collection_category_id' => new sfValidatorPropelChoice(array('model' => 'CollectionCategory', 'column' => 'id', 'required' => false)),
       'created_at'             => new sfValidatorDateTime(array('required' => false)),

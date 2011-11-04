@@ -217,7 +217,7 @@ abstract class BaseCollectionCategoryField extends BaseObject  implements Persis
         $this->ensureConsistency();
       }
 
-      return $startcol + 3; // 3 = CollectionCategoryFieldPeer::NUM_COLUMNS - CollectionCategoryFieldPeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 3; // 3 = CollectionCategoryFieldPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -322,6 +322,8 @@ abstract class BaseCollectionCategoryField extends BaseObject  implements Persis
     $con->beginTransaction();
     try
     {
+      $deleteQuery = CollectionCategoryFieldQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseCollectionCategoryField:delete:pre') as $callable)
@@ -335,9 +337,7 @@ abstract class BaseCollectionCategoryField extends BaseObject  implements Persis
 
       if ($ret)
       {
-        CollectionCategoryFieldQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BaseCollectionCategoryField:delete:post') as $callable)
@@ -669,12 +669,18 @@ abstract class BaseCollectionCategoryField extends BaseObject  implements Persis
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
    * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $includeForeignObjects = false)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
   {
+    if (isset($alreadyDumpedObjects['CollectionCategoryField'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['CollectionCategoryField'][$this->getPrimaryKey()] = true;
     $keys = CollectionCategoryFieldPeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
@@ -685,11 +691,11 @@ abstract class BaseCollectionCategoryField extends BaseObject  implements Persis
     {
       if (null !== $this->aCollectionCategory)
       {
-        $result['CollectionCategory'] = $this->aCollectionCategory->toArray($keyType, $includeLazyLoadColumns, true);
+        $result['CollectionCategory'] = $this->aCollectionCategory->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
       }
       if (null !== $this->aCustomField)
       {
-        $result['CustomField'] = $this->aCustomField->toArray($keyType, $includeLazyLoadColumns, true);
+        $result['CustomField'] = $this->aCustomField->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
       }
     }
     return $result;
@@ -830,15 +836,18 @@ abstract class BaseCollectionCategoryField extends BaseObject  implements Persis
    *
    * @param      object $copyObj An object of CollectionCategoryField (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setCollectionCategoryId($this->collection_category_id);
-    $copyObj->setCustomFieldId($this->custom_field_id);
-
-    $copyObj->setNew(true);
-    $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    $copyObj->setCollectionCategoryId($this->getCollectionCategoryId());
+    $copyObj->setCustomFieldId($this->getCustomFieldId());
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -924,11 +933,11 @@ abstract class BaseCollectionCategoryField extends BaseObject  implements Persis
     {
       $this->aCollectionCategory = CollectionCategoryQuery::create()->findPk($this->collection_category_id, $con);
       /* The following can be used additionally to
-         guarantee the related object contains a reference
-         to this object.  This level of coupling may, however, be
-         undesirable since it could result in an only partially populated collection
-         in the referenced object.
-         $this->aCollectionCategory->addCollectionCategoryFields($this);
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->aCollectionCategory->addCollectionCategoryFields($this);
        */
     }
     return $this->aCollectionCategory;
@@ -978,11 +987,11 @@ abstract class BaseCollectionCategoryField extends BaseObject  implements Persis
     {
       $this->aCustomField = CustomFieldQuery::create()->findPk($this->custom_field_id, $con);
       /* The following can be used additionally to
-         guarantee the related object contains a reference
-         to this object.  This level of coupling may, however, be
-         undesirable since it could result in an only partially populated collection
-         in the referenced object.
-         $this->aCustomField->addCollectionCategoryFields($this);
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->aCustomField->addCollectionCategoryFields($this);
        */
     }
     return $this->aCustomField;
@@ -1005,13 +1014,13 @@ abstract class BaseCollectionCategoryField extends BaseObject  implements Persis
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -1024,10 +1033,21 @@ abstract class BaseCollectionCategoryField extends BaseObject  implements Persis
   }
 
   /**
+   * Return the string representation of this object
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    return (string) $this->exportTo(CollectionCategoryFieldPeer::DEFAULT_STRING_FORMAT);
+  }
+
+  /**
    * Catches calls to virtual methods
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BaseCollectionCategoryField:' . $name))
     {
@@ -1035,20 +1055,6 @@ abstract class BaseCollectionCategoryField extends BaseObject  implements Persis
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

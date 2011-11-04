@@ -25,12 +25,15 @@ abstract class BaseNewsletterSignupPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'NewsletterSignupTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 3;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 3;
 
   /** the column name for the ID field */
   const ID = 'newsletter_signup.ID';
@@ -41,6 +44,9 @@ abstract class BaseNewsletterSignupPeer
   /** the column name for the NAME field */
   const NAME = 'newsletter_signup.NAME';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of NewsletterSignup objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -50,20 +56,13 @@ abstract class BaseNewsletterSignupPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'Email', 'Name', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'email', 'name', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::EMAIL, self::NAME, ),
@@ -78,7 +77,7 @@ abstract class BaseNewsletterSignupPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Email' => 1, 'Name' => 2, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'email' => 1, 'name' => 2, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::EMAIL => 1, self::NAME => 2, ),
@@ -227,7 +226,7 @@ abstract class BaseNewsletterSignupPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -247,7 +246,7 @@ abstract class BaseNewsletterSignupPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -309,7 +308,7 @@ abstract class BaseNewsletterSignupPeer
    * @param      NewsletterSignup $value A NewsletterSignup object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(NewsletterSignup $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -415,7 +414,7 @@ abstract class BaseNewsletterSignupPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -480,7 +479,7 @@ abstract class BaseNewsletterSignupPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + NewsletterSignupPeer::NUM_COLUMNS;
+      $col = $startcol + NewsletterSignupPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -491,6 +490,7 @@ abstract class BaseNewsletterSignupPeer
     }
     return array($obj, $col);
   }
+
   /**
    * Returns the TableMap related to this peer.
    * This method is not needed for general use but a specific application could have a need.
@@ -532,7 +532,7 @@ abstract class BaseNewsletterSignupPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a NewsletterSignup or Criteria object.
+   * Performs an INSERT on the database, given a NewsletterSignup or Criteria object.
    *
    * @param      mixed $values Criteria or NewsletterSignup object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -583,7 +583,7 @@ abstract class BaseNewsletterSignupPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a NewsletterSignup or Criteria object.
+   * Performs an UPDATE on the database, given a NewsletterSignup or Criteria object.
    *
    * @param      mixed $values Criteria or NewsletterSignup object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -627,11 +627,12 @@ abstract class BaseNewsletterSignupPeer
   }
 
   /**
-   * Method to DELETE all rows from the newsletter_signup table.
+   * Deletes all rows from the newsletter_signup table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -660,7 +661,7 @@ abstract class BaseNewsletterSignupPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a NewsletterSignup or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a NewsletterSignup or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or NewsletterSignup object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -735,7 +736,7 @@ abstract class BaseNewsletterSignupPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(NewsletterSignup $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

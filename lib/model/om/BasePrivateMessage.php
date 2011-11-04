@@ -451,19 +451,30 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_rich] column.
+   * Sets the value of the [is_rich] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     PrivateMessage The current object (for fluent API support)
    */
   public function setIsRich($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_rich !== $v || $this->isNew())
+    if ($this->is_rich !== $v)
     {
       $this->is_rich = $v;
       $this->modifiedColumns[] = PrivateMessagePeer::IS_RICH;
@@ -473,19 +484,30 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_read] column.
+   * Sets the value of the [is_read] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     PrivateMessage The current object (for fluent API support)
    */
   public function setIsRead($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_read !== $v || $this->isNew())
+    if ($this->is_read !== $v)
     {
       $this->is_read = $v;
       $this->modifiedColumns[] = PrivateMessagePeer::IS_READ;
@@ -495,19 +517,30 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_replied] column.
+   * Sets the value of the [is_replied] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     PrivateMessage The current object (for fluent API support)
    */
   public function setIsReplied($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_replied !== $v || $this->isNew())
+    if ($this->is_replied !== $v)
     {
       $this->is_replied = $v;
       $this->modifiedColumns[] = PrivateMessagePeer::IS_REPLIED;
@@ -517,19 +550,30 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_forwarded] column.
+   * Sets the value of the [is_forwarded] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     PrivateMessage The current object (for fluent API support)
    */
   public function setIsForwarded($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_forwarded !== $v || $this->isNew())
+    if ($this->is_forwarded !== $v)
     {
       $this->is_forwarded = $v;
       $this->modifiedColumns[] = PrivateMessagePeer::IS_FORWARDED;
@@ -539,19 +583,30 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_marked] column.
+   * Sets the value of the [is_marked] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     PrivateMessage The current object (for fluent API support)
    */
   public function setIsMarked($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_marked !== $v || $this->isNew())
+    if ($this->is_marked !== $v)
     {
       $this->is_marked = $v;
       $this->modifiedColumns[] = PrivateMessagePeer::IS_MARKED;
@@ -561,19 +616,30 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_deleted] column.
+   * Sets the value of the [is_deleted] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     PrivateMessage The current object (for fluent API support)
    */
   public function setIsDeleted($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_deleted !== $v || $this->isNew())
+    if ($this->is_deleted !== $v)
     {
       $this->is_deleted = $v;
       $this->modifiedColumns[] = PrivateMessagePeer::IS_DELETED;
@@ -585,56 +651,20 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
   /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     PrivateMessage The current object (for fluent API support)
    */
   public function setCreatedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->created_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->created_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->created_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->created_at = $newDateAsString;
         $this->modifiedColumns[] = PrivateMessagePeer::CREATED_AT;
       }
     }
@@ -727,7 +757,7 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 13; // 13 = PrivateMessagePeer::NUM_COLUMNS - PrivateMessagePeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 13; // 13 = PrivateMessagePeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -822,6 +852,8 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
     $con->beginTransaction();
     try
     {
+      $deleteQuery = PrivateMessageQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BasePrivateMessage:delete:pre') as $callable)
@@ -835,9 +867,7 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
 
       if ($ret)
       {
-        PrivateMessageQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BasePrivateMessage:delete:post') as $callable)
@@ -900,8 +930,6 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
         }
       }
 
-      // symfony_timestampable behavior
-      
       if ($isInsert)
       {
         $ret = $ret && $this->preInsert($con);
@@ -1162,11 +1190,17 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
   {
+    if (isset($alreadyDumpedObjects['PrivateMessage'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['PrivateMessage'][$this->getPrimaryKey()] = true;
     $keys = PrivateMessagePeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
@@ -1371,25 +1405,28 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
    *
    * @param      object $copyObj An object of PrivateMessage (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setThread($this->thread);
-    $copyObj->setSender($this->sender);
-    $copyObj->setReceiver($this->receiver);
-    $copyObj->setSubject($this->subject);
-    $copyObj->setBody($this->body);
-    $copyObj->setIsRich($this->is_rich);
-    $copyObj->setIsRead($this->is_read);
-    $copyObj->setIsReplied($this->is_replied);
-    $copyObj->setIsForwarded($this->is_forwarded);
-    $copyObj->setIsMarked($this->is_marked);
-    $copyObj->setIsDeleted($this->is_deleted);
-    $copyObj->setCreatedAt($this->created_at);
-
-    $copyObj->setNew(true);
-    $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    $copyObj->setThread($this->getThread());
+    $copyObj->setSender($this->getSender());
+    $copyObj->setReceiver($this->getReceiver());
+    $copyObj->setSubject($this->getSubject());
+    $copyObj->setBody($this->getBody());
+    $copyObj->setIsRich($this->getIsRich());
+    $copyObj->setIsRead($this->getIsRead());
+    $copyObj->setIsReplied($this->getIsReplied());
+    $copyObj->setIsForwarded($this->getIsForwarded());
+    $copyObj->setIsMarked($this->getIsMarked());
+    $copyObj->setIsDeleted($this->getIsDeleted());
+    $copyObj->setCreatedAt($this->getCreatedAt());
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -1459,13 +1496,13 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -1476,10 +1513,21 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
   }
 
   /**
+   * Return the string representation of this object
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    return (string) $this->exportTo(PrivateMessagePeer::DEFAULT_STRING_FORMAT);
+  }
+
+  /**
    * Catches calls to virtual methods
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BasePrivateMessage:' . $name))
     {
@@ -1487,20 +1535,6 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

@@ -25,18 +25,24 @@ abstract class BaseTermPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'TermTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 2;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 2;
+
   /** the column name for the ID field */
   const ID = 'term.ID';
 
   /** the column name for the NAME field */
   const NAME = 'term.NAME';
+
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
 
   /**
    * An identiy map to hold any loaded instances of Term objects.
@@ -47,20 +53,13 @@ abstract class BaseTermPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'Name', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'name', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::NAME, ),
@@ -75,7 +74,7 @@ abstract class BaseTermPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Name' => 1, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'name' => 1, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::NAME => 1, ),
@@ -222,7 +221,7 @@ abstract class BaseTermPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -242,7 +241,7 @@ abstract class BaseTermPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -304,7 +303,7 @@ abstract class BaseTermPeer
    * @param      Term $value A Term object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(Term $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -410,7 +409,7 @@ abstract class BaseTermPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -475,7 +474,7 @@ abstract class BaseTermPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + TermPeer::NUM_COLUMNS;
+      $col = $startcol + TermPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -486,6 +485,7 @@ abstract class BaseTermPeer
     }
     return array($obj, $col);
   }
+
   /**
    * Returns the TableMap related to this peer.
    * This method is not needed for general use but a specific application could have a need.
@@ -527,7 +527,7 @@ abstract class BaseTermPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a Term or Criteria object.
+   * Performs an INSERT on the database, given a Term or Criteria object.
    *
    * @param      mixed $values Criteria or Term object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -578,7 +578,7 @@ abstract class BaseTermPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a Term or Criteria object.
+   * Performs an UPDATE on the database, given a Term or Criteria object.
    *
    * @param      mixed $values Criteria or Term object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -622,11 +622,12 @@ abstract class BaseTermPeer
   }
 
   /**
-   * Method to DELETE all rows from the term table.
+   * Deletes all rows from the term table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -655,7 +656,7 @@ abstract class BaseTermPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a Term or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a Term or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or Term object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -730,7 +731,7 @@ abstract class BaseTermPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(Term $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

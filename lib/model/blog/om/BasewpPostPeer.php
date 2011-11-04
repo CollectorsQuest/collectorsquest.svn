@@ -25,12 +25,15 @@ abstract class BasewpPostPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'wpPostTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 24;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 24;
 
   /** the column name for the ID field */
   const ID = 'wp_posts.ID';
@@ -104,6 +107,9 @@ abstract class BasewpPostPeer
   /** the column name for the COMMENT_COUNT field */
   const COMMENT_COUNT = 'wp_posts.COMMENT_COUNT';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of wpPost objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -113,20 +119,13 @@ abstract class BasewpPostPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'PostAuthor', 'PostDate', 'PostDateGmt', 'PostContent', 'PostTitle', 'PostExcerpt', 'PostCategory', 'PostStatus', 'CommentStatus', 'PingStatus', 'PostPassword', 'PostName', 'ToPing', 'Pinged', 'PostModified', 'PostModifiedGmt', 'PostContentFiltered', 'PostParent', 'Guid', 'MenuOrder', 'PostType', 'PostMimeType', 'CommentCount', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'postAuthor', 'postDate', 'postDateGmt', 'postContent', 'postTitle', 'postExcerpt', 'postCategory', 'postStatus', 'commentStatus', 'pingStatus', 'postPassword', 'postName', 'toPing', 'pinged', 'postModified', 'postModifiedGmt', 'postContentFiltered', 'postParent', 'guid', 'menuOrder', 'postType', 'postMimeType', 'commentCount', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::POST_AUTHOR, self::POST_DATE, self::POST_DATE_GMT, self::POST_CONTENT, self::POST_TITLE, self::POST_EXCERPT, self::POST_CATEGORY, self::POST_STATUS, self::COMMENT_STATUS, self::PING_STATUS, self::POST_PASSWORD, self::POST_NAME, self::TO_PING, self::PINGED, self::POST_MODIFIED, self::POST_MODIFIED_GMT, self::POST_CONTENT_FILTERED, self::POST_PARENT, self::GUID, self::MENU_ORDER, self::POST_TYPE, self::POST_MIME_TYPE, self::COMMENT_COUNT, ),
@@ -141,7 +140,7 @@ abstract class BasewpPostPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PostAuthor' => 1, 'PostDate' => 2, 'PostDateGmt' => 3, 'PostContent' => 4, 'PostTitle' => 5, 'PostExcerpt' => 6, 'PostCategory' => 7, 'PostStatus' => 8, 'CommentStatus' => 9, 'PingStatus' => 10, 'PostPassword' => 11, 'PostName' => 12, 'ToPing' => 13, 'Pinged' => 14, 'PostModified' => 15, 'PostModifiedGmt' => 16, 'PostContentFiltered' => 17, 'PostParent' => 18, 'Guid' => 19, 'MenuOrder' => 20, 'PostType' => 21, 'PostMimeType' => 22, 'CommentCount' => 23, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'postAuthor' => 1, 'postDate' => 2, 'postDateGmt' => 3, 'postContent' => 4, 'postTitle' => 5, 'postExcerpt' => 6, 'postCategory' => 7, 'postStatus' => 8, 'commentStatus' => 9, 'pingStatus' => 10, 'postPassword' => 11, 'postName' => 12, 'toPing' => 13, 'pinged' => 14, 'postModified' => 15, 'postModifiedGmt' => 16, 'postContentFiltered' => 17, 'postParent' => 18, 'guid' => 19, 'menuOrder' => 20, 'postType' => 21, 'postMimeType' => 22, 'commentCount' => 23, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::POST_AUTHOR => 1, self::POST_DATE => 2, self::POST_DATE_GMT => 3, self::POST_CONTENT => 4, self::POST_TITLE => 5, self::POST_EXCERPT => 6, self::POST_CATEGORY => 7, self::POST_STATUS => 8, self::COMMENT_STATUS => 9, self::PING_STATUS => 10, self::POST_PASSWORD => 11, self::POST_NAME => 12, self::TO_PING => 13, self::PINGED => 14, self::POST_MODIFIED => 15, self::POST_MODIFIED_GMT => 16, self::POST_CONTENT_FILTERED => 17, self::POST_PARENT => 18, self::GUID => 19, self::MENU_ORDER => 20, self::POST_TYPE => 21, self::POST_MIME_TYPE => 22, self::COMMENT_COUNT => 23, ),
@@ -332,7 +331,7 @@ abstract class BasewpPostPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -352,7 +351,7 @@ abstract class BasewpPostPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -414,7 +413,7 @@ abstract class BasewpPostPeer
    * @param      wpPost $value A wpPost object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(wpPost $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -520,7 +519,7 @@ abstract class BasewpPostPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -585,7 +584,7 @@ abstract class BasewpPostPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + wpPostPeer::NUM_COLUMNS;
+      $col = $startcol + wpPostPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -596,6 +595,7 @@ abstract class BasewpPostPeer
     }
     return array($obj, $col);
   }
+
 
   /**
    * Returns the number of rows matching criteria, joining the related wpUser table
@@ -625,9 +625,9 @@ abstract class BasewpPostPeer
     {
       wpPostPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -679,7 +679,7 @@ abstract class BasewpPostPeer
     }
 
     wpPostPeer::addSelectColumns($criteria);
-    $startcol = (wpPostPeer::NUM_COLUMNS - wpPostPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol = wpPostPeer::NUM_HYDRATE_COLUMNS;
     wpUserPeer::addSelectColumns($criteria);
 
     $criteria->addJoin(wpPostPeer::POST_AUTHOR, wpUserPeer::ID, $join_behavior);
@@ -766,9 +766,9 @@ abstract class BasewpPostPeer
     {
       wpPostPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -820,10 +820,10 @@ abstract class BasewpPostPeer
     }
 
     wpPostPeer::addSelectColumns($criteria);
-    $startcol2 = (wpPostPeer::NUM_COLUMNS - wpPostPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = wpPostPeer::NUM_HYDRATE_COLUMNS;
 
     wpUserPeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + (wpUserPeer::NUM_COLUMNS - wpUserPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol3 = $startcol2 + wpUserPeer::NUM_HYDRATE_COLUMNS;
 
     $criteria->addJoin(wpPostPeer::POST_AUTHOR, wpUserPeer::ID, $join_behavior);
 
@@ -921,7 +921,7 @@ abstract class BasewpPostPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a wpPost or Criteria object.
+   * Performs an INSERT on the database, given a wpPost or Criteria object.
    *
    * @param      mixed $values Criteria or wpPost object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -972,7 +972,7 @@ abstract class BasewpPostPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a wpPost or Criteria object.
+   * Performs an UPDATE on the database, given a wpPost or Criteria object.
    *
    * @param      mixed $values Criteria or wpPost object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -1016,11 +1016,12 @@ abstract class BasewpPostPeer
   }
 
   /**
-   * Method to DELETE all rows from the wp_posts table.
+   * Deletes all rows from the wp_posts table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -1049,7 +1050,7 @@ abstract class BasewpPostPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a wpPost or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a wpPost or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or wpPost object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -1124,7 +1125,7 @@ abstract class BasewpPostPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(wpPost $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

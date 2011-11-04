@@ -21,7 +21,7 @@ abstract class BaseCollectorIdentifierForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'           => new sfValidatorPropelChoice(array('model' => 'CollectorIdentifier', 'column' => 'id', 'required' => false)),
+      'id'           => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'collector_id' => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id', 'required' => false)),
       'identifier'   => new sfValidatorString(array('max_length' => 255, 'required' => false)),
       'created_at'   => new sfValidatorDateTime(array('required' => false)),

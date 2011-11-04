@@ -27,7 +27,7 @@ abstract class BaseEventVideoForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'          => new sfValidatorPropelChoice(array('model' => 'EventVideo', 'column' => 'id', 'required' => false)),
+      'id'          => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'event_id'    => new sfValidatorPropelChoice(array('model' => 'Event', 'column' => 'id', 'required' => false)),
       'title'       => new sfValidatorString(array('max_length' => 128)),
       'description' => new sfValidatorString(),

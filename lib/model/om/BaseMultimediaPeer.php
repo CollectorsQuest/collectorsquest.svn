@@ -25,12 +25,15 @@ abstract class BaseMultimediaPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'MultimediaTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 12;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 12;
 
   /** the column name for the ID field */
   const ID = 'multimedia.ID';
@@ -68,6 +71,9 @@ abstract class BaseMultimediaPeer
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'multimedia.CREATED_AT';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of Multimedia objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -77,20 +83,13 @@ abstract class BaseMultimediaPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'Model', 'ModelId', 'Type', 'Name', 'Md5', 'Colors', 'Orientation', 'Source', 'IsPrimary', 'UpdatedAt', 'CreatedAt', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'model', 'modelId', 'type', 'name', 'md5', 'colors', 'orientation', 'source', 'isPrimary', 'updatedAt', 'createdAt', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::MODEL, self::MODEL_ID, self::TYPE, self::NAME, self::MD5, self::COLORS, self::ORIENTATION, self::SOURCE, self::IS_PRIMARY, self::UPDATED_AT, self::CREATED_AT, ),
@@ -105,7 +104,7 @@ abstract class BaseMultimediaPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Model' => 1, 'ModelId' => 2, 'Type' => 3, 'Name' => 4, 'Md5' => 5, 'Colors' => 6, 'Orientation' => 7, 'Source' => 8, 'IsPrimary' => 9, 'UpdatedAt' => 10, 'CreatedAt' => 11, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'model' => 1, 'modelId' => 2, 'type' => 3, 'name' => 4, 'md5' => 5, 'colors' => 6, 'orientation' => 7, 'source' => 8, 'isPrimary' => 9, 'updatedAt' => 10, 'createdAt' => 11, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::MODEL => 1, self::MODEL_ID => 2, self::TYPE => 3, self::NAME => 4, self::MD5 => 5, self::COLORS => 6, self::ORIENTATION => 7, self::SOURCE => 8, self::IS_PRIMARY => 9, self::UPDATED_AT => 10, self::CREATED_AT => 11, ),
@@ -272,7 +271,7 @@ abstract class BaseMultimediaPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -292,7 +291,7 @@ abstract class BaseMultimediaPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -354,7 +353,7 @@ abstract class BaseMultimediaPeer
    * @param      Multimedia $value A Multimedia object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(Multimedia $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -460,7 +459,7 @@ abstract class BaseMultimediaPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -525,7 +524,7 @@ abstract class BaseMultimediaPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + MultimediaPeer::NUM_COLUMNS;
+      $col = $startcol + MultimediaPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -536,6 +535,7 @@ abstract class BaseMultimediaPeer
     }
     return array($obj, $col);
   }
+
   /**
    * Returns the TableMap related to this peer.
    * This method is not needed for general use but a specific application could have a need.
@@ -577,7 +577,7 @@ abstract class BaseMultimediaPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a Multimedia or Criteria object.
+   * Performs an INSERT on the database, given a Multimedia or Criteria object.
    *
    * @param      mixed $values Criteria or Multimedia object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -628,7 +628,7 @@ abstract class BaseMultimediaPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a Multimedia or Criteria object.
+   * Performs an UPDATE on the database, given a Multimedia or Criteria object.
    *
    * @param      mixed $values Criteria or Multimedia object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -672,11 +672,12 @@ abstract class BaseMultimediaPeer
   }
 
   /**
-   * Method to DELETE all rows from the multimedia table.
+   * Deletes all rows from the multimedia table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -705,7 +706,7 @@ abstract class BaseMultimediaPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a Multimedia or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a Multimedia or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or Multimedia object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -780,7 +781,7 @@ abstract class BaseMultimediaPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(Multimedia $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

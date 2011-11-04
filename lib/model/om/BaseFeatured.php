@@ -96,7 +96,7 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
 
   /**
    * The value for the position field.
-   * Note: this column has a database default value of: 1
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $position;
@@ -127,7 +127,7 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
     $this->tree_right = 0;
     $this->tree_scope = 0;
     $this->is_active = true;
-    $this->position = 1;
+    $this->position = 0;
   }
 
   /**
@@ -441,7 +441,7 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
       $v = (int) $v;
     }
 
-    if ($this->tree_left !== $v || $this->isNew())
+    if ($this->tree_left !== $v)
     {
       $this->tree_left = $v;
       $this->modifiedColumns[] = FeaturedPeer::TREE_LEFT;
@@ -463,7 +463,7 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
       $v = (int) $v;
     }
 
-    if ($this->tree_right !== $v || $this->isNew())
+    if ($this->tree_right !== $v)
     {
       $this->tree_right = $v;
       $this->modifiedColumns[] = FeaturedPeer::TREE_RIGHT;
@@ -485,7 +485,7 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
       $v = (int) $v;
     }
 
-    if ($this->tree_scope !== $v || $this->isNew())
+    if ($this->tree_scope !== $v)
     {
       $this->tree_scope = $v;
       $this->modifiedColumns[] = FeaturedPeer::TREE_SCOPE;
@@ -519,56 +519,20 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
   /**
    * Sets the value of [start_date] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     Featured The current object (for fluent API support)
    */
   public function setStartDate($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->start_date !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->start_date !== null && $tmpDt = new DateTime($this->start_date)) ? $tmpDt->format('Y-m-d') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->start_date !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->start_date !== null && $tmpDt = new DateTime($this->start_date)) ? $tmpDt->format('Y-m-d') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->start_date = ($dt ? $dt->format('Y-m-d') : null);
+        $this->start_date = $newDateAsString;
         $this->modifiedColumns[] = FeaturedPeer::START_DATE;
       }
     }
@@ -579,56 +543,20 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
   /**
    * Sets the value of [end_date] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     Featured The current object (for fluent API support)
    */
   public function setEndDate($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->end_date !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->end_date !== null && $tmpDt = new DateTime($this->end_date)) ? $tmpDt->format('Y-m-d') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->end_date !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->end_date !== null && $tmpDt = new DateTime($this->end_date)) ? $tmpDt->format('Y-m-d') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->end_date = ($dt ? $dt->format('Y-m-d') : null);
+        $this->end_date = $newDateAsString;
         $this->modifiedColumns[] = FeaturedPeer::END_DATE;
       }
     }
@@ -637,19 +565,30 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_active] column.
+   * Sets the value of the [is_active] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     Featured The current object (for fluent API support)
    */
   public function setIsActive($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_active !== $v || $this->isNew())
+    if ($this->is_active !== $v)
     {
       $this->is_active = $v;
       $this->modifiedColumns[] = FeaturedPeer::IS_ACTIVE;
@@ -671,7 +610,7 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
       $v = (int) $v;
     }
 
-    if ($this->position !== $v || $this->isNew())
+    if ($this->position !== $v)
     {
       $this->position = $v;
       $this->modifiedColumns[] = FeaturedPeer::POSITION;
@@ -710,7 +649,7 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
         return false;
       }
 
-      if ($this->position !== 1)
+      if ($this->position !== 0)
       {
         return false;
       }
@@ -759,7 +698,7 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 12; // 12 = FeaturedPeer::NUM_COLUMNS - FeaturedPeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 12; // 12 = FeaturedPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -854,6 +793,8 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
     $con->beginTransaction();
     try
     {
+      $deleteQuery = FeaturedQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseFeatured:delete:pre') as $callable)
@@ -867,9 +808,7 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
 
       if ($ret)
       {
-        FeaturedQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BaseFeatured:delete:post') as $callable)
@@ -1183,11 +1122,17 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
   {
+    if (isset($alreadyDumpedObjects['Featured'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['Featured'][$this->getPrimaryKey()] = true;
     $keys = FeaturedPeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
@@ -1386,24 +1331,27 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
    *
    * @param      object $copyObj An object of Featured (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setFeaturedTypeId($this->featured_type_id);
-    $copyObj->setFeaturedModel($this->featured_model);
-    $copyObj->setFeaturedId($this->featured_id);
-    $copyObj->setTreeLeft($this->tree_left);
-    $copyObj->setTreeRight($this->tree_right);
-    $copyObj->setTreeScope($this->tree_scope);
-    $copyObj->setEblob($this->eblob);
-    $copyObj->setStartDate($this->start_date);
-    $copyObj->setEndDate($this->end_date);
-    $copyObj->setIsActive($this->is_active);
-    $copyObj->setPosition($this->position);
-
-    $copyObj->setNew(true);
-    $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    $copyObj->setFeaturedTypeId($this->getFeaturedTypeId());
+    $copyObj->setFeaturedModel($this->getFeaturedModel());
+    $copyObj->setFeaturedId($this->getFeaturedId());
+    $copyObj->setTreeLeft($this->getTreeLeft());
+    $copyObj->setTreeRight($this->getTreeRight());
+    $copyObj->setTreeScope($this->getTreeScope());
+    $copyObj->setEblob($this->getEblob());
+    $copyObj->setStartDate($this->getStartDate());
+    $copyObj->setEndDate($this->getEndDate());
+    $copyObj->setIsActive($this->getIsActive());
+    $copyObj->setPosition($this->getPosition());
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -1472,13 +1420,13 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -1489,10 +1437,21 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
   }
 
   /**
+   * Return the string representation of this object
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    return (string) $this->exportTo(FeaturedPeer::DEFAULT_STRING_FORMAT);
+  }
+
+  /**
    * Catches calls to virtual methods
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BaseFeatured:' . $name))
     {
@@ -1500,20 +1459,6 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

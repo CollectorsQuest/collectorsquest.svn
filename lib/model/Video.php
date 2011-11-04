@@ -107,12 +107,12 @@ class Video extends BaseVideo
   }
 }
 
-sfPropelBehavior::add('Video', array('sfPropelActAsTaggableBehavior'));
+sfPropelBehavior::add('Video', array('IceTaggableBehavior'));
 
 sfPropelBehavior::add(
   'Video',
   array(
-    'sfPropelActAsSluggableBehavior' => array(
+    'PropelActAsSluggableBehavior' => array(
       'columns' => array(
         'from' => VideoPeer::TITLE,
         'to' => VideoPeer::SLUG

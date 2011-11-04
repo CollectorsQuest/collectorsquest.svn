@@ -41,6 +41,7 @@ class CollectionCategoryTableMap extends TableMap
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
     $this->addColumn('PARENT_ID', 'ParentId', 'INTEGER', false, null, 0);
     $this->addColumn('NAME', 'Name', 'VARCHAR', true, 64, null);
+    $this->getColumn('NAME', false)->setPrimaryString(true);
     $this->addColumn('SCORE', 'Score', 'INTEGER', false, null, 0);
     // validators
   }
@@ -50,16 +51,16 @@ class CollectionCategoryTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('CollectorInterview', 'CollectorInterview', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), 'SET NULL', null);
-    $this->addRelation('Collection', 'Collection', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), 'SET NULL', null);
-    $this->addRelation('CollectionCategoryField', 'CollectionCategoryField', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), null, null);
-    $this->addRelation('VideoCollectionCategory', 'VideoCollectionCategory', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), null, null);
+    $this->addRelation('CollectorInterview', 'CollectorInterview', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), 'SET NULL', null, 'CollectorInterviews');
+    $this->addRelation('Collection', 'Collection', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), 'SET NULL', null, 'Collections');
+    $this->addRelation('CollectionCategoryField', 'CollectionCategoryField', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), null, null, 'CollectionCategoryFields');
+    $this->addRelation('VideoCollectionCategory', 'VideoCollectionCategory', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), null, null, 'VideoCollectionCategorys');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

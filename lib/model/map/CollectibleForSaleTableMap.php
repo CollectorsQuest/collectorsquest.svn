@@ -42,10 +42,10 @@ class CollectibleForSaleTableMap extends TableMap
     $this->addForeignKey('COLLECTIBLE_ID', 'CollectibleId', 'INTEGER', 'collectible', 'ID', true, null, null);
     $this->addColumn('PRICE', 'Price', 'FLOAT', false, null, null);
     $this->addColumn('CONDITION', 'Condition', 'CHAR', true, null, null);
-    $this->addColumn('IS_PRICE_NEGOTIABLE', 'IsPriceNegotiable', 'BOOLEAN', false, null, false);
-    $this->addColumn('IS_SHIPPING_FREE', 'IsShippingFree', 'BOOLEAN', false, null, false);
-    $this->addColumn('IS_SOLD', 'IsSold', 'BOOLEAN', false, null, false);
-    $this->addColumn('IS_READY', 'IsReady', 'BOOLEAN', false, null, false);
+    $this->addColumn('IS_PRICE_NEGOTIABLE', 'IsPriceNegotiable', 'BOOLEAN', false, 1, false);
+    $this->addColumn('IS_SHIPPING_FREE', 'IsShippingFree', 'BOOLEAN', false, 1, false);
+    $this->addColumn('IS_SOLD', 'IsSold', 'BOOLEAN', false, 1, false);
+    $this->addColumn('IS_READY', 'IsReady', 'BOOLEAN', false, 1, false);
     $this->addColumn('QUANTITY', 'Quantity', 'INTEGER', true, null, 1);
     $this->addColumn('DELETED_AT', 'DeletedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
@@ -59,13 +59,13 @@ class CollectibleForSaleTableMap extends TableMap
   public function buildRelations()
   {
     $this->addRelation('Collectible', 'Collectible', RelationMap::MANY_TO_ONE, array('collectible_id' => 'id', ), 'CASCADE', null);
-    $this->addRelation('CollectibleOffer', 'CollectibleOffer', RelationMap::ONE_TO_MANY, array('id' => 'collectible_for_sale_id', ), 'CASCADE', null);
+    $this->addRelation('CollectibleOffer', 'CollectibleOffer', RelationMap::ONE_TO_MANY, array('id' => 'collectible_for_sale_id', ), 'CASCADE', null, 'CollectibleOffers');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

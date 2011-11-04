@@ -44,7 +44,7 @@ class PlaylistTableMap extends TableMap
     $this->addColumn('DESCRIPTION', 'Description', 'LONGVARCHAR', true, null, null);
     $this->addColumn('TYPE', 'Type', 'VARCHAR', true, 64, null);
     $this->addColumn('LENGTH', 'Length', 'INTEGER', false, null, null);
-    $this->addColumn('IS_PUBLISHED', 'IsPublished', 'BOOLEAN', false, null, null);
+    $this->addColumn('IS_PUBLISHED', 'IsPublished', 'BOOLEAN', false, 1, null);
     $this->addColumn('PUBLISHED_AT', 'PublishedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     // validators
@@ -55,13 +55,13 @@ class PlaylistTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('VideoPlaylist', 'VideoPlaylist', RelationMap::ONE_TO_MANY, array('id' => 'playlist_id', ), null, null);
+    $this->addRelation('VideoPlaylist', 'VideoPlaylist', RelationMap::ONE_TO_MANY, array('id' => 'playlist_id', ), null, null, 'VideoPlaylists');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

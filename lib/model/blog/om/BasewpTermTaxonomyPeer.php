@@ -25,12 +25,15 @@ abstract class BasewpTermTaxonomyPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'wpTermTaxonomyTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 6;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 6;
 
   /** the column name for the TERM_TAXONOMY_ID field */
   const TERM_TAXONOMY_ID = 'wp_term_taxonomy.TERM_TAXONOMY_ID';
@@ -50,6 +53,9 @@ abstract class BasewpTermTaxonomyPeer
   /** the column name for the COUNT field */
   const COUNT = 'wp_term_taxonomy.COUNT';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of wpTermTaxonomy objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -59,20 +65,13 @@ abstract class BasewpTermTaxonomyPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('TermTaxonomyId', 'TermId', 'Taxonomy', 'Description', 'Parent', 'Count', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('termTaxonomyId', 'termId', 'taxonomy', 'description', 'parent', 'count', ),
     BasePeer::TYPE_COLNAME => array (self::TERM_TAXONOMY_ID, self::TERM_ID, self::TAXONOMY, self::DESCRIPTION, self::PARENT, self::COUNT, ),
@@ -87,7 +86,7 @@ abstract class BasewpTermTaxonomyPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('TermTaxonomyId' => 0, 'TermId' => 1, 'Taxonomy' => 2, 'Description' => 3, 'Parent' => 4, 'Count' => 5, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('termTaxonomyId' => 0, 'termId' => 1, 'taxonomy' => 2, 'description' => 3, 'parent' => 4, 'count' => 5, ),
     BasePeer::TYPE_COLNAME => array (self::TERM_TAXONOMY_ID => 0, self::TERM_ID => 1, self::TAXONOMY => 2, self::DESCRIPTION => 3, self::PARENT => 4, self::COUNT => 5, ),
@@ -242,7 +241,7 @@ abstract class BasewpTermTaxonomyPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -262,7 +261,7 @@ abstract class BasewpTermTaxonomyPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -324,7 +323,7 @@ abstract class BasewpTermTaxonomyPeer
    * @param      wpTermTaxonomy $value A wpTermTaxonomy object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(wpTermTaxonomy $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -430,7 +429,7 @@ abstract class BasewpTermTaxonomyPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -495,7 +494,7 @@ abstract class BasewpTermTaxonomyPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + wpTermTaxonomyPeer::NUM_COLUMNS;
+      $col = $startcol + wpTermTaxonomyPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -506,6 +505,7 @@ abstract class BasewpTermTaxonomyPeer
     }
     return array($obj, $col);
   }
+
   /**
    * Returns the TableMap related to this peer.
    * This method is not needed for general use but a specific application could have a need.
@@ -547,7 +547,7 @@ abstract class BasewpTermTaxonomyPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a wpTermTaxonomy or Criteria object.
+   * Performs an INSERT on the database, given a wpTermTaxonomy or Criteria object.
    *
    * @param      mixed $values Criteria or wpTermTaxonomy object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -598,7 +598,7 @@ abstract class BasewpTermTaxonomyPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a wpTermTaxonomy or Criteria object.
+   * Performs an UPDATE on the database, given a wpTermTaxonomy or Criteria object.
    *
    * @param      mixed $values Criteria or wpTermTaxonomy object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -642,11 +642,12 @@ abstract class BasewpTermTaxonomyPeer
   }
 
   /**
-   * Method to DELETE all rows from the wp_term_taxonomy table.
+   * Deletes all rows from the wp_term_taxonomy table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -675,7 +676,7 @@ abstract class BasewpTermTaxonomyPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a wpTermTaxonomy or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a wpTermTaxonomy or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or wpTermTaxonomy object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -750,7 +751,7 @@ abstract class BasewpTermTaxonomyPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(wpTermTaxonomy $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

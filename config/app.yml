@@ -39,6 +39,11 @@ all:
       public_key: ""
       private_key: ""
 
+  ice_libs:
+    emails:
+      sender: 'no-reply@collectorsquest.com'
+      notify: 'developers@collectorsquest.com'
+
 stg:
   cq:
     www_domain: "http://www.collectorsquest.stg"
@@ -75,10 +80,10 @@ dev:
   paypal:
     api_username: zecho2_1307375459_biz_api1.mail.bg
     api_password: 1307375482
-    api_signature: ARGZylcXa9FrdnmIO0iUQs0rR92RAgDpfU7OiYGf5M34hnxegFkGwxD8 
+    api_signature: ARGZylcXa9FrdnmIO0iUQs0rR92RAgDpfU7OiYGf5M34hnxegFkGwxD8
     api_url: https://api-3t.sandbox.paypal.com/nvp
     is_online: false
-    
+
     payment_action: Sale
     currency_code: USD
     payment_method: doDirectPayment

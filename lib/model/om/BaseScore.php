@@ -353,56 +353,20 @@ abstract class BaseScore extends BaseObject  implements Persistent
   /**
    * Sets the value of [day] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     Score The current object (for fluent API support)
    */
   public function setDay($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->day !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->day !== null && $tmpDt = new DateTime($this->day)) ? $tmpDt->format('Y-m-d') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->day !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->day !== null && $tmpDt = new DateTime($this->day)) ? $tmpDt->format('Y-m-d') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->day = ($dt ? $dt->format('Y-m-d') : null);
+        $this->day = $newDateAsString;
         $this->modifiedColumns[] = ScorePeer::DAY;
       }
     }
@@ -467,7 +431,7 @@ abstract class BaseScore extends BaseObject  implements Persistent
       $v = (int) $v;
     }
 
-    if ($this->views !== $v || $this->isNew())
+    if ($this->views !== $v)
     {
       $this->views = $v;
       $this->modifiedColumns[] = ScorePeer::VIEWS;
@@ -489,7 +453,7 @@ abstract class BaseScore extends BaseObject  implements Persistent
       $v = (int) $v;
     }
 
-    if ($this->ratings !== $v || $this->isNew())
+    if ($this->ratings !== $v)
     {
       $this->ratings = $v;
       $this->modifiedColumns[] = ScorePeer::RATINGS;
@@ -511,7 +475,7 @@ abstract class BaseScore extends BaseObject  implements Persistent
       $v = (int) $v;
     }
 
-    if ($this->score !== $v || $this->isNew())
+    if ($this->score !== $v)
     {
       $this->score = $v;
       $this->modifiedColumns[] = ScorePeer::SCORE;
@@ -523,56 +487,20 @@ abstract class BaseScore extends BaseObject  implements Persistent
   /**
    * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     Score The current object (for fluent API support)
    */
   public function setUpdatedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->updated_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->updated_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->updated_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->updated_at = $newDateAsString;
         $this->modifiedColumns[] = ScorePeer::UPDATED_AT;
       }
     }
@@ -583,56 +511,20 @@ abstract class BaseScore extends BaseObject  implements Persistent
   /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     Score The current object (for fluent API support)
    */
   public function setCreatedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->created_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->created_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->created_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->created_at = $newDateAsString;
         $this->modifiedColumns[] = ScorePeer::CREATED_AT;
       }
     }
@@ -706,7 +598,7 @@ abstract class BaseScore extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 9; // 9 = ScorePeer::NUM_COLUMNS - ScorePeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 9; // 9 = ScorePeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -801,6 +693,8 @@ abstract class BaseScore extends BaseObject  implements Persistent
     $con->beginTransaction();
     try
     {
+      $deleteQuery = ScoreQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseScore:delete:pre') as $callable)
@@ -814,9 +708,7 @@ abstract class BaseScore extends BaseObject  implements Persistent
 
       if ($ret)
       {
-        ScoreQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BaseScore:delete:post') as $callable)
@@ -884,7 +776,6 @@ abstract class BaseScore extends BaseObject  implements Persistent
       {
         $this->setUpdatedAt(time());
       }
-
       if ($isInsert)
       {
         $ret = $ret && $this->preInsert($con);
@@ -1133,11 +1024,17 @@ abstract class BaseScore extends BaseObject  implements Persistent
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
   {
+    if (isset($alreadyDumpedObjects['Score'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['Score'][$this->getPrimaryKey()] = true;
     $keys = ScorePeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
@@ -1318,21 +1215,24 @@ abstract class BaseScore extends BaseObject  implements Persistent
    *
    * @param      object $copyObj An object of Score (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setDay($this->day);
-    $copyObj->setModel($this->model);
-    $copyObj->setModelId($this->model_id);
-    $copyObj->setViews($this->views);
-    $copyObj->setRatings($this->ratings);
-    $copyObj->setScore($this->score);
-    $copyObj->setUpdatedAt($this->updated_at);
-    $copyObj->setCreatedAt($this->created_at);
-
-    $copyObj->setNew(true);
-    $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    $copyObj->setDay($this->getDay());
+    $copyObj->setModel($this->getModel());
+    $copyObj->setModelId($this->getModelId());
+    $copyObj->setViews($this->getViews());
+    $copyObj->setRatings($this->getRatings());
+    $copyObj->setScore($this->getScore());
+    $copyObj->setUpdatedAt($this->getUpdatedAt());
+    $copyObj->setCreatedAt($this->getCreatedAt());
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -1398,13 +1298,13 @@ abstract class BaseScore extends BaseObject  implements Persistent
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -1415,10 +1315,21 @@ abstract class BaseScore extends BaseObject  implements Persistent
   }
 
   /**
+   * Return the string representation of this object
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    return (string) $this->exportTo(ScorePeer::DEFAULT_STRING_FORMAT);
+  }
+
+  /**
    * Catches calls to virtual methods
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BaseScore:' . $name))
     {
@@ -1426,20 +1337,6 @@ abstract class BaseScore extends BaseObject  implements Persistent
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

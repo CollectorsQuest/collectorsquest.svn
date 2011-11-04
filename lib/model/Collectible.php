@@ -413,11 +413,11 @@ class Collectible extends BaseCollectible
   }
 }
 
-sfPropelBehavior::add('Collectible', array('sfPropelActAsTaggableBehavior'));
+sfPropelBehavior::add('Collectible', array('IceTaggableBehavior'));
 
 sfPropelBehavior::add(
   'Collectible', array(
-  'sfPropelActAsSluggableBehavior' => array(
+  'PropelActAsSluggableBehavior' => array(
     'columns' => array(
       'from' => CollectiblePeer::NAME,
       'to' => CollectiblePeer::SLUG

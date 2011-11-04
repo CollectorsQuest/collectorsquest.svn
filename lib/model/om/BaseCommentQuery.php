@@ -85,705 +85,764 @@
  */
 abstract class BaseCommentQuery extends ModelCriteria
 {
-
-  /**
-   * Initializes internal state of BaseCommentQuery object.
-   *
-   * @param     string $dbName The dabase name
-   * @param     string $modelName The phpName of a model, e.g. 'Book'
-   * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
-   */
-  public function __construct($dbName = 'propel', $modelName = 'Comment', $modelAlias = null)
-  {
-    parent::__construct($dbName, $modelName, $modelAlias);
-  }
-
-  /**
-   * Returns a new CommentQuery object.
-   *
-   * @param     string $modelAlias The alias of a model in the query
-   * @param     Criteria $criteria Optional Criteria to build the query from
-   *
-   * @return    CommentQuery
-   */
-  public static function create($modelAlias = null, $criteria = null)
-  {
-    if ($criteria instanceof CommentQuery)
+    
+    /**
+     * Initializes internal state of BaseCommentQuery object.
+     *
+     * @param     string $dbName The dabase name
+     * @param     string $modelName The phpName of a model, e.g. 'Book'
+     * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+     */
+    public function __construct($dbName = 'propel', $modelName = 'Comment', $modelAlias = null)
     {
-      return $criteria;
+        parent::__construct($dbName, $modelName, $modelAlias);
     }
-    $query = new CommentQuery();
-    if (null !== $modelAlias)
+
+    /**
+     * Returns a new CommentQuery object.
+     *
+     * @param     string $modelAlias The alias of a model in the query
+     * @param     Criteria $criteria Optional Criteria to build the query from
+     *
+     * @return    CommentQuery
+     */
+    public static function create($modelAlias = null, $criteria = null)
     {
-      $query->setModelAlias($modelAlias);
+        if ($criteria instanceof CommentQuery) {
+            return $criteria;
+        }
+        $query = new CommentQuery();
+        if (null !== $modelAlias) {
+            $query->setModelAlias($modelAlias);
+        }
+        if ($criteria instanceof Criteria) {
+            $query->mergeWith($criteria);
+        }
+        return $query;
     }
-    if ($criteria instanceof Criteria)
+
+    /**
+     * Find object by primary key
+     * Use instance pooling to avoid a database query if the object exists
+     * <code>
+     * $obj  = $c->findPk(12, $con);
+     * </code>
+     * @param     mixed $key Primary key to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    Comment|array|mixed the result, formatted by the current formatter
+     */
+    public function findPk($key, $con = null)
     {
-      $query->mergeWith($criteria);
+        if ((null !== ($obj = CommentPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
+            // the object is alredy in the instance pool
+            return $obj;
+        } else {
+            // the object has not been requested yet, or the formatter is not an object formatter
+            $criteria = $this->isKeepQuery() ? clone $this : $this;
+            $stmt = $criteria
+                ->filterByPrimaryKey($key)
+                ->getSelectStatement($con);
+            return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+        }
     }
-    return $query;
-  }
 
-  /**
-   * Find object by primary key
-   * Use instance pooling to avoid a database query if the object exists
-   * <code>
-   * $obj  = $c->findPk(12, $con);
-   * </code>
-   * @param     mixed $key Primary key to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    Comment|array|mixed the result, formatted by the current formatter
-   */
-  public function findPk($key, $con = null)
-  {
-    if ((null !== ($obj = CommentPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter())
+    /**
+     * Find objects by primary key
+     * <code>
+     * $objs = $c->findPks(array(12, 56, 832), $con);
+     * </code>
+     * @param     array $keys Primary keys to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
+     */
+    public function findPks($keys, $con = null)
     {
-      // the object is alredy in the instance pool
-      return $obj;
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        return $this
+            ->filterByPrimaryKeys($keys)
+            ->find($con);
     }
-    else
+
+    /**
+     * Filter the query by primary key
+     *
+     * @param     mixed $key Primary key to use for the query
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKey($key)
     {
-      // the object has not been requested yet, or the formatter is not an object formatter
-      $criteria = $this->isKeepQuery() ? clone $this : $this;
-      $stmt = $criteria
-        ->filterByPrimaryKey($key)
-        ->getSelectStatement($con);
-      return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+        return $this->addUsingAlias(CommentPeer::ID, $key, Criteria::EQUAL);
     }
-  }
 
-  /**
-   * Find objects by primary key
-   * <code>
-   * $objs = $c->findPks(array(12, 56, 832), $con);
-   * </code>
-   * @param     array $keys Primary keys to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
-   */
-  public function findPks($keys, $con = null)
-  {  
-    $criteria = $this->isKeepQuery() ? clone $this : $this;
-    return $this
-      ->filterByPrimaryKeys($keys)
-      ->find($con);
-  }
-
-  /**
-   * Filter the query by primary key
-   *
-   * @param     mixed $key Primary key to use for the query
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKey($key)
-  {
-    return $this->addUsingAlias(CommentPeer::ID, $key, Criteria::EQUAL);
-  }
-
-  /**
-   * Filter the query by a list of primary keys
-   *
-   * @param     array $keys The list of primary key to use for the query
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKeys($keys)
-  {
-    return $this->addUsingAlias(CommentPeer::ID, $keys, Criteria::IN);
-  }
-
-  /**
-   * Filter the query on the id column
-   * 
-   * @param     int|array $id The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterById($id = null, $comparison = null)
-  {
-    if (is_array($id) && null === $comparison)
+    /**
+     * Filter the query by a list of primary keys
+     *
+     * @param     array $keys The list of primary key to use for the query
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKeys($keys)
     {
-      $comparison = Criteria::IN;
+        return $this->addUsingAlias(CommentPeer::ID, $keys, Criteria::IN);
     }
-    return $this->addUsingAlias(CommentPeer::ID, $id, $comparison);
-  }
 
-  /**
-   * Filter the query on the disqus_id column
-   * 
-   * @param     string $disqusId The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByDisqusId($disqusId = null, $comparison = null)
-  {
-    if (null === $comparison)
+    /**
+     * Filter the query on the id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterById(1234); // WHERE id = 1234
+     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
+     * $query->filterById(array('min' => 12)); // WHERE id > 12
+     * </code>
+     *
+     * @param     mixed $id The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterById($id = null, $comparison = null)
     {
-      if (is_array($disqusId))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $disqusId))
-      {
-        $disqusId = str_replace('*', '%', $disqusId);
-        $comparison = Criteria::LIKE;
-      }
+        if (is_array($id) && null === $comparison) {
+            $comparison = Criteria::IN;
+        }
+        return $this->addUsingAlias(CommentPeer::ID, $id, $comparison);
     }
-    return $this->addUsingAlias(CommentPeer::DISQUS_ID, $disqusId, $comparison);
-  }
 
-  /**
-   * Filter the query on the parent_id column
-   * 
-   * @param     string $parentId The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByParentId($parentId = null, $comparison = null)
-  {
-    if (null === $comparison)
+    /**
+     * Filter the query on the disqus_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByDisqusId('fooValue');   // WHERE disqus_id = 'fooValue'
+     * $query->filterByDisqusId('%fooValue%'); // WHERE disqus_id LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $disqusId The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByDisqusId($disqusId = null, $comparison = null)
     {
-      if (is_array($parentId))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $parentId))
-      {
-        $parentId = str_replace('*', '%', $parentId);
-        $comparison = Criteria::LIKE;
-      }
+        if (null === $comparison) {
+            if (is_array($disqusId)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $disqusId)) {
+                $disqusId = str_replace('*', '%', $disqusId);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CommentPeer::DISQUS_ID, $disqusId, $comparison);
     }
-    return $this->addUsingAlias(CommentPeer::PARENT_ID, $parentId, $comparison);
-  }
 
-  /**
-   * Filter the query on the collection_id column
-   * 
-   * @param     int|array $collectionId The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByCollectionId($collectionId = null, $comparison = null)
-  {
-    if (is_array($collectionId))
+    /**
+     * Filter the query on the parent_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByParentId('fooValue');   // WHERE parent_id = 'fooValue'
+     * $query->filterByParentId('%fooValue%'); // WHERE parent_id LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $parentId The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByParentId($parentId = null, $comparison = null)
     {
-      $useMinMax = false;
-      if (isset($collectionId['min']))
-      {
-        $this->addUsingAlias(CommentPeer::COLLECTION_ID, $collectionId['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($collectionId['max']))
-      {
-        $this->addUsingAlias(CommentPeer::COLLECTION_ID, $collectionId['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
+        if (null === $comparison) {
+            if (is_array($parentId)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $parentId)) {
+                $parentId = str_replace('*', '%', $parentId);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CommentPeer::PARENT_ID, $parentId, $comparison);
+    }
+
+    /**
+     * Filter the query on the collection_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCollectionId(1234); // WHERE collection_id = 1234
+     * $query->filterByCollectionId(array(12, 34)); // WHERE collection_id IN (12, 34)
+     * $query->filterByCollectionId(array('min' => 12)); // WHERE collection_id > 12
+     * </code>
+     *
+     * @see       filterByCollection()
+     *
+     * @param     mixed $collectionId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByCollectionId($collectionId = null, $comparison = null)
+    {
+        if (is_array($collectionId)) {
+            $useMinMax = false;
+            if (isset($collectionId['min'])) {
+                $this->addUsingAlias(CommentPeer::COLLECTION_ID, $collectionId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($collectionId['max'])) {
+                $this->addUsingAlias(CommentPeer::COLLECTION_ID, $collectionId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CommentPeer::COLLECTION_ID, $collectionId, $comparison);
+    }
+
+    /**
+     * Filter the query on the collectible_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCollectibleId(1234); // WHERE collectible_id = 1234
+     * $query->filterByCollectibleId(array(12, 34)); // WHERE collectible_id IN (12, 34)
+     * $query->filterByCollectibleId(array('min' => 12)); // WHERE collectible_id > 12
+     * </code>
+     *
+     * @see       filterByCollectible()
+     *
+     * @param     mixed $collectibleId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByCollectibleId($collectibleId = null, $comparison = null)
+    {
+        if (is_array($collectibleId)) {
+            $useMinMax = false;
+            if (isset($collectibleId['min'])) {
+                $this->addUsingAlias(CommentPeer::COLLECTIBLE_ID, $collectibleId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($collectibleId['max'])) {
+                $this->addUsingAlias(CommentPeer::COLLECTIBLE_ID, $collectibleId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CommentPeer::COLLECTIBLE_ID, $collectibleId, $comparison);
+    }
+
+    /**
+     * Filter the query on the collector_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCollectorId(1234); // WHERE collector_id = 1234
+     * $query->filterByCollectorId(array(12, 34)); // WHERE collector_id IN (12, 34)
+     * $query->filterByCollectorId(array('min' => 12)); // WHERE collector_id > 12
+     * </code>
+     *
+     * @see       filterByCollector()
+     *
+     * @param     mixed $collectorId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByCollectorId($collectorId = null, $comparison = null)
+    {
+        if (is_array($collectorId)) {
+            $useMinMax = false;
+            if (isset($collectorId['min'])) {
+                $this->addUsingAlias(CommentPeer::COLLECTOR_ID, $collectorId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($collectorId['max'])) {
+                $this->addUsingAlias(CommentPeer::COLLECTOR_ID, $collectorId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CommentPeer::COLLECTOR_ID, $collectorId, $comparison);
+    }
+
+    /**
+     * Filter the query on the author_name column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByAuthorName('fooValue');   // WHERE author_name = 'fooValue'
+     * $query->filterByAuthorName('%fooValue%'); // WHERE author_name LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $authorName The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByAuthorName($authorName = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($authorName)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $authorName)) {
+                $authorName = str_replace('*', '%', $authorName);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CommentPeer::AUTHOR_NAME, $authorName, $comparison);
+    }
+
+    /**
+     * Filter the query on the author_email column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByAuthorEmail('fooValue');   // WHERE author_email = 'fooValue'
+     * $query->filterByAuthorEmail('%fooValue%'); // WHERE author_email LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $authorEmail The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByAuthorEmail($authorEmail = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($authorEmail)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $authorEmail)) {
+                $authorEmail = str_replace('*', '%', $authorEmail);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CommentPeer::AUTHOR_EMAIL, $authorEmail, $comparison);
+    }
+
+    /**
+     * Filter the query on the author_url column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByAuthorUrl('fooValue');   // WHERE author_url = 'fooValue'
+     * $query->filterByAuthorUrl('%fooValue%'); // WHERE author_url LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $authorUrl The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByAuthorUrl($authorUrl = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($authorUrl)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $authorUrl)) {
+                $authorUrl = str_replace('*', '%', $authorUrl);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CommentPeer::AUTHOR_URL, $authorUrl, $comparison);
+    }
+
+    /**
+     * Filter the query on the subject column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterBySubject('fooValue');   // WHERE subject = 'fooValue'
+     * $query->filterBySubject('%fooValue%'); // WHERE subject LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $subject The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterBySubject($subject = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($subject)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $subject)) {
+                $subject = str_replace('*', '%', $subject);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CommentPeer::SUBJECT, $subject, $comparison);
+    }
+
+    /**
+     * Filter the query on the body column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByBody('fooValue');   // WHERE body = 'fooValue'
+     * $query->filterByBody('%fooValue%'); // WHERE body LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $body The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByBody($body = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($body)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $body)) {
+                $body = str_replace('*', '%', $body);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CommentPeer::BODY, $body, $comparison);
+    }
+
+    /**
+     * Filter the query on the ip_address column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByIpAddress('fooValue');   // WHERE ip_address = 'fooValue'
+     * $query->filterByIpAddress('%fooValue%'); // WHERE ip_address LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $ipAddress The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByIpAddress($ipAddress = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($ipAddress)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $ipAddress)) {
+                $ipAddress = str_replace('*', '%', $ipAddress);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CommentPeer::IP_ADDRESS, $ipAddress, $comparison);
+    }
+
+    /**
+     * Filter the query on the created_at column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCreatedAt('2011-03-14'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt('now'); // WHERE created_at = '2011-03-14'
+     * $query->filterByCreatedAt(array('max' => 'yesterday')); // WHERE created_at > '2011-03-13'
+     * </code>
+     *
+     * @param     mixed $createdAt The value to use as filter.
+     *              Values can be integers (unix timestamps), DateTime objects, or strings.
+     *              Empty strings are treated as NULL.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByCreatedAt($createdAt = null, $comparison = null)
+    {
+        if (is_array($createdAt)) {
+            $useMinMax = false;
+            if (isset($createdAt['min'])) {
+                $this->addUsingAlias(CommentPeer::CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($createdAt['max'])) {
+                $this->addUsingAlias(CommentPeer::CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CommentPeer::CREATED_AT, $createdAt, $comparison);
+    }
+
+    /**
+     * Filter the query by a related Collection object
+     *
+     * @param     Collection|PropelCollection $collection The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByCollection($collection, $comparison = null)
+    {
+        if ($collection instanceof Collection) {
+            return $this
+                ->addUsingAlias(CommentPeer::COLLECTION_ID, $collection->getId(), $comparison);
+        } elseif ($collection instanceof PropelCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+            return $this
+                ->addUsingAlias(CommentPeer::COLLECTION_ID, $collection->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByCollection() only accepts arguments of type Collection or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Collection relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function joinCollection($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Collection');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Collection');
+        }
+
         return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
     }
-    return $this->addUsingAlias(CommentPeer::COLLECTION_ID, $collectionId, $comparison);
-  }
 
-  /**
-   * Filter the query on the collectible_id column
-   * 
-   * @param     int|array $collectibleId The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByCollectibleId($collectibleId = null, $comparison = null)
-  {
-    if (is_array($collectibleId))
+    /**
+     * Use the Collection relation Collection object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CollectionQuery A secondary query class using the current class as primary query
+     */
+    public function useCollectionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
-      $useMinMax = false;
-      if (isset($collectibleId['min']))
-      {
-        $this->addUsingAlias(CommentPeer::COLLECTIBLE_ID, $collectibleId['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($collectibleId['max']))
-      {
-        $this->addUsingAlias(CommentPeer::COLLECTIBLE_ID, $collectibleId['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
+        return $this
+            ->joinCollection($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Collection', 'CollectionQuery');
+    }
+
+    /**
+     * Filter the query by a related Collectible object
+     *
+     * @param     Collectible|PropelCollection $collectible The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByCollectible($collectible, $comparison = null)
+    {
+        if ($collectible instanceof Collectible) {
+            return $this
+                ->addUsingAlias(CommentPeer::COLLECTIBLE_ID, $collectible->getId(), $comparison);
+        } elseif ($collectible instanceof PropelCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+            return $this
+                ->addUsingAlias(CommentPeer::COLLECTIBLE_ID, $collectible->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByCollectible() only accepts arguments of type Collectible or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Collectible relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function joinCollectible($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Collectible');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Collectible');
+        }
+
         return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
     }
-    return $this->addUsingAlias(CommentPeer::COLLECTIBLE_ID, $collectibleId, $comparison);
-  }
 
-  /**
-   * Filter the query on the collector_id column
-   * 
-   * @param     int|array $collectorId The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByCollectorId($collectorId = null, $comparison = null)
-  {
-    if (is_array($collectorId))
+    /**
+     * Use the Collectible relation Collectible object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CollectibleQuery A secondary query class using the current class as primary query
+     */
+    public function useCollectibleQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
-      $useMinMax = false;
-      if (isset($collectorId['min']))
-      {
-        $this->addUsingAlias(CommentPeer::COLLECTOR_ID, $collectorId['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($collectorId['max']))
-      {
-        $this->addUsingAlias(CommentPeer::COLLECTOR_ID, $collectorId['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
+        return $this
+            ->joinCollectible($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Collectible', 'CollectibleQuery');
+    }
+
+    /**
+     * Filter the query by a related Collector object
+     *
+     * @param     Collector|PropelCollection $collector The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function filterByCollector($collector, $comparison = null)
+    {
+        if ($collector instanceof Collector) {
+            return $this
+                ->addUsingAlias(CommentPeer::COLLECTOR_ID, $collector->getId(), $comparison);
+        } elseif ($collector instanceof PropelCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+            return $this
+                ->addUsingAlias(CommentPeer::COLLECTOR_ID, $collector->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByCollector() only accepts arguments of type Collector or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Collector relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function joinCollector($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Collector');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Collector');
+        }
+
         return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
     }
-    return $this->addUsingAlias(CommentPeer::COLLECTOR_ID, $collectorId, $comparison);
-  }
 
-  /**
-   * Filter the query on the author_name column
-   * 
-   * @param     string $authorName The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByAuthorName($authorName = null, $comparison = null)
-  {
-    if (null === $comparison)
+    /**
+     * Use the Collector relation Collector object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CollectorQuery A secondary query class using the current class as primary query
+     */
+    public function useCollectorQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
-      if (is_array($authorName))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $authorName))
-      {
-        $authorName = str_replace('*', '%', $authorName);
-        $comparison = Criteria::LIKE;
-      }
+        return $this
+            ->joinCollector($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Collector', 'CollectorQuery');
     }
-    return $this->addUsingAlias(CommentPeer::AUTHOR_NAME, $authorName, $comparison);
-  }
 
-  /**
-   * Filter the query on the author_email column
-   * 
-   * @param     string $authorEmail The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByAuthorEmail($authorEmail = null, $comparison = null)
-  {
-    if (null === $comparison)
+    /**
+     * Exclude object from result
+     *
+     * @param     Comment $comment Object to remove from the list of results
+     *
+     * @return    CommentQuery The current query, for fluid interface
+     */
+    public function prune($comment = null)
     {
-      if (is_array($authorEmail))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $authorEmail))
-      {
-        $authorEmail = str_replace('*', '%', $authorEmail);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(CommentPeer::AUTHOR_EMAIL, $authorEmail, $comparison);
-  }
+        if ($comment) {
+            $this->addUsingAlias(CommentPeer::ID, $comment->getId(), Criteria::NOT_EQUAL);
+        }
 
-  /**
-   * Filter the query on the author_url column
-   * 
-   * @param     string $authorUrl The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByAuthorUrl($authorUrl = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($authorUrl))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $authorUrl))
-      {
-        $authorUrl = str_replace('*', '%', $authorUrl);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(CommentPeer::AUTHOR_URL, $authorUrl, $comparison);
-  }
-
-  /**
-   * Filter the query on the subject column
-   * 
-   * @param     string $subject The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterBySubject($subject = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($subject))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $subject))
-      {
-        $subject = str_replace('*', '%', $subject);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(CommentPeer::SUBJECT, $subject, $comparison);
-  }
-
-  /**
-   * Filter the query on the body column
-   * 
-   * @param     string $body The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByBody($body = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($body))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $body))
-      {
-        $body = str_replace('*', '%', $body);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(CommentPeer::BODY, $body, $comparison);
-  }
-
-  /**
-   * Filter the query on the ip_address column
-   * 
-   * @param     string $ipAddress The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByIpAddress($ipAddress = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($ipAddress))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $ipAddress))
-      {
-        $ipAddress = str_replace('*', '%', $ipAddress);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(CommentPeer::IP_ADDRESS, $ipAddress, $comparison);
-  }
-
-  /**
-   * Filter the query on the created_at column
-   * 
-   * @param     string|array $createdAt The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByCreatedAt($createdAt = null, $comparison = null)
-  {
-    if (is_array($createdAt))
-    {
-      $useMinMax = false;
-      if (isset($createdAt['min']))
-      {
-        $this->addUsingAlias(CommentPeer::CREATED_AT, $createdAt['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($createdAt['max']))
-      {
-        $this->addUsingAlias(CommentPeer::CREATED_AT, $createdAt['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
         return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
     }
-    return $this->addUsingAlias(CommentPeer::CREATED_AT, $createdAt, $comparison);
-  }
-
-  /**
-   * Filter the query by a related Collection object
-   *
-   * @param     Collection $collection  the related object to use as filter
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByCollection($collection, $comparison = null)
-  {
-    return $this
-      ->addUsingAlias(CommentPeer::COLLECTION_ID, $collection->getId(), $comparison);
-  }
-
-  /**
-   * Adds a JOIN clause to the query using the Collection relation
-   * 
-   * @param     string $relationAlias optional alias for the relation
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function joinCollection($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-  {
-    $tableMap = $this->getTableMap();
-    $relationMap = $tableMap->getRelation('Collection');
-    
-    // create a ModelJoin object for this join
-    $join = new ModelJoin();
-    $join->setJoinType($joinType);
-    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-    if ($previousJoin = $this->getPreviousJoin())
-    {
-      $join->setPreviousJoin($previousJoin);
-    }
-    
-    // add the ModelJoin to the current object
-    if($relationAlias)
-    {
-      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-      $this->addJoinObject($join, $relationAlias);
-    }
-    else
-    {
-      $this->addJoinObject($join, 'Collection');
-    }
-    
-    return $this;
-  }
-
-  /**
-   * Use the Collection relation Collection object
-   *
-   * @see       useQuery()
-   * 
-   * @param     string $relationAlias optional alias for the relation,
-   *                                   to be used as main alias in the secondary query
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CollectionQuery A secondary query class using the current class as primary query
-   */
-  public function useCollectionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-  {
-    return $this
-      ->joinCollection($relationAlias, $joinType)
-      ->useQuery($relationAlias ? $relationAlias : 'Collection', 'CollectionQuery');
-  }
-
-  /**
-   * Filter the query by a related Collectible object
-   *
-   * @param     Collectible $collectible  the related object to use as filter
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByCollectible($collectible, $comparison = null)
-  {
-    return $this
-      ->addUsingAlias(CommentPeer::COLLECTIBLE_ID, $collectible->getId(), $comparison);
-  }
-
-  /**
-   * Adds a JOIN clause to the query using the Collectible relation
-   * 
-   * @param     string $relationAlias optional alias for the relation
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function joinCollectible($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-  {
-    $tableMap = $this->getTableMap();
-    $relationMap = $tableMap->getRelation('Collectible');
-    
-    // create a ModelJoin object for this join
-    $join = new ModelJoin();
-    $join->setJoinType($joinType);
-    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-    if ($previousJoin = $this->getPreviousJoin())
-    {
-      $join->setPreviousJoin($previousJoin);
-    }
-    
-    // add the ModelJoin to the current object
-    if($relationAlias)
-    {
-      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-      $this->addJoinObject($join, $relationAlias);
-    }
-    else
-    {
-      $this->addJoinObject($join, 'Collectible');
-    }
-    
-    return $this;
-  }
-
-  /**
-   * Use the Collectible relation Collectible object
-   *
-   * @see       useQuery()
-   * 
-   * @param     string $relationAlias optional alias for the relation,
-   *                                   to be used as main alias in the secondary query
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CollectibleQuery A secondary query class using the current class as primary query
-   */
-  public function useCollectibleQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-  {
-    return $this
-      ->joinCollectible($relationAlias, $joinType)
-      ->useQuery($relationAlias ? $relationAlias : 'Collectible', 'CollectibleQuery');
-  }
-
-  /**
-   * Filter the query by a related Collector object
-   *
-   * @param     Collector $collector  the related object to use as filter
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function filterByCollector($collector, $comparison = null)
-  {
-    return $this
-      ->addUsingAlias(CommentPeer::COLLECTOR_ID, $collector->getId(), $comparison);
-  }
-
-  /**
-   * Adds a JOIN clause to the query using the Collector relation
-   * 
-   * @param     string $relationAlias optional alias for the relation
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function joinCollector($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-  {
-    $tableMap = $this->getTableMap();
-    $relationMap = $tableMap->getRelation('Collector');
-    
-    // create a ModelJoin object for this join
-    $join = new ModelJoin();
-    $join->setJoinType($joinType);
-    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-    if ($previousJoin = $this->getPreviousJoin())
-    {
-      $join->setPreviousJoin($previousJoin);
-    }
-    
-    // add the ModelJoin to the current object
-    if($relationAlias)
-    {
-      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-      $this->addJoinObject($join, $relationAlias);
-    }
-    else
-    {
-      $this->addJoinObject($join, 'Collector');
-    }
-    
-    return $this;
-  }
-
-  /**
-   * Use the Collector relation Collector object
-   *
-   * @see       useQuery()
-   * 
-   * @param     string $relationAlias optional alias for the relation,
-   *                                   to be used as main alias in the secondary query
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CollectorQuery A secondary query class using the current class as primary query
-   */
-  public function useCollectorQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-  {
-    return $this
-      ->joinCollector($relationAlias, $joinType)
-      ->useQuery($relationAlias ? $relationAlias : 'Collector', 'CollectorQuery');
-  }
-
-  /**
-   * Exclude object from result
-   *
-   * @param     Comment $comment Object to remove from the list of results
-   *
-   * @return    CommentQuery The current query, for fluid interface
-   */
-  public function prune($comment = null)
-  {
-    if ($comment)
-    {
-      $this->addUsingAlias(CommentPeer::ID, $comment->getId(), Criteria::NOT_EQUAL);
-    }
-    
-    return $this;
-  }
 
 }

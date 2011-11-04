@@ -71,13 +71,13 @@ class wpPostTableMap extends TableMap
   public function buildRelations()
   {
     $this->addRelation('wpUser', 'wpUser', RelationMap::MANY_TO_ONE, array('post_author' => 'id', ), null, null);
-    $this->addRelation('wpPostMeta', 'wpPostMeta', RelationMap::ONE_TO_MANY, array('id' => 'post_id', ), null, null);
+    $this->addRelation('wpPostMeta', 'wpPostMeta', RelationMap::ONE_TO_MANY, array('id' => 'post_id', ), null, null, 'wpPostMetas');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

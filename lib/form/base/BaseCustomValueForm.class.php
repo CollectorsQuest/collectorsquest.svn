@@ -27,7 +27,7 @@ abstract class BaseCustomValueForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'             => new sfValidatorPropelChoice(array('model' => 'CustomValue', 'column' => 'id', 'required' => false)),
+      'id'             => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'collection_id'  => new sfValidatorPropelChoice(array('model' => 'Collection', 'column' => 'id')),
       'collectible_id' => new sfValidatorPropelChoice(array('model' => 'Collectible', 'column' => 'id')),
       'field_id'       => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),

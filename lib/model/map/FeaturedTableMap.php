@@ -48,8 +48,8 @@ class FeaturedTableMap extends TableMap
     $this->addColumn('EBLOB', 'Eblob', 'LONGVARCHAR', false, null, null);
     $this->addColumn('START_DATE', 'StartDate', 'DATE', false, null, null);
     $this->addColumn('END_DATE', 'EndDate', 'DATE', false, null, null);
-    $this->addColumn('IS_ACTIVE', 'IsActive', 'BOOLEAN', true, null, true);
-    $this->addColumn('POSITION', 'Position', 'TINYINT', false, null, 1);
+    $this->addColumn('IS_ACTIVE', 'IsActive', 'BOOLEAN', true, 1, true);
+    $this->addColumn('POSITION', 'Position', 'TINYINT', false, null, 0);
     // validators
   }
 
@@ -61,9 +61,9 @@ class FeaturedTableMap extends TableMap
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

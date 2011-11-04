@@ -51,13 +51,13 @@ class CustomFieldTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('CollectionCategoryField', 'CollectionCategoryField', RelationMap::ONE_TO_MANY, array('id' => 'custom_field_id', ), null, null);
+    $this->addRelation('CollectionCategoryField', 'CollectionCategoryField', RelationMap::ONE_TO_MANY, array('id' => 'custom_field_id', ), null, null, 'CollectionCategoryFields');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

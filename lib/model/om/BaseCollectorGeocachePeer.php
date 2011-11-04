@@ -25,12 +25,15 @@ abstract class BaseCollectorGeocachePeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'CollectorGeocacheTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 12;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 12;
 
   /** the column name for the ID field */
   const ID = 'collector_geocache.ID';
@@ -68,6 +71,9 @@ abstract class BaseCollectorGeocachePeer
   /** the column name for the TIMEZONE field */
   const TIMEZONE = 'collector_geocache.TIMEZONE';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of CollectorGeocache objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -77,20 +83,13 @@ abstract class BaseCollectorGeocachePeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'CollectorId', 'Country', 'CountryIso3166', 'State', 'County', 'City', 'ZipPostal', 'Address', 'Latitude', 'Longitude', 'Timezone', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectorId', 'country', 'countryIso3166', 'state', 'county', 'city', 'zipPostal', 'address', 'latitude', 'longitude', 'timezone', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTOR_ID, self::COUNTRY, self::COUNTRY_ISO3166, self::STATE, self::COUNTY, self::CITY, self::ZIP_POSTAL, self::ADDRESS, self::LATITUDE, self::LONGITUDE, self::TIMEZONE, ),
@@ -105,7 +104,7 @@ abstract class BaseCollectorGeocachePeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectorId' => 1, 'Country' => 2, 'CountryIso3166' => 3, 'State' => 4, 'County' => 5, 'City' => 6, 'ZipPostal' => 7, 'Address' => 8, 'Latitude' => 9, 'Longitude' => 10, 'Timezone' => 11, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectorId' => 1, 'country' => 2, 'countryIso3166' => 3, 'state' => 4, 'county' => 5, 'city' => 6, 'zipPostal' => 7, 'address' => 8, 'latitude' => 9, 'longitude' => 10, 'timezone' => 11, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTOR_ID => 1, self::COUNTRY => 2, self::COUNTRY_ISO3166 => 3, self::STATE => 4, self::COUNTY => 5, self::CITY => 6, self::ZIP_POSTAL => 7, self::ADDRESS => 8, self::LATITUDE => 9, self::LONGITUDE => 10, self::TIMEZONE => 11, ),
@@ -272,7 +271,7 @@ abstract class BaseCollectorGeocachePeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -292,7 +291,7 @@ abstract class BaseCollectorGeocachePeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -354,7 +353,7 @@ abstract class BaseCollectorGeocachePeer
    * @param      CollectorGeocache $value A CollectorGeocache object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(CollectorGeocache $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -460,7 +459,7 @@ abstract class BaseCollectorGeocachePeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -525,7 +524,7 @@ abstract class BaseCollectorGeocachePeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + CollectorGeocachePeer::NUM_COLUMNS;
+      $col = $startcol + CollectorGeocachePeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -536,6 +535,7 @@ abstract class BaseCollectorGeocachePeer
     }
     return array($obj, $col);
   }
+
 
   /**
    * Returns the number of rows matching criteria, joining the related Collector table
@@ -565,9 +565,9 @@ abstract class BaseCollectorGeocachePeer
     {
       CollectorGeocachePeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -619,7 +619,7 @@ abstract class BaseCollectorGeocachePeer
     }
 
     CollectorGeocachePeer::addSelectColumns($criteria);
-    $startcol = (CollectorGeocachePeer::NUM_COLUMNS - CollectorGeocachePeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol = CollectorGeocachePeer::NUM_HYDRATE_COLUMNS;
     CollectorPeer::addSelectColumns($criteria);
 
     $criteria->addJoin(CollectorGeocachePeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
@@ -706,9 +706,9 @@ abstract class BaseCollectorGeocachePeer
     {
       CollectorGeocachePeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -760,10 +760,10 @@ abstract class BaseCollectorGeocachePeer
     }
 
     CollectorGeocachePeer::addSelectColumns($criteria);
-    $startcol2 = (CollectorGeocachePeer::NUM_COLUMNS - CollectorGeocachePeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = CollectorGeocachePeer::NUM_HYDRATE_COLUMNS;
 
     CollectorPeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + (CollectorPeer::NUM_COLUMNS - CollectorPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol3 = $startcol2 + CollectorPeer::NUM_HYDRATE_COLUMNS;
 
     $criteria->addJoin(CollectorGeocachePeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
 
@@ -861,7 +861,7 @@ abstract class BaseCollectorGeocachePeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a CollectorGeocache or Criteria object.
+   * Performs an INSERT on the database, given a CollectorGeocache or Criteria object.
    *
    * @param      mixed $values Criteria or CollectorGeocache object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -912,7 +912,7 @@ abstract class BaseCollectorGeocachePeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a CollectorGeocache or Criteria object.
+   * Performs an UPDATE on the database, given a CollectorGeocache or Criteria object.
    *
    * @param      mixed $values Criteria or CollectorGeocache object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -956,11 +956,12 @@ abstract class BaseCollectorGeocachePeer
   }
 
   /**
-   * Method to DELETE all rows from the collector_geocache table.
+   * Deletes all rows from the collector_geocache table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -989,7 +990,7 @@ abstract class BaseCollectorGeocachePeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a CollectorGeocache or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a CollectorGeocache or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or CollectorGeocache object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -1064,7 +1065,7 @@ abstract class BaseCollectorGeocachePeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(CollectorGeocache $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

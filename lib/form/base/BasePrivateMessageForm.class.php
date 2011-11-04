@@ -30,7 +30,7 @@ abstract class BasePrivateMessageForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'           => new sfValidatorPropelChoice(array('model' => 'PrivateMessage', 'column' => 'id', 'required' => false)),
+      'id'           => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'thread'       => new sfValidatorString(array('max_length' => 32, 'required' => false)),
       'sender'       => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),
       'receiver'     => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),

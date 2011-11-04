@@ -21,7 +21,7 @@ abstract class BaseTermRelationshipForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'       => new sfValidatorPropelChoice(array('model' => 'TermRelationship', 'column' => 'id', 'required' => false)),
+      'id'       => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'term_id'  => new sfValidatorPropelChoice(array('model' => 'Term', 'column' => 'id', 'required' => false)),
       'model'    => new sfValidatorString(array('max_length' => 30, 'required' => false)),
       'model_id' => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),

@@ -25,12 +25,15 @@ abstract class BasePlaylistPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'PlaylistTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 9;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 9;
 
   /** the column name for the ID field */
   const ID = 'playlist.ID';
@@ -59,6 +62,9 @@ abstract class BasePlaylistPeer
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'playlist.CREATED_AT';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of Playlist objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -68,20 +74,13 @@ abstract class BasePlaylistPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'Title', 'Slug', 'Description', 'Type', 'Length', 'IsPublished', 'PublishedAt', 'CreatedAt', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'title', 'slug', 'description', 'type', 'length', 'isPublished', 'publishedAt', 'createdAt', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::TITLE, self::SLUG, self::DESCRIPTION, self::TYPE, self::LENGTH, self::IS_PUBLISHED, self::PUBLISHED_AT, self::CREATED_AT, ),
@@ -96,7 +95,7 @@ abstract class BasePlaylistPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Title' => 1, 'Slug' => 2, 'Description' => 3, 'Type' => 4, 'Length' => 5, 'IsPublished' => 6, 'PublishedAt' => 7, 'CreatedAt' => 8, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'title' => 1, 'slug' => 2, 'description' => 3, 'type' => 4, 'length' => 5, 'isPublished' => 6, 'publishedAt' => 7, 'createdAt' => 8, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::TITLE => 1, self::SLUG => 2, self::DESCRIPTION => 3, self::TYPE => 4, self::LENGTH => 5, self::IS_PUBLISHED => 6, self::PUBLISHED_AT => 7, self::CREATED_AT => 8, ),
@@ -257,7 +256,7 @@ abstract class BasePlaylistPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -277,7 +276,7 @@ abstract class BasePlaylistPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -339,7 +338,7 @@ abstract class BasePlaylistPeer
    * @param      Playlist $value A Playlist object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(Playlist $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -445,7 +444,7 @@ abstract class BasePlaylistPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -510,7 +509,7 @@ abstract class BasePlaylistPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + PlaylistPeer::NUM_COLUMNS;
+      $col = $startcol + PlaylistPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -521,6 +520,7 @@ abstract class BasePlaylistPeer
     }
     return array($obj, $col);
   }
+
   /**
    * Returns the TableMap related to this peer.
    * This method is not needed for general use but a specific application could have a need.
@@ -562,7 +562,7 @@ abstract class BasePlaylistPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a Playlist or Criteria object.
+   * Performs an INSERT on the database, given a Playlist or Criteria object.
    *
    * @param      mixed $values Criteria or Playlist object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -613,7 +613,7 @@ abstract class BasePlaylistPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a Playlist or Criteria object.
+   * Performs an UPDATE on the database, given a Playlist or Criteria object.
    *
    * @param      mixed $values Criteria or Playlist object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -657,11 +657,12 @@ abstract class BasePlaylistPeer
   }
 
   /**
-   * Method to DELETE all rows from the playlist table.
+   * Deletes all rows from the playlist table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -690,7 +691,7 @@ abstract class BasePlaylistPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a Playlist or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a Playlist or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or Playlist object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -765,7 +766,7 @@ abstract class BasePlaylistPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(Playlist $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

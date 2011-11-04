@@ -484,19 +484,30 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_price_negotiable] column.
+   * Sets the value of the [is_price_negotiable] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     CollectibleForSale The current object (for fluent API support)
    */
   public function setIsPriceNegotiable($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_price_negotiable !== $v || $this->isNew())
+    if ($this->is_price_negotiable !== $v)
     {
       $this->is_price_negotiable = $v;
       $this->modifiedColumns[] = CollectibleForSalePeer::IS_PRICE_NEGOTIABLE;
@@ -506,19 +517,30 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_shipping_free] column.
+   * Sets the value of the [is_shipping_free] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     CollectibleForSale The current object (for fluent API support)
    */
   public function setIsShippingFree($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_shipping_free !== $v || $this->isNew())
+    if ($this->is_shipping_free !== $v)
     {
       $this->is_shipping_free = $v;
       $this->modifiedColumns[] = CollectibleForSalePeer::IS_SHIPPING_FREE;
@@ -528,19 +550,30 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_sold] column.
+   * Sets the value of the [is_sold] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     CollectibleForSale The current object (for fluent API support)
    */
   public function setIsSold($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_sold !== $v || $this->isNew())
+    if ($this->is_sold !== $v)
     {
       $this->is_sold = $v;
       $this->modifiedColumns[] = CollectibleForSalePeer::IS_SOLD;
@@ -550,19 +583,30 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_ready] column.
+   * Sets the value of the [is_ready] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * Show in the market or no
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     CollectibleForSale The current object (for fluent API support)
    */
   public function setIsReady($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_ready !== $v || $this->isNew())
+    if ($this->is_ready !== $v)
     {
       $this->is_ready = $v;
       $this->modifiedColumns[] = CollectibleForSalePeer::IS_READY;
@@ -584,7 +628,7 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
       $v = (int) $v;
     }
 
-    if ($this->quantity !== $v || $this->isNew())
+    if ($this->quantity !== $v)
     {
       $this->quantity = $v;
       $this->modifiedColumns[] = CollectibleForSalePeer::QUANTITY;
@@ -596,56 +640,20 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
   /**
    * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     CollectibleForSale The current object (for fluent API support)
    */
   public function setDeletedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->deleted_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->deleted_at !== null && $tmpDt = new DateTime($this->deleted_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->deleted_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->deleted_at !== null && $tmpDt = new DateTime($this->deleted_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->deleted_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->deleted_at = $newDateAsString;
         $this->modifiedColumns[] = CollectibleForSalePeer::DELETED_AT;
       }
     }
@@ -656,56 +664,20 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
   /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     CollectibleForSale The current object (for fluent API support)
    */
   public function setCreatedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->created_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->created_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->created_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->created_at = $newDateAsString;
         $this->modifiedColumns[] = CollectibleForSalePeer::CREATED_AT;
       }
     }
@@ -716,56 +688,20 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
   /**
    * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     CollectibleForSale The current object (for fluent API support)
    */
   public function setUpdatedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->updated_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->updated_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->updated_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->updated_at = $newDateAsString;
         $this->modifiedColumns[] = CollectibleForSalePeer::UPDATED_AT;
       }
     }
@@ -852,7 +788,7 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 12; // 12 = CollectibleForSalePeer::NUM_COLUMNS - CollectibleForSalePeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 12; // 12 = CollectibleForSalePeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -954,16 +890,21 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
     $con->beginTransaction();
     try
     {
+      $deleteQuery = CollectibleForSaleQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // soft_delete behavior
       if (!empty($ret) && CollectibleForSaleQuery::isSoftDeleteEnabled())
       {
+        $this->keepUpdateDateUnchanged();
         $this->setDeletedAt(time());
         $this->save($con);
+        $this->postDelete($con);
         $con->commit();
         CollectibleForSalePeer::removeInstanceFromPool($this);
         return;
       }
+
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseCollectibleForSale:delete:pre') as $callable)
       {
@@ -976,9 +917,7 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
 
       if ($ret)
       {
-        CollectibleForSaleQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BaseCollectibleForSale:delete:post') as $callable)
@@ -1356,12 +1295,18 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
    * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $includeForeignObjects = false)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
   {
+    if (isset($alreadyDumpedObjects['CollectibleForSale'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['CollectibleForSale'][$this->getPrimaryKey()] = true;
     $keys = CollectibleForSalePeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
@@ -1381,7 +1326,11 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
     {
       if (null !== $this->aCollectible)
       {
-        $result['Collectible'] = $this->aCollectible->toArray($keyType, $includeLazyLoadColumns, true);
+        $result['Collectible'] = $this->aCollectible->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+      }
+      if (null !== $this->collCollectibleOffers)
+      {
+        $result['CollectibleOffers'] = $this->collCollectibleOffers->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
       }
     }
     return $result;
@@ -1567,21 +1516,22 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
    *
    * @param      object $copyObj An object of CollectibleForSale (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setCollectibleId($this->collectible_id);
-    $copyObj->setPrice($this->price);
-    $copyObj->setCondition($this->condition);
-    $copyObj->setIsPriceNegotiable($this->is_price_negotiable);
-    $copyObj->setIsShippingFree($this->is_shipping_free);
-    $copyObj->setIsSold($this->is_sold);
-    $copyObj->setIsReady($this->is_ready);
-    $copyObj->setQuantity($this->quantity);
-    $copyObj->setDeletedAt($this->deleted_at);
-    $copyObj->setCreatedAt($this->created_at);
-    $copyObj->setUpdatedAt($this->updated_at);
+    $copyObj->setCollectibleId($this->getCollectibleId());
+    $copyObj->setPrice($this->getPrice());
+    $copyObj->setCondition($this->getCondition());
+    $copyObj->setIsPriceNegotiable($this->getIsPriceNegotiable());
+    $copyObj->setIsShippingFree($this->getIsShippingFree());
+    $copyObj->setIsSold($this->getIsSold());
+    $copyObj->setIsReady($this->getIsReady());
+    $copyObj->setQuantity($this->getQuantity());
+    $copyObj->setDeletedAt($this->getDeletedAt());
+    $copyObj->setCreatedAt($this->getCreatedAt());
+    $copyObj->setUpdatedAt($this->getUpdatedAt());
 
     if ($deepCopy)
     {
@@ -1598,9 +1548,11 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
 
     }
 
-
-    $copyObj->setNew(true);
-    $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -1686,14 +1638,31 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
     {
       $this->aCollectible = CollectibleQuery::create()->findPk($this->collectible_id, $con);
       /* The following can be used additionally to
-         guarantee the related object contains a reference
-         to this object.  This level of coupling may, however, be
-         undesirable since it could result in an only partially populated collection
-         in the referenced object.
-         $this->aCollectible->addCollectibleForSales($this);
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->aCollectible->addCollectibleForSales($this);
        */
     }
     return $this->aCollectible;
+  }
+
+
+  /**
+   * Initializes a collection based on the name of a relation.
+   * Avoids crafting an 'init[$relationName]s' method name
+   * that wouldn't work when StandardEnglishPluralizer is used.
+   *
+   * @param      string $relationName The name of the relation to initialize
+   * @return     void
+   */
+  public function initRelation($relationName)
+  {
+    if ('CollectibleOffer' == $relationName)
+    {
+      return $this->initCollectibleOffers();
+    }
   }
 
   /**
@@ -1717,10 +1686,17 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initCollectibleOffers()
+  public function initCollectibleOffers($overrideExisting = true)
   {
+    if (null !== $this->collCollectibleOffers && !$overrideExisting)
+    {
+      return;
+    }
     $this->collCollectibleOffers = new PropelObjectCollection();
     $this->collCollectibleOffers->setModel('CollectibleOffer');
   }
@@ -1803,8 +1779,7 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
    * through the CollectibleOffer foreign key attribute.
    *
    * @param      CollectibleOffer $l CollectibleOffer
-   * @return     void
-   * @throws     PropelException
+   * @return     CollectibleForSale The current object (for fluent API support)
    */
   public function addCollectibleOffer(CollectibleOffer $l)
   {
@@ -1816,6 +1791,8 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
       $this->collCollectibleOffers[]= $l;
       $l->setCollectibleForSale($this);
     }
+
+    return $this;
   }
 
 
@@ -1895,13 +1872,13 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -1909,15 +1886,29 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
     {
       if ($this->collCollectibleOffers)
       {
-        foreach ((array) $this->collCollectibleOffers as $o)
+        foreach ($this->collCollectibleOffers as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
     }
 
+    if ($this->collCollectibleOffers instanceof PropelCollection)
+    {
+      $this->collCollectibleOffers->clearIterator();
+    }
     $this->collCollectibleOffers = null;
     $this->aCollectible = null;
+  }
+
+  /**
+   * Return the string representation of this object
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    return (string) $this->exportTo(CollectibleForSalePeer::DEFAULT_STRING_FORMAT);
   }
 
   // soft_delete behavior
@@ -1927,8 +1918,15 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
    */
   public function forceDelete(PropelPDO $con = null)
   {
-    CollectibleForSalePeer::disableSoftDelete();
+    if($isSoftDeleteEnabled = CollectibleForSalePeer::isSoftDeleteEnabled())
+    {
+      CollectibleForSalePeer::disableSoftDelete();
+    }
     $this->delete($con);
+    if ($isSoftDeleteEnabled)
+    {
+      CollectibleForSalePeer::enableSoftDelete();
+    }
   }
   
   /**
@@ -1960,6 +1958,7 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BaseCollectibleForSale:' . $name))
     {
@@ -1967,20 +1966,6 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

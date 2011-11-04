@@ -29,183 +29,190 @@
  */
 abstract class BasewpTermRelationshipQuery extends ModelCriteria
 {
-
-  /**
-   * Initializes internal state of BasewpTermRelationshipQuery object.
-   *
-   * @param     string $dbName The dabase name
-   * @param     string $modelName The phpName of a model, e.g. 'Book'
-   * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
-   */
-  public function __construct($dbName = 'blog', $modelName = 'wpTermRelationship', $modelAlias = null)
-  {
-    parent::__construct($dbName, $modelName, $modelAlias);
-  }
-
-  /**
-   * Returns a new wpTermRelationshipQuery object.
-   *
-   * @param     string $modelAlias The alias of a model in the query
-   * @param     Criteria $criteria Optional Criteria to build the query from
-   *
-   * @return    wpTermRelationshipQuery
-   */
-  public static function create($modelAlias = null, $criteria = null)
-  {
-    if ($criteria instanceof wpTermRelationshipQuery)
-    {
-      return $criteria;
-    }
-    $query = new wpTermRelationshipQuery();
-    if (null !== $modelAlias)
-    {
-      $query->setModelAlias($modelAlias);
-    }
-    if ($criteria instanceof Criteria)
-    {
-      $query->mergeWith($criteria);
-    }
-    return $query;
-  }
-
-  /**
-   * Find object by primary key
-   * <code>
-   * $obj = $c->findPk(array(12, 34), $con);
-   * </code>
-   * @param     array[$object_id, $term_taxonomy_id] $key Primary key to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    wpTermRelationship|array|mixed the result, formatted by the current formatter
-   */
-  public function findPk($key, $con = null)
-  {
-    if ((null !== ($obj = wpTermRelationshipPeer::getInstanceFromPool(serialize(array((string) $key[0], (string) $key[1]))))) && $this->getFormatter()->isObjectFormatter())
-    {
-      // the object is alredy in the instance pool
-      return $obj;
-    }
-    else
-    {
-      // the object has not been requested yet, or the formatter is not an object formatter
-      $criteria = $this->isKeepQuery() ? clone $this : $this;
-      $stmt = $criteria
-        ->filterByPrimaryKey($key)
-        ->getSelectStatement($con);
-      return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
-    }
-  }
-
-  /**
-   * Find objects by primary key
-   * <code>
-   * $objs = $c->findPks(array(array(12, 56), array(832, 123), array(123, 456)), $con);
-   * </code>
-   * @param     array $keys Primary keys to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
-   */
-  public function findPks($keys, $con = null)
-  {  
-    $criteria = $this->isKeepQuery() ? clone $this : $this;
-    return $this
-      ->filterByPrimaryKeys($keys)
-      ->find($con);
-  }
-
-  /**
-   * Filter the query by primary key
-   *
-   * @param     mixed $key Primary key to use for the query
-   *
-   * @return    wpTermRelationshipQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKey($key)
-  {
-    $this->addUsingAlias(wpTermRelationshipPeer::OBJECT_ID, $key[0], Criteria::EQUAL);
-    $this->addUsingAlias(wpTermRelationshipPeer::TERM_TAXONOMY_ID, $key[1], Criteria::EQUAL);
     
-    return $this;
-  }
+    /**
+     * Initializes internal state of BasewpTermRelationshipQuery object.
+     *
+     * @param     string $dbName The dabase name
+     * @param     string $modelName The phpName of a model, e.g. 'Book'
+     * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+     */
+    public function __construct($dbName = 'blog', $modelName = 'wpTermRelationship', $modelAlias = null)
+    {
+        parent::__construct($dbName, $modelName, $modelAlias);
+    }
 
-  /**
-   * Filter the query by a list of primary keys
-   *
-   * @param     array $keys The list of primary key to use for the query
-   *
-   * @return    wpTermRelationshipQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKeys($keys)
-  {
-    if (empty($keys))
+    /**
+     * Returns a new wpTermRelationshipQuery object.
+     *
+     * @param     string $modelAlias The alias of a model in the query
+     * @param     Criteria $criteria Optional Criteria to build the query from
+     *
+     * @return    wpTermRelationshipQuery
+     */
+    public static function create($modelAlias = null, $criteria = null)
     {
-      return $this->add(null, '1<>1', Criteria::CUSTOM);
+        if ($criteria instanceof wpTermRelationshipQuery) {
+            return $criteria;
+        }
+        $query = new wpTermRelationshipQuery();
+        if (null !== $modelAlias) {
+            $query->setModelAlias($modelAlias);
+        }
+        if ($criteria instanceof Criteria) {
+            $query->mergeWith($criteria);
+        }
+        return $query;
     }
-    foreach ($keys as $key)
-    {
-      $cton0 = $this->getNewCriterion(wpTermRelationshipPeer::OBJECT_ID, $key[0], Criteria::EQUAL);
-      $cton1 = $this->getNewCriterion(wpTermRelationshipPeer::TERM_TAXONOMY_ID, $key[1], Criteria::EQUAL);
-      $cton0->addAnd($cton1);
-      $this->addOr($cton0);
-    }
-    
-    return $this;
-  }
 
-  /**
-   * Filter the query on the object_id column
-   * 
-   * @param     int|array $objectId The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    wpTermRelationshipQuery The current query, for fluid interface
-   */
-  public function filterByObjectId($objectId = null, $comparison = null)
-  {
-    if (is_array($objectId) && null === $comparison)
+    /**
+     * Find object by primary key
+     * <code>
+     * $obj = $c->findPk(array(12, 34), $con);
+     * </code>
+     * @param     array[$object_id, $term_taxonomy_id] $key Primary key to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    wpTermRelationship|array|mixed the result, formatted by the current formatter
+     */
+    public function findPk($key, $con = null)
     {
-      $comparison = Criteria::IN;
+        if ((null !== ($obj = wpTermRelationshipPeer::getInstanceFromPool(serialize(array((string) $key[0], (string) $key[1]))))) && $this->getFormatter()->isObjectFormatter()) {
+            // the object is alredy in the instance pool
+            return $obj;
+        } else {
+            // the object has not been requested yet, or the formatter is not an object formatter
+            $criteria = $this->isKeepQuery() ? clone $this : $this;
+            $stmt = $criteria
+                ->filterByPrimaryKey($key)
+                ->getSelectStatement($con);
+            return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+        }
     }
-    return $this->addUsingAlias(wpTermRelationshipPeer::OBJECT_ID, $objectId, $comparison);
-  }
 
-  /**
-   * Filter the query on the term_taxonomy_id column
-   * 
-   * @param     int|array $termTaxonomyId The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    wpTermRelationshipQuery The current query, for fluid interface
-   */
-  public function filterByTermTaxonomyId($termTaxonomyId = null, $comparison = null)
-  {
-    if (is_array($termTaxonomyId) && null === $comparison)
+    /**
+     * Find objects by primary key
+     * <code>
+     * $objs = $c->findPks(array(array(12, 56), array(832, 123), array(123, 456)), $con);
+     * </code>
+     * @param     array $keys Primary keys to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
+     */
+    public function findPks($keys, $con = null)
     {
-      $comparison = Criteria::IN;
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        return $this
+            ->filterByPrimaryKeys($keys)
+            ->find($con);
     }
-    return $this->addUsingAlias(wpTermRelationshipPeer::TERM_TAXONOMY_ID, $termTaxonomyId, $comparison);
-  }
 
-  /**
-   * Exclude object from result
-   *
-   * @param     wpTermRelationship $wpTermRelationship Object to remove from the list of results
-   *
-   * @return    wpTermRelationshipQuery The current query, for fluid interface
-   */
-  public function prune($wpTermRelationship = null)
-  {
-    if ($wpTermRelationship)
+    /**
+     * Filter the query by primary key
+     *
+     * @param     mixed $key Primary key to use for the query
+     *
+     * @return    wpTermRelationshipQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKey($key)
     {
-      $this->addCond('pruneCond0', $this->getAliasedColName(wpTermRelationshipPeer::OBJECT_ID), $wpTermRelationship->getObjectId(), Criteria::NOT_EQUAL);
-      $this->addCond('pruneCond1', $this->getAliasedColName(wpTermRelationshipPeer::TERM_TAXONOMY_ID), $wpTermRelationship->getTermTaxonomyId(), Criteria::NOT_EQUAL);
-      $this->combine(array('pruneCond0', 'pruneCond1'), Criteria::LOGICAL_OR);
+        $this->addUsingAlias(wpTermRelationshipPeer::OBJECT_ID, $key[0], Criteria::EQUAL);
+        $this->addUsingAlias(wpTermRelationshipPeer::TERM_TAXONOMY_ID, $key[1], Criteria::EQUAL);
+
+        return $this;
     }
-    
-    return $this;
-  }
+
+    /**
+     * Filter the query by a list of primary keys
+     *
+     * @param     array $keys The list of primary key to use for the query
+     *
+     * @return    wpTermRelationshipQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKeys($keys)
+    {
+        if (empty($keys)) {
+            return $this->add(null, '1<>1', Criteria::CUSTOM);
+        }
+        foreach ($keys as $key) {
+            $cton0 = $this->getNewCriterion(wpTermRelationshipPeer::OBJECT_ID, $key[0], Criteria::EQUAL);
+            $cton1 = $this->getNewCriterion(wpTermRelationshipPeer::TERM_TAXONOMY_ID, $key[1], Criteria::EQUAL);
+            $cton0->addAnd($cton1);
+            $this->addOr($cton0);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Filter the query on the object_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByObjectId(1234); // WHERE object_id = 1234
+     * $query->filterByObjectId(array(12, 34)); // WHERE object_id IN (12, 34)
+     * $query->filterByObjectId(array('min' => 12)); // WHERE object_id > 12
+     * </code>
+     *
+     * @param     mixed $objectId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    wpTermRelationshipQuery The current query, for fluid interface
+     */
+    public function filterByObjectId($objectId = null, $comparison = null)
+    {
+        if (is_array($objectId) && null === $comparison) {
+            $comparison = Criteria::IN;
+        }
+        return $this->addUsingAlias(wpTermRelationshipPeer::OBJECT_ID, $objectId, $comparison);
+    }
+
+    /**
+     * Filter the query on the term_taxonomy_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByTermTaxonomyId(1234); // WHERE term_taxonomy_id = 1234
+     * $query->filterByTermTaxonomyId(array(12, 34)); // WHERE term_taxonomy_id IN (12, 34)
+     * $query->filterByTermTaxonomyId(array('min' => 12)); // WHERE term_taxonomy_id > 12
+     * </code>
+     *
+     * @param     mixed $termTaxonomyId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    wpTermRelationshipQuery The current query, for fluid interface
+     */
+    public function filterByTermTaxonomyId($termTaxonomyId = null, $comparison = null)
+    {
+        if (is_array($termTaxonomyId) && null === $comparison) {
+            $comparison = Criteria::IN;
+        }
+        return $this->addUsingAlias(wpTermRelationshipPeer::TERM_TAXONOMY_ID, $termTaxonomyId, $comparison);
+    }
+
+    /**
+     * Exclude object from result
+     *
+     * @param     wpTermRelationship $wpTermRelationship Object to remove from the list of results
+     *
+     * @return    wpTermRelationshipQuery The current query, for fluid interface
+     */
+    public function prune($wpTermRelationship = null)
+    {
+        if ($wpTermRelationship) {
+            $this->addCond('pruneCond0', $this->getAliasedColName(wpTermRelationshipPeer::OBJECT_ID), $wpTermRelationship->getObjectId(), Criteria::NOT_EQUAL);
+            $this->addCond('pruneCond1', $this->getAliasedColName(wpTermRelationshipPeer::TERM_TAXONOMY_ID), $wpTermRelationship->getTermTaxonomyId(), Criteria::NOT_EQUAL);
+            $this->combine(array('pruneCond0', 'pruneCond1'), Criteria::LOGICAL_OR);
+        }
+
+        return $this;
+    }
 
 }

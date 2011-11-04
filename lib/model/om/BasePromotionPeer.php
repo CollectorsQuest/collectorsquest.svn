@@ -25,12 +25,15 @@ abstract class BasePromotionPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'PromotionTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 10;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 10;
 
   /** the column name for the ID field */
   const ID = 'promotion.ID';
@@ -62,6 +65,9 @@ abstract class BasePromotionPeer
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'promotion.CREATED_AT';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of Promotion objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -71,20 +77,13 @@ abstract class BasePromotionPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'PromotionName', 'PromotionDesc', 'PromotionCode', 'Amount', 'AmountType', 'NoOfTimeUsed', 'ExpiryDate', 'UpdatedAt', 'CreatedAt', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'promotionName', 'promotionDesc', 'promotionCode', 'amount', 'amountType', 'noOfTimeUsed', 'expiryDate', 'updatedAt', 'createdAt', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::PROMOTION_NAME, self::PROMOTION_DESC, self::PROMOTION_CODE, self::AMOUNT, self::AMOUNT_TYPE, self::NO_OF_TIME_USED, self::EXPIRY_DATE, self::UPDATED_AT, self::CREATED_AT, ),
@@ -99,7 +98,7 @@ abstract class BasePromotionPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PromotionName' => 1, 'PromotionDesc' => 2, 'PromotionCode' => 3, 'Amount' => 4, 'AmountType' => 5, 'NoOfTimeUsed' => 6, 'ExpiryDate' => 7, 'UpdatedAt' => 8, 'CreatedAt' => 9, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'promotionName' => 1, 'promotionDesc' => 2, 'promotionCode' => 3, 'amount' => 4, 'amountType' => 5, 'noOfTimeUsed' => 6, 'expiryDate' => 7, 'updatedAt' => 8, 'createdAt' => 9, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::PROMOTION_NAME => 1, self::PROMOTION_DESC => 2, self::PROMOTION_CODE => 3, self::AMOUNT => 4, self::AMOUNT_TYPE => 5, self::NO_OF_TIME_USED => 6, self::EXPIRY_DATE => 7, self::UPDATED_AT => 8, self::CREATED_AT => 9, ),
@@ -262,7 +261,7 @@ abstract class BasePromotionPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -282,7 +281,7 @@ abstract class BasePromotionPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -344,7 +343,7 @@ abstract class BasePromotionPeer
    * @param      Promotion $value A Promotion object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(Promotion $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -427,7 +426,7 @@ abstract class BasePromotionPeer
    */
   public static function clearRelatedInstancePool()
   {
-    // Invalidate objects in PromotionTransactionPeer instance pool, 
+    // Invalidate objects in PromotionTransactionPeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     PromotionTransactionPeer::clearInstancePool();
   }
@@ -453,7 +452,7 @@ abstract class BasePromotionPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -518,7 +517,7 @@ abstract class BasePromotionPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + PromotionPeer::NUM_COLUMNS;
+      $col = $startcol + PromotionPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -529,6 +528,7 @@ abstract class BasePromotionPeer
     }
     return array($obj, $col);
   }
+
   /**
    * Returns the TableMap related to this peer.
    * This method is not needed for general use but a specific application could have a need.
@@ -570,7 +570,7 @@ abstract class BasePromotionPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a Promotion or Criteria object.
+   * Performs an INSERT on the database, given a Promotion or Criteria object.
    *
    * @param      mixed $values Criteria or Promotion object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -621,7 +621,7 @@ abstract class BasePromotionPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a Promotion or Criteria object.
+   * Performs an UPDATE on the database, given a Promotion or Criteria object.
    *
    * @param      mixed $values Criteria or Promotion object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -665,11 +665,12 @@ abstract class BasePromotionPeer
   }
 
   /**
-   * Method to DELETE all rows from the promotion table.
+   * Deletes all rows from the promotion table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -699,7 +700,7 @@ abstract class BasePromotionPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a Promotion or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a Promotion or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or Promotion object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -815,7 +816,7 @@ abstract class BasePromotionPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(Promotion $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

@@ -44,12 +44,12 @@ class PrivateMessageTableMap extends TableMap
     $this->addColumn('RECEIVER', 'Receiver', 'INTEGER', true, null, null);
     $this->addColumn('SUBJECT', 'Subject', 'VARCHAR', true, 255, null);
     $this->addColumn('BODY', 'Body', 'LONGVARCHAR', true, null, null);
-    $this->addColumn('IS_RICH', 'IsRich', 'BOOLEAN', false, null, false);
-    $this->addColumn('IS_READ', 'IsRead', 'BOOLEAN', false, null, false);
-    $this->addColumn('IS_REPLIED', 'IsReplied', 'BOOLEAN', false, null, false);
-    $this->addColumn('IS_FORWARDED', 'IsForwarded', 'BOOLEAN', false, null, false);
-    $this->addColumn('IS_MARKED', 'IsMarked', 'BOOLEAN', false, null, false);
-    $this->addColumn('IS_DELETED', 'IsDeleted', 'BOOLEAN', false, null, false);
+    $this->addColumn('IS_RICH', 'IsRich', 'BOOLEAN', false, 1, false);
+    $this->addColumn('IS_READ', 'IsRead', 'BOOLEAN', false, 1, false);
+    $this->addColumn('IS_REPLIED', 'IsReplied', 'BOOLEAN', false, 1, false);
+    $this->addColumn('IS_FORWARDED', 'IsForwarded', 'BOOLEAN', false, 1, false);
+    $this->addColumn('IS_MARKED', 'IsMarked', 'BOOLEAN', false, 1, false);
+    $this->addColumn('IS_DELETED', 'IsDeleted', 'BOOLEAN', false, 1, false);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     // validators
   }
@@ -62,9 +62,9 @@ class PrivateMessageTableMap extends TableMap
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

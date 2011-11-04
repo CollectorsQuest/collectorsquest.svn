@@ -21,7 +21,7 @@ abstract class BasewpPostMetaForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'meta_id'    => new sfValidatorPropelChoice(array('model' => 'wpPostMeta', 'column' => 'meta_id', 'required' => false)),
+      'meta_id'    => new sfValidatorChoice(array('choices' => array($this->getObject()->getMetaId()), 'empty_value' => $this->getObject()->getMetaId(), 'required' => false)),
       'post_id'    => new sfValidatorPropelChoice(array('model' => 'wpPost', 'column' => 'id')),
       'meta_key'   => new sfValidatorString(array('max_length' => 255, 'required' => false)),
       'meta_value' => new sfValidatorString(array('required' => false)),

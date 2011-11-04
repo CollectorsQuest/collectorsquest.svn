@@ -27,7 +27,7 @@ abstract class BasewpUserForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'                  => new sfValidatorPropelChoice(array('model' => 'wpUser', 'column' => 'id', 'required' => false)),
+      'id'                  => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'user_login'          => new sfValidatorString(array('max_length' => 60, 'required' => false)),
       'user_pass'           => new sfValidatorString(array('max_length' => 64, 'required' => false)),
       'user_nicename'       => new sfValidatorString(array('max_length' => 50, 'required' => false)),

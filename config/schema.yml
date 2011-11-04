@@ -24,7 +24,7 @@ classes:
       most_expensive_item:   { type: float, default: 0 }
       company:               { type: varchar, size: 255, required: false }
       is_public:      { type: boolean, default: true }
-      session_id:     { type: varchar, size: 255, foreignClass: SessionStorage, foreignReference: id, required: false, onDelete: setnull }
+      session_id:     { type: varchar, size: 32 }
       last_seen_at:   timestamp
 
     propel_behaviors:
@@ -409,13 +409,6 @@ classes:
       end_date:          date
       is_active:         { type: boolean, default: true, required: true }
       position:          { type: tinyint, default: true, required: false }
-
-  SessionStorage:
-    columns:
-      id:            ~
-      session_id:    varchar(64)
-      session_data:  longvarchar
-      session_time:  bigint
 
   Package:
     columns:

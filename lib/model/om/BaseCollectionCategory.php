@@ -181,7 +181,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $v = (int) $v;
     }
 
-    if ($this->parent_id !== $v || $this->isNew())
+    if ($this->parent_id !== $v)
     {
       $this->parent_id = $v;
       $this->modifiedColumns[] = CollectionCategoryPeer::PARENT_ID;
@@ -225,7 +225,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $v = (int) $v;
     }
 
-    if ($this->score !== $v || $this->isNew())
+    if ($this->score !== $v)
     {
       $this->score = $v;
       $this->modifiedColumns[] = CollectionCategoryPeer::SCORE;
@@ -290,7 +290,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 4; // 4 = CollectionCategoryPeer::NUM_COLUMNS - CollectionCategoryPeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 4; // 4 = CollectionCategoryPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -393,6 +393,8 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
     $con->beginTransaction();
     try
     {
+      $deleteQuery = CollectionCategoryQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseCollectionCategory:delete:pre') as $callable)
@@ -406,9 +408,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
 
       if ($ret)
       {
-        CollectionCategoryQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BaseCollectionCategory:delete:post') as $callable)
@@ -786,11 +786,18 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+   * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
   {
+    if (isset($alreadyDumpedObjects['CollectionCategory'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['CollectionCategory'][$this->getPrimaryKey()] = true;
     $keys = CollectionCategoryPeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
@@ -798,6 +805,25 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $keys[2] => $this->getName(),
       $keys[3] => $this->getScore(),
     );
+    if ($includeForeignObjects)
+    {
+      if (null !== $this->collCollectorInterviews)
+      {
+        $result['CollectorInterviews'] = $this->collCollectorInterviews->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+      if (null !== $this->collCollections)
+      {
+        $result['Collections'] = $this->collCollections->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+      if (null !== $this->collCollectionCategoryFields)
+      {
+        $result['CollectionCategoryFields'] = $this->collCollectionCategoryFields->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+      if (null !== $this->collVideoCollectionCategorys)
+      {
+        $result['VideoCollectionCategorys'] = $this->collVideoCollectionCategorys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+    }
     return $result;
   }
 
@@ -941,13 +967,14 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
    *
    * @param      object $copyObj An object of CollectionCategory (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setParentId($this->parent_id);
-    $copyObj->setName($this->name);
-    $copyObj->setScore($this->score);
+    $copyObj->setParentId($this->getParentId());
+    $copyObj->setName($this->getName());
+    $copyObj->setScore($this->getScore());
 
     if ($deepCopy)
     {
@@ -985,9 +1012,11 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
 
     }
 
-
-    $copyObj->setNew(true);
-    $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -1029,6 +1058,35 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
     return self::$peer;
   }
 
+
+  /**
+   * Initializes a collection based on the name of a relation.
+   * Avoids crafting an 'init[$relationName]s' method name
+   * that wouldn't work when StandardEnglishPluralizer is used.
+   *
+   * @param      string $relationName The name of the relation to initialize
+   * @return     void
+   */
+  public function initRelation($relationName)
+  {
+    if ('CollectorInterview' == $relationName)
+    {
+      return $this->initCollectorInterviews();
+    }
+    if ('Collection' == $relationName)
+    {
+      return $this->initCollections();
+    }
+    if ('CollectionCategoryField' == $relationName)
+    {
+      return $this->initCollectionCategoryFields();
+    }
+    if ('VideoCollectionCategory' == $relationName)
+    {
+      return $this->initVideoCollectionCategorys();
+    }
+  }
+
   /**
    * Clears out the collCollectorInterviews collection
    *
@@ -1050,10 +1108,17 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initCollectorInterviews()
+  public function initCollectorInterviews($overrideExisting = true)
   {
+    if (null !== $this->collCollectorInterviews && !$overrideExisting)
+    {
+      return;
+    }
     $this->collCollectorInterviews = new PropelObjectCollection();
     $this->collCollectorInterviews->setModel('CollectorInterview');
   }
@@ -1136,8 +1201,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
    * through the CollectorInterview foreign key attribute.
    *
    * @param      CollectorInterview $l CollectorInterview
-   * @return     void
-   * @throws     PropelException
+   * @return     CollectionCategory The current object (for fluent API support)
    */
   public function addCollectorInterview(CollectorInterview $l)
   {
@@ -1149,6 +1213,8 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $this->collCollectorInterviews[]= $l;
       $l->setCollectionCategory($this);
     }
+
+    return $this;
   }
 
 
@@ -1222,10 +1288,17 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initCollections()
+  public function initCollections($overrideExisting = true)
   {
+    if (null !== $this->collCollections && !$overrideExisting)
+    {
+      return;
+    }
     $this->collCollections = new PropelObjectCollection();
     $this->collCollections->setModel('Collection');
   }
@@ -1308,8 +1381,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
    * through the Collection foreign key attribute.
    *
    * @param      Collection $l Collection
-   * @return     void
-   * @throws     PropelException
+   * @return     CollectionCategory The current object (for fluent API support)
    */
   public function addCollection(Collection $l)
   {
@@ -1321,6 +1393,8 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $this->collCollections[]= $l;
       $l->setCollectionCategory($this);
     }
+
+    return $this;
   }
 
 
@@ -1369,10 +1443,17 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initCollectionCategoryFields()
+  public function initCollectionCategoryFields($overrideExisting = true)
   {
+    if (null !== $this->collCollectionCategoryFields && !$overrideExisting)
+    {
+      return;
+    }
     $this->collCollectionCategoryFields = new PropelObjectCollection();
     $this->collCollectionCategoryFields->setModel('CollectionCategoryField');
   }
@@ -1455,8 +1536,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
    * through the CollectionCategoryField foreign key attribute.
    *
    * @param      CollectionCategoryField $l CollectionCategoryField
-   * @return     void
-   * @throws     PropelException
+   * @return     CollectionCategory The current object (for fluent API support)
    */
   public function addCollectionCategoryField(CollectionCategoryField $l)
   {
@@ -1468,6 +1548,8 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $this->collCollectionCategoryFields[]= $l;
       $l->setCollectionCategory($this);
     }
+
+    return $this;
   }
 
 
@@ -1516,10 +1598,17 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initVideoCollectionCategorys()
+  public function initVideoCollectionCategorys($overrideExisting = true)
   {
+    if (null !== $this->collVideoCollectionCategorys && !$overrideExisting)
+    {
+      return;
+    }
     $this->collVideoCollectionCategorys = new PropelObjectCollection();
     $this->collVideoCollectionCategorys->setModel('VideoCollectionCategory');
   }
@@ -1602,8 +1691,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
    * through the VideoCollectionCategory foreign key attribute.
    *
    * @param      VideoCollectionCategory $l VideoCollectionCategory
-   * @return     void
-   * @throws     PropelException
+   * @return     CollectionCategory The current object (for fluent API support)
    */
   public function addVideoCollectionCategory(VideoCollectionCategory $l)
   {
@@ -1615,6 +1703,8 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $this->collVideoCollectionCategorys[]= $l;
       $l->setCollectionCategory($this);
     }
+
+    return $this;
   }
 
 
@@ -1661,13 +1751,13 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -1675,37 +1765,53 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
     {
       if ($this->collCollectorInterviews)
       {
-        foreach ((array) $this->collCollectorInterviews as $o)
+        foreach ($this->collCollectorInterviews as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
       if ($this->collCollections)
       {
-        foreach ((array) $this->collCollections as $o)
+        foreach ($this->collCollections as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
       if ($this->collCollectionCategoryFields)
       {
-        foreach ((array) $this->collCollectionCategoryFields as $o)
+        foreach ($this->collCollectionCategoryFields as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
       if ($this->collVideoCollectionCategorys)
       {
-        foreach ((array) $this->collVideoCollectionCategorys as $o)
+        foreach ($this->collVideoCollectionCategorys as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
     }
 
+    if ($this->collCollectorInterviews instanceof PropelCollection)
+    {
+      $this->collCollectorInterviews->clearIterator();
+    }
     $this->collCollectorInterviews = null;
+    if ($this->collCollections instanceof PropelCollection)
+    {
+      $this->collCollections->clearIterator();
+    }
     $this->collCollections = null;
+    if ($this->collCollectionCategoryFields instanceof PropelCollection)
+    {
+      $this->collCollectionCategoryFields->clearIterator();
+    }
     $this->collCollectionCategoryFields = null;
+    if ($this->collVideoCollectionCategorys instanceof PropelCollection)
+    {
+      $this->collVideoCollectionCategorys->clearIterator();
+    }
     $this->collVideoCollectionCategorys = null;
   }
 
@@ -1724,6 +1830,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BaseCollectionCategory:' . $name))
     {
@@ -1731,20 +1838,6 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

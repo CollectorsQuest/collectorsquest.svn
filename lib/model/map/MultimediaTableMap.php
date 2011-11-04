@@ -47,7 +47,7 @@ class MultimediaTableMap extends TableMap
     $this->addColumn('COLORS', 'Colors', 'VARCHAR', false, 128, null);
     $this->addColumn('ORIENTATION', 'Orientation', 'CHAR', false, null, 'landscape');
     $this->addColumn('SOURCE', 'Source', 'VARCHAR', false, 255, null);
-    $this->addColumn('IS_PRIMARY', 'IsPrimary', 'BOOLEAN', false, null, false);
+    $this->addColumn('IS_PRIMARY', 'IsPrimary', 'BOOLEAN', false, 1, false);
     $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     // validators
@@ -61,9 +61,9 @@ class MultimediaTableMap extends TableMap
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

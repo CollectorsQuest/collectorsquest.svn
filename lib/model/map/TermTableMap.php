@@ -40,6 +40,7 @@ class TermTableMap extends TableMap
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
     $this->addColumn('NAME', 'Name', 'VARCHAR', false, 100, null);
+    $this->getColumn('NAME', false)->setPrimaryString(true);
     // validators
   }
 
@@ -48,13 +49,13 @@ class TermTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('TermRelationship', 'TermRelationship', RelationMap::ONE_TO_MANY, array('id' => 'term_id', ), null, null);
+    $this->addRelation('TermRelationship', 'TermRelationship', RelationMap::ONE_TO_MANY, array('id' => 'term_id', ), null, null, 'TermRelationships');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

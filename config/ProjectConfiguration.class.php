@@ -2,7 +2,7 @@
 
 date_default_timezone_set('America/New_York');
 
-require_once '/www/libs/symfony-1.3.x/lib/autoload/sfCoreAutoload.class.php';
+require_once '/www/lib/symfony-1.3.x/lib/autoload/sfCoreAutoload.class.php';
 sfCoreAutoload::register();
 
 class ProjectConfiguration extends sfProjectConfiguration

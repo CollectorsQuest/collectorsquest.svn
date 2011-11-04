@@ -469,7 +469,7 @@ abstract class BaseFeaturedNestedSetPeer extends BaseFeaturedPeer implements Nod
 			$root->setLevel(0);
 			FeaturedPeer::hydrateDescendants($root, $stmt);
 			FeaturedPeer::addInstanceToPool($root);
-			
+
 			$stmt->closeCursor();
 			return $root;
 		}
@@ -582,7 +582,7 @@ abstract class BaseFeaturedNestedSetPeer extends BaseFeaturedPeer implements Nod
 			$con = Propel::getConnection(FeaturedPeer::DATABASE_NAME, Propel::CONNECTION_READ);
 		}
 
-		$sql = "SELECT COUNT(*) AS level FROM " . self::TABLE_NAME . " WHERE " . self::LEFT_COL . " < :left AND " . self::RIGHT_COL . " > :right";
+		$sql = "SELECT COUNT(*) AS lvl FROM " . self::TABLE_NAME . " WHERE " . self::LEFT_COL . " < :left AND " . self::RIGHT_COL . " > :right";
 
 		if (self::SCOPE_COL) {
 			$sql .= ' AND ' . self::SCOPE_COL . ' = :scope';
@@ -596,7 +596,7 @@ abstract class BaseFeaturedNestedSetPeer extends BaseFeaturedPeer implements Nod
 		}
 		$stmt->execute();
 		$row = $stmt->fetch();
-		return $row['level'];
+		return $row['lvl'];
 	}
 
 	/**

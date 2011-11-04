@@ -41,7 +41,7 @@ abstract class BasewpPostForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'                    => new sfValidatorPropelChoice(array('model' => 'wpPost', 'column' => 'id', 'required' => false)),
+      'id'                    => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'post_author'           => new sfValidatorPropelChoice(array('model' => 'wpUser', 'column' => 'id')),
       'post_date'             => new sfValidatorDateTime(),
       'post_date_gmt'         => new sfValidatorDateTime(),

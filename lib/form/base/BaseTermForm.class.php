@@ -19,7 +19,7 @@ abstract class BaseTermForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'   => new sfValidatorPropelChoice(array('model' => 'Term', 'column' => 'id', 'required' => false)),
+      'id'   => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'name' => new sfValidatorString(array('max_length' => 100, 'required' => false)),
     ));
 

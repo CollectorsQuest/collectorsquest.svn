@@ -43,8 +43,9 @@ class CollectorInterviewTableMap extends TableMap
     $this->addForeignKey('COLLECTION_CATEGORY_ID', 'CollectionCategoryId', 'INTEGER', 'collection_category', 'ID', false, null, null);
     $this->addForeignKey('COLLECTION_ID', 'CollectionId', 'INTEGER', 'collection', 'ID', false, null, null);
     $this->addColumn('TITLE', 'Title', 'VARCHAR', true, 128, null);
+    $this->getColumn('TITLE', false)->setPrimaryString(true);
     $this->addColumn('CATCH_PHRASE', 'CatchPhrase', 'VARCHAR', true, 128, null);
-    $this->addColumn('IS_ACTIVE', 'IsActive', 'BOOLEAN', false, null, false);
+    $this->addColumn('IS_ACTIVE', 'IsActive', 'BOOLEAN', false, 1, false);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     // validators
   }
@@ -57,13 +58,13 @@ class CollectorInterviewTableMap extends TableMap
     $this->addRelation('Collector', 'Collector', RelationMap::MANY_TO_ONE, array('collector_id' => 'id', ), 'CASCADE', null);
     $this->addRelation('CollectionCategory', 'CollectionCategory', RelationMap::MANY_TO_ONE, array('collection_category_id' => 'id', ), 'SET NULL', null);
     $this->addRelation('Collection', 'Collection', RelationMap::MANY_TO_ONE, array('collection_id' => 'id', ), 'SET NULL', null);
-    $this->addRelation('InterviewQuestion', 'InterviewQuestion', RelationMap::ONE_TO_MANY, array('id' => 'collector_interview_id', ), 'CASCADE', null);
+    $this->addRelation('InterviewQuestion', 'InterviewQuestion', RelationMap::ONE_TO_MANY, array('id' => 'collector_interview_id', ), 'CASCADE', null, 'InterviewQuestions');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

@@ -29,7 +29,7 @@ abstract class BaseCollectibleForSaleForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'                  => new sfValidatorPropelChoice(array('model' => 'CollectibleForSale', 'column' => 'id', 'required' => false)),
+      'id'                  => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'collectible_id'      => new sfValidatorPropelChoice(array('model' => 'Collectible', 'column' => 'id')),
       'price'               => new sfValidatorNumber(array('required' => false)),
       'condition'           => new sfValidatorString(),

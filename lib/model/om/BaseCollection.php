@@ -754,7 +754,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
       $v = (int) $v;
     }
 
-    if ($this->score !== $v || $this->isNew())
+    if ($this->score !== $v)
     {
       $this->score = $v;
       $this->modifiedColumns[] = CollectionPeer::SCORE;
@@ -764,19 +764,30 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_public] column.
+   * Sets the value of the [is_public] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     Collection The current object (for fluent API support)
    */
   public function setIsPublic($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_public !== $v || $this->isNew())
+    if ($this->is_public !== $v)
     {
       $this->is_public = $v;
       $this->modifiedColumns[] = CollectionPeer::IS_PUBLIC;
@@ -786,19 +797,30 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_featured] column.
+   * Sets the value of the [is_featured] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     Collection The current object (for fluent API support)
    */
   public function setIsFeatured($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_featured !== $v || $this->isNew())
+    if ($this->is_featured !== $v)
     {
       $this->is_featured = $v;
       $this->modifiedColumns[] = CollectionPeer::IS_FEATURED;
@@ -808,19 +830,30 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [comments_on] column.
+   * Sets the value of the [comments_on] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     Collection The current object (for fluent API support)
    */
   public function setCommentsOn($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->comments_on !== $v || $this->isNew())
+    if ($this->comments_on !== $v)
     {
       $this->comments_on = $v;
       $this->modifiedColumns[] = CollectionPeer::COMMENTS_ON;
@@ -830,19 +863,30 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [rating_on] column.
+   * Sets the value of the [rating_on] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     Collection The current object (for fluent API support)
    */
   public function setRatingOn($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->rating_on !== $v || $this->isNew())
+    if ($this->rating_on !== $v)
     {
       $this->rating_on = $v;
       $this->modifiedColumns[] = CollectionPeer::RATING_ON;
@@ -854,56 +898,20 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   /**
    * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     Collection The current object (for fluent API support)
    */
   public function setDeletedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->deleted_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->deleted_at !== null && $tmpDt = new DateTime($this->deleted_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->deleted_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->deleted_at !== null && $tmpDt = new DateTime($this->deleted_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->deleted_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->deleted_at = $newDateAsString;
         $this->modifiedColumns[] = CollectionPeer::DELETED_AT;
       }
     }
@@ -914,56 +922,20 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     Collection The current object (for fluent API support)
    */
   public function setCreatedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->created_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->created_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->created_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->created_at = $newDateAsString;
         $this->modifiedColumns[] = CollectionPeer::CREATED_AT;
       }
     }
@@ -974,56 +946,20 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   /**
    * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     Collection The current object (for fluent API support)
    */
   public function setUpdatedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->updated_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->updated_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->updated_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->updated_at = $newDateAsString;
         $this->modifiedColumns[] = CollectionPeer::UPDATED_AT;
       }
     }
@@ -1116,7 +1052,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 18; // 18 = CollectionPeer::NUM_COLUMNS - CollectionPeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 18; // 18 = CollectionPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -1231,16 +1167,21 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     $con->beginTransaction();
     try
     {
+      $deleteQuery = CollectionQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // soft_delete behavior
       if (!empty($ret) && CollectionQuery::isSoftDeleteEnabled())
       {
+        $this->keepUpdateDateUnchanged();
         $this->setDeletedAt(time());
         $this->save($con);
+        $this->postDelete($con);
         $con->commit();
         CollectionPeer::removeInstanceFromPool($this);
         return;
       }
+
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseCollection:delete:pre') as $callable)
       {
@@ -1253,9 +1194,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
       if ($ret)
       {
-        CollectionQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BaseCollection:delete:post') as $callable)
@@ -1756,12 +1695,18 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
    * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $includeForeignObjects = false)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
   {
+    if (isset($alreadyDumpedObjects['Collection'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['Collection'][$this->getPrimaryKey()] = true;
     $keys = CollectionPeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
@@ -1787,11 +1732,31 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     {
       if (null !== $this->aCollectionCategory)
       {
-        $result['CollectionCategory'] = $this->aCollectionCategory->toArray($keyType, $includeLazyLoadColumns, true);
+        $result['CollectionCategory'] = $this->aCollectionCategory->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
       }
       if (null !== $this->aCollector)
       {
-        $result['Collector'] = $this->aCollector->toArray($keyType, $includeLazyLoadColumns, true);
+        $result['Collector'] = $this->aCollector->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+      }
+      if (null !== $this->collCollectionItems)
+      {
+        $result['CollectionItems'] = $this->collCollectionItems->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+      if (null !== $this->collCollectorInterviews)
+      {
+        $result['CollectorInterviews'] = $this->collCollectorInterviews->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+      if (null !== $this->collCollectibles)
+      {
+        $result['Collectibles'] = $this->collCollectibles->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+      if (null !== $this->collComments)
+      {
+        $result['Comments'] = $this->collComments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+      if (null !== $this->collCustomValues)
+      {
+        $result['CustomValues'] = $this->collCustomValues->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
       }
     }
     return $result;
@@ -2007,27 +1972,28 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    *
    * @param      object $copyObj An object of Collection (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setCollectionCategoryId($this->collection_category_id);
-    $copyObj->setCollectorId($this->collector_id);
-    $copyObj->setName($this->name);
-    $copyObj->setSlug($this->slug);
-    $copyObj->setDescription($this->description);
-    $copyObj->setNumItems($this->num_items);
-    $copyObj->setNumViews($this->num_views);
-    $copyObj->setNumComments($this->num_comments);
-    $copyObj->setNumRatings($this->num_ratings);
-    $copyObj->setScore($this->score);
-    $copyObj->setIsPublic($this->is_public);
-    $copyObj->setIsFeatured($this->is_featured);
-    $copyObj->setCommentsOn($this->comments_on);
-    $copyObj->setRatingOn($this->rating_on);
-    $copyObj->setDeletedAt($this->deleted_at);
-    $copyObj->setCreatedAt($this->created_at);
-    $copyObj->setUpdatedAt($this->updated_at);
+    $copyObj->setCollectionCategoryId($this->getCollectionCategoryId());
+    $copyObj->setCollectorId($this->getCollectorId());
+    $copyObj->setName($this->getName());
+    $copyObj->setSlug($this->getSlug());
+    $copyObj->setDescription($this->getDescription());
+    $copyObj->setNumItems($this->getNumItems());
+    $copyObj->setNumViews($this->getNumViews());
+    $copyObj->setNumComments($this->getNumComments());
+    $copyObj->setNumRatings($this->getNumRatings());
+    $copyObj->setScore($this->getScore());
+    $copyObj->setIsPublic($this->getIsPublic());
+    $copyObj->setIsFeatured($this->getIsFeatured());
+    $copyObj->setCommentsOn($this->getCommentsOn());
+    $copyObj->setRatingOn($this->getRatingOn());
+    $copyObj->setDeletedAt($this->getDeletedAt());
+    $copyObj->setCreatedAt($this->getCreatedAt());
+    $copyObj->setUpdatedAt($this->getUpdatedAt());
 
     if ($deepCopy)
     {
@@ -2072,9 +2038,11 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
     }
 
-
-    $copyObj->setNew(true);
-    $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -2160,11 +2128,11 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     {
       $this->aCollectionCategory = CollectionCategoryQuery::create()->findPk($this->collection_category_id, $con);
       /* The following can be used additionally to
-         guarantee the related object contains a reference
-         to this object.  This level of coupling may, however, be
-         undesirable since it could result in an only partially populated collection
-         in the referenced object.
-         $this->aCollectionCategory->addCollections($this);
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->aCollectionCategory->addCollections($this);
        */
     }
     return $this->aCollectionCategory;
@@ -2214,14 +2182,47 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     {
       $this->aCollector = CollectorQuery::create()->findPk($this->collector_id, $con);
       /* The following can be used additionally to
-         guarantee the related object contains a reference
-         to this object.  This level of coupling may, however, be
-         undesirable since it could result in an only partially populated collection
-         in the referenced object.
-         $this->aCollector->addCollections($this);
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->aCollector->addCollections($this);
        */
     }
     return $this->aCollector;
+  }
+
+
+  /**
+   * Initializes a collection based on the name of a relation.
+   * Avoids crafting an 'init[$relationName]s' method name
+   * that wouldn't work when StandardEnglishPluralizer is used.
+   *
+   * @param      string $relationName The name of the relation to initialize
+   * @return     void
+   */
+  public function initRelation($relationName)
+  {
+    if ('CollectionItem' == $relationName)
+    {
+      return $this->initCollectionItems();
+    }
+    if ('CollectorInterview' == $relationName)
+    {
+      return $this->initCollectorInterviews();
+    }
+    if ('Collectible' == $relationName)
+    {
+      return $this->initCollectibles();
+    }
+    if ('Comment' == $relationName)
+    {
+      return $this->initComments();
+    }
+    if ('CustomValue' == $relationName)
+    {
+      return $this->initCustomValues();
+    }
   }
 
   /**
@@ -2245,10 +2246,17 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initCollectionItems()
+  public function initCollectionItems($overrideExisting = true)
   {
+    if (null !== $this->collCollectionItems && !$overrideExisting)
+    {
+      return;
+    }
     $this->collCollectionItems = new PropelObjectCollection();
     $this->collCollectionItems->setModel('CollectionItem');
   }
@@ -2331,8 +2339,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    * through the CollectionItem foreign key attribute.
    *
    * @param      CollectionItem $l CollectionItem
-   * @return     void
-   * @throws     PropelException
+   * @return     Collection The current object (for fluent API support)
    */
   public function addCollectionItem(CollectionItem $l)
   {
@@ -2344,6 +2351,8 @@ abstract class BaseCollection extends BaseObject  implements Persistent
       $this->collCollectionItems[]= $l;
       $l->setCollection($this);
     }
+
+    return $this;
   }
 
   /**
@@ -2367,10 +2376,17 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initCollectorInterviews()
+  public function initCollectorInterviews($overrideExisting = true)
   {
+    if (null !== $this->collCollectorInterviews && !$overrideExisting)
+    {
+      return;
+    }
     $this->collCollectorInterviews = new PropelObjectCollection();
     $this->collCollectorInterviews->setModel('CollectorInterview');
   }
@@ -2453,8 +2469,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    * through the CollectorInterview foreign key attribute.
    *
    * @param      CollectorInterview $l CollectorInterview
-   * @return     void
-   * @throws     PropelException
+   * @return     Collection The current object (for fluent API support)
    */
   public function addCollectorInterview(CollectorInterview $l)
   {
@@ -2466,6 +2481,8 @@ abstract class BaseCollection extends BaseObject  implements Persistent
       $this->collCollectorInterviews[]= $l;
       $l->setCollection($this);
     }
+
+    return $this;
   }
 
 
@@ -2539,10 +2556,17 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initCollectibles()
+  public function initCollectibles($overrideExisting = true)
   {
+    if (null !== $this->collCollectibles && !$overrideExisting)
+    {
+      return;
+    }
     $this->collCollectibles = new PropelObjectCollection();
     $this->collCollectibles->setModel('Collectible');
   }
@@ -2625,8 +2649,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    * through the Collectible foreign key attribute.
    *
    * @param      Collectible $l Collectible
-   * @return     void
-   * @throws     PropelException
+   * @return     Collection The current object (for fluent API support)
    */
   public function addCollectible(Collectible $l)
   {
@@ -2638,6 +2661,8 @@ abstract class BaseCollection extends BaseObject  implements Persistent
       $this->collCollectibles[]= $l;
       $l->setCollection($this);
     }
+
+    return $this;
   }
 
 
@@ -2686,10 +2711,17 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initComments()
+  public function initComments($overrideExisting = true)
   {
+    if (null !== $this->collComments && !$overrideExisting)
+    {
+      return;
+    }
     $this->collComments = new PropelObjectCollection();
     $this->collComments->setModel('Comment');
   }
@@ -2772,8 +2804,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    * through the Comment foreign key attribute.
    *
    * @param      Comment $l Comment
-   * @return     void
-   * @throws     PropelException
+   * @return     Collection The current object (for fluent API support)
    */
   public function addComment(Comment $l)
   {
@@ -2785,6 +2816,8 @@ abstract class BaseCollection extends BaseObject  implements Persistent
       $this->collComments[]= $l;
       $l->setCollection($this);
     }
+
+    return $this;
   }
 
 
@@ -2858,10 +2891,17 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initCustomValues()
+  public function initCustomValues($overrideExisting = true)
   {
+    if (null !== $this->collCustomValues && !$overrideExisting)
+    {
+      return;
+    }
     $this->collCustomValues = new PropelObjectCollection();
     $this->collCustomValues->setModel('CustomValue');
   }
@@ -2944,8 +2984,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    * through the CustomValue foreign key attribute.
    *
    * @param      CustomValue $l CustomValue
-   * @return     void
-   * @throws     PropelException
+   * @return     Collection The current object (for fluent API support)
    */
   public function addCustomValue(CustomValue $l)
   {
@@ -2957,6 +2996,8 @@ abstract class BaseCollection extends BaseObject  implements Persistent
       $this->collCustomValues[]= $l;
       $l->setCollection($this);
     }
+
+    return $this;
   }
 
 
@@ -3017,13 +3058,13 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -3031,45 +3072,65 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     {
       if ($this->collCollectionItems)
       {
-        foreach ((array) $this->collCollectionItems as $o)
+        foreach ($this->collCollectionItems as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
       if ($this->collCollectorInterviews)
       {
-        foreach ((array) $this->collCollectorInterviews as $o)
+        foreach ($this->collCollectorInterviews as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
       if ($this->collCollectibles)
       {
-        foreach ((array) $this->collCollectibles as $o)
+        foreach ($this->collCollectibles as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
       if ($this->collComments)
       {
-        foreach ((array) $this->collComments as $o)
+        foreach ($this->collComments as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
       if ($this->collCustomValues)
       {
-        foreach ((array) $this->collCustomValues as $o)
+        foreach ($this->collCustomValues as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
     }
 
+    if ($this->collCollectionItems instanceof PropelCollection)
+    {
+      $this->collCollectionItems->clearIterator();
+    }
     $this->collCollectionItems = null;
+    if ($this->collCollectorInterviews instanceof PropelCollection)
+    {
+      $this->collCollectorInterviews->clearIterator();
+    }
     $this->collCollectorInterviews = null;
+    if ($this->collCollectibles instanceof PropelCollection)
+    {
+      $this->collCollectibles->clearIterator();
+    }
     $this->collCollectibles = null;
+    if ($this->collComments instanceof PropelCollection)
+    {
+      $this->collComments->clearIterator();
+    }
     $this->collComments = null;
+    if ($this->collCustomValues instanceof PropelCollection)
+    {
+      $this->collCustomValues->clearIterator();
+    }
     $this->collCustomValues = null;
     $this->aCollectionCategory = null;
     $this->aCollector = null;
@@ -3092,8 +3153,15 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    */
   public function forceDelete(PropelPDO $con = null)
   {
-    CollectionPeer::disableSoftDelete();
+    if($isSoftDeleteEnabled = CollectionPeer::isSoftDeleteEnabled())
+    {
+      CollectionPeer::disableSoftDelete();
+    }
     $this->delete($con);
+    if ($isSoftDeleteEnabled)
+    {
+      CollectionPeer::enableSoftDelete();
+    }
   }
   
   /**
@@ -3125,6 +3193,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BaseCollection:' . $name))
     {
@@ -3132,20 +3201,6 @@ abstract class BaseCollection extends BaseObject  implements Persistent
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

@@ -29,7 +29,7 @@ abstract class BaseFeaturedForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'               => new sfValidatorPropelChoice(array('model' => 'Featured', 'column' => 'id', 'required' => false)),
+      'id'               => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'featured_type_id' => new sfValidatorInteger(array('min' => -128, 'max' => 127)),
       'featured_model'   => new sfValidatorString(array('max_length' => 64)),
       'featured_id'      => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),

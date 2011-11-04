@@ -25,12 +25,15 @@ abstract class BaseCollectionCategoryFieldPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'CollectionCategoryFieldTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 3;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 3;
 
   /** the column name for the ID field */
   const ID = 'collection_category_field.ID';
@@ -41,6 +44,9 @@ abstract class BaseCollectionCategoryFieldPeer
   /** the column name for the CUSTOM_FIELD_ID field */
   const CUSTOM_FIELD_ID = 'collection_category_field.CUSTOM_FIELD_ID';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of CollectionCategoryField objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -50,20 +56,13 @@ abstract class BaseCollectionCategoryFieldPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'CollectionCategoryId', 'CustomFieldId', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectionCategoryId', 'customFieldId', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTION_CATEGORY_ID, self::CUSTOM_FIELD_ID, ),
@@ -78,7 +77,7 @@ abstract class BaseCollectionCategoryFieldPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectionCategoryId' => 1, 'CustomFieldId' => 2, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectionCategoryId' => 1, 'customFieldId' => 2, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTION_CATEGORY_ID => 1, self::CUSTOM_FIELD_ID => 2, ),
@@ -227,7 +226,7 @@ abstract class BaseCollectionCategoryFieldPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -247,7 +246,7 @@ abstract class BaseCollectionCategoryFieldPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -309,7 +308,7 @@ abstract class BaseCollectionCategoryFieldPeer
    * @param      CollectionCategoryField $value A CollectionCategoryField object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(CollectionCategoryField $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -415,7 +414,7 @@ abstract class BaseCollectionCategoryFieldPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -480,7 +479,7 @@ abstract class BaseCollectionCategoryFieldPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + CollectionCategoryFieldPeer::NUM_COLUMNS;
+      $col = $startcol + CollectionCategoryFieldPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -491,6 +490,7 @@ abstract class BaseCollectionCategoryFieldPeer
     }
     return array($obj, $col);
   }
+
 
   /**
    * Returns the number of rows matching criteria, joining the related CollectionCategory table
@@ -520,9 +520,9 @@ abstract class BaseCollectionCategoryFieldPeer
     {
       CollectionCategoryFieldPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -582,9 +582,9 @@ abstract class BaseCollectionCategoryFieldPeer
     {
       CollectionCategoryFieldPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -636,7 +636,7 @@ abstract class BaseCollectionCategoryFieldPeer
     }
 
     CollectionCategoryFieldPeer::addSelectColumns($criteria);
-    $startcol = (CollectionCategoryFieldPeer::NUM_COLUMNS - CollectionCategoryFieldPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol = CollectionCategoryFieldPeer::NUM_HYDRATE_COLUMNS;
     CollectionCategoryPeer::addSelectColumns($criteria);
 
     $criteria->addJoin(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, CollectionCategoryPeer::ID, $join_behavior);
@@ -715,7 +715,7 @@ abstract class BaseCollectionCategoryFieldPeer
     }
 
     CollectionCategoryFieldPeer::addSelectColumns($criteria);
-    $startcol = (CollectionCategoryFieldPeer::NUM_COLUMNS - CollectionCategoryFieldPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol = CollectionCategoryFieldPeer::NUM_HYDRATE_COLUMNS;
     CustomFieldPeer::addSelectColumns($criteria);
 
     $criteria->addJoin(CollectionCategoryFieldPeer::CUSTOM_FIELD_ID, CustomFieldPeer::ID, $join_behavior);
@@ -802,9 +802,9 @@ abstract class BaseCollectionCategoryFieldPeer
     {
       CollectionCategoryFieldPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -858,13 +858,13 @@ abstract class BaseCollectionCategoryFieldPeer
     }
 
     CollectionCategoryFieldPeer::addSelectColumns($criteria);
-    $startcol2 = (CollectionCategoryFieldPeer::NUM_COLUMNS - CollectionCategoryFieldPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = CollectionCategoryFieldPeer::NUM_HYDRATE_COLUMNS;
 
     CollectionCategoryPeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + (CollectionCategoryPeer::NUM_COLUMNS - CollectionCategoryPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol3 = $startcol2 + CollectionCategoryPeer::NUM_HYDRATE_COLUMNS;
 
     CustomFieldPeer::addSelectColumns($criteria);
-    $startcol4 = $startcol3 + (CustomFieldPeer::NUM_COLUMNS - CustomFieldPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol4 = $startcol3 + CustomFieldPeer::NUM_HYDRATE_COLUMNS;
 
     $criteria->addJoin(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, CollectionCategoryPeer::ID, $join_behavior);
 
@@ -962,7 +962,7 @@ abstract class BaseCollectionCategoryFieldPeer
     // it will be impossible for the BasePeer::createSelectSql() method to determine which
     // tables go into the FROM clause.
     $criteria->setPrimaryTableName(CollectionCategoryFieldPeer::TABLE_NAME);
-    
+
     if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
     {
       $criteria->setDistinct();
@@ -972,9 +972,9 @@ abstract class BaseCollectionCategoryFieldPeer
     {
       CollectionCategoryFieldPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -1024,7 +1024,7 @@ abstract class BaseCollectionCategoryFieldPeer
     // it will be impossible for the BasePeer::createSelectSql() method to determine which
     // tables go into the FROM clause.
     $criteria->setPrimaryTableName(CollectionCategoryFieldPeer::TABLE_NAME);
-    
+
     if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
     {
       $criteria->setDistinct();
@@ -1034,9 +1034,9 @@ abstract class BaseCollectionCategoryFieldPeer
     {
       CollectionCategoryFieldPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -1091,10 +1091,10 @@ abstract class BaseCollectionCategoryFieldPeer
     }
 
     CollectionCategoryFieldPeer::addSelectColumns($criteria);
-    $startcol2 = (CollectionCategoryFieldPeer::NUM_COLUMNS - CollectionCategoryFieldPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = CollectionCategoryFieldPeer::NUM_HYDRATE_COLUMNS;
 
     CustomFieldPeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + (CustomFieldPeer::NUM_COLUMNS - CustomFieldPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol3 = $startcol2 + CustomFieldPeer::NUM_HYDRATE_COLUMNS;
 
     $criteria->addJoin(CollectionCategoryFieldPeer::CUSTOM_FIELD_ID, CustomFieldPeer::ID, $join_behavior);
 
@@ -1177,10 +1177,10 @@ abstract class BaseCollectionCategoryFieldPeer
     }
 
     CollectionCategoryFieldPeer::addSelectColumns($criteria);
-    $startcol2 = (CollectionCategoryFieldPeer::NUM_COLUMNS - CollectionCategoryFieldPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = CollectionCategoryFieldPeer::NUM_HYDRATE_COLUMNS;
 
     CollectionCategoryPeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + (CollectionCategoryPeer::NUM_COLUMNS - CollectionCategoryPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol3 = $startcol2 + CollectionCategoryPeer::NUM_HYDRATE_COLUMNS;
 
     $criteria->addJoin(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, CollectionCategoryPeer::ID, $join_behavior);
 
@@ -1280,7 +1280,7 @@ abstract class BaseCollectionCategoryFieldPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a CollectionCategoryField or Criteria object.
+   * Performs an INSERT on the database, given a CollectionCategoryField or Criteria object.
    *
    * @param      mixed $values Criteria or CollectionCategoryField object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -1331,7 +1331,7 @@ abstract class BaseCollectionCategoryFieldPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a CollectionCategoryField or Criteria object.
+   * Performs an UPDATE on the database, given a CollectionCategoryField or Criteria object.
    *
    * @param      mixed $values Criteria or CollectionCategoryField object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -1375,11 +1375,12 @@ abstract class BaseCollectionCategoryFieldPeer
   }
 
   /**
-   * Method to DELETE all rows from the collection_category_field table.
+   * Deletes all rows from the collection_category_field table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -1408,7 +1409,7 @@ abstract class BaseCollectionCategoryFieldPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a CollectionCategoryField or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a CollectionCategoryField or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or CollectionCategoryField object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -1483,7 +1484,7 @@ abstract class BaseCollectionCategoryFieldPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(CollectionCategoryField $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

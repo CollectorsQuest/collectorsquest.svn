@@ -120,7 +120,7 @@ class Playlist extends BasePlaylist
 sfPropelBehavior::add(
   'Playlist',
   array(
-    'sfPropelActAsSluggableBehavior' => array(
+    'PropelActAsSluggableBehavior' => array(
       'columns' => array(
         'from' => PlaylistPeer::TITLE,
         'to' => PlaylistPeer::SLUG

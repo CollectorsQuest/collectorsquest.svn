@@ -45,331 +45,350 @@
  */
 abstract class BaseInterviewQuestionQuery extends ModelCriteria
 {
-
-  /**
-   * Initializes internal state of BaseInterviewQuestionQuery object.
-   *
-   * @param     string $dbName The dabase name
-   * @param     string $modelName The phpName of a model, e.g. 'Book'
-   * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
-   */
-  public function __construct($dbName = 'propel', $modelName = 'InterviewQuestion', $modelAlias = null)
-  {
-    parent::__construct($dbName, $modelName, $modelAlias);
-  }
-
-  /**
-   * Returns a new InterviewQuestionQuery object.
-   *
-   * @param     string $modelAlias The alias of a model in the query
-   * @param     Criteria $criteria Optional Criteria to build the query from
-   *
-   * @return    InterviewQuestionQuery
-   */
-  public static function create($modelAlias = null, $criteria = null)
-  {
-    if ($criteria instanceof InterviewQuestionQuery)
+    
+    /**
+     * Initializes internal state of BaseInterviewQuestionQuery object.
+     *
+     * @param     string $dbName The dabase name
+     * @param     string $modelName The phpName of a model, e.g. 'Book'
+     * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+     */
+    public function __construct($dbName = 'propel', $modelName = 'InterviewQuestion', $modelAlias = null)
     {
-      return $criteria;
+        parent::__construct($dbName, $modelName, $modelAlias);
     }
-    $query = new InterviewQuestionQuery();
-    if (null !== $modelAlias)
+
+    /**
+     * Returns a new InterviewQuestionQuery object.
+     *
+     * @param     string $modelAlias The alias of a model in the query
+     * @param     Criteria $criteria Optional Criteria to build the query from
+     *
+     * @return    InterviewQuestionQuery
+     */
+    public static function create($modelAlias = null, $criteria = null)
     {
-      $query->setModelAlias($modelAlias);
+        if ($criteria instanceof InterviewQuestionQuery) {
+            return $criteria;
+        }
+        $query = new InterviewQuestionQuery();
+        if (null !== $modelAlias) {
+            $query->setModelAlias($modelAlias);
+        }
+        if ($criteria instanceof Criteria) {
+            $query->mergeWith($criteria);
+        }
+        return $query;
     }
-    if ($criteria instanceof Criteria)
+
+    /**
+     * Find object by primary key
+     * Use instance pooling to avoid a database query if the object exists
+     * <code>
+     * $obj  = $c->findPk(12, $con);
+     * </code>
+     * @param     mixed $key Primary key to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    InterviewQuestion|array|mixed the result, formatted by the current formatter
+     */
+    public function findPk($key, $con = null)
     {
-      $query->mergeWith($criteria);
+        if ((null !== ($obj = InterviewQuestionPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
+            // the object is alredy in the instance pool
+            return $obj;
+        } else {
+            // the object has not been requested yet, or the formatter is not an object formatter
+            $criteria = $this->isKeepQuery() ? clone $this : $this;
+            $stmt = $criteria
+                ->filterByPrimaryKey($key)
+                ->getSelectStatement($con);
+            return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+        }
     }
-    return $query;
-  }
 
-  /**
-   * Find object by primary key
-   * Use instance pooling to avoid a database query if the object exists
-   * <code>
-   * $obj  = $c->findPk(12, $con);
-   * </code>
-   * @param     mixed $key Primary key to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    InterviewQuestion|array|mixed the result, formatted by the current formatter
-   */
-  public function findPk($key, $con = null)
-  {
-    if ((null !== ($obj = InterviewQuestionPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter())
+    /**
+     * Find objects by primary key
+     * <code>
+     * $objs = $c->findPks(array(12, 56, 832), $con);
+     * </code>
+     * @param     array $keys Primary keys to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
+     */
+    public function findPks($keys, $con = null)
     {
-      // the object is alredy in the instance pool
-      return $obj;
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        return $this
+            ->filterByPrimaryKeys($keys)
+            ->find($con);
     }
-    else
+
+    /**
+     * Filter the query by primary key
+     *
+     * @param     mixed $key Primary key to use for the query
+     *
+     * @return    InterviewQuestionQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKey($key)
     {
-      // the object has not been requested yet, or the formatter is not an object formatter
-      $criteria = $this->isKeepQuery() ? clone $this : $this;
-      $stmt = $criteria
-        ->filterByPrimaryKey($key)
-        ->getSelectStatement($con);
-      return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+        return $this->addUsingAlias(InterviewQuestionPeer::ID, $key, Criteria::EQUAL);
     }
-  }
 
-  /**
-   * Find objects by primary key
-   * <code>
-   * $objs = $c->findPks(array(12, 56, 832), $con);
-   * </code>
-   * @param     array $keys Primary keys to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
-   */
-  public function findPks($keys, $con = null)
-  {  
-    $criteria = $this->isKeepQuery() ? clone $this : $this;
-    return $this
-      ->filterByPrimaryKeys($keys)
-      ->find($con);
-  }
-
-  /**
-   * Filter the query by primary key
-   *
-   * @param     mixed $key Primary key to use for the query
-   *
-   * @return    InterviewQuestionQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKey($key)
-  {
-    return $this->addUsingAlias(InterviewQuestionPeer::ID, $key, Criteria::EQUAL);
-  }
-
-  /**
-   * Filter the query by a list of primary keys
-   *
-   * @param     array $keys The list of primary key to use for the query
-   *
-   * @return    InterviewQuestionQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKeys($keys)
-  {
-    return $this->addUsingAlias(InterviewQuestionPeer::ID, $keys, Criteria::IN);
-  }
-
-  /**
-   * Filter the query on the id column
-   * 
-   * @param     int|array $id The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    InterviewQuestionQuery The current query, for fluid interface
-   */
-  public function filterById($id = null, $comparison = null)
-  {
-    if (is_array($id) && null === $comparison)
+    /**
+     * Filter the query by a list of primary keys
+     *
+     * @param     array $keys The list of primary key to use for the query
+     *
+     * @return    InterviewQuestionQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKeys($keys)
     {
-      $comparison = Criteria::IN;
+        return $this->addUsingAlias(InterviewQuestionPeer::ID, $keys, Criteria::IN);
     }
-    return $this->addUsingAlias(InterviewQuestionPeer::ID, $id, $comparison);
-  }
 
-  /**
-   * Filter the query on the collector_interview_id column
-   * 
-   * @param     int|array $collectorInterviewId The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    InterviewQuestionQuery The current query, for fluid interface
-   */
-  public function filterByCollectorInterviewId($collectorInterviewId = null, $comparison = null)
-  {
-    if (is_array($collectorInterviewId))
+    /**
+     * Filter the query on the id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterById(1234); // WHERE id = 1234
+     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
+     * $query->filterById(array('min' => 12)); // WHERE id > 12
+     * </code>
+     *
+     * @param     mixed $id The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    InterviewQuestionQuery The current query, for fluid interface
+     */
+    public function filterById($id = null, $comparison = null)
     {
-      $useMinMax = false;
-      if (isset($collectorInterviewId['min']))
-      {
-        $this->addUsingAlias(InterviewQuestionPeer::COLLECTOR_INTERVIEW_ID, $collectorInterviewId['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($collectorInterviewId['max']))
-      {
-        $this->addUsingAlias(InterviewQuestionPeer::COLLECTOR_INTERVIEW_ID, $collectorInterviewId['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
+        if (is_array($id) && null === $comparison) {
+            $comparison = Criteria::IN;
+        }
+        return $this->addUsingAlias(InterviewQuestionPeer::ID, $id, $comparison);
+    }
+
+    /**
+     * Filter the query on the collector_interview_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCollectorInterviewId(1234); // WHERE collector_interview_id = 1234
+     * $query->filterByCollectorInterviewId(array(12, 34)); // WHERE collector_interview_id IN (12, 34)
+     * $query->filterByCollectorInterviewId(array('min' => 12)); // WHERE collector_interview_id > 12
+     * </code>
+     *
+     * @see       filterByCollectorInterview()
+     *
+     * @param     mixed $collectorInterviewId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    InterviewQuestionQuery The current query, for fluid interface
+     */
+    public function filterByCollectorInterviewId($collectorInterviewId = null, $comparison = null)
+    {
+        if (is_array($collectorInterviewId)) {
+            $useMinMax = false;
+            if (isset($collectorInterviewId['min'])) {
+                $this->addUsingAlias(InterviewQuestionPeer::COLLECTOR_INTERVIEW_ID, $collectorInterviewId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($collectorInterviewId['max'])) {
+                $this->addUsingAlias(InterviewQuestionPeer::COLLECTOR_INTERVIEW_ID, $collectorInterviewId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(InterviewQuestionPeer::COLLECTOR_INTERVIEW_ID, $collectorInterviewId, $comparison);
+    }
+
+    /**
+     * Filter the query on the question column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByQuestion('fooValue');   // WHERE question = 'fooValue'
+     * $query->filterByQuestion('%fooValue%'); // WHERE question LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $question The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    InterviewQuestionQuery The current query, for fluid interface
+     */
+    public function filterByQuestion($question = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($question)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $question)) {
+                $question = str_replace('*', '%', $question);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(InterviewQuestionPeer::QUESTION, $question, $comparison);
+    }
+
+    /**
+     * Filter the query on the answer column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByAnswer('fooValue');   // WHERE answer = 'fooValue'
+     * $query->filterByAnswer('%fooValue%'); // WHERE answer LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $answer The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    InterviewQuestionQuery The current query, for fluid interface
+     */
+    public function filterByAnswer($answer = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($answer)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $answer)) {
+                $answer = str_replace('*', '%', $answer);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(InterviewQuestionPeer::ANSWER, $answer, $comparison);
+    }
+
+    /**
+     * Filter the query on the photo column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByPhoto('fooValue');   // WHERE photo = 'fooValue'
+     * $query->filterByPhoto('%fooValue%'); // WHERE photo LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $photo The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    InterviewQuestionQuery The current query, for fluid interface
+     */
+    public function filterByPhoto($photo = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($photo)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $photo)) {
+                $photo = str_replace('*', '%', $photo);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(InterviewQuestionPeer::PHOTO, $photo, $comparison);
+    }
+
+    /**
+     * Filter the query by a related CollectorInterview object
+     *
+     * @param     CollectorInterview|PropelCollection $collectorInterview The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    InterviewQuestionQuery The current query, for fluid interface
+     */
+    public function filterByCollectorInterview($collectorInterview, $comparison = null)
+    {
+        if ($collectorInterview instanceof CollectorInterview) {
+            return $this
+                ->addUsingAlias(InterviewQuestionPeer::COLLECTOR_INTERVIEW_ID, $collectorInterview->getId(), $comparison);
+        } elseif ($collectorInterview instanceof PropelCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+            return $this
+                ->addUsingAlias(InterviewQuestionPeer::COLLECTOR_INTERVIEW_ID, $collectorInterview->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByCollectorInterview() only accepts arguments of type CollectorInterview or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the CollectorInterview relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    InterviewQuestionQuery The current query, for fluid interface
+     */
+    public function joinCollectorInterview($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('CollectorInterview');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'CollectorInterview');
+        }
+
         return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
     }
-    return $this->addUsingAlias(InterviewQuestionPeer::COLLECTOR_INTERVIEW_ID, $collectorInterviewId, $comparison);
-  }
 
-  /**
-   * Filter the query on the question column
-   * 
-   * @param     string $question The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    InterviewQuestionQuery The current query, for fluid interface
-   */
-  public function filterByQuestion($question = null, $comparison = null)
-  {
-    if (null === $comparison)
+    /**
+     * Use the CollectorInterview relation CollectorInterview object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CollectorInterviewQuery A secondary query class using the current class as primary query
+     */
+    public function useCollectorInterviewQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
-      if (is_array($question))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $question))
-      {
-        $question = str_replace('*', '%', $question);
-        $comparison = Criteria::LIKE;
-      }
+        return $this
+            ->joinCollectorInterview($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'CollectorInterview', 'CollectorInterviewQuery');
     }
-    return $this->addUsingAlias(InterviewQuestionPeer::QUESTION, $question, $comparison);
-  }
 
-  /**
-   * Filter the query on the answer column
-   * 
-   * @param     string $answer The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    InterviewQuestionQuery The current query, for fluid interface
-   */
-  public function filterByAnswer($answer = null, $comparison = null)
-  {
-    if (null === $comparison)
+    /**
+     * Exclude object from result
+     *
+     * @param     InterviewQuestion $interviewQuestion Object to remove from the list of results
+     *
+     * @return    InterviewQuestionQuery The current query, for fluid interface
+     */
+    public function prune($interviewQuestion = null)
     {
-      if (is_array($answer))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $answer))
-      {
-        $answer = str_replace('*', '%', $answer);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(InterviewQuestionPeer::ANSWER, $answer, $comparison);
-  }
+        if ($interviewQuestion) {
+            $this->addUsingAlias(InterviewQuestionPeer::ID, $interviewQuestion->getId(), Criteria::NOT_EQUAL);
+        }
 
-  /**
-   * Filter the query on the photo column
-   * 
-   * @param     string $photo The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    InterviewQuestionQuery The current query, for fluid interface
-   */
-  public function filterByPhoto($photo = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($photo))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $photo))
-      {
-        $photo = str_replace('*', '%', $photo);
-        $comparison = Criteria::LIKE;
-      }
+        return $this;
     }
-    return $this->addUsingAlias(InterviewQuestionPeer::PHOTO, $photo, $comparison);
-  }
-
-  /**
-   * Filter the query by a related CollectorInterview object
-   *
-   * @param     CollectorInterview $collectorInterview  the related object to use as filter
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    InterviewQuestionQuery The current query, for fluid interface
-   */
-  public function filterByCollectorInterview($collectorInterview, $comparison = null)
-  {
-    return $this
-      ->addUsingAlias(InterviewQuestionPeer::COLLECTOR_INTERVIEW_ID, $collectorInterview->getId(), $comparison);
-  }
-
-  /**
-   * Adds a JOIN clause to the query using the CollectorInterview relation
-   * 
-   * @param     string $relationAlias optional alias for the relation
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    InterviewQuestionQuery The current query, for fluid interface
-   */
-  public function joinCollectorInterview($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-  {
-    $tableMap = $this->getTableMap();
-    $relationMap = $tableMap->getRelation('CollectorInterview');
-    
-    // create a ModelJoin object for this join
-    $join = new ModelJoin();
-    $join->setJoinType($joinType);
-    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-    if ($previousJoin = $this->getPreviousJoin())
-    {
-      $join->setPreviousJoin($previousJoin);
-    }
-    
-    // add the ModelJoin to the current object
-    if($relationAlias)
-    {
-      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-      $this->addJoinObject($join, $relationAlias);
-    }
-    else
-    {
-      $this->addJoinObject($join, 'CollectorInterview');
-    }
-    
-    return $this;
-  }
-
-  /**
-   * Use the CollectorInterview relation CollectorInterview object
-   *
-   * @see       useQuery()
-   * 
-   * @param     string $relationAlias optional alias for the relation,
-   *                                   to be used as main alias in the secondary query
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CollectorInterviewQuery A secondary query class using the current class as primary query
-   */
-  public function useCollectorInterviewQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-  {
-    return $this
-      ->joinCollectorInterview($relationAlias, $joinType)
-      ->useQuery($relationAlias ? $relationAlias : 'CollectorInterview', 'CollectorInterviewQuery');
-  }
-
-  /**
-   * Exclude object from result
-   *
-   * @param     InterviewQuestion $interviewQuestion Object to remove from the list of results
-   *
-   * @return    InterviewQuestionQuery The current query, for fluid interface
-   */
-  public function prune($interviewQuestion = null)
-  {
-    if ($interviewQuestion)
-    {
-      $this->addUsingAlias(InterviewQuestionPeer::ID, $interviewQuestion->getId(), Criteria::NOT_EQUAL);
-    }
-    
-    return $this;
-  }
 
 }

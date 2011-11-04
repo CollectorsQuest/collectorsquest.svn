@@ -47,7 +47,7 @@ class CollectionItemTableMap extends TableMap
     $this->addColumn('PURCHASED_PRICE', 'PurchasedPrice', 'INTEGER', false, null, 0);
     $this->addColumn('CURRENCY', 'Currency', 'VARCHAR', false, 50, null);
     $this->addColumn('PHOTO', 'Photo', 'VARCHAR', false, 128, null);
-    $this->addColumn('IS_FOR_SALE', 'IsForSale', 'BOOLEAN', false, null, false);
+    $this->addColumn('IS_FOR_SALE', 'IsForSale', 'BOOLEAN', false, 1, false);
     $this->addColumn('NUM_VIEWS', 'NumViews', 'INTEGER', false, null, 0);
     $this->addColumn('POSITION', 'Position', 'TINYINT', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
@@ -61,14 +61,14 @@ class CollectionItemTableMap extends TableMap
   public function buildRelations()
   {
     $this->addRelation('Collection', 'Collection', RelationMap::MANY_TO_ONE, array('collection_id' => 'id', ), null, null);
-    $this->addRelation('CollectionItemForSale', 'CollectionItemForSale', RelationMap::ONE_TO_MANY, array('id' => 'item_id', ), null, null);
-    $this->addRelation('CollectionItemOffer', 'CollectionItemOffer', RelationMap::ONE_TO_MANY, array('id' => 'item_id', ), null, null);
+    $this->addRelation('CollectionItemForSale', 'CollectionItemForSale', RelationMap::ONE_TO_MANY, array('id' => 'item_id', ), null, null, 'CollectionItemForSales');
+    $this->addRelation('CollectionItemOffer', 'CollectionItemOffer', RelationMap::ONE_TO_MANY, array('id' => 'item_id', ), null, null, 'CollectionItemOffers');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

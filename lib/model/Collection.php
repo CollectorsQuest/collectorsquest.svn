@@ -6,8 +6,8 @@ class Collection extends BaseCollection
    * @return string
    */
   public function __toString()
-  {  
-	return $this->getName();	
+  {
+	return $this->getName();
   }
 
   /**
@@ -38,7 +38,7 @@ class Collection extends BaseCollection
 
   /**
    * @param  string  $type Can be 'html' or 'markdown'
-   * 
+   *
    * @return string
    */
   public function getDescription($type = 'html')
@@ -71,7 +71,7 @@ class Collection extends BaseCollection
     $c->add(TaggingPeer::TAGGABLE_ID, $this->getId());
     $c->add(TaggingPeer::TAGGABLE_MODEL, 'Collection');
     $stmt = TaggingPeer::doSelectStmt($c);
-    
+
     return $stmt->fetchAll(PDO::FETCH_COLUMN);
   }
 
@@ -209,7 +209,7 @@ class Collection extends BaseCollection
 		$oCriteria->addSelectColumn(CollectionPeer::NAME);
 		$oCriteria->add(CollectionPeer::COLLECTOR_ID, $snIdCollector);
 		$oCriteria->addAscendingOrderByColumn(CollectionPeer::NAME);
-		
+
 		return CollectionPeer::doSelectStmt($oCriteria);
 	}
 
@@ -230,12 +230,12 @@ class Collection extends BaseCollection
   }
 }
 
-sfPropelBehavior::add('Collection', array('sfPropelActAsTaggableBehavior'));
+sfPropelBehavior::add('Collection', array('IceTaggableBehavior'));
 
 sfPropelBehavior::add(
   'Collection',
   array(
-    'sfPropelActAsSluggableBehavior' => array(
+    'PropelActAsSluggableBehavior' => array(
       'columns' => array(
         'from' => CollectionPeer::NAME,
         'to' => CollectionPeer::SLUG

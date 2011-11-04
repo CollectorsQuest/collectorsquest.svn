@@ -25,12 +25,15 @@ abstract class BaseCollectorPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'CollectorTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 23;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 23;
 
   /** the column name for the ID field */
   const ID = 'collector.ID';
@@ -101,6 +104,9 @@ abstract class BaseCollectorPeer
   /** the column name for the UPDATED_AT field */
   const UPDATED_AT = 'collector.UPDATED_AT';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of Collector objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -110,20 +116,13 @@ abstract class BaseCollectorPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'FacebookId', 'Username', 'DisplayName', 'Slug', 'Sha1Password', 'Salt', 'Score', 'Email', 'UserType', 'ItemsAllowed', 'WhatYouCollect', 'PurchasesPerYear', 'WhatYouSell', 'AnnuallySpend', 'MostExpensiveItem', 'Company', 'IsPublic', 'SessionId', 'LastSeenAt', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'facebookId', 'username', 'displayName', 'slug', 'sha1Password', 'salt', 'score', 'email', 'userType', 'itemsAllowed', 'whatYouCollect', 'purchasesPerYear', 'whatYouSell', 'annuallySpend', 'mostExpensiveItem', 'company', 'isPublic', 'sessionId', 'lastSeenAt', 'deletedAt', 'createdAt', 'updatedAt', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::FACEBOOK_ID, self::USERNAME, self::DISPLAY_NAME, self::SLUG, self::SHA1_PASSWORD, self::SALT, self::SCORE, self::EMAIL, self::USER_TYPE, self::ITEMS_ALLOWED, self::WHAT_YOU_COLLECT, self::PURCHASES_PER_YEAR, self::WHAT_YOU_SELL, self::ANNUALLY_SPEND, self::MOST_EXPENSIVE_ITEM, self::COMPANY, self::IS_PUBLIC, self::SESSION_ID, self::LAST_SEEN_AT, self::DELETED_AT, self::CREATED_AT, self::UPDATED_AT, ),
@@ -138,7 +137,7 @@ abstract class BaseCollectorPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'FacebookId' => 1, 'Username' => 2, 'DisplayName' => 3, 'Slug' => 4, 'Sha1Password' => 5, 'Salt' => 6, 'Score' => 7, 'Email' => 8, 'UserType' => 9, 'ItemsAllowed' => 10, 'WhatYouCollect' => 11, 'PurchasesPerYear' => 12, 'WhatYouSell' => 13, 'AnnuallySpend' => 14, 'MostExpensiveItem' => 15, 'Company' => 16, 'IsPublic' => 17, 'SessionId' => 18, 'LastSeenAt' => 19, 'DeletedAt' => 20, 'CreatedAt' => 21, 'UpdatedAt' => 22, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'facebookId' => 1, 'username' => 2, 'displayName' => 3, 'slug' => 4, 'sha1Password' => 5, 'salt' => 6, 'score' => 7, 'email' => 8, 'userType' => 9, 'itemsAllowed' => 10, 'whatYouCollect' => 11, 'purchasesPerYear' => 12, 'whatYouSell' => 13, 'annuallySpend' => 14, 'mostExpensiveItem' => 15, 'company' => 16, 'isPublic' => 17, 'sessionId' => 18, 'lastSeenAt' => 19, 'deletedAt' => 20, 'createdAt' => 21, 'updatedAt' => 22, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::FACEBOOK_ID => 1, self::USERNAME => 2, self::DISPLAY_NAME => 3, self::SLUG => 4, self::SHA1_PASSWORD => 5, self::SALT => 6, self::SCORE => 7, self::EMAIL => 8, self::USER_TYPE => 9, self::ITEMS_ALLOWED => 10, self::WHAT_YOU_COLLECT => 11, self::PURCHASES_PER_YEAR => 12, self::WHAT_YOU_SELL => 13, self::ANNUALLY_SPEND => 14, self::MOST_EXPENSIVE_ITEM => 15, self::COMPANY => 16, self::IS_PUBLIC => 17, self::SESSION_ID => 18, self::LAST_SEEN_AT => 19, self::DELETED_AT => 20, self::CREATED_AT => 21, self::UPDATED_AT => 22, ),
@@ -336,7 +335,7 @@ abstract class BaseCollectorPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -356,7 +355,7 @@ abstract class BaseCollectorPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -427,7 +426,7 @@ abstract class BaseCollectorPeer
    * @param      Collector $value A Collector object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(Collector $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -510,31 +509,31 @@ abstract class BaseCollectorPeer
    */
   public static function clearRelatedInstancePool()
   {
-    // Invalidate objects in CollectorProfilePeer instance pool, 
+    // Invalidate objects in CollectorProfilePeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     CollectorProfilePeer::clearInstancePool();
-    // Invalidate objects in CollectorIdentifierPeer instance pool, 
+    // Invalidate objects in CollectorIdentifierPeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     CollectorIdentifierPeer::clearInstancePool();
-    // Invalidate objects in CollectorInterviewPeer instance pool, 
+    // Invalidate objects in CollectorInterviewPeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     CollectorInterviewPeer::clearInstancePool();
-    // Invalidate objects in CollectorGeocachePeer instance pool, 
+    // Invalidate objects in CollectorGeocachePeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     CollectorGeocachePeer::clearInstancePool();
-    // Invalidate objects in CollectionPeer instance pool, 
+    // Invalidate objects in CollectionPeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     CollectionPeer::clearInstancePool();
-    // Invalidate objects in CollectiblePeer instance pool, 
+    // Invalidate objects in CollectiblePeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     CollectiblePeer::clearInstancePool();
-    // Invalidate objects in CommentPeer instance pool, 
+    // Invalidate objects in CommentPeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     CommentPeer::clearInstancePool();
-    // Invalidate objects in PackageTransactionPeer instance pool, 
+    // Invalidate objects in PackageTransactionPeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     PackageTransactionPeer::clearInstancePool();
-    // Invalidate objects in PromotionTransactionPeer instance pool, 
+    // Invalidate objects in PromotionTransactionPeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     PromotionTransactionPeer::clearInstancePool();
   }
@@ -560,7 +559,7 @@ abstract class BaseCollectorPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -625,7 +624,7 @@ abstract class BaseCollectorPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + CollectorPeer::NUM_COLUMNS;
+      $col = $startcol + CollectorPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -635,325 +634,6 @@ abstract class BaseCollectorPeer
       CollectorPeer::addInstanceToPool($obj, $key);
     }
     return array($obj, $col);
-  }
-
-  /**
-   * Returns the number of rows matching criteria, joining the related SessionStorage table
-   *
-   * @param      Criteria $criteria
-   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-   * @param      PropelPDO $con
-   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-   * @return     int Number of matching rows.
-   */
-  public static function doCountJoinSessionStorage(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-  {
-    // we're going to modify criteria, so copy it first
-    $criteria = clone $criteria;
-
-    // We need to set the primary table name, since in the case that there are no WHERE columns
-    // it will be impossible for the BasePeer::createSelectSql() method to determine which
-    // tables go into the FROM clause.
-    $criteria->setPrimaryTableName(CollectorPeer::TABLE_NAME);
-
-    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
-    {
-      $criteria->setDistinct();
-    }
-
-    if (!$criteria->hasSelectClause())
-    {
-      CollectorPeer::addSelectColumns($criteria);
-    }
-    
-    $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
-    // Set the correct dbName
-    $criteria->setDbName(self::DATABASE_NAME);
-
-    if ($con === null)
-    {
-      $con = Propel::getConnection(CollectorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-    }
-
-    $criteria->addJoin(CollectorPeer::SESSION_ID, SessionStoragePeer::ID, $join_behavior);
-
-    // soft_delete behavior
-    if (CollectorQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectorPeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectorPeer::enableSoftDelete();
-    }
-    // symfony_behaviors behavior
-    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
-    {
-      call_user_func($sf_hook, 'BaseCollectorPeer', $criteria, $con);
-    }
-
-    $stmt = BasePeer::doCount($criteria, $con);
-
-    if ($row = $stmt->fetch(PDO::FETCH_NUM))
-    {
-      $count = (int) $row[0];
-    }
-    else
-    {
-      $count = 0; // no rows returned; we infer that means 0 matches.
-    }
-    $stmt->closeCursor();
-    return $count;
-  }
-
-
-  /**
-   * Selects a collection of Collector objects pre-filled with their SessionStorage objects.
-   * @param      Criteria  $criteria
-   * @param      PropelPDO $con
-   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-   * @return     array Array of Collector objects.
-   * @throws     PropelException Any exceptions caught during processing will be
-   *     rethrown wrapped into a PropelException.
-   */
-  public static function doSelectJoinSessionStorage(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-  {
-    $criteria = clone $criteria;
-
-    // Set the correct dbName if it has not been overridden
-    if ($criteria->getDbName() == Propel::getDefaultDB())
-    {
-      $criteria->setDbName(self::DATABASE_NAME);
-    }
-
-    CollectorPeer::addSelectColumns($criteria);
-    $startcol = (CollectorPeer::NUM_COLUMNS - CollectorPeer::NUM_LAZY_LOAD_COLUMNS);
-    SessionStoragePeer::addSelectColumns($criteria);
-
-    $criteria->addJoin(CollectorPeer::SESSION_ID, SessionStoragePeer::ID, $join_behavior);
-
-    // soft_delete behavior
-    if (CollectorQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectorPeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectorPeer::enableSoftDelete();
-    }
-    // symfony_behaviors behavior
-    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
-    {
-      call_user_func($sf_hook, 'BaseCollectorPeer', $criteria, $con);
-    }
-
-    $stmt = BasePeer::doSelect($criteria, $con);
-    $results = array();
-
-    while ($row = $stmt->fetch(PDO::FETCH_NUM))
-    {
-      $key1 = CollectorPeer::getPrimaryKeyHashFromRow($row, 0);
-      if (null !== ($obj1 = CollectorPeer::getInstanceFromPool($key1)))
-      {
-        // We no longer rehydrate the object, since this can cause data loss.
-        // See http://www.propelorm.org/ticket/509
-        // $obj1->hydrate($row, 0, true); // rehydrate
-      }
-      else
-      {
-
-        $cls = CollectorPeer::getOMClass(false);
-
-        $obj1 = new $cls();
-        $obj1->hydrate($row);
-        CollectorPeer::addInstanceToPool($obj1, $key1);
-      }
-
-      $key2 = SessionStoragePeer::getPrimaryKeyHashFromRow($row, $startcol);
-      if ($key2 !== null)
-      {
-        $obj2 = SessionStoragePeer::getInstanceFromPool($key2);
-        if (!$obj2)
-        {
-
-          $cls = SessionStoragePeer::getOMClass(false);
-
-          $obj2 = new $cls();
-          $obj2->hydrate($row, $startcol);
-          SessionStoragePeer::addInstanceToPool($obj2, $key2);
-        }
-
-        // Add the $obj1 (Collector) to $obj2 (SessionStorage)
-        $obj2->addCollector($obj1);
-
-      }
-
-      $results[] = $obj1;
-    }
-    $stmt->closeCursor();
-    return $results;
-  }
-
-
-  /**
-   * Returns the number of rows matching criteria, joining all related tables
-   *
-   * @param      Criteria $criteria
-   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-   * @param      PropelPDO $con
-   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-   * @return     int Number of matching rows.
-   */
-  public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-  {
-    // we're going to modify criteria, so copy it first
-    $criteria = clone $criteria;
-
-    // We need to set the primary table name, since in the case that there are no WHERE columns
-    // it will be impossible for the BasePeer::createSelectSql() method to determine which
-    // tables go into the FROM clause.
-    $criteria->setPrimaryTableName(CollectorPeer::TABLE_NAME);
-
-    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
-    {
-      $criteria->setDistinct();
-    }
-
-    if (!$criteria->hasSelectClause())
-    {
-      CollectorPeer::addSelectColumns($criteria);
-    }
-    
-    $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
-    // Set the correct dbName
-    $criteria->setDbName(self::DATABASE_NAME);
-
-    if ($con === null)
-    {
-      $con = Propel::getConnection(CollectorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-    }
-
-    $criteria->addJoin(CollectorPeer::SESSION_ID, SessionStoragePeer::ID, $join_behavior);
-
-    // soft_delete behavior
-    if (CollectorQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectorPeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectorPeer::enableSoftDelete();
-    }
-    // symfony_behaviors behavior
-    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
-    {
-      call_user_func($sf_hook, 'BaseCollectorPeer', $criteria, $con);
-    }
-
-    $stmt = BasePeer::doCount($criteria, $con);
-
-    if ($row = $stmt->fetch(PDO::FETCH_NUM))
-    {
-      $count = (int) $row[0];
-    }
-    else
-    {
-      $count = 0; // no rows returned; we infer that means 0 matches.
-    }
-    $stmt->closeCursor();
-    return $count;
-  }
-
-  /**
-   * Selects a collection of Collector objects pre-filled with all related objects.
-   *
-   * @param      Criteria  $criteria
-   * @param      PropelPDO $con
-   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-   * @return     array Array of Collector objects.
-   * @throws     PropelException Any exceptions caught during processing will be
-   *     rethrown wrapped into a PropelException.
-   */
-  public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
-  {
-    $criteria = clone $criteria;
-
-    // Set the correct dbName if it has not been overridden
-    if ($criteria->getDbName() == Propel::getDefaultDB())
-    {
-      $criteria->setDbName(self::DATABASE_NAME);
-    }
-
-    CollectorPeer::addSelectColumns($criteria);
-    $startcol2 = (CollectorPeer::NUM_COLUMNS - CollectorPeer::NUM_LAZY_LOAD_COLUMNS);
-
-    SessionStoragePeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + (SessionStoragePeer::NUM_COLUMNS - SessionStoragePeer::NUM_LAZY_LOAD_COLUMNS);
-
-    $criteria->addJoin(CollectorPeer::SESSION_ID, SessionStoragePeer::ID, $join_behavior);
-
-    // soft_delete behavior
-    if (CollectorQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectorPeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectorPeer::enableSoftDelete();
-    }
-    // symfony_behaviors behavior
-    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
-    {
-      call_user_func($sf_hook, 'BaseCollectorPeer', $criteria, $con);
-    }
-
-    $stmt = BasePeer::doSelect($criteria, $con);
-    $results = array();
-
-    while ($row = $stmt->fetch(PDO::FETCH_NUM))
-    {
-      $key1 = CollectorPeer::getPrimaryKeyHashFromRow($row, 0);
-      if (null !== ($obj1 = CollectorPeer::getInstanceFromPool($key1)))
-      {
-        // We no longer rehydrate the object, since this can cause data loss.
-        // See http://www.propelorm.org/ticket/509
-        // $obj1->hydrate($row, 0, true); // rehydrate
-      }
-      else
-      {
-        $cls = CollectorPeer::getOMClass(false);
-
-        $obj1 = new $cls();
-        $obj1->hydrate($row);
-        CollectorPeer::addInstanceToPool($obj1, $key1);
-      }
-
-      // Add objects for joined SessionStorage rows
-
-      $key2 = SessionStoragePeer::getPrimaryKeyHashFromRow($row, $startcol2);
-      if ($key2 !== null)
-      {
-        $obj2 = SessionStoragePeer::getInstanceFromPool($key2);
-        if (!$obj2)
-        {
-
-          $cls = SessionStoragePeer::getOMClass(false);
-
-          $obj2 = new $cls();
-          $obj2->hydrate($row, $startcol2);
-          SessionStoragePeer::addInstanceToPool($obj2, $key2);
-        }
-
-        // Add the $obj1 (Collector) to the collection in $obj2 (SessionStorage)
-        $obj2->addCollector($obj1);
-      }
-
-      $results[] = $obj1;
-    }
-    $stmt->closeCursor();
-    return $results;
   }
 
   /**
@@ -997,7 +677,7 @@ abstract class BaseCollectorPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a Collector or Criteria object.
+   * Performs an INSERT on the database, given a Collector or Criteria object.
    *
    * @param      mixed $values Criteria or Collector object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -1048,7 +728,7 @@ abstract class BaseCollectorPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a Collector or Criteria object.
+   * Performs an UPDATE on the database, given a Collector or Criteria object.
    *
    * @param      mixed $values Criteria or Collector object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -1092,11 +772,12 @@ abstract class BaseCollectorPeer
   }
 
   /**
-   * Method to DELETE all rows from the collector table.
+   * Deletes all rows from the collector table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doForceDeleteAll($con = null)
+  public static function doForceDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -1126,7 +807,7 @@ abstract class BaseCollectorPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a Collector or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a Collector or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or Collector object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -1290,7 +971,7 @@ abstract class BaseCollectorPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(Collector $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 
@@ -1419,24 +1100,29 @@ abstract class BaseCollectorPeer
    */
   public static function doSoftDelete($values, PropelPDO $con = null)
   {
+    if ($con === null)
+    {
+      $con = Propel::getConnection(CollectorPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+    }
     if ($values instanceof Criteria)
     {
       // rename for clarity
-      $criteria = clone $values;
-    }
-    elseif ($values instanceof Collector)
-    {
+      $selectCriteria = clone $values;
+     } elseif ($values instanceof Collector) {
       // create criteria based on pk values
-      $criteria = $values->buildPkeyCriteria();
+      $selectCriteria = $values->buildPkeyCriteria();
     }
     else
     {
       // it must be the primary key
-      $criteria = new Criteria(self::DATABASE_NAME);
-      $criteria->add(CollectorPeer::ID, (array) $values, Criteria::IN);
+      $selectCriteria = new Criteria(self::DATABASE_NAME);
+       $selectCriteria->add(CollectorPeer::ID, (array) $values, Criteria::IN);
     }
-    $criteria->add(CollectorPeer::DELETED_AT, time());
-    return CollectorPeer::doUpdate($criteria, $con);
+    // Set the correct dbName
+    $selectCriteria->setDbName(CollectorPeer::DATABASE_NAME);
+    $updateCriteria = new Criteria(self::DATABASE_NAME);
+      $updateCriteria->add(CollectorPeer::DELETED_AT, time());
+     return BasePeer::doUpdate($selectCriteria, $updateCriteria, $con);
   }
   
   /**
@@ -1458,7 +1144,7 @@ abstract class BaseCollectorPeer
     else
     {
       return CollectorPeer::doForceDelete($values, $con);
-    } 
+    }
   }
   /**
    * Method to soft delete all rows from the collector table.
@@ -1499,7 +1185,7 @@ abstract class BaseCollectorPeer
     else
     {
       return CollectorPeer::doForceDeleteAll($con);
-    } 
+    }
   }
 
   // symfony behavior

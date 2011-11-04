@@ -51,13 +51,13 @@ class ResourceCategoryTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('ResourceEntry', 'ResourceEntry', RelationMap::ONE_TO_MANY, array('id' => 'category_id', ), null, null);
+    $this->addRelation('ResourceEntry', 'ResourceEntry', RelationMap::ONE_TO_MANY, array('id' => 'category_id', ), null, null, 'ResourceEntrys');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

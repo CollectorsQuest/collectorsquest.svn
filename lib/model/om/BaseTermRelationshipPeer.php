@@ -25,12 +25,15 @@ abstract class BaseTermRelationshipPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'TermRelationshipTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 4;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 4;
 
   /** the column name for the ID field */
   const ID = 'term_relationship.ID';
@@ -44,6 +47,9 @@ abstract class BaseTermRelationshipPeer
   /** the column name for the MODEL_ID field */
   const MODEL_ID = 'term_relationship.MODEL_ID';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of TermRelationship objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -53,20 +59,13 @@ abstract class BaseTermRelationshipPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'TermId', 'Model', 'ModelId', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'termId', 'model', 'modelId', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::TERM_ID, self::MODEL, self::MODEL_ID, ),
@@ -81,7 +80,7 @@ abstract class BaseTermRelationshipPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'TermId' => 1, 'Model' => 2, 'ModelId' => 3, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'termId' => 1, 'model' => 2, 'modelId' => 3, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::TERM_ID => 1, self::MODEL => 2, self::MODEL_ID => 3, ),
@@ -232,7 +231,7 @@ abstract class BaseTermRelationshipPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -252,7 +251,7 @@ abstract class BaseTermRelationshipPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -314,7 +313,7 @@ abstract class BaseTermRelationshipPeer
    * @param      TermRelationship $value A TermRelationship object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(TermRelationship $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -420,7 +419,7 @@ abstract class BaseTermRelationshipPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -485,7 +484,7 @@ abstract class BaseTermRelationshipPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + TermRelationshipPeer::NUM_COLUMNS;
+      $col = $startcol + TermRelationshipPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -496,6 +495,7 @@ abstract class BaseTermRelationshipPeer
     }
     return array($obj, $col);
   }
+
 
   /**
    * Returns the number of rows matching criteria, joining the related Term table
@@ -525,9 +525,9 @@ abstract class BaseTermRelationshipPeer
     {
       TermRelationshipPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -579,7 +579,7 @@ abstract class BaseTermRelationshipPeer
     }
 
     TermRelationshipPeer::addSelectColumns($criteria);
-    $startcol = (TermRelationshipPeer::NUM_COLUMNS - TermRelationshipPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol = TermRelationshipPeer::NUM_HYDRATE_COLUMNS;
     TermPeer::addSelectColumns($criteria);
 
     $criteria->addJoin(TermRelationshipPeer::TERM_ID, TermPeer::ID, $join_behavior);
@@ -666,9 +666,9 @@ abstract class BaseTermRelationshipPeer
     {
       TermRelationshipPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -720,10 +720,10 @@ abstract class BaseTermRelationshipPeer
     }
 
     TermRelationshipPeer::addSelectColumns($criteria);
-    $startcol2 = (TermRelationshipPeer::NUM_COLUMNS - TermRelationshipPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = TermRelationshipPeer::NUM_HYDRATE_COLUMNS;
 
     TermPeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + (TermPeer::NUM_COLUMNS - TermPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol3 = $startcol2 + TermPeer::NUM_HYDRATE_COLUMNS;
 
     $criteria->addJoin(TermRelationshipPeer::TERM_ID, TermPeer::ID, $join_behavior);
 
@@ -821,7 +821,7 @@ abstract class BaseTermRelationshipPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a TermRelationship or Criteria object.
+   * Performs an INSERT on the database, given a TermRelationship or Criteria object.
    *
    * @param      mixed $values Criteria or TermRelationship object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -872,7 +872,7 @@ abstract class BaseTermRelationshipPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a TermRelationship or Criteria object.
+   * Performs an UPDATE on the database, given a TermRelationship or Criteria object.
    *
    * @param      mixed $values Criteria or TermRelationship object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -916,11 +916,12 @@ abstract class BaseTermRelationshipPeer
   }
 
   /**
-   * Method to DELETE all rows from the term_relationship table.
+   * Deletes all rows from the term_relationship table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -949,7 +950,7 @@ abstract class BaseTermRelationshipPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a TermRelationship or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a TermRelationship or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or TermRelationship object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -1024,7 +1025,7 @@ abstract class BaseTermRelationshipPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(TermRelationship $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

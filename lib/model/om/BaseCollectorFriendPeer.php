@@ -25,12 +25,15 @@ abstract class BaseCollectorFriendPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'CollectorFriendTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 4;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 4;
 
   /** the column name for the ID field */
   const ID = 'collector_friend.ID';
@@ -44,6 +47,9 @@ abstract class BaseCollectorFriendPeer
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'collector_friend.CREATED_AT';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of CollectorFriend objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -53,20 +59,13 @@ abstract class BaseCollectorFriendPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'CollectorId', 'FriendId', 'CreatedAt', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectorId', 'friendId', 'createdAt', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTOR_ID, self::FRIEND_ID, self::CREATED_AT, ),
@@ -81,7 +80,7 @@ abstract class BaseCollectorFriendPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectorId' => 1, 'FriendId' => 2, 'CreatedAt' => 3, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectorId' => 1, 'friendId' => 2, 'createdAt' => 3, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTOR_ID => 1, self::FRIEND_ID => 2, self::CREATED_AT => 3, ),
@@ -232,7 +231,7 @@ abstract class BaseCollectorFriendPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -252,7 +251,7 @@ abstract class BaseCollectorFriendPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -314,7 +313,7 @@ abstract class BaseCollectorFriendPeer
    * @param      CollectorFriend $value A CollectorFriend object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(CollectorFriend $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -420,7 +419,7 @@ abstract class BaseCollectorFriendPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -485,7 +484,7 @@ abstract class BaseCollectorFriendPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + CollectorFriendPeer::NUM_COLUMNS;
+      $col = $startcol + CollectorFriendPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -496,6 +495,7 @@ abstract class BaseCollectorFriendPeer
     }
     return array($obj, $col);
   }
+
 
   /**
    * Returns the number of rows matching criteria, joining the related CollectorRelatedByCollectorId table
@@ -525,9 +525,9 @@ abstract class BaseCollectorFriendPeer
     {
       CollectorFriendPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -587,9 +587,9 @@ abstract class BaseCollectorFriendPeer
     {
       CollectorFriendPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -641,7 +641,7 @@ abstract class BaseCollectorFriendPeer
     }
 
     CollectorFriendPeer::addSelectColumns($criteria);
-    $startcol = (CollectorFriendPeer::NUM_COLUMNS - CollectorFriendPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol = CollectorFriendPeer::NUM_HYDRATE_COLUMNS;
     CollectorPeer::addSelectColumns($criteria);
 
     $criteria->addJoin(CollectorFriendPeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
@@ -720,7 +720,7 @@ abstract class BaseCollectorFriendPeer
     }
 
     CollectorFriendPeer::addSelectColumns($criteria);
-    $startcol = (CollectorFriendPeer::NUM_COLUMNS - CollectorFriendPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol = CollectorFriendPeer::NUM_HYDRATE_COLUMNS;
     CollectorPeer::addSelectColumns($criteria);
 
     $criteria->addJoin(CollectorFriendPeer::FRIEND_ID, CollectorPeer::ID, $join_behavior);
@@ -807,9 +807,9 @@ abstract class BaseCollectorFriendPeer
     {
       CollectorFriendPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -863,13 +863,13 @@ abstract class BaseCollectorFriendPeer
     }
 
     CollectorFriendPeer::addSelectColumns($criteria);
-    $startcol2 = (CollectorFriendPeer::NUM_COLUMNS - CollectorFriendPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = CollectorFriendPeer::NUM_HYDRATE_COLUMNS;
 
     CollectorPeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + (CollectorPeer::NUM_COLUMNS - CollectorPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol3 = $startcol2 + CollectorPeer::NUM_HYDRATE_COLUMNS;
 
     CollectorPeer::addSelectColumns($criteria);
-    $startcol4 = $startcol3 + (CollectorPeer::NUM_COLUMNS - CollectorPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol4 = $startcol3 + CollectorPeer::NUM_HYDRATE_COLUMNS;
 
     $criteria->addJoin(CollectorFriendPeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
 
@@ -967,7 +967,7 @@ abstract class BaseCollectorFriendPeer
     // it will be impossible for the BasePeer::createSelectSql() method to determine which
     // tables go into the FROM clause.
     $criteria->setPrimaryTableName(CollectorFriendPeer::TABLE_NAME);
-    
+
     if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
     {
       $criteria->setDistinct();
@@ -977,9 +977,9 @@ abstract class BaseCollectorFriendPeer
     {
       CollectorFriendPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -1027,7 +1027,7 @@ abstract class BaseCollectorFriendPeer
     // it will be impossible for the BasePeer::createSelectSql() method to determine which
     // tables go into the FROM clause.
     $criteria->setPrimaryTableName(CollectorFriendPeer::TABLE_NAME);
-    
+
     if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
     {
       $criteria->setDistinct();
@@ -1037,9 +1037,9 @@ abstract class BaseCollectorFriendPeer
     {
       CollectorFriendPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -1092,7 +1092,7 @@ abstract class BaseCollectorFriendPeer
     }
 
     CollectorFriendPeer::addSelectColumns($criteria);
-    $startcol2 = (CollectorFriendPeer::NUM_COLUMNS - CollectorFriendPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = CollectorFriendPeer::NUM_HYDRATE_COLUMNS;
 
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
@@ -1152,7 +1152,7 @@ abstract class BaseCollectorFriendPeer
     }
 
     CollectorFriendPeer::addSelectColumns($criteria);
-    $startcol2 = (CollectorFriendPeer::NUM_COLUMNS - CollectorFriendPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = CollectorFriendPeer::NUM_HYDRATE_COLUMNS;
 
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
@@ -1229,7 +1229,7 @@ abstract class BaseCollectorFriendPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a CollectorFriend or Criteria object.
+   * Performs an INSERT on the database, given a CollectorFriend or Criteria object.
    *
    * @param      mixed $values Criteria or CollectorFriend object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -1280,7 +1280,7 @@ abstract class BaseCollectorFriendPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a CollectorFriend or Criteria object.
+   * Performs an UPDATE on the database, given a CollectorFriend or Criteria object.
    *
    * @param      mixed $values Criteria or CollectorFriend object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -1324,11 +1324,12 @@ abstract class BaseCollectorFriendPeer
   }
 
   /**
-   * Method to DELETE all rows from the collector_friend table.
+   * Deletes all rows from the collector_friend table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -1357,7 +1358,7 @@ abstract class BaseCollectorFriendPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a CollectorFriend or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a CollectorFriend or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or CollectorFriend object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -1432,7 +1433,7 @@ abstract class BaseCollectorFriendPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(CollectorFriend $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

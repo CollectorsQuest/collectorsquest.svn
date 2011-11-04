@@ -25,12 +25,15 @@ abstract class BaseCollectorProfilePeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'CollectorProfileTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 23;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 23;
 
   /** the column name for the ID field */
   const ID = 'collector_profile.ID';
@@ -101,6 +104,9 @@ abstract class BaseCollectorProfilePeer
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'collector_profile.CREATED_AT';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of CollectorProfile objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -110,20 +116,13 @@ abstract class BaseCollectorProfilePeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'CollectorId', 'CollectorType', 'Birthday', 'Gender', 'ZipPostal', 'Country', 'CountryIso3166', 'Website', 'About', 'Collections', 'Collecting', 'MostSpent', 'AnuallySpent', 'NewItemEvery', 'Interests', 'IsFeatured', 'IsSeller', 'IsImageAuto', 'Preferences', 'Notifications', 'UpdatedAt', 'CreatedAt', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectorId', 'collectorType', 'birthday', 'gender', 'zipPostal', 'country', 'countryIso3166', 'website', 'about', 'collections', 'collecting', 'mostSpent', 'anuallySpent', 'newItemEvery', 'interests', 'isFeatured', 'isSeller', 'isImageAuto', 'preferences', 'notifications', 'updatedAt', 'createdAt', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTOR_ID, self::COLLECTOR_TYPE, self::BIRTHDAY, self::GENDER, self::ZIP_POSTAL, self::COUNTRY, self::COUNTRY_ISO3166, self::WEBSITE, self::ABOUT, self::COLLECTIONS, self::COLLECTING, self::MOST_SPENT, self::ANUALLY_SPENT, self::NEW_ITEM_EVERY, self::INTERESTS, self::IS_FEATURED, self::IS_SELLER, self::IS_IMAGE_AUTO, self::PREFERENCES, self::NOTIFICATIONS, self::UPDATED_AT, self::CREATED_AT, ),
@@ -138,7 +137,7 @@ abstract class BaseCollectorProfilePeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectorId' => 1, 'CollectorType' => 2, 'Birthday' => 3, 'Gender' => 4, 'ZipPostal' => 5, 'Country' => 6, 'CountryIso3166' => 7, 'Website' => 8, 'About' => 9, 'Collections' => 10, 'Collecting' => 11, 'MostSpent' => 12, 'AnuallySpent' => 13, 'NewItemEvery' => 14, 'Interests' => 15, 'IsFeatured' => 16, 'IsSeller' => 17, 'IsImageAuto' => 18, 'Preferences' => 19, 'Notifications' => 20, 'UpdatedAt' => 21, 'CreatedAt' => 22, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectorId' => 1, 'collectorType' => 2, 'birthday' => 3, 'gender' => 4, 'zipPostal' => 5, 'country' => 6, 'countryIso3166' => 7, 'website' => 8, 'about' => 9, 'collections' => 10, 'collecting' => 11, 'mostSpent' => 12, 'anuallySpent' => 13, 'newItemEvery' => 14, 'interests' => 15, 'isFeatured' => 16, 'isSeller' => 17, 'isImageAuto' => 18, 'preferences' => 19, 'notifications' => 20, 'updatedAt' => 21, 'createdAt' => 22, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTOR_ID => 1, self::COLLECTOR_TYPE => 2, self::BIRTHDAY => 3, self::GENDER => 4, self::ZIP_POSTAL => 5, self::COUNTRY => 6, self::COUNTRY_ISO3166 => 7, self::WEBSITE => 8, self::ABOUT => 9, self::COLLECTIONS => 10, self::COLLECTING => 11, self::MOST_SPENT => 12, self::ANUALLY_SPENT => 13, self::NEW_ITEM_EVERY => 14, self::INTERESTS => 15, self::IS_FEATURED => 16, self::IS_SELLER => 17, self::IS_IMAGE_AUTO => 18, self::PREFERENCES => 19, self::NOTIFICATIONS => 20, self::UPDATED_AT => 21, self::CREATED_AT => 22, ),
@@ -327,7 +326,7 @@ abstract class BaseCollectorProfilePeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -347,7 +346,7 @@ abstract class BaseCollectorProfilePeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -409,7 +408,7 @@ abstract class BaseCollectorProfilePeer
    * @param      CollectorProfile $value A CollectorProfile object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(CollectorProfile $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -515,7 +514,7 @@ abstract class BaseCollectorProfilePeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -580,7 +579,7 @@ abstract class BaseCollectorProfilePeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + CollectorProfilePeer::NUM_COLUMNS;
+      $col = $startcol + CollectorProfilePeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -591,6 +590,7 @@ abstract class BaseCollectorProfilePeer
     }
     return array($obj, $col);
   }
+
 
   /**
    * Returns the number of rows matching criteria, joining the related Collector table
@@ -620,9 +620,9 @@ abstract class BaseCollectorProfilePeer
     {
       CollectorProfilePeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -674,7 +674,7 @@ abstract class BaseCollectorProfilePeer
     }
 
     CollectorProfilePeer::addSelectColumns($criteria);
-    $startcol = (CollectorProfilePeer::NUM_COLUMNS - CollectorProfilePeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol = CollectorProfilePeer::NUM_HYDRATE_COLUMNS;
     CollectorPeer::addSelectColumns($criteria);
 
     $criteria->addJoin(CollectorProfilePeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
@@ -761,9 +761,9 @@ abstract class BaseCollectorProfilePeer
     {
       CollectorProfilePeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -815,10 +815,10 @@ abstract class BaseCollectorProfilePeer
     }
 
     CollectorProfilePeer::addSelectColumns($criteria);
-    $startcol2 = (CollectorProfilePeer::NUM_COLUMNS - CollectorProfilePeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = CollectorProfilePeer::NUM_HYDRATE_COLUMNS;
 
     CollectorPeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + (CollectorPeer::NUM_COLUMNS - CollectorPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol3 = $startcol2 + CollectorPeer::NUM_HYDRATE_COLUMNS;
 
     $criteria->addJoin(CollectorProfilePeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
 
@@ -916,7 +916,7 @@ abstract class BaseCollectorProfilePeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a CollectorProfile or Criteria object.
+   * Performs an INSERT on the database, given a CollectorProfile or Criteria object.
    *
    * @param      mixed $values Criteria or CollectorProfile object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -967,7 +967,7 @@ abstract class BaseCollectorProfilePeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a CollectorProfile or Criteria object.
+   * Performs an UPDATE on the database, given a CollectorProfile or Criteria object.
    *
    * @param      mixed $values Criteria or CollectorProfile object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -1011,11 +1011,12 @@ abstract class BaseCollectorProfilePeer
   }
 
   /**
-   * Method to DELETE all rows from the collector_profile table.
+   * Deletes all rows from the collector_profile table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -1044,7 +1045,7 @@ abstract class BaseCollectorProfilePeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a CollectorProfile or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a CollectorProfile or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or CollectorProfile object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -1119,7 +1120,7 @@ abstract class BaseCollectorProfilePeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(CollectorProfile $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

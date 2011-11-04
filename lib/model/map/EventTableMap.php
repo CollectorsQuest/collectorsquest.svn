@@ -50,13 +50,13 @@ class EventTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('EventVideo', 'EventVideo', RelationMap::ONE_TO_MANY, array('id' => 'event_id', ), null, null);
+    $this->addRelation('EventVideo', 'EventVideo', RelationMap::ONE_TO_MANY, array('id' => 'event_id', ), null, null, 'EventVideos');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

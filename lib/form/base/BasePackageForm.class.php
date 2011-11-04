@@ -25,7 +25,7 @@ abstract class BasePackageForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'                  => new sfValidatorPropelChoice(array('model' => 'Package', 'column' => 'id', 'required' => false)),
+      'id'                  => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'package_name'        => new sfValidatorString(array('max_length' => 255)),
       'package_description' => new sfValidatorString(array('required' => false)),
       'max_items_for_sale'  => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),

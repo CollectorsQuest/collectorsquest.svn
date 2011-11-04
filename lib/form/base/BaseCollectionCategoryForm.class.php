@@ -21,7 +21,7 @@ abstract class BaseCollectionCategoryForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'        => new sfValidatorPropelChoice(array('model' => 'CollectionCategory', 'column' => 'id', 'required' => false)),
+      'id'        => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'parent_id' => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
       'name'      => new sfValidatorString(array('max_length' => 64)),
       'score'     => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),

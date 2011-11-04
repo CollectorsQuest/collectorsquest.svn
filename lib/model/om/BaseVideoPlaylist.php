@@ -256,7 +256,7 @@ abstract class BaseVideoPlaylist extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 4; // 4 = VideoPlaylistPeer::NUM_COLUMNS - VideoPlaylistPeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 4; // 4 = VideoPlaylistPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -361,6 +361,8 @@ abstract class BaseVideoPlaylist extends BaseObject  implements Persistent
     $con->beginTransaction();
     try
     {
+      $deleteQuery = VideoPlaylistQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseVideoPlaylist:delete:pre') as $callable)
@@ -374,9 +376,7 @@ abstract class BaseVideoPlaylist extends BaseObject  implements Persistent
 
       if ($ret)
       {
-        VideoPlaylistQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BaseVideoPlaylist:delete:post') as $callable)
@@ -711,12 +711,18 @@ abstract class BaseVideoPlaylist extends BaseObject  implements Persistent
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
    * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $includeForeignObjects = false)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
   {
+    if (isset($alreadyDumpedObjects['VideoPlaylist'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['VideoPlaylist'][$this->getPrimaryKey()] = true;
     $keys = VideoPlaylistPeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
@@ -728,11 +734,11 @@ abstract class BaseVideoPlaylist extends BaseObject  implements Persistent
     {
       if (null !== $this->aVideo)
       {
-        $result['Video'] = $this->aVideo->toArray($keyType, $includeLazyLoadColumns, true);
+        $result['Video'] = $this->aVideo->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
       }
       if (null !== $this->aPlaylist)
       {
-        $result['Playlist'] = $this->aPlaylist->toArray($keyType, $includeLazyLoadColumns, true);
+        $result['Playlist'] = $this->aPlaylist->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
       }
     }
     return $result;
@@ -878,16 +884,19 @@ abstract class BaseVideoPlaylist extends BaseObject  implements Persistent
    *
    * @param      object $copyObj An object of VideoPlaylist (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setVideoId($this->video_id);
-    $copyObj->setPlaylistId($this->playlist_id);
-    $copyObj->setPosition($this->position);
-
-    $copyObj->setNew(true);
-    $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    $copyObj->setVideoId($this->getVideoId());
+    $copyObj->setPlaylistId($this->getPlaylistId());
+    $copyObj->setPosition($this->getPosition());
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -973,11 +982,11 @@ abstract class BaseVideoPlaylist extends BaseObject  implements Persistent
     {
       $this->aVideo = VideoQuery::create()->findPk($this->video_id, $con);
       /* The following can be used additionally to
-         guarantee the related object contains a reference
-         to this object.  This level of coupling may, however, be
-         undesirable since it could result in an only partially populated collection
-         in the referenced object.
-         $this->aVideo->addVideoPlaylists($this);
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->aVideo->addVideoPlaylists($this);
        */
     }
     return $this->aVideo;
@@ -1027,11 +1036,11 @@ abstract class BaseVideoPlaylist extends BaseObject  implements Persistent
     {
       $this->aPlaylist = PlaylistQuery::create()->findPk($this->playlist_id, $con);
       /* The following can be used additionally to
-         guarantee the related object contains a reference
-         to this object.  This level of coupling may, however, be
-         undesirable since it could result in an only partially populated collection
-         in the referenced object.
-         $this->aPlaylist->addVideoPlaylists($this);
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->aPlaylist->addVideoPlaylists($this);
        */
     }
     return $this->aPlaylist;
@@ -1055,13 +1064,13 @@ abstract class BaseVideoPlaylist extends BaseObject  implements Persistent
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -1074,10 +1083,21 @@ abstract class BaseVideoPlaylist extends BaseObject  implements Persistent
   }
 
   /**
+   * Return the string representation of this object
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    return (string) $this->exportTo(VideoPlaylistPeer::DEFAULT_STRING_FORMAT);
+  }
+
+  /**
    * Catches calls to virtual methods
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BaseVideoPlaylist:' . $name))
     {
@@ -1085,20 +1105,6 @@ abstract class BaseVideoPlaylist extends BaseObject  implements Persistent
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

@@ -42,9 +42,9 @@ class CollectionItemForSaleTableMap extends TableMap
     $this->addForeignKey('ITEM_ID', 'ItemId', 'INTEGER', 'collection_item', 'ID', true, null, null);
     $this->addColumn('PRICE', 'Price', 'FLOAT', false, null, null);
     $this->addColumn('CONDITION', 'Condition', 'CHAR', true, null, null);
-    $this->addColumn('IS_PRICE_NEGOTIABLE', 'IsPriceNegotiable', 'BOOLEAN', false, null, false);
-    $this->addColumn('IS_SHIPPING_FREE', 'IsShippingFree', 'BOOLEAN', false, null, false);
-    $this->addColumn('IS_SOLD', 'IsSold', 'BOOLEAN', false, null, false);
+    $this->addColumn('IS_PRICE_NEGOTIABLE', 'IsPriceNegotiable', 'BOOLEAN', false, 1, false);
+    $this->addColumn('IS_SHIPPING_FREE', 'IsShippingFree', 'BOOLEAN', false, 1, false);
+    $this->addColumn('IS_SOLD', 'IsSold', 'BOOLEAN', false, 1, false);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     // validators
@@ -56,13 +56,13 @@ class CollectionItemForSaleTableMap extends TableMap
   public function buildRelations()
   {
     $this->addRelation('CollectionItem', 'CollectionItem', RelationMap::MANY_TO_ONE, array('item_id' => 'id', ), null, null);
-    $this->addRelation('CollectionItemOffer', 'CollectionItemOffer', RelationMap::ONE_TO_MANY, array('id' => 'item_for_sale_id', ), null, null);
+    $this->addRelation('CollectionItemOffer', 'CollectionItemOffer', RelationMap::ONE_TO_MANY, array('id' => 'item_for_sale_id', ), null, null, 'CollectionItemOffers');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

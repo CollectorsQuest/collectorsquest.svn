@@ -56,13 +56,13 @@ class wpUserTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('wpPost', 'wpPost', RelationMap::ONE_TO_MANY, array('id' => 'post_author', ), null, null);
+    $this->addRelation('wpPost', 'wpPost', RelationMap::ONE_TO_MANY, array('id' => 'post_author', ), null, null, 'wpPosts');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

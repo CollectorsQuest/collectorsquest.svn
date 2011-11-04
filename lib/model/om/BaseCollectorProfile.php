@@ -631,56 +631,20 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   /**
    * Sets the value of [birthday] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     CollectorProfile The current object (for fluent API support)
    */
   public function setBirthday($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->birthday !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->birthday !== null && $tmpDt = new DateTime($this->birthday)) ? $tmpDt->format('Y-m-d') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->birthday !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->birthday !== null && $tmpDt = new DateTime($this->birthday)) ? $tmpDt->format('Y-m-d') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->birthday = ($dt ? $dt->format('Y-m-d') : null);
+        $this->birthday = $newDateAsString;
         $this->modifiedColumns[] = CollectorProfilePeer::BIRTHDAY;
       }
     }
@@ -953,19 +917,30 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_featured] column.
+   * Sets the value of the [is_featured] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     CollectorProfile The current object (for fluent API support)
    */
   public function setIsFeatured($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_featured !== $v || $this->isNew())
+    if ($this->is_featured !== $v)
     {
       $this->is_featured = $v;
       $this->modifiedColumns[] = CollectorProfilePeer::IS_FEATURED;
@@ -975,19 +950,30 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_seller] column.
+   * Sets the value of the [is_seller] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     CollectorProfile The current object (for fluent API support)
    */
   public function setIsSeller($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_seller !== $v || $this->isNew())
+    if ($this->is_seller !== $v)
     {
       $this->is_seller = $v;
       $this->modifiedColumns[] = CollectorProfilePeer::IS_SELLER;
@@ -997,19 +983,30 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_image_auto] column.
+   * Sets the value of the [is_image_auto] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     CollectorProfile The current object (for fluent API support)
    */
   public function setIsImageAuto($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_image_auto !== $v || $this->isNew())
+    if ($this->is_image_auto !== $v)
     {
       $this->is_image_auto = $v;
       $this->modifiedColumns[] = CollectorProfilePeer::IS_IMAGE_AUTO;
@@ -1065,56 +1062,20 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   /**
    * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     CollectorProfile The current object (for fluent API support)
    */
   public function setUpdatedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->updated_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->updated_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->updated_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->updated_at = $newDateAsString;
         $this->modifiedColumns[] = CollectorProfilePeer::UPDATED_AT;
       }
     }
@@ -1125,56 +1086,20 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     CollectorProfile The current object (for fluent API support)
    */
   public function setCreatedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->created_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->created_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->created_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->created_at = $newDateAsString;
         $this->modifiedColumns[] = CollectorProfilePeer::CREATED_AT;
       }
     }
@@ -1262,7 +1187,7 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 23; // 23 = CollectorProfilePeer::NUM_COLUMNS - CollectorProfilePeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 23; // 23 = CollectorProfilePeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -1362,6 +1287,8 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
     $con->beginTransaction();
     try
     {
+      $deleteQuery = CollectorProfileQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseCollectorProfile:delete:pre') as $callable)
@@ -1375,9 +1302,7 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
 
       if ($ret)
       {
-        CollectorProfileQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BaseCollectorProfile:delete:post') as $callable)
@@ -1445,7 +1370,6 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
       {
         $this->setUpdatedAt(time());
       }
-
       if ($isInsert)
       {
         $ret = $ret && $this->preInsert($con);
@@ -1764,12 +1688,18 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
    * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $includeForeignObjects = false)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
   {
+    if (isset($alreadyDumpedObjects['CollectorProfile'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['CollectorProfile'][$this->getPrimaryKey()] = true;
     $keys = CollectorProfilePeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
@@ -1800,7 +1730,7 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
     {
       if (null !== $this->aCollector)
       {
-        $result['Collector'] = $this->aCollector->toArray($keyType, $includeLazyLoadColumns, true);
+        $result['Collector'] = $this->aCollector->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
       }
     }
     return $result;
@@ -2041,35 +1971,38 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
    *
    * @param      object $copyObj An object of CollectorProfile (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setCollectorId($this->collector_id);
-    $copyObj->setCollectorType($this->collector_type);
-    $copyObj->setBirthday($this->birthday);
-    $copyObj->setGender($this->gender);
-    $copyObj->setZipPostal($this->zip_postal);
-    $copyObj->setCountry($this->country);
-    $copyObj->setCountryIso3166($this->country_iso3166);
-    $copyObj->setWebsite($this->website);
-    $copyObj->setAbout($this->about);
-    $copyObj->setCollections($this->collections);
-    $copyObj->setCollecting($this->collecting);
-    $copyObj->setMostSpent($this->most_spent);
-    $copyObj->setAnuallySpent($this->anually_spent);
-    $copyObj->setNewItemEvery($this->new_item_every);
-    $copyObj->setInterests($this->interests);
-    $copyObj->setIsFeatured($this->is_featured);
-    $copyObj->setIsSeller($this->is_seller);
-    $copyObj->setIsImageAuto($this->is_image_auto);
-    $copyObj->setPreferences($this->preferences);
-    $copyObj->setNotifications($this->notifications);
-    $copyObj->setUpdatedAt($this->updated_at);
-    $copyObj->setCreatedAt($this->created_at);
-
-    $copyObj->setNew(true);
-    $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    $copyObj->setCollectorId($this->getCollectorId());
+    $copyObj->setCollectorType($this->getCollectorType());
+    $copyObj->setBirthday($this->getBirthday());
+    $copyObj->setGender($this->getGender());
+    $copyObj->setZipPostal($this->getZipPostal());
+    $copyObj->setCountry($this->getCountry());
+    $copyObj->setCountryIso3166($this->getCountryIso3166());
+    $copyObj->setWebsite($this->getWebsite());
+    $copyObj->setAbout($this->getAbout());
+    $copyObj->setCollections($this->getCollections());
+    $copyObj->setCollecting($this->getCollecting());
+    $copyObj->setMostSpent($this->getMostSpent());
+    $copyObj->setAnuallySpent($this->getAnuallySpent());
+    $copyObj->setNewItemEvery($this->getNewItemEvery());
+    $copyObj->setInterests($this->getInterests());
+    $copyObj->setIsFeatured($this->getIsFeatured());
+    $copyObj->setIsSeller($this->getIsSeller());
+    $copyObj->setIsImageAuto($this->getIsImageAuto());
+    $copyObj->setPreferences($this->getPreferences());
+    $copyObj->setNotifications($this->getNotifications());
+    $copyObj->setUpdatedAt($this->getUpdatedAt());
+    $copyObj->setCreatedAt($this->getCreatedAt());
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -2155,11 +2088,11 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
     {
       $this->aCollector = CollectorQuery::create()->findPk($this->collector_id, $con);
       /* The following can be used additionally to
-         guarantee the related object contains a reference
-         to this object.  This level of coupling may, however, be
-         undesirable since it could result in an only partially populated collection
-         in the referenced object.
-         $this->aCollector->addCollectorProfiles($this);
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->aCollector->addCollectorProfiles($this);
        */
     }
     return $this->aCollector;
@@ -2203,13 +2136,13 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -2221,10 +2154,21 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   }
 
   /**
+   * Return the string representation of this object
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    return (string) $this->exportTo(CollectorProfilePeer::DEFAULT_STRING_FORMAT);
+  }
+
+  /**
    * Catches calls to virtual methods
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BaseCollectorProfile:' . $name))
     {
@@ -2232,20 +2176,6 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

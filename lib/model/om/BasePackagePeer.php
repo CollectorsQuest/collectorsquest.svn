@@ -25,12 +25,15 @@ abstract class BasePackagePeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'PackageTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 8;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 8;
 
   /** the column name for the ID field */
   const ID = 'package.ID';
@@ -56,6 +59,9 @@ abstract class BasePackagePeer
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'package.CREATED_AT';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of Package objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -65,20 +71,13 @@ abstract class BasePackagePeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'PackageName', 'PackageDescription', 'MaxItemsForSale', 'PackagePrice', 'PlanType', 'UpdatedAt', 'CreatedAt', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'packageName', 'packageDescription', 'maxItemsForSale', 'packagePrice', 'planType', 'updatedAt', 'createdAt', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::PACKAGE_NAME, self::PACKAGE_DESCRIPTION, self::MAX_ITEMS_FOR_SALE, self::PACKAGE_PRICE, self::PLAN_TYPE, self::UPDATED_AT, self::CREATED_AT, ),
@@ -93,7 +92,7 @@ abstract class BasePackagePeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PackageName' => 1, 'PackageDescription' => 2, 'MaxItemsForSale' => 3, 'PackagePrice' => 4, 'PlanType' => 5, 'UpdatedAt' => 6, 'CreatedAt' => 7, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'packageName' => 1, 'packageDescription' => 2, 'maxItemsForSale' => 3, 'packagePrice' => 4, 'planType' => 5, 'updatedAt' => 6, 'createdAt' => 7, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::PACKAGE_NAME => 1, self::PACKAGE_DESCRIPTION => 2, self::MAX_ITEMS_FOR_SALE => 3, self::PACKAGE_PRICE => 4, self::PLAN_TYPE => 5, self::UPDATED_AT => 6, self::CREATED_AT => 7, ),
@@ -252,7 +251,7 @@ abstract class BasePackagePeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -272,7 +271,7 @@ abstract class BasePackagePeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -334,7 +333,7 @@ abstract class BasePackagePeer
    * @param      Package $value A Package object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(Package $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -417,7 +416,7 @@ abstract class BasePackagePeer
    */
   public static function clearRelatedInstancePool()
   {
-    // Invalidate objects in PackageTransactionPeer instance pool, 
+    // Invalidate objects in PackageTransactionPeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     PackageTransactionPeer::clearInstancePool();
   }
@@ -443,7 +442,7 @@ abstract class BasePackagePeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -508,7 +507,7 @@ abstract class BasePackagePeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + PackagePeer::NUM_COLUMNS;
+      $col = $startcol + PackagePeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -519,6 +518,7 @@ abstract class BasePackagePeer
     }
     return array($obj, $col);
   }
+
   /**
    * Returns the TableMap related to this peer.
    * This method is not needed for general use but a specific application could have a need.
@@ -560,7 +560,7 @@ abstract class BasePackagePeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a Package or Criteria object.
+   * Performs an INSERT on the database, given a Package or Criteria object.
    *
    * @param      mixed $values Criteria or Package object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -611,7 +611,7 @@ abstract class BasePackagePeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a Package or Criteria object.
+   * Performs an UPDATE on the database, given a Package or Criteria object.
    *
    * @param      mixed $values Criteria or Package object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -655,11 +655,12 @@ abstract class BasePackagePeer
   }
 
   /**
-   * Method to DELETE all rows from the package table.
+   * Deletes all rows from the package table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -689,7 +690,7 @@ abstract class BasePackagePeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a Package or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a Package or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or Package object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -805,7 +806,7 @@ abstract class BasePackagePeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(Package $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

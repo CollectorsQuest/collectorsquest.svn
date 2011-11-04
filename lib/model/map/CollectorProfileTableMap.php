@@ -54,9 +54,9 @@ class CollectorProfileTableMap extends TableMap
     $this->addColumn('ANUALLY_SPENT', 'AnuallySpent', 'INTEGER', false, null, null);
     $this->addColumn('NEW_ITEM_EVERY', 'NewItemEvery', 'VARCHAR', false, 64, null);
     $this->addColumn('INTERESTS', 'Interests', 'LONGVARCHAR', false, null, null);
-    $this->addColumn('IS_FEATURED', 'IsFeatured', 'BOOLEAN', false, null, false);
-    $this->addColumn('IS_SELLER', 'IsSeller', 'BOOLEAN', false, null, false);
-    $this->addColumn('IS_IMAGE_AUTO', 'IsImageAuto', 'BOOLEAN', true, null, true);
+    $this->addColumn('IS_FEATURED', 'IsFeatured', 'BOOLEAN', false, 1, false);
+    $this->addColumn('IS_SELLER', 'IsSeller', 'BOOLEAN', false, 1, false);
+    $this->addColumn('IS_IMAGE_AUTO', 'IsImageAuto', 'BOOLEAN', true, 1, true);
     $this->addColumn('PREFERENCES', 'Preferences', 'LONGVARCHAR', false, null, null);
     $this->addColumn('NOTIFICATIONS', 'Notifications', 'LONGVARCHAR', false, null, null);
     $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
@@ -73,9 +73,9 @@ class CollectorProfileTableMap extends TableMap
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

@@ -1,6 +1,8 @@
 rendering: ~
 security:  ~
-sfRequestHistory:
-  class: sfRequestHistoryFilter
+
+IceRequestHistory:
+  class: IceRequestHistoryFilter
+
 cache:     ~
 execution: ~

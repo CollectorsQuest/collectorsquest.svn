@@ -22,7 +22,7 @@ abstract class BaseCustomFieldForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'         => new sfValidatorPropelChoice(array('model' => 'CustomField', 'column' => 'id', 'required' => false)),
+      'id'         => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'name'       => new sfValidatorString(array('max_length' => 64)),
       'type'       => new sfValidatorInteger(array('min' => -128, 'max' => 127)),
       'object'     => new sfValidatorString(array('required' => false)),

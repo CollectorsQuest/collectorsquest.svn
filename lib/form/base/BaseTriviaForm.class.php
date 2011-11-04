@@ -20,7 +20,7 @@ abstract class BaseTriviaForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'         => new sfValidatorPropelChoice(array('model' => 'Trivia', 'column' => 'id', 'required' => false)),
+      'id'         => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'content'    => new sfValidatorString(),
       'created_at' => new sfValidatorDateTime(array('required' => false)),
     ));

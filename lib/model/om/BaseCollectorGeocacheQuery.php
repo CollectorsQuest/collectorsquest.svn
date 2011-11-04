@@ -73,533 +73,570 @@
  */
 abstract class BaseCollectorGeocacheQuery extends ModelCriteria
 {
-
-  /**
-   * Initializes internal state of BaseCollectorGeocacheQuery object.
-   *
-   * @param     string $dbName The dabase name
-   * @param     string $modelName The phpName of a model, e.g. 'Book'
-   * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
-   */
-  public function __construct($dbName = 'propel', $modelName = 'CollectorGeocache', $modelAlias = null)
-  {
-    parent::__construct($dbName, $modelName, $modelAlias);
-  }
-
-  /**
-   * Returns a new CollectorGeocacheQuery object.
-   *
-   * @param     string $modelAlias The alias of a model in the query
-   * @param     Criteria $criteria Optional Criteria to build the query from
-   *
-   * @return    CollectorGeocacheQuery
-   */
-  public static function create($modelAlias = null, $criteria = null)
-  {
-    if ($criteria instanceof CollectorGeocacheQuery)
+    
+    /**
+     * Initializes internal state of BaseCollectorGeocacheQuery object.
+     *
+     * @param     string $dbName The dabase name
+     * @param     string $modelName The phpName of a model, e.g. 'Book'
+     * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+     */
+    public function __construct($dbName = 'propel', $modelName = 'CollectorGeocache', $modelAlias = null)
     {
-      return $criteria;
+        parent::__construct($dbName, $modelName, $modelAlias);
     }
-    $query = new CollectorGeocacheQuery();
-    if (null !== $modelAlias)
+
+    /**
+     * Returns a new CollectorGeocacheQuery object.
+     *
+     * @param     string $modelAlias The alias of a model in the query
+     * @param     Criteria $criteria Optional Criteria to build the query from
+     *
+     * @return    CollectorGeocacheQuery
+     */
+    public static function create($modelAlias = null, $criteria = null)
     {
-      $query->setModelAlias($modelAlias);
+        if ($criteria instanceof CollectorGeocacheQuery) {
+            return $criteria;
+        }
+        $query = new CollectorGeocacheQuery();
+        if (null !== $modelAlias) {
+            $query->setModelAlias($modelAlias);
+        }
+        if ($criteria instanceof Criteria) {
+            $query->mergeWith($criteria);
+        }
+        return $query;
     }
-    if ($criteria instanceof Criteria)
+
+    /**
+     * Find object by primary key
+     * Use instance pooling to avoid a database query if the object exists
+     * <code>
+     * $obj  = $c->findPk(12, $con);
+     * </code>
+     * @param     mixed $key Primary key to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    CollectorGeocache|array|mixed the result, formatted by the current formatter
+     */
+    public function findPk($key, $con = null)
     {
-      $query->mergeWith($criteria);
+        if ((null !== ($obj = CollectorGeocachePeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
+            // the object is alredy in the instance pool
+            return $obj;
+        } else {
+            // the object has not been requested yet, or the formatter is not an object formatter
+            $criteria = $this->isKeepQuery() ? clone $this : $this;
+            $stmt = $criteria
+                ->filterByPrimaryKey($key)
+                ->getSelectStatement($con);
+            return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+        }
     }
-    return $query;
-  }
 
-  /**
-   * Find object by primary key
-   * Use instance pooling to avoid a database query if the object exists
-   * <code>
-   * $obj  = $c->findPk(12, $con);
-   * </code>
-   * @param     mixed $key Primary key to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    CollectorGeocache|array|mixed the result, formatted by the current formatter
-   */
-  public function findPk($key, $con = null)
-  {
-    if ((null !== ($obj = CollectorGeocachePeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter())
+    /**
+     * Find objects by primary key
+     * <code>
+     * $objs = $c->findPks(array(12, 56, 832), $con);
+     * </code>
+     * @param     array $keys Primary keys to use for the query
+     * @param     PropelPDO $con an optional connection object
+     *
+     * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
+     */
+    public function findPks($keys, $con = null)
     {
-      // the object is alredy in the instance pool
-      return $obj;
+        $criteria = $this->isKeepQuery() ? clone $this : $this;
+        return $this
+            ->filterByPrimaryKeys($keys)
+            ->find($con);
     }
-    else
+
+    /**
+     * Filter the query by primary key
+     *
+     * @param     mixed $key Primary key to use for the query
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKey($key)
     {
-      // the object has not been requested yet, or the formatter is not an object formatter
-      $criteria = $this->isKeepQuery() ? clone $this : $this;
-      $stmt = $criteria
-        ->filterByPrimaryKey($key)
-        ->getSelectStatement($con);
-      return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+        return $this->addUsingAlias(CollectorGeocachePeer::ID, $key, Criteria::EQUAL);
     }
-  }
 
-  /**
-   * Find objects by primary key
-   * <code>
-   * $objs = $c->findPks(array(12, 56, 832), $con);
-   * </code>
-   * @param     array $keys Primary keys to use for the query
-   * @param     PropelPDO $con an optional connection object
-   *
-   * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
-   */
-  public function findPks($keys, $con = null)
-  {  
-    $criteria = $this->isKeepQuery() ? clone $this : $this;
-    return $this
-      ->filterByPrimaryKeys($keys)
-      ->find($con);
-  }
-
-  /**
-   * Filter the query by primary key
-   *
-   * @param     mixed $key Primary key to use for the query
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKey($key)
-  {
-    return $this->addUsingAlias(CollectorGeocachePeer::ID, $key, Criteria::EQUAL);
-  }
-
-  /**
-   * Filter the query by a list of primary keys
-   *
-   * @param     array $keys The list of primary key to use for the query
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByPrimaryKeys($keys)
-  {
-    return $this->addUsingAlias(CollectorGeocachePeer::ID, $keys, Criteria::IN);
-  }
-
-  /**
-   * Filter the query on the id column
-   * 
-   * @param     int|array $id The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterById($id = null, $comparison = null)
-  {
-    if (is_array($id) && null === $comparison)
+    /**
+     * Filter the query by a list of primary keys
+     *
+     * @param     array $keys The list of primary key to use for the query
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByPrimaryKeys($keys)
     {
-      $comparison = Criteria::IN;
+        return $this->addUsingAlias(CollectorGeocachePeer::ID, $keys, Criteria::IN);
     }
-    return $this->addUsingAlias(CollectorGeocachePeer::ID, $id, $comparison);
-  }
 
-  /**
-   * Filter the query on the collector_id column
-   * 
-   * @param     int|array $collectorId The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByCollectorId($collectorId = null, $comparison = null)
-  {
-    if (is_array($collectorId))
+    /**
+     * Filter the query on the id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterById(1234); // WHERE id = 1234
+     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
+     * $query->filterById(array('min' => 12)); // WHERE id > 12
+     * </code>
+     *
+     * @param     mixed $id The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterById($id = null, $comparison = null)
     {
-      $useMinMax = false;
-      if (isset($collectorId['min']))
-      {
-        $this->addUsingAlias(CollectorGeocachePeer::COLLECTOR_ID, $collectorId['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($collectorId['max']))
-      {
-        $this->addUsingAlias(CollectorGeocachePeer::COLLECTOR_ID, $collectorId['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
+        if (is_array($id) && null === $comparison) {
+            $comparison = Criteria::IN;
+        }
+        return $this->addUsingAlias(CollectorGeocachePeer::ID, $id, $comparison);
+    }
+
+    /**
+     * Filter the query on the collector_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCollectorId(1234); // WHERE collector_id = 1234
+     * $query->filterByCollectorId(array(12, 34)); // WHERE collector_id IN (12, 34)
+     * $query->filterByCollectorId(array('min' => 12)); // WHERE collector_id > 12
+     * </code>
+     *
+     * @see       filterByCollector()
+     *
+     * @param     mixed $collectorId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByCollectorId($collectorId = null, $comparison = null)
+    {
+        if (is_array($collectorId)) {
+            $useMinMax = false;
+            if (isset($collectorId['min'])) {
+                $this->addUsingAlias(CollectorGeocachePeer::COLLECTOR_ID, $collectorId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($collectorId['max'])) {
+                $this->addUsingAlias(CollectorGeocachePeer::COLLECTOR_ID, $collectorId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CollectorGeocachePeer::COLLECTOR_ID, $collectorId, $comparison);
+    }
+
+    /**
+     * Filter the query on the country column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCountry('fooValue');   // WHERE country = 'fooValue'
+     * $query->filterByCountry('%fooValue%'); // WHERE country LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $country The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByCountry($country = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($country)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $country)) {
+                $country = str_replace('*', '%', $country);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectorGeocachePeer::COUNTRY, $country, $comparison);
+    }
+
+    /**
+     * Filter the query on the country_iso3166 column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCountryIso3166('fooValue');   // WHERE country_iso3166 = 'fooValue'
+     * $query->filterByCountryIso3166('%fooValue%'); // WHERE country_iso3166 LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $countryIso3166 The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByCountryIso3166($countryIso3166 = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($countryIso3166)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $countryIso3166)) {
+                $countryIso3166 = str_replace('*', '%', $countryIso3166);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectorGeocachePeer::COUNTRY_ISO3166, $countryIso3166, $comparison);
+    }
+
+    /**
+     * Filter the query on the state column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByState('fooValue');   // WHERE state = 'fooValue'
+     * $query->filterByState('%fooValue%'); // WHERE state LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $state The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByState($state = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($state)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $state)) {
+                $state = str_replace('*', '%', $state);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectorGeocachePeer::STATE, $state, $comparison);
+    }
+
+    /**
+     * Filter the query on the county column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCounty('fooValue');   // WHERE county = 'fooValue'
+     * $query->filterByCounty('%fooValue%'); // WHERE county LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $county The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByCounty($county = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($county)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $county)) {
+                $county = str_replace('*', '%', $county);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectorGeocachePeer::COUNTY, $county, $comparison);
+    }
+
+    /**
+     * Filter the query on the city column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByCity('fooValue');   // WHERE city = 'fooValue'
+     * $query->filterByCity('%fooValue%'); // WHERE city LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $city The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByCity($city = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($city)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $city)) {
+                $city = str_replace('*', '%', $city);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectorGeocachePeer::CITY, $city, $comparison);
+    }
+
+    /**
+     * Filter the query on the zip_postal column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByZipPostal('fooValue');   // WHERE zip_postal = 'fooValue'
+     * $query->filterByZipPostal('%fooValue%'); // WHERE zip_postal LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $zipPostal The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByZipPostal($zipPostal = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($zipPostal)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $zipPostal)) {
+                $zipPostal = str_replace('*', '%', $zipPostal);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectorGeocachePeer::ZIP_POSTAL, $zipPostal, $comparison);
+    }
+
+    /**
+     * Filter the query on the address column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByAddress('fooValue');   // WHERE address = 'fooValue'
+     * $query->filterByAddress('%fooValue%'); // WHERE address LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $address The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByAddress($address = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($address)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $address)) {
+                $address = str_replace('*', '%', $address);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectorGeocachePeer::ADDRESS, $address, $comparison);
+    }
+
+    /**
+     * Filter the query on the latitude column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByLatitude(1234); // WHERE latitude = 1234
+     * $query->filterByLatitude(array(12, 34)); // WHERE latitude IN (12, 34)
+     * $query->filterByLatitude(array('min' => 12)); // WHERE latitude > 12
+     * </code>
+     *
+     * @param     mixed $latitude The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByLatitude($latitude = null, $comparison = null)
+    {
+        if (is_array($latitude)) {
+            $useMinMax = false;
+            if (isset($latitude['min'])) {
+                $this->addUsingAlias(CollectorGeocachePeer::LATITUDE, $latitude['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($latitude['max'])) {
+                $this->addUsingAlias(CollectorGeocachePeer::LATITUDE, $latitude['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CollectorGeocachePeer::LATITUDE, $latitude, $comparison);
+    }
+
+    /**
+     * Filter the query on the longitude column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByLongitude(1234); // WHERE longitude = 1234
+     * $query->filterByLongitude(array(12, 34)); // WHERE longitude IN (12, 34)
+     * $query->filterByLongitude(array('min' => 12)); // WHERE longitude > 12
+     * </code>
+     *
+     * @param     mixed $longitude The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByLongitude($longitude = null, $comparison = null)
+    {
+        if (is_array($longitude)) {
+            $useMinMax = false;
+            if (isset($longitude['min'])) {
+                $this->addUsingAlias(CollectorGeocachePeer::LONGITUDE, $longitude['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($longitude['max'])) {
+                $this->addUsingAlias(CollectorGeocachePeer::LONGITUDE, $longitude['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CollectorGeocachePeer::LONGITUDE, $longitude, $comparison);
+    }
+
+    /**
+     * Filter the query on the timezone column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByTimezone('fooValue');   // WHERE timezone = 'fooValue'
+     * $query->filterByTimezone('%fooValue%'); // WHERE timezone LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $timezone The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByTimezone($timezone = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($timezone)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $timezone)) {
+                $timezone = str_replace('*', '%', $timezone);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectorGeocachePeer::TIMEZONE, $timezone, $comparison);
+    }
+
+    /**
+     * Filter the query by a related Collector object
+     *
+     * @param     Collector|PropelCollection $collector The related object(s) to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function filterByCollector($collector, $comparison = null)
+    {
+        if ($collector instanceof Collector) {
+            return $this
+                ->addUsingAlias(CollectorGeocachePeer::COLLECTOR_ID, $collector->getId(), $comparison);
+        } elseif ($collector instanceof PropelCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+            return $this
+                ->addUsingAlias(CollectorGeocachePeer::COLLECTOR_ID, $collector->toKeyValue('PrimaryKey', 'Id'), $comparison);
+        } else {
+            throw new PropelException('filterByCollector() only accepts arguments of type Collector or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Collector relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function joinCollector($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Collector');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Collector');
+        }
+
         return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
     }
-    return $this->addUsingAlias(CollectorGeocachePeer::COLLECTOR_ID, $collectorId, $comparison);
-  }
 
-  /**
-   * Filter the query on the country column
-   * 
-   * @param     string $country The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByCountry($country = null, $comparison = null)
-  {
-    if (null === $comparison)
+    /**
+     * Use the Collector relation Collector object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CollectorQuery A secondary query class using the current class as primary query
+     */
+    public function useCollectorQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
-      if (is_array($country))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $country))
-      {
-        $country = str_replace('*', '%', $country);
-        $comparison = Criteria::LIKE;
-      }
+        return $this
+            ->joinCollector($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Collector', 'CollectorQuery');
     }
-    return $this->addUsingAlias(CollectorGeocachePeer::COUNTRY, $country, $comparison);
-  }
 
-  /**
-   * Filter the query on the country_iso3166 column
-   * 
-   * @param     string $countryIso3166 The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByCountryIso3166($countryIso3166 = null, $comparison = null)
-  {
-    if (null === $comparison)
+    /**
+     * Exclude object from result
+     *
+     * @param     CollectorGeocache $collectorGeocache Object to remove from the list of results
+     *
+     * @return    CollectorGeocacheQuery The current query, for fluid interface
+     */
+    public function prune($collectorGeocache = null)
     {
-      if (is_array($countryIso3166))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $countryIso3166))
-      {
-        $countryIso3166 = str_replace('*', '%', $countryIso3166);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(CollectorGeocachePeer::COUNTRY_ISO3166, $countryIso3166, $comparison);
-  }
+        if ($collectorGeocache) {
+            $this->addUsingAlias(CollectorGeocachePeer::ID, $collectorGeocache->getId(), Criteria::NOT_EQUAL);
+        }
 
-  /**
-   * Filter the query on the state column
-   * 
-   * @param     string $state The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByState($state = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($state))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $state))
-      {
-        $state = str_replace('*', '%', $state);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(CollectorGeocachePeer::STATE, $state, $comparison);
-  }
-
-  /**
-   * Filter the query on the county column
-   * 
-   * @param     string $county The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByCounty($county = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($county))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $county))
-      {
-        $county = str_replace('*', '%', $county);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(CollectorGeocachePeer::COUNTY, $county, $comparison);
-  }
-
-  /**
-   * Filter the query on the city column
-   * 
-   * @param     string $city The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByCity($city = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($city))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $city))
-      {
-        $city = str_replace('*', '%', $city);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(CollectorGeocachePeer::CITY, $city, $comparison);
-  }
-
-  /**
-   * Filter the query on the zip_postal column
-   * 
-   * @param     string $zipPostal The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByZipPostal($zipPostal = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($zipPostal))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $zipPostal))
-      {
-        $zipPostal = str_replace('*', '%', $zipPostal);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(CollectorGeocachePeer::ZIP_POSTAL, $zipPostal, $comparison);
-  }
-
-  /**
-   * Filter the query on the address column
-   * 
-   * @param     string $address The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByAddress($address = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($address))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $address))
-      {
-        $address = str_replace('*', '%', $address);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(CollectorGeocachePeer::ADDRESS, $address, $comparison);
-  }
-
-  /**
-   * Filter the query on the latitude column
-   * 
-   * @param     double|array $latitude The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByLatitude($latitude = null, $comparison = null)
-  {
-    if (is_array($latitude))
-    {
-      $useMinMax = false;
-      if (isset($latitude['min']))
-      {
-        $this->addUsingAlias(CollectorGeocachePeer::LATITUDE, $latitude['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($latitude['max']))
-      {
-        $this->addUsingAlias(CollectorGeocachePeer::LATITUDE, $latitude['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
         return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
     }
-    return $this->addUsingAlias(CollectorGeocachePeer::LATITUDE, $latitude, $comparison);
-  }
-
-  /**
-   * Filter the query on the longitude column
-   * 
-   * @param     double|array $longitude The value to use as filter.
-   *            Accepts an associative array('min' => $minValue, 'max' => $maxValue)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByLongitude($longitude = null, $comparison = null)
-  {
-    if (is_array($longitude))
-    {
-      $useMinMax = false;
-      if (isset($longitude['min']))
-      {
-        $this->addUsingAlias(CollectorGeocachePeer::LONGITUDE, $longitude['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($longitude['max']))
-      {
-        $this->addUsingAlias(CollectorGeocachePeer::LONGITUDE, $longitude['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
-        return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
-    }
-    return $this->addUsingAlias(CollectorGeocachePeer::LONGITUDE, $longitude, $comparison);
-  }
-
-  /**
-   * Filter the query on the timezone column
-   * 
-   * @param     string $timezone The value to use as filter.
-   *            Accepts wildcards (* and % trigger a LIKE)
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByTimezone($timezone = null, $comparison = null)
-  {
-    if (null === $comparison)
-    {
-      if (is_array($timezone))
-      {
-        $comparison = Criteria::IN;
-      }
-      elseif (preg_match('/[\%\*]/', $timezone))
-      {
-        $timezone = str_replace('*', '%', $timezone);
-        $comparison = Criteria::LIKE;
-      }
-    }
-    return $this->addUsingAlias(CollectorGeocachePeer::TIMEZONE, $timezone, $comparison);
-  }
-
-  /**
-   * Filter the query by a related Collector object
-   *
-   * @param     Collector $collector  the related object to use as filter
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function filterByCollector($collector, $comparison = null)
-  {
-    return $this
-      ->addUsingAlias(CollectorGeocachePeer::COLLECTOR_ID, $collector->getId(), $comparison);
-  }
-
-  /**
-   * Adds a JOIN clause to the query using the Collector relation
-   * 
-   * @param     string $relationAlias optional alias for the relation
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function joinCollector($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-  {
-    $tableMap = $this->getTableMap();
-    $relationMap = $tableMap->getRelation('Collector');
-    
-    // create a ModelJoin object for this join
-    $join = new ModelJoin();
-    $join->setJoinType($joinType);
-    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-    if ($previousJoin = $this->getPreviousJoin())
-    {
-      $join->setPreviousJoin($previousJoin);
-    }
-    
-    // add the ModelJoin to the current object
-    if($relationAlias)
-    {
-      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-      $this->addJoinObject($join, $relationAlias);
-    }
-    else
-    {
-      $this->addJoinObject($join, 'Collector');
-    }
-    
-    return $this;
-  }
-
-  /**
-   * Use the Collector relation Collector object
-   *
-   * @see       useQuery()
-   * 
-   * @param     string $relationAlias optional alias for the relation,
-   *                                   to be used as main alias in the secondary query
-   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-   *
-   * @return    CollectorQuery A secondary query class using the current class as primary query
-   */
-  public function useCollectorQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
-  {
-    return $this
-      ->joinCollector($relationAlias, $joinType)
-      ->useQuery($relationAlias ? $relationAlias : 'Collector', 'CollectorQuery');
-  }
-
-  /**
-   * Exclude object from result
-   *
-   * @param     CollectorGeocache $collectorGeocache Object to remove from the list of results
-   *
-   * @return    CollectorGeocacheQuery The current query, for fluid interface
-   */
-  public function prune($collectorGeocache = null)
-  {
-    if ($collectorGeocache)
-    {
-      $this->addUsingAlias(CollectorGeocachePeer::ID, $collectorGeocache->getId(), Criteria::NOT_EQUAL);
-    }
-    
-    return $this;
-  }
 
 }

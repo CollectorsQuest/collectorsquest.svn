@@ -23,7 +23,7 @@ abstract class BasewpTermTaxonomyForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'term_taxonomy_id' => new sfValidatorPropelChoice(array('model' => 'wpTermTaxonomy', 'column' => 'term_taxonomy_id', 'required' => false)),
+      'term_taxonomy_id' => new sfValidatorChoice(array('choices' => array($this->getObject()->getTermTaxonomyId()), 'empty_value' => $this->getObject()->getTermTaxonomyId(), 'required' => false)),
       'term_id'          => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
       'taxonomy'         => new sfValidatorString(array('max_length' => 32, 'required' => false)),
       'description'      => new sfValidatorString(array('required' => false)),

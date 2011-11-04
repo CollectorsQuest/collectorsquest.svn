@@ -828,22 +828,6 @@ CREATE TABLE `featured`
 ) ENGINE=InnoDB;
 
 #-----------------------------------------------------------------------------
-#-- session_storage
-#-----------------------------------------------------------------------------
-
-DROP TABLE IF EXISTS `session_storage`;
-
-
-CREATE TABLE `session_storage`
-(
-	`id` INTEGER  NOT NULL AUTO_INCREMENT,
-	`session_id` VARCHAR(64),
-	`session_data` TEXT,
-	`session_time` BIGINT,
-	PRIMARY KEY (`id`)
-) ENGINE=InnoDB;
-
-#-----------------------------------------------------------------------------
 #-- package
 #-----------------------------------------------------------------------------
 

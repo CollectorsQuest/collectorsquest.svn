@@ -314,7 +314,7 @@ abstract class BasewpTermTaxonomy extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 6; // 6 = wpTermTaxonomyPeer::NUM_COLUMNS - wpTermTaxonomyPeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 6; // 6 = wpTermTaxonomyPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -409,6 +409,8 @@ abstract class BasewpTermTaxonomy extends BaseObject  implements Persistent
     $con->beginTransaction();
     try
     {
+      $deleteQuery = wpTermTaxonomyQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BasewpTermTaxonomy:delete:pre') as $callable)
@@ -422,9 +424,7 @@ abstract class BasewpTermTaxonomy extends BaseObject  implements Persistent
 
       if ($ret)
       {
-        wpTermTaxonomyQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BasewpTermTaxonomy:delete:post') as $callable)
@@ -720,11 +720,17 @@ abstract class BasewpTermTaxonomy extends BaseObject  implements Persistent
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
   {
+    if (isset($alreadyDumpedObjects['wpTermTaxonomy'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['wpTermTaxonomy'][$this->getPrimaryKey()] = true;
     $keys = wpTermTaxonomyPeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getTermTaxonomyId(),
@@ -887,18 +893,21 @@ abstract class BasewpTermTaxonomy extends BaseObject  implements Persistent
    *
    * @param      object $copyObj An object of wpTermTaxonomy (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setTermId($this->term_id);
-    $copyObj->setTaxonomy($this->taxonomy);
-    $copyObj->setDescription($this->description);
-    $copyObj->setParent($this->parent);
-    $copyObj->setCount($this->count);
-
-    $copyObj->setNew(true);
-    $copyObj->setTermTaxonomyId(NULL); // this is a auto-increment column, so set to default value
+    $copyObj->setTermId($this->getTermId());
+    $copyObj->setTaxonomy($this->getTaxonomy());
+    $copyObj->setDescription($this->getDescription());
+    $copyObj->setParent($this->getParent());
+    $copyObj->setCount($this->getCount());
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setTermTaxonomyId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -960,13 +969,13 @@ abstract class BasewpTermTaxonomy extends BaseObject  implements Persistent
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -977,10 +986,21 @@ abstract class BasewpTermTaxonomy extends BaseObject  implements Persistent
   }
 
   /**
+   * Return the string representation of this object
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    return (string) $this->exportTo(wpTermTaxonomyPeer::DEFAULT_STRING_FORMAT);
+  }
+
+  /**
    * Catches calls to virtual methods
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BasewpTermTaxonomy:' . $name))
     {
@@ -988,20 +1008,6 @@ abstract class BasewpTermTaxonomy extends BaseObject  implements Persistent
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

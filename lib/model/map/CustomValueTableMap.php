@@ -45,7 +45,7 @@ class CustomValueTableMap extends TableMap
     $this->addColumn('VALUE_TEXT', 'ValueText', 'VARCHAR', false, 255, null);
     $this->addColumn('VALUE_DATE', 'ValueDate', 'DATE', false, null, null);
     $this->addColumn('VALUE_NUMERIC', 'ValueNumeric', 'FLOAT', false, null, null);
-    $this->addColumn('VALUE_BOOL', 'ValueBool', 'BOOLEAN', false, null, false);
+    $this->addColumn('VALUE_BOOL', 'ValueBool', 'BOOLEAN', false, 1, false);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     // validators
@@ -61,9 +61,9 @@ class CustomValueTableMap extends TableMap
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

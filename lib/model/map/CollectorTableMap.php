@@ -42,6 +42,7 @@ class CollectorTableMap extends TableMap
     $this->addColumn('FACEBOOK_ID', 'FacebookId', 'INTEGER', false, null, null);
     $this->addColumn('USERNAME', 'Username', 'VARCHAR', true, 64, null);
     $this->addColumn('DISPLAY_NAME', 'DisplayName', 'VARCHAR', true, 64, null);
+    $this->getColumn('DISPLAY_NAME', false)->setPrimaryString(true);
     $this->addColumn('SLUG', 'Slug', 'VARCHAR', false, 64, null);
     $this->addColumn('SHA1_PASSWORD', 'Sha1Password', 'VARCHAR', true, 40, null);
     $this->addColumn('SALT', 'Salt', 'VARCHAR', true, 32, null);
@@ -55,8 +56,8 @@ class CollectorTableMap extends TableMap
     $this->addColumn('ANNUALLY_SPEND', 'AnnuallySpend', 'FLOAT', false, null, 0);
     $this->addColumn('MOST_EXPENSIVE_ITEM', 'MostExpensiveItem', 'FLOAT', false, null, 0);
     $this->addColumn('COMPANY', 'Company', 'VARCHAR', false, 255, null);
-    $this->addColumn('IS_PUBLIC', 'IsPublic', 'BOOLEAN', false, null, true);
-    $this->addForeignKey('SESSION_ID', 'SessionId', 'VARCHAR', 'session_storage', 'ID', false, 255, null);
+    $this->addColumn('IS_PUBLIC', 'IsPublic', 'BOOLEAN', false, 1, true);
+    $this->addColumn('SESSION_ID', 'SessionId', 'VARCHAR', false, 32, null);
     $this->addColumn('LAST_SEEN_AT', 'LastSeenAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('DELETED_AT', 'DeletedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
@@ -69,26 +70,25 @@ class CollectorTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('SessionStorage', 'SessionStorage', RelationMap::MANY_TO_ONE, array('session_id' => 'id', ), 'SET NULL', null);
-    $this->addRelation('CollectionItemOffer', 'CollectionItemOffer', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), null, null);
-    $this->addRelation('CollectorProfile', 'CollectorProfile', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null);
-    $this->addRelation('CollectorIdentifier', 'CollectorIdentifier', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null);
-    $this->addRelation('CollectorInterview', 'CollectorInterview', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null);
-    $this->addRelation('CollectorGeocache', 'CollectorGeocache', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null);
-    $this->addRelation('CollectorFriendRelatedByCollectorId', 'CollectorFriend', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), null, null);
-    $this->addRelation('CollectorFriendRelatedByFriendId', 'CollectorFriend', RelationMap::ONE_TO_MANY, array('id' => 'friend_id', ), null, null);
-    $this->addRelation('Collection', 'Collection', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null);
-    $this->addRelation('Collectible', 'Collectible', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null);
-    $this->addRelation('CollectibleOffer', 'CollectibleOffer', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), null, null);
-    $this->addRelation('Comment', 'Comment', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null);
-    $this->addRelation('PackageTransaction', 'PackageTransaction', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null);
-    $this->addRelation('PromotionTransaction', 'PromotionTransaction', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null);
+    $this->addRelation('CollectionItemOffer', 'CollectionItemOffer', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), null, null, 'CollectionItemOffers');
+    $this->addRelation('CollectorProfile', 'CollectorProfile', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'CollectorProfiles');
+    $this->addRelation('CollectorIdentifier', 'CollectorIdentifier', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'CollectorIdentifiers');
+    $this->addRelation('CollectorInterview', 'CollectorInterview', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'CollectorInterviews');
+    $this->addRelation('CollectorGeocache', 'CollectorGeocache', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'CollectorGeocaches');
+    $this->addRelation('CollectorFriendRelatedByCollectorId', 'CollectorFriend', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), null, null, 'CollectorFriendsRelatedByCollectorId');
+    $this->addRelation('CollectorFriendRelatedByFriendId', 'CollectorFriend', RelationMap::ONE_TO_MANY, array('id' => 'friend_id', ), null, null, 'CollectorFriendsRelatedByFriendId');
+    $this->addRelation('Collection', 'Collection', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'Collections');
+    $this->addRelation('Collectible', 'Collectible', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'Collectibles');
+    $this->addRelation('CollectibleOffer', 'CollectibleOffer', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), null, null, 'CollectibleOffers');
+    $this->addRelation('Comment', 'Comment', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'Comments');
+    $this->addRelation('PackageTransaction', 'PackageTransaction', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'PackageTransactions');
+    $this->addRelation('PromotionTransaction', 'PromotionTransaction', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'PromotionTransactions');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

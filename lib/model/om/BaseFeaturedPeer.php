@@ -25,12 +25,15 @@ abstract class BaseFeaturedPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'FeaturedTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 12;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 12;
 
   /** the column name for the ID field */
   const ID = 'featured.ID';
@@ -68,6 +71,9 @@ abstract class BaseFeaturedPeer
   /** the column name for the POSITION field */
   const POSITION = 'featured.POSITION';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of Featured objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -77,20 +83,13 @@ abstract class BaseFeaturedPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'FeaturedTypeId', 'FeaturedModel', 'FeaturedId', 'TreeLeft', 'TreeRight', 'TreeScope', 'Eblob', 'StartDate', 'EndDate', 'IsActive', 'Position', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'featuredTypeId', 'featuredModel', 'featuredId', 'treeLeft', 'treeRight', 'treeScope', 'eblob', 'startDate', 'endDate', 'isActive', 'position', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::FEATURED_TYPE_ID, self::FEATURED_MODEL, self::FEATURED_ID, self::TREE_LEFT, self::TREE_RIGHT, self::TREE_SCOPE, self::EBLOB, self::START_DATE, self::END_DATE, self::IS_ACTIVE, self::POSITION, ),
@@ -105,7 +104,7 @@ abstract class BaseFeaturedPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'FeaturedTypeId' => 1, 'FeaturedModel' => 2, 'FeaturedId' => 3, 'TreeLeft' => 4, 'TreeRight' => 5, 'TreeScope' => 6, 'Eblob' => 7, 'StartDate' => 8, 'EndDate' => 9, 'IsActive' => 10, 'Position' => 11, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'featuredTypeId' => 1, 'featuredModel' => 2, 'featuredId' => 3, 'treeLeft' => 4, 'treeRight' => 5, 'treeScope' => 6, 'eblob' => 7, 'startDate' => 8, 'endDate' => 9, 'isActive' => 10, 'position' => 11, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::FEATURED_TYPE_ID => 1, self::FEATURED_MODEL => 2, self::FEATURED_ID => 3, self::TREE_LEFT => 4, self::TREE_RIGHT => 5, self::TREE_SCOPE => 6, self::EBLOB => 7, self::START_DATE => 8, self::END_DATE => 9, self::IS_ACTIVE => 10, self::POSITION => 11, ),
@@ -272,7 +271,7 @@ abstract class BaseFeaturedPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -292,7 +291,7 @@ abstract class BaseFeaturedPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -354,7 +353,7 @@ abstract class BaseFeaturedPeer
    * @param      Featured $value A Featured object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(Featured $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -460,7 +459,7 @@ abstract class BaseFeaturedPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -525,7 +524,7 @@ abstract class BaseFeaturedPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + FeaturedPeer::NUM_COLUMNS;
+      $col = $startcol + FeaturedPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -536,6 +535,7 @@ abstract class BaseFeaturedPeer
     }
     return array($obj, $col);
   }
+
   /**
    * Returns the TableMap related to this peer.
    * This method is not needed for general use but a specific application could have a need.
@@ -577,7 +577,7 @@ abstract class BaseFeaturedPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a Featured or Criteria object.
+   * Performs an INSERT on the database, given a Featured or Criteria object.
    *
    * @param      mixed $values Criteria or Featured object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -628,7 +628,7 @@ abstract class BaseFeaturedPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a Featured or Criteria object.
+   * Performs an UPDATE on the database, given a Featured or Criteria object.
    *
    * @param      mixed $values Criteria or Featured object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -672,11 +672,12 @@ abstract class BaseFeaturedPeer
   }
 
   /**
-   * Method to DELETE all rows from the featured table.
+   * Deletes all rows from the featured table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -705,7 +706,7 @@ abstract class BaseFeaturedPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a Featured or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a Featured or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or Featured object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -780,7 +781,7 @@ abstract class BaseFeaturedPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(Featured $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

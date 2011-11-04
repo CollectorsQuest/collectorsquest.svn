@@ -47,7 +47,7 @@ class VideoTableMap extends TableMap
     $this->addColumn('FILENAME', 'Filename', 'VARCHAR', false, 128, null);
     $this->addColumn('THUMB_SMALL', 'ThumbSmall', 'VARCHAR', false, 128, null);
     $this->addColumn('THUMB_LARGE', 'ThumbLarge', 'VARCHAR', false, 128, null);
-    $this->addColumn('IS_PUBLISHED', 'IsPublished', 'BOOLEAN', false, null, null);
+    $this->addColumn('IS_PUBLISHED', 'IsPublished', 'BOOLEAN', false, 1, null);
     $this->addColumn('PUBLISHED_AT', 'PublishedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('UPLOADED_AT', 'UploadedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
@@ -59,14 +59,14 @@ class VideoTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('VideoPlaylist', 'VideoPlaylist', RelationMap::ONE_TO_MANY, array('id' => 'video_id', ), null, null);
-    $this->addRelation('VideoCollectionCategory', 'VideoCollectionCategory', RelationMap::ONE_TO_MANY, array('id' => 'video_id', ), null, null);
+    $this->addRelation('VideoPlaylist', 'VideoPlaylist', RelationMap::ONE_TO_MANY, array('id' => 'video_id', ), null, null, 'VideoPlaylists');
+    $this->addRelation('VideoCollectionCategory', 'VideoCollectionCategory', RelationMap::ONE_TO_MANY, array('id' => 'video_id', ), null, null, 'VideoCollectionCategorys');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

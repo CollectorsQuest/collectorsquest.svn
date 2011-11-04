@@ -19,8 +19,8 @@ abstract class BasewpTermRelationshipForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'object_id'        => new sfValidatorPropelChoice(array('model' => 'wpTermRelationship', 'column' => 'object_id', 'required' => false)),
-      'term_taxonomy_id' => new sfValidatorPropelChoice(array('model' => 'wpTermRelationship', 'column' => 'term_taxonomy_id', 'required' => false)),
+      'object_id'        => new sfValidatorChoice(array('choices' => array($this->getObject()->getObjectId()), 'empty_value' => $this->getObject()->getObjectId(), 'required' => false)),
+      'term_taxonomy_id' => new sfValidatorChoice(array('choices' => array($this->getObject()->getTermTaxonomyId()), 'empty_value' => $this->getObject()->getTermTaxonomyId(), 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('wp_term_relationship[%s]');

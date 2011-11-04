@@ -26,7 +26,7 @@ abstract class BaseScoreForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'         => new sfValidatorPropelChoice(array('model' => 'Score', 'column' => 'id', 'required' => false)),
+      'id'         => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'day'        => new sfValidatorDate(array('required' => false)),
       'model'      => new sfValidatorString(array('max_length' => 64)),
       'model_id'   => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),

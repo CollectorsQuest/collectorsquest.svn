@@ -88,4 +88,4 @@ class CollectionCategory extends BaseCollectionCategory
   }
 }
 
-sfPropelBehavior::add('CollectionCategory', array('sfPropelActAsTaggableBehavior'));
+sfPropelBehavior::add('CollectionCategory', array('IceTaggableBehavior'));

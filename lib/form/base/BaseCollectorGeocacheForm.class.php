@@ -29,7 +29,7 @@ abstract class BaseCollectorGeocacheForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'              => new sfValidatorPropelChoice(array('model' => 'CollectorGeocache', 'column' => 'id', 'required' => false)),
+      'id'              => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'collector_id'    => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id')),
       'country'         => new sfValidatorString(array('max_length' => 64, 'required' => false)),
       'country_iso3166' => new sfValidatorString(array('max_length' => 2, 'required' => false)),

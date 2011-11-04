@@ -25,12 +25,15 @@ abstract class BaseCollectionItemPeer
 
   /** the related TableMap class for this table */
   const TM_CLASS = 'CollectionItemTableMap';
-  
+
   /** The total number of columns. */
   const NUM_COLUMNS = 14;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
+
+  /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
+  const NUM_HYDRATE_COLUMNS = 14;
 
   /** the column name for the ID field */
   const ID = 'collection_item.ID';
@@ -74,6 +77,9 @@ abstract class BaseCollectionItemPeer
   /** the column name for the UPDATED_AT field */
   const UPDATED_AT = 'collection_item.UPDATED_AT';
 
+  /** The default string format for model objects of the related table **/
+  const DEFAULT_STRING_FORMAT = 'YAML';
+
   /**
    * An identiy map to hold any loaded instances of CollectionItem objects.
    * This must be public so that other peer classes can access this when hydrating from JOIN
@@ -83,20 +89,13 @@ abstract class BaseCollectionItemPeer
   public static $instances = array();
 
 
-  // symfony behavior
-  
-  /**
-   * Indicates whether the current model includes I18N.
-   */
-  const IS_I18N = false;
-
   /**
    * holds an array of fieldnames
    *
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
-  private static $fieldNames = array (
+  protected static $fieldNames = array (
     BasePeer::TYPE_PHPNAME => array ('Id', 'CollectionId', 'Name', 'Slug', 'Description', 'EstValue', 'PurchasedPrice', 'Currency', 'Photo', 'IsForSale', 'NumViews', 'Position', 'CreatedAt', 'UpdatedAt', ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectionId', 'name', 'slug', 'description', 'estValue', 'purchasedPrice', 'currency', 'photo', 'isForSale', 'numViews', 'position', 'createdAt', 'updatedAt', ),
     BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTION_ID, self::NAME, self::SLUG, self::DESCRIPTION, self::EST_VALUE, self::PURCHASED_PRICE, self::CURRENCY, self::PHOTO, self::IS_FOR_SALE, self::NUM_VIEWS, self::POSITION, self::CREATED_AT, self::UPDATED_AT, ),
@@ -111,7 +110,7 @@ abstract class BaseCollectionItemPeer
    * first dimension keys are the type constants
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
-  private static $fieldKeys = array (
+  protected static $fieldKeys = array (
     BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectionId' => 1, 'Name' => 2, 'Slug' => 3, 'Description' => 4, 'EstValue' => 5, 'PurchasedPrice' => 6, 'Currency' => 7, 'Photo' => 8, 'IsForSale' => 9, 'NumViews' => 10, 'Position' => 11, 'CreatedAt' => 12, 'UpdatedAt' => 13, ),
     BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectionId' => 1, 'name' => 2, 'slug' => 3, 'description' => 4, 'estValue' => 5, 'purchasedPrice' => 6, 'currency' => 7, 'photo' => 8, 'isForSale' => 9, 'numViews' => 10, 'position' => 11, 'createdAt' => 12, 'updatedAt' => 13, ),
     BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTION_ID => 1, self::NAME => 2, self::SLUG => 3, self::DESCRIPTION => 4, self::EST_VALUE => 5, self::PURCHASED_PRICE => 6, self::CURRENCY => 7, self::PHOTO => 8, self::IS_FOR_SALE => 9, self::NUM_VIEWS => 10, self::POSITION => 11, self::CREATED_AT => 12, self::UPDATED_AT => 13, ),
@@ -282,7 +281,7 @@ abstract class BaseCollectionItemPeer
     return $count;
   }
   /**
-   * Method to select one object from the DB.
+   * Selects one object from the DB.
    *
    * @param      Criteria $criteria object used to create the SELECT statement.
    * @param      PropelPDO $con
@@ -302,7 +301,7 @@ abstract class BaseCollectionItemPeer
     return null;
   }
   /**
-   * Method to do selects.
+   * Selects several row from the DB.
    *
    * @param      Criteria $criteria The Criteria object used to build the SELECT statement.
    * @param      PropelPDO $con
@@ -364,7 +363,7 @@ abstract class BaseCollectionItemPeer
    * @param      CollectionItem $value A CollectionItem object.
    * @param      string $key (optional) key to use for instance map (for performance boost if key was already calculated externally).
    */
-  public static function addInstanceToPool(CollectionItem $obj, $key = null)
+  public static function addInstanceToPool($obj, $key = null)
   {
     if (Propel::isInstancePoolingEnabled())
     {
@@ -470,7 +469,7 @@ abstract class BaseCollectionItemPeer
   }
 
   /**
-   * Retrieves the primary key from the DB resultset row 
+   * Retrieves the primary key from the DB resultset row
    * For tables with a single-column primary key, that simple pkey value will be returned.  For tables with
    * a multi-column primary key, an array of the primary key columns will be returned.
    *
@@ -535,7 +534,7 @@ abstract class BaseCollectionItemPeer
       // We no longer rehydrate the object, since this can cause data loss.
       // See http://www.propelorm.org/ticket/509
       // $obj->hydrate($row, $startcol, true); // rehydrate
-      $col = $startcol + CollectionItemPeer::NUM_COLUMNS;
+      $col = $startcol + CollectionItemPeer::NUM_HYDRATE_COLUMNS;
     }
     else
     {
@@ -546,6 +545,7 @@ abstract class BaseCollectionItemPeer
     }
     return array($obj, $col);
   }
+
 
   /**
    * Returns the number of rows matching criteria, joining the related Collection table
@@ -575,9 +575,9 @@ abstract class BaseCollectionItemPeer
     {
       CollectionItemPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -629,7 +629,7 @@ abstract class BaseCollectionItemPeer
     }
 
     CollectionItemPeer::addSelectColumns($criteria);
-    $startcol = (CollectionItemPeer::NUM_COLUMNS - CollectionItemPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol = CollectionItemPeer::NUM_HYDRATE_COLUMNS;
     CollectionPeer::addSelectColumns($criteria);
 
     $criteria->addJoin(CollectionItemPeer::COLLECTION_ID, CollectionPeer::ID, $join_behavior);
@@ -716,9 +716,9 @@ abstract class BaseCollectionItemPeer
     {
       CollectionItemPeer::addSelectColumns($criteria);
     }
-    
+
     $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-    
+
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
 
@@ -770,10 +770,10 @@ abstract class BaseCollectionItemPeer
     }
 
     CollectionItemPeer::addSelectColumns($criteria);
-    $startcol2 = (CollectionItemPeer::NUM_COLUMNS - CollectionItemPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol2 = CollectionItemPeer::NUM_HYDRATE_COLUMNS;
 
     CollectionPeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + (CollectionPeer::NUM_COLUMNS - CollectionPeer::NUM_LAZY_LOAD_COLUMNS);
+    $startcol3 = $startcol2 + CollectionPeer::NUM_HYDRATE_COLUMNS;
 
     $criteria->addJoin(CollectionItemPeer::COLLECTION_ID, CollectionPeer::ID, $join_behavior);
 
@@ -871,7 +871,7 @@ abstract class BaseCollectionItemPeer
   }
 
   /**
-   * Method perform an INSERT on the database, given a CollectionItem or Criteria object.
+   * Performs an INSERT on the database, given a CollectionItem or Criteria object.
    *
    * @param      mixed $values Criteria or CollectionItem object containing data that is used to create the INSERT statement.
    * @param      PropelPDO $con the PropelPDO connection to use
@@ -922,7 +922,7 @@ abstract class BaseCollectionItemPeer
   }
 
   /**
-   * Method perform an UPDATE on the database, given a CollectionItem or Criteria object.
+   * Performs an UPDATE on the database, given a CollectionItem or Criteria object.
    *
    * @param      mixed $values Criteria or CollectionItem object containing data that is used to create the UPDATE statement.
    * @param      PropelPDO $con The connection to use (specify PropelPDO connection object to exert more control over transactions).
@@ -966,11 +966,12 @@ abstract class BaseCollectionItemPeer
   }
 
   /**
-   * Method to DELETE all rows from the collection_item table.
+   * Deletes all rows from the collection_item table.
    *
+   * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doDeleteAll($con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -999,7 +1000,7 @@ abstract class BaseCollectionItemPeer
   }
 
   /**
-   * Method perform a DELETE on the database, given a CollectionItem or Criteria object OR a primary key value.
+   * Performs a DELETE on the database, given a CollectionItem or Criteria object OR a primary key value.
    *
    * @param      mixed $values Criteria or CollectionItem object or primary key or array of primary keys
    *              which is used to create the DELETE statement
@@ -1074,7 +1075,7 @@ abstract class BaseCollectionItemPeer
    *
    * @return     mixed TRUE if all columns are valid or the error message of the first invalid column.
    */
-  public static function doValidate(CollectionItem $obj, $cols = null)
+  public static function doValidate($obj, $cols = null)
   {
     $columns = array();
 

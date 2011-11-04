@@ -29,7 +29,7 @@ abstract class BaseMultimediaForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'          => new sfValidatorPropelChoice(array('model' => 'Multimedia', 'column' => 'id', 'required' => false)),
+      'id'          => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'model'       => new sfValidatorString(array('max_length' => 64)),
       'model_id'    => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
       'type'        => new sfValidatorString(),

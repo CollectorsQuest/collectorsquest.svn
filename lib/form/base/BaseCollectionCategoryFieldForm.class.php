@@ -20,7 +20,7 @@ abstract class BaseCollectionCategoryFieldForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'                     => new sfValidatorPropelChoice(array('model' => 'CollectionCategoryField', 'column' => 'id', 'required' => false)),
+      'id'                     => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'collection_category_id' => new sfValidatorPropelChoice(array('model' => 'CollectionCategory', 'column' => 'id', 'required' => false)),
       'custom_field_id'        => new sfValidatorPropelChoice(array('model' => 'CustomField', 'column' => 'id', 'required' => false)),
     ));

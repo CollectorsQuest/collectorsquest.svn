@@ -241,7 +241,7 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 4; // 4 = SessionStoragePeer::NUM_COLUMNS - SessionStoragePeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 4; // 4 = SessionStoragePeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -338,6 +338,8 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
     $con->beginTransaction();
     try
     {
+      $deleteQuery = SessionStorageQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseSessionStorage:delete:pre') as $callable)
@@ -351,9 +353,7 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
 
       if ($ret)
       {
-        SessionStorageQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BaseSessionStorage:delete:post') as $callable)
@@ -665,11 +665,18 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+   * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
   {
+    if (isset($alreadyDumpedObjects['SessionStorage'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['SessionStorage'][$this->getPrimaryKey()] = true;
     $keys = SessionStoragePeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
@@ -677,6 +684,13 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
       $keys[2] => $this->getSessionData(),
       $keys[3] => $this->getSessionTime(),
     );
+    if ($includeForeignObjects)
+    {
+      if (null !== $this->collCollectors)
+      {
+        $result['Collectors'] = $this->collCollectors->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+    }
     return $result;
   }
 
@@ -820,13 +834,14 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
    *
    * @param      object $copyObj An object of SessionStorage (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setSessionId($this->session_id);
-    $copyObj->setSessionData($this->session_data);
-    $copyObj->setSessionTime($this->session_time);
+    $copyObj->setSessionId($this->getSessionId());
+    $copyObj->setSessionData($this->getSessionData());
+    $copyObj->setSessionTime($this->getSessionTime());
 
     if ($deepCopy)
     {
@@ -843,9 +858,11 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
 
     }
 
-
-    $copyObj->setNew(true);
-    $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -887,6 +904,23 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
     return self::$peer;
   }
 
+
+  /**
+   * Initializes a collection based on the name of a relation.
+   * Avoids crafting an 'init[$relationName]s' method name
+   * that wouldn't work when StandardEnglishPluralizer is used.
+   *
+   * @param      string $relationName The name of the relation to initialize
+   * @return     void
+   */
+  public function initRelation($relationName)
+  {
+    if ('Collector' == $relationName)
+    {
+      return $this->initCollectors();
+    }
+  }
+
   /**
    * Clears out the collCollectors collection
    *
@@ -908,10 +942,17 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initCollectors()
+  public function initCollectors($overrideExisting = true)
   {
+    if (null !== $this->collCollectors && !$overrideExisting)
+    {
+      return;
+    }
     $this->collCollectors = new PropelObjectCollection();
     $this->collCollectors->setModel('Collector');
   }
@@ -994,8 +1035,7 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
    * through the Collector foreign key attribute.
    *
    * @param      Collector $l Collector
-   * @return     void
-   * @throws     PropelException
+   * @return     SessionStorage The current object (for fluent API support)
    */
   public function addCollector(Collector $l)
   {
@@ -1007,6 +1047,8 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
       $this->collCollectors[]= $l;
       $l->setSessionStorage($this);
     }
+
+    return $this;
   }
 
   /**
@@ -1027,13 +1069,13 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -1041,14 +1083,28 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
     {
       if ($this->collCollectors)
       {
-        foreach ((array) $this->collCollectors as $o)
+        foreach ($this->collCollectors as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
     }
 
+    if ($this->collCollectors instanceof PropelCollection)
+    {
+      $this->collCollectors->clearIterator();
+    }
     $this->collCollectors = null;
+  }
+
+  /**
+   * Return the string representation of this object
+   *
+   * @return string
+   */
+  public function __toString()
+  {
+    return (string) $this->exportTo(SessionStoragePeer::DEFAULT_STRING_FORMAT);
   }
 
   /**
@@ -1056,6 +1112,7 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BaseSessionStorage:' . $name))
     {
@@ -1063,20 +1120,6 @@ abstract class BaseSessionStorage extends BaseObject  implements Persistent
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

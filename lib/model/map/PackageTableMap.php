@@ -54,13 +54,13 @@ class PackageTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('PackageTransaction', 'PackageTransaction', RelationMap::ONE_TO_MANY, array('id' => 'package_id', ), 'CASCADE', null);
+    $this->addRelation('PackageTransaction', 'PackageTransaction', RelationMap::ONE_TO_MANY, array('id' => 'package_id', ), 'CASCADE', null, 'PackageTransactions');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

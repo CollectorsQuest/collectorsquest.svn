@@ -21,7 +21,7 @@ abstract class BaseVideoPlaylistForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'          => new sfValidatorPropelChoice(array('model' => 'VideoPlaylist', 'column' => 'id', 'required' => false)),
+      'id'          => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'video_id'    => new sfValidatorPropelChoice(array('model' => 'Video', 'column' => 'id', 'required' => false)),
       'playlist_id' => new sfValidatorPropelChoice(array('model' => 'Playlist', 'column' => 'id', 'required' => false)),
       'position'    => new sfValidatorInteger(array('min' => -128, 'max' => 127, 'required' => false)),

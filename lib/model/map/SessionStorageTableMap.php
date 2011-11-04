@@ -50,13 +50,13 @@ class SessionStorageTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('Collector', 'Collector', RelationMap::ONE_TO_MANY, array('id' => 'session_id', ), 'SET NULL', null);
+    $this->addRelation('Collector', 'Collector', RelationMap::ONE_TO_MANY, array('id' => 'session_id', ), 'SET NULL', null, 'Collectors');
   }
 
   /**
-   * 
+   *
    * Gets the list of behaviors registered for this table
-   * 
+   *
    * @return array Associative array (name => parameters) of behaviors
    */
   public function getBehaviors()

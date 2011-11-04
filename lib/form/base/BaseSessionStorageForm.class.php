@@ -21,7 +21,7 @@ abstract class BaseSessionStorageForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'           => new sfValidatorPropelChoice(array('model' => 'SessionStorage', 'column' => 'id', 'required' => false)),
+      'id'           => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'session_id'   => new sfValidatorString(array('max_length' => 64, 'required' => false)),
       'session_data' => new sfValidatorString(array('required' => false)),
       'session_time' => new sfValidatorInteger(array('min' => -9.2233720368548E+18, 'max' => 9.2233720368548E+18, 'required' => false)),

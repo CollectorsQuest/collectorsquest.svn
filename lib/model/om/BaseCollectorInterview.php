@@ -396,19 +396,30 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [is_active] column.
+   * Sets the value of the [is_active] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
    * 
-   * @param      boolean $v new value
+   * @param      boolean|integer|string $v The new value
    * @return     CollectorInterview The current object (for fluent API support)
    */
   public function setIsActive($v)
   {
     if ($v !== null)
     {
-      $v = (boolean) $v;
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
     }
 
-    if ($this->is_active !== $v || $this->isNew())
+    if ($this->is_active !== $v)
     {
       $this->is_active = $v;
       $this->modifiedColumns[] = CollectorInterviewPeer::IS_ACTIVE;
@@ -420,56 +431,20 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
   /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.  Empty string will
-   *            be treated as NULL for temporal objects.
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     CollectorInterview The current object (for fluent API support)
    */
   public function setCreatedAt($v)
   {
-    // we treat '' as NULL for temporal objects because DateTime('') == DateTime('now')
-    // -- which is unexpected, to say the least.
-    if ($v === null || $v === '')
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->created_at !== null || $dt !== null)
     {
-      $dt = null;
-    }
-    elseif ($v instanceof DateTime)
-    {
-      $dt = $v;
-    }
-    else
-    {
-      // some string/numeric value passed; we normalize that so that we can
-      // validate it.
-      try
+      $currentDateAsString = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
       {
-        if (is_numeric($v)) { // if it's a unix timestamp
-          $dt = new DateTime('@'.$v, new DateTimeZone('UTC'));
-          // We have to explicitly specify and then change the time zone because of a
-          // DateTime bug: http://bugs.php.net/bug.php?id=43003
-          $dt->setTimeZone(new DateTimeZone(date_default_timezone_get()));
-        }
-        else
-        {
-          $dt = new DateTime($v);
-        }
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException('Error parsing date/time value: ' . var_export($v, true), $x);
-      }
-    }
-
-    if ( $this->created_at !== null || $dt !== null )
-    {
-      // (nested ifs are a little easier to read in this case)
-
-      $currNorm = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newNorm = ($dt !== null) ? $dt->format('Y-m-d H:i:s') : null;
-
-      if ( ($currNorm !== $newNorm) // normalized values don't match 
-          )
-      {
-        $this->created_at = ($dt ? $dt->format('Y-m-d H:i:s') : null);
+        $this->created_at = $newDateAsString;
         $this->modifiedColumns[] = CollectorInterviewPeer::CREATED_AT;
       }
     }
@@ -532,7 +507,7 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 8; // 8 = CollectorInterviewPeer::NUM_COLUMNS - CollectorInterviewPeer::NUM_LAZY_LOAD_COLUMNS).
+      return $startcol + 8; // 8 = CollectorInterviewPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -644,6 +619,8 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
     $con->beginTransaction();
     try
     {
+      $deleteQuery = CollectorInterviewQuery::create()
+        ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseCollectorInterview:delete:pre') as $callable)
@@ -657,9 +634,7 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
 
       if ($ret)
       {
-        CollectorInterviewQuery::create()
-          ->filterByPrimaryKey($this->getPrimaryKey())
-          ->delete($con);
+        $deleteQuery->delete($con);
         $this->postDelete($con);
         // symfony_behaviors behavior
         foreach (sfMixer::getCallables('BaseCollectorInterview:delete:post') as $callable)
@@ -722,8 +697,6 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
         }
       }
 
-      // symfony_timestampable behavior
-      
       if ($isInsert)
       {
         $ret = $ret && $this->preInsert($con);
@@ -1053,12 +1026,18 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
    *                    BasePeer::TYPE_COLNAME, BasePeer::TYPE_FIELDNAME, BasePeer::TYPE_NUM.
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
+   * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
    * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $includeForeignObjects = false)
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
   {
+    if (isset($alreadyDumpedObjects['CollectorInterview'][$this->getPrimaryKey()]))
+    {
+      return '*RECURSION*';
+    }
+    $alreadyDumpedObjects['CollectorInterview'][$this->getPrimaryKey()] = true;
     $keys = CollectorInterviewPeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
@@ -1074,15 +1053,19 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
     {
       if (null !== $this->aCollector)
       {
-        $result['Collector'] = $this->aCollector->toArray($keyType, $includeLazyLoadColumns, true);
+        $result['Collector'] = $this->aCollector->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
       }
       if (null !== $this->aCollectionCategory)
       {
-        $result['CollectionCategory'] = $this->aCollectionCategory->toArray($keyType, $includeLazyLoadColumns, true);
+        $result['CollectionCategory'] = $this->aCollectionCategory->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
       }
       if (null !== $this->aCollection)
       {
-        $result['Collection'] = $this->aCollection->toArray($keyType, $includeLazyLoadColumns, true);
+        $result['Collection'] = $this->aCollection->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+      }
+      if (null !== $this->collInterviewQuestions)
+      {
+        $result['InterviewQuestions'] = $this->collInterviewQuestions->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
       }
     }
     return $result;
@@ -1248,17 +1231,18 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
    *
    * @param      object $copyObj An object of CollectorInterview (or compatible) type.
    * @param      boolean $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
+   * @param      boolean $makeNew Whether to reset autoincrement PKs and make the object new.
    * @throws     PropelException
    */
-  public function copyInto($copyObj, $deepCopy = false)
+  public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setCollectorId($this->collector_id);
-    $copyObj->setCollectionCategoryId($this->collection_category_id);
-    $copyObj->setCollectionId($this->collection_id);
-    $copyObj->setTitle($this->title);
-    $copyObj->setCatchPhrase($this->catch_phrase);
-    $copyObj->setIsActive($this->is_active);
-    $copyObj->setCreatedAt($this->created_at);
+    $copyObj->setCollectorId($this->getCollectorId());
+    $copyObj->setCollectionCategoryId($this->getCollectionCategoryId());
+    $copyObj->setCollectionId($this->getCollectionId());
+    $copyObj->setTitle($this->getTitle());
+    $copyObj->setCatchPhrase($this->getCatchPhrase());
+    $copyObj->setIsActive($this->getIsActive());
+    $copyObj->setCreatedAt($this->getCreatedAt());
 
     if ($deepCopy)
     {
@@ -1275,9 +1259,11 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
 
     }
 
-
-    $copyObj->setNew(true);
-    $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    if ($makeNew)
+    {
+      $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
+    }
   }
 
   /**
@@ -1363,11 +1349,11 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
     {
       $this->aCollector = CollectorQuery::create()->findPk($this->collector_id, $con);
       /* The following can be used additionally to
-         guarantee the related object contains a reference
-         to this object.  This level of coupling may, however, be
-         undesirable since it could result in an only partially populated collection
-         in the referenced object.
-         $this->aCollector->addCollectorInterviews($this);
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->aCollector->addCollectorInterviews($this);
        */
     }
     return $this->aCollector;
@@ -1417,11 +1403,11 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
     {
       $this->aCollectionCategory = CollectionCategoryQuery::create()->findPk($this->collection_category_id, $con);
       /* The following can be used additionally to
-         guarantee the related object contains a reference
-         to this object.  This level of coupling may, however, be
-         undesirable since it could result in an only partially populated collection
-         in the referenced object.
-         $this->aCollectionCategory->addCollectorInterviews($this);
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->aCollectionCategory->addCollectorInterviews($this);
        */
     }
     return $this->aCollectionCategory;
@@ -1471,14 +1457,31 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
     {
       $this->aCollection = CollectionQuery::create()->findPk($this->collection_id, $con);
       /* The following can be used additionally to
-         guarantee the related object contains a reference
-         to this object.  This level of coupling may, however, be
-         undesirable since it could result in an only partially populated collection
-         in the referenced object.
-         $this->aCollection->addCollectorInterviews($this);
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->aCollection->addCollectorInterviews($this);
        */
     }
     return $this->aCollection;
+  }
+
+
+  /**
+   * Initializes a collection based on the name of a relation.
+   * Avoids crafting an 'init[$relationName]s' method name
+   * that wouldn't work when StandardEnglishPluralizer is used.
+   *
+   * @param      string $relationName The name of the relation to initialize
+   * @return     void
+   */
+  public function initRelation($relationName)
+  {
+    if ('InterviewQuestion' == $relationName)
+    {
+      return $this->initInterviewQuestions();
+    }
   }
 
   /**
@@ -1502,10 +1505,17 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
    * however, you may wish to override this method in your stub class to provide setting appropriate
    * to your application -- for example, setting the initial array to the values stored in database.
    *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
    * @return     void
    */
-  public function initInterviewQuestions()
+  public function initInterviewQuestions($overrideExisting = true)
   {
+    if (null !== $this->collInterviewQuestions && !$overrideExisting)
+    {
+      return;
+    }
     $this->collInterviewQuestions = new PropelObjectCollection();
     $this->collInterviewQuestions->setModel('InterviewQuestion');
   }
@@ -1588,8 +1598,7 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
    * through the InterviewQuestion foreign key attribute.
    *
    * @param      InterviewQuestion $l InterviewQuestion
-   * @return     void
-   * @throws     PropelException
+   * @return     CollectorInterview The current object (for fluent API support)
    */
   public function addInterviewQuestion(InterviewQuestion $l)
   {
@@ -1601,6 +1610,8 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
       $this->collInterviewQuestions[]= $l;
       $l->setCollectorInterview($this);
     }
+
+    return $this;
   }
 
   /**
@@ -1626,13 +1637,13 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
   }
 
   /**
-   * Resets all collections of referencing foreign keys.
+   * Resets all references to other model objects or collections of model objects.
    *
-   * This method is a user-space workaround for PHP's inability to garbage collect objects
-   * with circular references.  This is currently necessary when using Propel in certain
-   * daemon or large-volumne/high-memory operations.
+   * This method is a user-space workaround for PHP's inability to garbage collect
+   * objects with circular references (even in PHP 5.3). This is currently necessary
+   * when using Propel in certain daemon or large-volumne/high-memory operations.
    *
-   * @param      boolean $deep Whether to also clear the references on all associated objects.
+   * @param      boolean $deep Whether to also clear the references on all referrer objects.
    */
   public function clearAllReferences($deep = false)
   {
@@ -1640,13 +1651,17 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
     {
       if ($this->collInterviewQuestions)
       {
-        foreach ((array) $this->collInterviewQuestions as $o)
+        foreach ($this->collInterviewQuestions as $o)
         {
           $o->clearAllReferences($deep);
         }
       }
     }
 
+    if ($this->collInterviewQuestions instanceof PropelCollection)
+    {
+      $this->collInterviewQuestions->clearIterator();
+    }
     $this->collInterviewQuestions = null;
     $this->aCollector = null;
     $this->aCollectionCategory = null;
@@ -1668,6 +1683,7 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
    */
   public function __call($name, $params)
   {
+    
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BaseCollectorInterview:' . $name))
     {
@@ -1675,20 +1691,6 @@ abstract class BaseCollectorInterview extends BaseObject  implements Persistent
       return call_user_func_array($callable, $params);
     }
 
-    if (preg_match('/get(\w+)/', $name, $matches))
-    {
-      $virtualColumn = $matches[1];
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-      // no lcfirst in php<5.3...
-      $virtualColumn[0] = strtolower($virtualColumn[0]);
-      if ($this->hasVirtualColumn($virtualColumn))
-      {
-        return $this->getVirtualColumn($virtualColumn);
-      }
-    }
     return parent::__call($name, $params);
   }
 

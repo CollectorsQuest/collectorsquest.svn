@@ -26,7 +26,7 @@ abstract class BaseCollectibleOfferForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'                      => new sfValidatorPropelChoice(array('model' => 'CollectibleOffer', 'column' => 'id', 'required' => false)),
+      'id'                      => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'collectible_id'          => new sfValidatorPropelChoice(array('model' => 'Collectible', 'column' => 'id')),
       'collectible_for_sale_id' => new sfValidatorPropelChoice(array('model' => 'CollectibleForSale', 'column' => 'id')),
       'collector_id'            => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id', 'required' => false)),
