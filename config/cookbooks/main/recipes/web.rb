@@ -8,12 +8,10 @@ service "zend" do
 end
 
 execute "Checkout /www from subversion" do
-  cwd "/"
-  command "svn co -N -q --no-auth-cache --trust-server-cert --username=development --password=hmBiv9799qEgvN svn://184.73.239.190/server /www"
+  command "svn co -q --non-interactive --no-auth-cache --trust-server-cert --username=development --password=hmBiv9799qEgvN svn://184.73.239.190/server /www"
   not_if "test -d /www"
 end
 
 execute "Update /www from subversion" do
-  cwd "/www"
-  command "./svn-up"
+  command "svn up -q --non-interactive --no-auth-cache --trust-server-cert --username=development --password=hmBiv9799qEgvN /www"
 end
