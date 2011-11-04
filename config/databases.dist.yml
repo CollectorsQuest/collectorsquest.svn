@@ -72,7 +72,7 @@ dev:
   propel:
     param:
       classname:  DebugPDO
-      dsn:        mysql:dbname=collectorsquest_com;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_dev;host=cq-mysql-master
       username:   root
       password:
       encoding:   utf8
@@ -101,23 +101,33 @@ dev:
   blog:
     param:
       classname:  DebugPDO
+      dsn:        mysql:dbname=collectorsquest_dev;host=cq-mysql-master
       username:   root
       password:
 
   calendar:
     param:
       classname:  DebugPDO
+      dsn:        mysql:dbname=collectorsquest_dev;host=cq-mysql-master
       username:   root
       password:
 
   queue:
     param:
       classname:  DebugPDO
+      dsn:        mysql:dbname=collectorsquest_dev;host=cq-mysql-master
       username:   root
       password:
 
 test:
   propel:
+    param:
+      classname:  DebugPDO
+      dsn:        mysql:dbname=collectorsquest_test;host=cq-mysql-master
+      username:   root
+      password:
+
+  blog:
     param:
       classname:  DebugPDO
       dsn:        mysql:dbname=collectorsquest_test;host=cq-mysql-master

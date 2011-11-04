@@ -33,12 +33,6 @@ else if ($_SERVER['SERVER_NAME'] == 'backend.collectorsquest.com')
   define('SF_ENV', 'prod');
   define('SF_DEBUG', false);
 }
-else if ($_SERVER['SERVER_NAME'] == 'www.collectorsquest.local')
-{
-  define('SF_APP', 'frontend');
-  define('SF_ENV', 'dev');
-  define('SF_DEBUG', false);
-}
 else if ($_SERVER['SERVER_NAME'] == 'www.collectorsquest.stg')
 {
   define('SF_APP', 'frontend');
