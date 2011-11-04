@@ -7,7 +7,7 @@
  *
  * @package    CollectorsQuest
  * @subpackage form
- * @author     Kiril Angov
+ * @author     Collectors
  */
 abstract class BaseVideoForm extends BaseFormPropel
 {

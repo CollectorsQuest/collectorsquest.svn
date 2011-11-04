@@ -5,7 +5,7 @@
  *
  * @package    CollectorsQuest
  * @subpackage filter
- * @author     Kiril Angov
+ * @author     Collectors
  */
 abstract class BaseTermRelationshipFormFilter extends BaseFormFilterPropel
 {

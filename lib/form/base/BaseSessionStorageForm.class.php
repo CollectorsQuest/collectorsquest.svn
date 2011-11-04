@@ -7,7 +7,7 @@
  *
  * @package    CollectorsQuest
  * @subpackage form
- * @author     Kiril Angov
+ * @author     Collectors
  */
 abstract class BaseSessionStorageForm extends BaseFormPropel
 {
@@ -24,7 +24,7 @@ abstract class BaseSessionStorageForm extends BaseFormPropel
       'id'           => new sfValidatorPropelChoice(array('model' => 'SessionStorage', 'column' => 'id', 'required' => false)),
       'session_id'   => new sfValidatorString(array('max_length' => 64, 'required' => false)),
       'session_data' => new sfValidatorString(array('required' => false)),
-      'session_time' => new sfValidatorInteger(array('min' => -9.2233720368548E+18, 'max' => 9223372036854775807, 'required' => false)),
+      'session_time' => new sfValidatorInteger(array('min' => -9.2233720368548E+18, 'max' => 9.2233720368548E+18, 'required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('session_storage[%s]');

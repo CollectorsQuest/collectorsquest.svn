@@ -1,7 +1,6 @@
 <?php
 
-include(dirname(__FILE__).'/unit.php');
+include __DIR__ .'/unit.php';
 
-$configuration = ProjectConfiguration::getApplicationConfiguration('frontend', 'test', true);
-
-new sfDatabaseManager($configuration);
+$application = $configuration->getApplicationConfiguration('frontend', 'test', isset($debug) ? $debug : true);
+$context = sfContext::createInstance($application);

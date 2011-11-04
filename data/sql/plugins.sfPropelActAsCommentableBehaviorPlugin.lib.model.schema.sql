@@ -27,7 +27,7 @@ CREATE TABLE `sf_comment`
 	KEY `comments_index`(`comment_namespace`, `commentable_model`, `commentable_id`),
 	KEY `object_index`(`commentable_model`, `commentable_id`),
 	KEY `author_index`(`author_id`)
-)Type=InnoDB;
+) ENGINE=InnoDB;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
