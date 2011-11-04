@@ -24,3 +24,18 @@ link "/www/etc/apache2/sites-available/collectorsquest.dev.conf" do
   not_if "test -L /etc/apache2/sites-enabled/collectorsquest.dev.conf"
   notifies :restart, "service[zend]"
 end
+
+link "/www/vhosts/collectorsquest.dev" do
+  to "/www/vhosts/collectorsquest.com"
+  not_if "test -L /www/vhosts/collectorsquest.dev"
+end
+
+link "/www/vhosts/collectorsquest.com/releases/trunk" do
+  to "/mnt/collectorsquest.com"
+  not_if "test -L /www/vhosts/collectorsquest.com/releases/trunk"
+end
+
+link "/www/vhosts/collectorsquest.com/current" do
+  to "/www/vhosts/collectorsquest.com/releases/trunk"
+  not_if "test -L /www/vhosts/collectorsquest.com/current"
+end
