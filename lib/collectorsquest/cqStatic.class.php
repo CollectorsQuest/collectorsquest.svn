@@ -5,17 +5,47 @@ class cqStatic extends IceStatic
   static private $_browser = array();
   static private $_browser_recycle = array();
 
+  static private $_memcache_clients = array();
+  static private $_memcache_cache   = null;
+
   /**
    * Get a Memcache() object
    *
-   * @return  Memcache
+   * @param  array $servers
+   * @return Memcache
    */
-  static public function getMemcacheClient()
+  static public function getMemcacheClient($servers = array())
   {
-    $memcache = new Memcache();
-    $memcache->pconnect('memcached', 11211);
+    // Unique key for the $server parameter
+    $key = md5(serialize($servers));
 
-    return $memcache;
+    if (!isset(self::$_memcache_clients[$key]))
+    {
+      $servers = array_merge(
+        array(
+          'cq-memcached' => array(
+            'host' => 'ice-memcached', 'port' => 11211,
+            'persistent' => true, 'weight' => 1
+          )
+        ),
+        $servers
+      );
+
+      // Create the Memcache instance
+      self::$_memcache_clients[$key] = new Memcache();
+
+      foreach ($servers as $server)
+      {
+        $port       = isset($server['port']) ? $server['port'] : 11211;
+        $persistent = isset($server['persistent']) ? $server['persistent'] : true;
+        $weight     = isset($server['weight']) ? $server['weight'] : 1;
+        $timeout    = isset($server['timeout']) ? $server['timeout'] : 1;
+
+        self::$_memcache_clients[$key]->addServer($server['host'], $port, $persistent, $weight, $timeout);
+      }
+    }
+
+    return self::$_memcache_clients[$key];
   }
 
   /**

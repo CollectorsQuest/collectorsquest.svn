@@ -13,17 +13,21 @@ execute "Checkout /www from subversion" do
   not_if "test -d /www"
 end
 
-execute "Update /www from subversion" do
-  command "svn up -q --ignore-externals --non-interactive --no-auth-cache --trust-server-cert --username=development --password=hmBiv9799qEgvN /www"
+bash "Update /www from subversion" do
+  code <<-EOH
+    svn cleanup /www
+    svn up -q --ignore-externals --non-interactive --no-auth-cache --trust-server-cert --username=development --password=hmBiv9799qEgvN /www
+  EOH
 end
 
 execute "Update all PEAR packages" do
   command "/usr/local/zend/bin/pear upgrade-all"
 end
 
-bash "Install Symfony 1.3.x from PEAR" do
+bash "Install Symfony 1.4.x from PEAR" do
   code <<-EOH
+    /usr/local/zend/bin/pear update-channels
     /usr/local/zend/bin/pear channel-discover pear.symfony-project.com
-    /usr/local/zend/bin/pear install symfony/symfony-1.3.11
+    /usr/local/zend/bin/pear upgrade symfony/symfony
   EOH
 end
