@@ -38,7 +38,7 @@ abstract class BaseCollectibleForm extends BaseFormPropel
       'description'       => new sfValidatorString(),
       'num_comments'      => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),
       'score'             => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),
-      'position'          => new sfValidatorInteger(array('min' => -128, 'max' => 127, 'required' => false)),
+      'position'          => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),
       'is_name_automatic' => new sfValidatorBoolean(array('required' => false)),
       'deleted_at'        => new sfValidatorDateTime(array('required' => false)),
       'created_at'        => new sfValidatorDateTime(array('required' => false)),

@@ -6,7 +6,7 @@ class cqUser extends sfBasicSecurityUser
   private static $collector = null;
 
   /** @var array */
-  private static $_facebook_data = null;
+  protected static $_facebook_data = null;
 
   public function __construct(sfEventDispatcher $dispatcher, sfStorage $storage, $options = array())
   {
@@ -263,7 +263,7 @@ class cqUser extends sfBasicSecurityUser
   {
     $collector = $this->getCollector();
 
-    if (method_exists($collector, $m))
+    if ($collector && method_exists($collector, $m))
     {
       return call_user_func_array(array($collector, $m), $a);
     }

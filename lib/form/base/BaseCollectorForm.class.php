@@ -41,7 +41,7 @@ abstract class BaseCollectorForm extends BaseFormPropel
 
     $this->setValidators(array(
       'id'                  => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
-      'facebook_id'         => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
+      'facebook_id'         => new sfValidatorString(array('max_length' => 64, 'required' => false)),
       'username'            => new sfValidatorString(array('max_length' => 64)),
       'display_name'        => new sfValidatorString(array('max_length' => 64)),
       'slug'                => new sfValidatorString(array('max_length' => 64, 'required' => false)),
@@ -49,7 +49,7 @@ abstract class BaseCollectorForm extends BaseFormPropel
       'salt'                => new sfValidatorString(array('max_length' => 32)),
       'score'               => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
       'email'               => new sfValidatorString(array('max_length' => 128)),
-      'user_type'           => new sfValidatorString(array('required' => false)),
+      'user_type'           => new sfValidatorString(),
       'items_allowed'       => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
       'what_you_collect'    => new sfValidatorString(array('max_length' => 255, 'required' => false)),
       'purchases_per_year'  => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
@@ -64,6 +64,10 @@ abstract class BaseCollectorForm extends BaseFormPropel
       'created_at'          => new sfValidatorDateTime(array('required' => false)),
       'updated_at'          => new sfValidatorDateTime(array('required' => false)),
     ));
+
+    $this->validatorSchema->setPostValidator(
+      new sfValidatorPropelUnique(array('model' => 'Collector', 'column' => array('facebook_id')))
+    );
 
     $this->widgetSchema->setNameFormat('collector[%s]');
 

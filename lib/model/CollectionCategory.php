@@ -69,11 +69,11 @@ class CollectionCategory extends BaseCollectionCategory
     $tag_ids = array();
 
     $c = new Criteria;
-    $c->addSelectColumn(TaggingPeer::TAG_ID);
-    $c->add(TaggingPeer::TAGGABLE_ID, $this->getId());
-    $c->add(TaggingPeer::TAGGABLE_MODEL, 'CollectionCategory');
+    $c->addSelectColumn(iceModelTaggingPeer::TAG_ID);
+    $c->add(iceModelTaggingPeer::TAGGABLE_ID, $this->getId());
+    $c->add(iceModelTaggingPeer::TAGGABLE_MODEL, 'CollectionCategory');
 
-    $stmt = TaggingPeer::doSelectStmt($c);
+    $stmt = iceModelTaggingPeer::doSelectStmt($c);
     while ($tag_id = $stmt->fetchColumn(0))
     {
       $tag_ids[] = (int) $tag_id;

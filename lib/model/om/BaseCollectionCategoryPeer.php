@@ -567,11 +567,6 @@ abstract class BaseCollectionCategoryPeer
       $criteria = $values->buildCriteria(); // build Criteria from CollectionCategory object
     }
 
-    if ($criteria->containsKey(CollectionCategoryPeer::ID) && $criteria->keyContainsValue(CollectionCategoryPeer::ID) )
-    {
-      throw new PropelException('Cannot insert a value for auto-increment primary key ('.CollectionCategoryPeer::ID.')');
-    }
-
 
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);

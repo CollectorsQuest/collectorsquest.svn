@@ -62,24 +62,28 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * The value for the num_items field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $num_items;
 
   /**
    * The value for the num_views field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $num_views;
 
   /**
    * The value for the num_comments field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $num_comments;
 
   /**
    * The value for the num_ratings field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $num_ratings;
@@ -194,6 +198,10 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    */
   public function applyDefaultValues()
   {
+    $this->num_items = 0;
+    $this->num_views = 0;
+    $this->num_comments = 0;
+    $this->num_ratings = 0;
     $this->score = 0;
     $this->is_public = true;
     $this->is_featured = false;
@@ -977,6 +985,26 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    */
   public function hasOnlyDefaultValues()
   {
+      if ($this->num_items !== 0)
+      {
+        return false;
+      }
+
+      if ($this->num_views !== 0)
+      {
+        return false;
+      }
+
+      if ($this->num_comments !== 0)
+      {
+        return false;
+      }
+
+      if ($this->num_ratings !== 0)
+      {
+        return false;
+      }
+
       if ($this->score !== 0)
       {
         return false;

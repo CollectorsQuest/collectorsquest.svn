@@ -67,10 +67,10 @@ class Collection extends BaseCollection
   public function getTagIds()
   {
     $c = new Criteria;
-    $c->addSelectColumn(TaggingPeer::TAG_ID);
-    $c->add(TaggingPeer::TAGGABLE_ID, $this->getId());
-    $c->add(TaggingPeer::TAGGABLE_MODEL, 'Collection');
-    $stmt = TaggingPeer::doSelectStmt($c);
+    $c->addSelectColumn(iceModelTaggingPeer::TAG_ID);
+    $c->add(iceModelTaggingPeer::TAGGABLE_ID, $this->getId());
+    $c->add(iceModelTaggingPeer::TAGGABLE_MODEL, 'Collection');
+    $stmt = iceModelTaggingPeer::doSelectStmt($c);
 
     return $stmt->fetchAll(PDO::FETCH_COLUMN);
   }

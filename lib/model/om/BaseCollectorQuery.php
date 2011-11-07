@@ -114,7 +114,7 @@
  * @method     Collector findOneOrCreate(PropelPDO $con = null) Return the first Collector matching the query, or a new Collector object populated from the query conditions when no match is found
  *
  * @method     Collector findOneById(int $id) Return the first Collector filtered by the id column
- * @method     Collector findOneByFacebookId(int $facebook_id) Return the first Collector filtered by the facebook_id column
+ * @method     Collector findOneByFacebookId(string $facebook_id) Return the first Collector filtered by the facebook_id column
  * @method     Collector findOneByUsername(string $username) Return the first Collector filtered by the username column
  * @method     Collector findOneByDisplayName(string $display_name) Return the first Collector filtered by the display_name column
  * @method     Collector findOneBySlug(string $slug) Return the first Collector filtered by the slug column
@@ -138,7 +138,7 @@
  * @method     Collector findOneByUpdatedAt(string $updated_at) Return the first Collector filtered by the updated_at column
  *
  * @method     array findById(int $id) Return Collector objects filtered by the id column
- * @method     array findByFacebookId(int $facebook_id) Return Collector objects filtered by the facebook_id column
+ * @method     array findByFacebookId(string $facebook_id) Return Collector objects filtered by the facebook_id column
  * @method     array findByUsername(string $username) Return Collector objects filtered by the username column
  * @method     array findByDisplayName(string $display_name) Return Collector objects filtered by the display_name column
  * @method     array findBySlug(string $slug) Return Collector objects filtered by the slug column
@@ -304,36 +304,24 @@ abstract class BaseCollectorQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByFacebookId(1234); // WHERE facebook_id = 1234
-     * $query->filterByFacebookId(array(12, 34)); // WHERE facebook_id IN (12, 34)
-     * $query->filterByFacebookId(array('min' => 12)); // WHERE facebook_id > 12
+     * $query->filterByFacebookId('fooValue');   // WHERE facebook_id = 'fooValue'
+     * $query->filterByFacebookId('%fooValue%'); // WHERE facebook_id LIKE '%fooValue%'
      * </code>
      *
-     * @param     mixed $facebookId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $facebookId The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
      * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return    CollectorQuery The current query, for fluid interface
      */
     public function filterByFacebookId($facebookId = null, $comparison = null)
     {
-        if (is_array($facebookId)) {
-            $useMinMax = false;
-            if (isset($facebookId['min'])) {
-                $this->addUsingAlias(CollectorPeer::FACEBOOK_ID, $facebookId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($facebookId['max'])) {
-                $this->addUsingAlias(CollectorPeer::FACEBOOK_ID, $facebookId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
+        if (null === $comparison) {
+            if (is_array($facebookId)) {
                 $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $facebookId)) {
+                $facebookId = str_replace('*', '%', $facebookId);
+                $comparison = Criteria::LIKE;
             }
         }
         return $this->addUsingAlias(CollectorPeer::FACEBOOK_ID, $facebookId, $comparison);

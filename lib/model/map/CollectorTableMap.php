@@ -39,7 +39,7 @@ class CollectorTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-    $this->addColumn('FACEBOOK_ID', 'FacebookId', 'INTEGER', false, null, null);
+    $this->addColumn('FACEBOOK_ID', 'FacebookId', 'VARCHAR', false, 64, null);
     $this->addColumn('USERNAME', 'Username', 'VARCHAR', true, 64, null);
     $this->addColumn('DISPLAY_NAME', 'DisplayName', 'VARCHAR', true, 64, null);
     $this->getColumn('DISPLAY_NAME', false)->setPrimaryString(true);
@@ -48,7 +48,7 @@ class CollectorTableMap extends TableMap
     $this->addColumn('SALT', 'Salt', 'VARCHAR', true, 32, null);
     $this->addColumn('SCORE', 'Score', 'INTEGER', false, null, 0);
     $this->addColumn('EMAIL', 'Email', 'VARCHAR', true, 128, null);
-    $this->addColumn('USER_TYPE', 'UserType', 'CHAR', false, null, 'Collector');
+    $this->addColumn('USER_TYPE', 'UserType', 'CHAR', true, null, 'Collector');
     $this->addColumn('ITEMS_ALLOWED', 'ItemsAllowed', 'INTEGER', false, null, null);
     $this->addColumn('WHAT_YOU_COLLECT', 'WhatYouCollect', 'VARCHAR', false, 255, null);
     $this->addColumn('PURCHASES_PER_YEAR', 'PurchasesPerYear', 'INTEGER', false, null, 0);

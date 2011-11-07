@@ -20,7 +20,7 @@ abstract class BaseCollectorFormFilter extends BaseFormFilterPropel
       'salt'                => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'score'               => new sfWidgetFormFilterInput(),
       'email'               => new sfWidgetFormFilterInput(array('with_empty' => false)),
-      'user_type'           => new sfWidgetFormFilterInput(),
+      'user_type'           => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'items_allowed'       => new sfWidgetFormFilterInput(),
       'what_you_collect'    => new sfWidgetFormFilterInput(),
       'purchases_per_year'  => new sfWidgetFormFilterInput(),
@@ -37,7 +37,7 @@ abstract class BaseCollectorFormFilter extends BaseFormFilterPropel
     ));
 
     $this->setValidators(array(
-      'facebook_id'         => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
+      'facebook_id'         => new sfValidatorPass(array('required' => false)),
       'username'            => new sfValidatorPass(array('required' => false)),
       'display_name'        => new sfValidatorPass(array('required' => false)),
       'slug'                => new sfValidatorPass(array('required' => false)),
@@ -77,7 +77,7 @@ abstract class BaseCollectorFormFilter extends BaseFormFilterPropel
   {
     return array(
       'id'                  => 'Number',
-      'facebook_id'         => 'Number',
+      'facebook_id'         => 'Text',
       'username'            => 'Text',
       'display_name'        => 'Text',
       'slug'                => 'Text',

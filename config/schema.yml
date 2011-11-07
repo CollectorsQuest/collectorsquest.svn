@@ -7,7 +7,7 @@ classes:
   Collector:
     columns:
       id:             ~
-      facebook_id:    integer
+      facebook_id:    { type: varchar, size: 64, required: false, index: unique }
       username:       { type: varchar, size: 64, required: true }
       display_name:   { type: varchar, size: 64, required: true, primaryString: true }
       slug:           varchar(64)
@@ -15,7 +15,7 @@ classes:
       salt:           { type: varchar, size: 32, required: true }
       score:          { type: integer, required: false, default: 0 }
       email:          { type: varchar, size: 128, required: true }
-      user_type:      { type: char, sqlType: "ENUM('Collector','Seller')", default: Collector, required: false }
+      user_type:      { type: char, sqlType: "ENUM('Collector','Seller')", default: Collector, required: true }
       items_allowed:         integer
       what_you_collect:      { type: varchar, size: 255, required: false }
       purchases_per_year:    { type: integer, default: 0 }
@@ -28,6 +28,7 @@ classes:
       last_seen_at:   timestamp
 
     propel_behaviors:
+      # archivable: ~
       soft_delete: ~
       timestampable: ~
 
@@ -112,15 +113,15 @@ classes:
   Collection:
     columns:
       id:                      ~
-      collection_category_id:  { type: integer, foreignClass: CollectionCategory, foreignReference: id, required: false, onDelete: setnull }
+      collection_category_id:  { type: smallint, foreignClass: CollectionCategory, foreignReference: id, required: false, onDelete: setnull }
       collector_id:            { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
       name:                    { type: varchar, size: 128, required: true, primaryString: true }
       slug:                    { type: varchar, size: 140, required: true }
       description:             { type: longvarchar, required: true }
-      num_items:               integer
-      num_views:               integer
-      num_comments:            integer
-      num_ratings:             integer
+      num_items:               { type: integer, required: true, default: 0 }
+      num_views:               { type: integer, required: true, default: 0 }
+      num_comments:            { type: integer, required: true, default: 0 }
+      num_ratings:             { type: integer, required: true, default: 0 }
       score:                   { type: integer, required: false, default: 0 }
       is_public:               { type: boolean, default: true }
       is_featured:             { type: boolean, default: false }
@@ -128,12 +129,13 @@ classes:
       rating_on:               { type: boolean, default: true }
 
     propel_behaviors:
+      # archivable: ~
       soft_delete: ~
       timestampable: ~
 
   CollectionCategory:
     columns:
-      id:  ~
+      id:         { type: smallint, primaryKey: true }
       parent_id:  { type: integer, default: 0, required: false }
       name:       { type: varchar, size: 64, required: true, primaryString: true }
       score:      { type: integer, required: false, default: 0 }
@@ -156,10 +158,11 @@ classes:
       description:       { type: longvarchar, required: true }
       num_comments:      { type: integer, required: true, default: 0 }
       score:             { type: integer, required: true, default: 0 }
-      position:          { type: tinyint, sqlType: "tinyint unsigned",default: 0 }
-      is_name_automatic: { type: boolean, sqlType: "tinyint(1) unsigned", default: false }
+      position:          { type: integer, required: true, default: 0 }
+      is_name_automatic: { type: boolean, default: false }
 
     propel_behaviors:
+      # archivable: ~
       soft_delete: ~
       timestampable: ~
 
@@ -178,6 +181,7 @@ classes:
       collectible_for_sale_item: [collectible_id]
 
     propel_behaviors:
+      # archivable: ~
       soft_delete: ~
       timestampable: ~
 
@@ -191,6 +195,7 @@ classes:
       status:  { type: char, sqlType: "ENUM('pending','counter','rejected','accepted')", required: true }
 
     propel_behaviors:
+      # archivable: ~
       soft_delete: ~
       timestampable: ~
 

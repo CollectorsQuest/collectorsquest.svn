@@ -139,20 +139,20 @@ class Collectible extends BaseCollectible
   public function hasTags()
   {
     $c = new Criteria;
-    $c->addSelectColumn(TaggingPeer::TAG_ID);
-    $c->add(TaggingPeer::TAGGABLE_ID, $this->getId());
-    $c->add(TaggingPeer::TAGGABLE_MODEL, 'Collectible');
+    $c->addSelectColumn(iceModelTaggingPeer::TAG_ID);
+    $c->add(iceModelTaggingPeer::TAGGABLE_ID, $this->getId());
+    $c->add(iceModelTaggingPeer::TAGGABLE_MODEL, 'Collectible');
 
-    return 0 < TaggingPeer::doCount($c);
+    return 0 < iceModelTaggingPeer::doCount($c);
   }
 
   public function getTagIds()
   {
     $c = new Criteria;
-    $c->addSelectColumn(TaggingPeer::TAG_ID);
-    $c->add(TaggingPeer::TAGGABLE_ID, $this->getId());
-    $c->add(TaggingPeer::TAGGABLE_MODEL, 'Collectible');
-    $stmt = TaggingPeer::doSelectStmt($c);
+    $c->addSelectColumn(iceModelTaggingPeer::TAG_ID);
+    $c->add(iceModelTaggingPeer::TAGGABLE_ID, $this->getId());
+    $c->add(iceModelTaggingPeer::TAGGABLE_MODEL, 'Collectible');
+    $stmt = iceModelTaggingPeer::doSelectStmt($c);
 
     return $stmt->fetchAll(PDO::FETCH_COLUMN);
   }

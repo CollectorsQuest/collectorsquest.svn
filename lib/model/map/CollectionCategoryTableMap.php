@@ -36,9 +36,9 @@ class CollectionCategoryTableMap extends TableMap
     $this->setPhpName('CollectionCategory');
     $this->setClassname('CollectionCategory');
     $this->setPackage('lib.model');
-    $this->setUseIdGenerator(true);
+    $this->setUseIdGenerator(false);
     // columns
-    $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
+    $this->addPrimaryKey('ID', 'Id', 'SMALLINT', true, null, null);
     $this->addColumn('PARENT_ID', 'ParentId', 'INTEGER', false, null, 0);
     $this->addColumn('NAME', 'Name', 'VARCHAR', true, 64, null);
     $this->getColumn('NAME', false)->setPrimaryString(true);

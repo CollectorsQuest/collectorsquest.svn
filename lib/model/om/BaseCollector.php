@@ -32,7 +32,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
 
   /**
    * The value for the facebook_id field.
-   * @var        int
+   * @var        string
    */
   protected $facebook_id;
 
@@ -286,7 +286,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   /**
    * Get the [facebook_id] column value.
    * 
-   * @return     int
+   * @return     string
    */
   public function getFacebookId()
   {
@@ -688,14 +688,14 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   /**
    * Set the value of [facebook_id] column.
    * 
-   * @param      int $v new value
+   * @param      string $v new value
    * @return     Collector The current object (for fluent API support)
    */
   public function setFacebookId($v)
   {
     if ($v !== null)
     {
-      $v = (int) $v;
+      $v = (string) $v;
     }
 
     if ($this->facebook_id !== $v)
@@ -1252,7 +1252,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     {
 
       $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-      $this->facebook_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+      $this->facebook_id = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
       $this->username = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
       $this->display_name = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
       $this->slug = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;

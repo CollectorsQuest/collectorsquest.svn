@@ -23,10 +23,10 @@ class CollectiblePeer extends BaseCollectiblePeer
   public static function getPopularByTag($tag, $limit = 6)
   {
     $c = new Criteria();
-    $c->add(TagPeer::NAME, $tag);
-    $c->addJoin(TaggingPeer::TAG_ID, TagPeer::ID);
-    $c->add(TaggingPeer::TAGGABLE_MODEL, 'Collectible');
-    $c->addJoin(self::ID, TaggingPeer::TAGGABLE_ID, Criteria::LEFT_JOIN);
+    $c->add(iceModelTagPeer::NAME, $tag);
+    $c->addJoin(iceModelTaggingPeer::TAG_ID, iceModelTagPeer::ID);
+    $c->add(iceModelTaggingPeer::TAGGABLE_MODEL, 'Collectible');
+    $c->addJoin(self::ID, iceModelTaggingPeer::TAGGABLE_ID, Criteria::LEFT_JOIN);
     $c->setLimit($limit);
 
     return self::doSelect($c);
@@ -35,11 +35,11 @@ class CollectiblePeer extends BaseCollectiblePeer
   public static function getPopularTags($limit = 50)
   {
     $c = new Criteria();
-    $c->add(TagPeer::NAME, 'CHAR_LENGTH('.TagPeer::NAME.') > 2', Criteria::CUSTOM);
+    $c->add(iceModelTagPeer::NAME, 'CHAR_LENGTH('.iceModelTagPeer::NAME.') > 2', Criteria::CUSTOM);
     $c->setLimit($limit);
 
-    return TagPeer::getPopulars($c, array('model' => 'Collectible'));
+    return iceModelTagPeer::getPopulars($c, array('model' => 'Collectible'));
   }
-  
-  
+
+
 }

@@ -22,12 +22,12 @@ class CollectionPeer extends BaseCollectionPeer
     $c = ($criteria instanceof Criteria) ? clone $criteria : new Criteria();
     $c->setDistinct();
 
-    $regex = TagPeer::NAME . " REGEXP '[[:<:]]".str_replace("'", "", implode('|', $tags))."[[:>:]]'";
-    $c->add(TagPeer::NAME, $regex, Criteria::CUSTOM);
+    $regex = iceModelTagPeer::NAME . " REGEXP '[[:<:]]".str_replace("'", "", implode('|', $tags))."[[:>:]]'";
+    $c->add(iceModelTagPeer::NAME, $regex, Criteria::CUSTOM);
 
-    $c->addJoin(TaggingPeer::TAG_ID, TagPeer::ID);
-    $c->add(TaggingPeer::TAGGABLE_MODEL, 'Collection');
-    $c->addJoin(CollectionPeer::ID, TaggingPeer::TAGGABLE_ID, Criteria::LEFT_JOIN);
+    $c->addJoin(iceModelTaggingPeer::TAG_ID, iceModelTagPeer::ID);
+    $c->add(iceModelTaggingPeer::TAGGABLE_MODEL, 'Collection');
+    $c->addJoin(CollectionPeer::ID, iceModelTaggingPeer::TAGGABLE_ID, Criteria::LEFT_JOIN);
     $c->add(CollectionPeer::NUM_ITEMS, 3, Criteria::GREATER_EQUAL);
     $c->addDescendingOrderByColumn(CollectionPeer::NUM_ITEMS);
     $c->setLimit($limit);
@@ -91,7 +91,7 @@ class CollectionPeer extends BaseCollectionPeer
 
     if ($tag_ids = $object->getTagIds())
     {
-      $tag_ids = TagPeer::removeTagsForRelatedItems($tag_ids);
+      $tag_ids = iceModelTagPeer::removeTagsForRelatedItems($tag_ids);
 
       $c = (is_null($criteria)) ? new Criteria() : clone $criteria;
       $c->setDistinct();
@@ -100,27 +100,30 @@ class CollectionPeer extends BaseCollectionPeer
         'tags_count',
         sprintf(
           "(SELECT DISTINCT COUNT(t.id) FROM %s t WHERE t.taggable_model = 'Collection' AND t.taggable_id = %s GROUP BY t.taggable_id)",
-          TaggingPeer::TABLE_NAME, TaggingPeer::TAGGABLE_ID
+          iceModelTaggingPeer::TABLE_NAME, iceModelTaggingPeer::TAGGABLE_ID
         )
       );
-      $c->addJoin(CollectionPeer::ID, TaggingPeer::TAGGABLE_ID);
+      $c->addJoin(CollectionPeer::ID, iceModelTaggingPeer::TAGGABLE_ID);
       $c->add(CollectionPeer::ID, 767, Criteria::NOT_EQUAL);
       $c->add(CollectionPeer::NUM_ITEMS, 3, Criteria::GREATER_EQUAL);
-      $c->add(TaggingPeer::TAGGABLE_MODEL, 'Collection');
-      if (!empty($tag_ids)) $c->add(TaggingPeer::TAG_ID, $tag_ids, Criteria::IN);
+      $c->add(iceModelTaggingPeer::TAGGABLE_MODEL, 'Collection');
+      if (!empty($tag_ids)) $c->add(iceModelTaggingPeer::TAG_ID, $tag_ids, Criteria::IN);
       $c->addAscendingOrderByColumn('tags_count');
-      $c->addAscendingOrderByColumn(TaggingPeer::TAG_ID);
+      $c->addAscendingOrderByColumn(iceModelTaggingPeer::TAG_ID);
       $c->setLimit($limit);
 
       switch (get_class($object))
       {
         case 'Collection':
+          /** @var $object Collection */
           $c->add(CollectionPeer::ID, $object->getId(), Criteria::NOT_EQUAL);
           break;
         case 'Collector':
+          /** @var $object Collector */
           $c->add(CollectionPeer::COLLECTOR_ID, $object->getId(), Criteria::NOT_EQUAL);
           break;
         case 'Collectible':
+          /** @var $object Collectible */
           $c->add(CollectionPeer::ID, $object->getCollection()->getId(), Criteria::NOT_EQUAL);
           break;
       }
@@ -191,9 +194,9 @@ class CollectionPeer extends BaseCollectionPeer
       $c->setDistinct();
       $c->addSelectColumn(CollectionPeer::ID);
       $c->add(CollectionPeer::ID, 767, Criteria::NOT_EQUAL);
-      $c->addJoin(CollectionPeer::ID, TaggingPeer::TAGGABLE_ID);
+      $c->addJoin(CollectionPeer::ID, iceModelTaggingPeer::TAGGABLE_ID);
       $c->add(CollectionPeer::NUM_ITEMS, 3, Criteria::GREATER_EQUAL);
-      $c->add(TaggingPeer::TAGGABLE_MODEL, 'Collection');
+      $c->add(iceModelTaggingPeer::TAGGABLE_MODEL, 'Collection');
       $c->addDescendingOrderByColumn(CollectionPeer::NUM_ITEMS);
 
       switch (get_class($object))
@@ -206,18 +209,18 @@ class CollectionPeer extends BaseCollectionPeer
           $collection_category_ids = $object->getCollectionCategoryIds();
 
           $k = new Criteria;
-          $k->addSelectColumn(TaggingPeer::TAG_ID);
+          $k->addSelectColumn(iceModelTaggingPeer::TAG_ID);
           if (!empty($collection_category_ids))
           {
-            $k->add(TaggingPeer::TAGGABLE_ID, $collection_category_ids, Criteria::IN);
+            $k->add(iceModelTaggingPeer::TAGGABLE_ID, $collection_category_ids, Criteria::IN);
           }
-          $k->add(TaggingPeer::TAGGABLE_MODEL, 'CollectionCategory');
+          $k->add(iceModelTaggingPeer::TAGGABLE_MODEL, 'CollectionCategory');
 
           try
           {
             $tag_ids = array();
 
-            $stmt = TaggingPeer::doSelectStmt($k);
+            $stmt = iceModelTaggingPeer::doSelectStmt($k);
             while ($tag_id = $stmt->fetchColumn(0))
             {
               $tag_ids[] = (int) $tag_id;
@@ -238,7 +241,7 @@ class CollectionPeer extends BaseCollectionPeer
 
       if (!empty($tag_ids))
       {
-        $c->add(TaggingPeer::TAG_ID, $tag_ids, Criteria::IN);
+        $c->add(iceModelTaggingPeer::TAG_ID, $tag_ids, Criteria::IN);
       }
 
       $stmt = CollectionPeer::doSelectStmt($c);

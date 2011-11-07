@@ -19,7 +19,7 @@ abstract class BaseCollectibleFormFilter extends BaseFormFilterPropel
       'description'       => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'num_comments'      => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'score'             => new sfWidgetFormFilterInput(array('with_empty' => false)),
-      'position'          => new sfWidgetFormFilterInput(),
+      'position'          => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'is_name_automatic' => new sfWidgetFormChoice(array('choices' => array('' => 'yes or no', 1 => 'yes', 0 => 'no'))),
       'deleted_at'        => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),
       'created_at'        => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),

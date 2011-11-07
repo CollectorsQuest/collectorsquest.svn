@@ -47,7 +47,7 @@ class CollectibleTableMap extends TableMap
     $this->addColumn('DESCRIPTION', 'Description', 'LONGVARCHAR', true, null, null);
     $this->addColumn('NUM_COMMENTS', 'NumComments', 'INTEGER', true, null, 0);
     $this->addColumn('SCORE', 'Score', 'INTEGER', true, null, 0);
-    $this->addColumn('POSITION', 'Position', 'TINYINT', false, null, 0);
+    $this->addColumn('POSITION', 'Position', 'INTEGER', true, null, 0);
     $this->addColumn('IS_NAME_AUTOMATIC', 'IsNameAutomatic', 'BOOLEAN', false, 1, false);
     $this->addColumn('DELETED_AT', 'DeletedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
