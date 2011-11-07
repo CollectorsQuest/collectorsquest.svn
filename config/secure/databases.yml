@@ -7,7 +7,6 @@ all:
       username:   collectorsquest
       password:   rM6aKxoKKwUX4r
       encoding:   utf8
-      charset:    utf8
       persistent: true
       pooling:    true
 
@@ -18,8 +17,7 @@ all:
       dsn:        mysql:dbname=collectorsquest_blog;host=cq-mysql-master
       username:   collectorsquest
       password:   rM6aKxoKKwUX4r
-      persistent: true
-      pooling:    true
+      encoding:   utf8
 
   calendar:
     class:        sfPropelDatabase
@@ -28,8 +26,6 @@ all:
       dsn:        mysql:dbname=collectorsquest_calendar;host=cq-mysql-master
       username:   collectorsquest
       password:   rM6aKxoKKwUX4r
-      persistent: true
-      pooling:    true
 
 stg:
   propel:
@@ -38,12 +34,10 @@ stg:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
       username:   staging
-      password:   24QU2FJGLmA9vf
+      password:   "24QU2FJGLmA9vf"
       encoding:   utf8
-      charset:    utf8
       persistent: true
       pooling:    true
-
 
   blog:
     class:        sfPropelDatabase
@@ -51,7 +45,8 @@ stg:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
       username:   staging
-      password:   24QU2FJGLmA9vf
+      password:   "24QU2FJGLmA9vf"
+      encoding:   utf8
 
   calendar:
     class:        sfPropelDatabase
@@ -59,7 +54,8 @@ stg:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
       username:   staging
-      password:   24QU2FJGLmA9vf
+      password:   "24QU2FJGLmA9vf"
+      encoding:   utf8
 
   queue:
     class:        sfPropelDatabase
@@ -68,3 +64,4 @@ stg:
       dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
       username:   staging
       password:   24QU2FJGLmA9vf
+      encoding:   utf8
