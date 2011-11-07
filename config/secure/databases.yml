@@ -1,23 +1,36 @@
 all:
   propel:
+    class:        sfPropelDatabase
     param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_com;host=cq-mysql-master
       username:  collectorsquest
       password:  rM6aKxoKKwUX4r
+      encoding:   utf8
+      persistent: true
+      pooling:    true
 
   blog:
+    class:        sfPropelDatabase
     param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_blog;host=cq-mysql-master
       username:  collectorsquest
       password:  rM6aKxoKKwUX4r
+      encoding:   utf8
+      persistent: true
+      pooling:    true
 
   calendar:
+    class:        sfPropelDatabase
     param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_calendar;host=cq-mysql-master
       username:  collectorsquest
       password:  rM6aKxoKKwUX4r
-
-  queue:
-    param:
-      username:  collectorsquest
-      password:  rM6aKxoKKwUX4r
+      encoding:   utf8
+      persistent: true
+      pooling:    true
 
 stg:
   propel:
