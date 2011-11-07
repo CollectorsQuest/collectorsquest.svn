@@ -7,6 +7,7 @@ all:
       username:   collectorsquest
       password:   rM6aKxoKKwUX4r
       encoding:   utf8
+      charset:    utf8
       persistent: true
       pooling:    true
 
@@ -38,6 +39,11 @@ stg:
       dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
       username:   staging
       password:   24QU2FJGLmA9vf
+      encoding:   utf8
+      charset:    utf8
+      persistent: true
+      pooling:    true
+
 
   blog:
     class:        sfPropelDatabase
