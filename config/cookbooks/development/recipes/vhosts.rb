@@ -21,5 +21,5 @@ end
 
 link "/www/vhosts/collectorsquest.com/current/config/databases.yml" do
   to "/www/vhosts/collectorsquest.com/current/config/databases.dist.yml"
-  not_if "test -L /www/vhosts/collectorsquest.com/current/config/databases.yml"
+  not_if "test -e /www/vhosts/collectorsquest.com/current/config/databases.yml"
 end
