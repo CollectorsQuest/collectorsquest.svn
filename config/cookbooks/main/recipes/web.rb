@@ -9,14 +9,14 @@ service "zend" do
 end
 
 execute "Checkout /www from subversion" do
-  command "svn co -q --non-interactive --no-auth-cache --trust-server-cert --username=development --password=hmBiv9799qEgvN svn://184.73.239.190/server /www"
+  command "svn co -q --non-interactive --trust-server-cert svn://184.73.239.190/server /www"
   not_if "test -d /www"
 end
 
 bash "Update /www from subversion" do
   code <<-EOH
     svn cleanup /www
-    svn up -q --ignore-externals --non-interactive --no-auth-cache --trust-server-cert --username=development --password=hmBiv9799qEgvN /www
+    svn up -q --ignore-externals --non-interactive --trust-server-cert /www
   EOH
 end
 
