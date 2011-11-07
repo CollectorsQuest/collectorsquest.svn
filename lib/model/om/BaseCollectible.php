@@ -76,6 +76,7 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
 
   /**
    * The value for the position field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $position;
@@ -159,6 +160,7 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   {
     $this->num_comments = 0;
     $this->score = 0;
+    $this->position = 0;
     $this->is_name_automatic = false;
   }
 
@@ -751,6 +753,11 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
       }
 
       if ($this->score !== 0)
+      {
+        return false;
+      }
+
+      if ($this->position !== 0)
       {
         return false;
       }

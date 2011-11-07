@@ -151,13 +151,13 @@ classes:
       id: ~
       collector_id:      { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
       collection_id:     { type: integer, foreignClass: Collection, foreignReference: id, required: true, onDelete: cascade }
-      name:              { type: varchar, size: 64, required: true, primaryString: true }
-      slug:              { type: varchar, size: 128 }
+      name:              { type: varchar, size: 128, required: true, primaryString: true }
+      slug:              { type: varchar, size: 128, index: unique }
       description:       { type: longvarchar, required: true }
-      num_comments:      { type: integer, required: false, default: 0 }
-      score:             { type: integer, required: false, default: 0 }
-      position:          { type: tinyint }
-      is_name_automatic: { type: boolean, sqlType: "BOOL", default: false }
+      num_comments:      { type: integer, required: true, default: 0 }
+      score:             { type: integer, required: true, default: 0 }
+      position:          { type: tinyint, sqlType: "tinyint unsigned",default: 0 }
+      is_name_automatic: { type: boolean, sqlType: "tinyint(1) unsigned", default: false }
 
     propel_behaviors:
       soft_delete: ~

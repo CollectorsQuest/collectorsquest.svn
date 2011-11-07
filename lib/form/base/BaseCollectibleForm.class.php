@@ -33,17 +33,21 @@ abstract class BaseCollectibleForm extends BaseFormPropel
       'id'                => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'collector_id'      => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id')),
       'collection_id'     => new sfValidatorPropelChoice(array('model' => 'Collection', 'column' => 'id')),
-      'name'              => new sfValidatorString(array('max_length' => 64)),
+      'name'              => new sfValidatorString(array('max_length' => 128)),
       'slug'              => new sfValidatorString(array('max_length' => 128, 'required' => false)),
       'description'       => new sfValidatorString(),
-      'num_comments'      => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
-      'score'             => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
+      'num_comments'      => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),
+      'score'             => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),
       'position'          => new sfValidatorInteger(array('min' => -128, 'max' => 127, 'required' => false)),
       'is_name_automatic' => new sfValidatorBoolean(array('required' => false)),
       'deleted_at'        => new sfValidatorDateTime(array('required' => false)),
       'created_at'        => new sfValidatorDateTime(array('required' => false)),
       'updated_at'        => new sfValidatorDateTime(array('required' => false)),
     ));
+
+    $this->validatorSchema->setPostValidator(
+      new sfValidatorPropelUnique(array('model' => 'Collectible', 'column' => array('slug')))
+    );
 
     $this->widgetSchema->setNameFormat('collectible[%s]');
 
