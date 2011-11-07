@@ -6,6 +6,7 @@ all:
       dsn:        mysql:dbname=collectorsquest_com;host=cq-mysql-master
       username:   collectorsquest
       password:   rM6aKxoKKwUX4r
+      encoding:   utf8
       persistent: true
       pooling:    true
 
