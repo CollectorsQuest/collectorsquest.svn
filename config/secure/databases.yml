@@ -31,19 +31,28 @@ all:
 
 stg:
   propel:
+    class:        sfPropelDatabase
     param:
-      username:  staging
-      password:  24QU2FJGLmA9vf
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
+      username:   staging
+      password:   24QU2FJGLmA9vf
 
   blog:
+    class:        sfPropelDatabase
     param:
-      username:  staging
-      password:  24QU2FJGLmA9vf
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
+      username:   staging
+      password:   24QU2FJGLmA9vf
 
   calendar:
+    class:        sfPropelDatabase
     param:
-      username:  staging
-      password:  24QU2FJGLmA9vf
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
+      username:   staging
+      password:   24QU2FJGLmA9vf
 
   queue:
     param:
