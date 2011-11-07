@@ -15,8 +15,8 @@ if ('new' == $env || 'com' == $env)
 @list(, $type, $size, $filename) = explode('/', $_SERVER['REQUEST_URI']);
 if (in_array($type, array('image', 'video')))
 {
-  include_once(dirname(__FILE__).'/../lib/vendor/symfony/yaml/sfYaml.php');
-  
+  include_once('/www/libs/symfony-1.3.x/lib/yaml/sfYaml.php');
+
   $databases = sfYaml::load(dirname(__FILE__).'/../config/databases.yml');
   $databases['prod'] = $databases['all'];
 
@@ -30,11 +30,11 @@ if (in_array($type, array('image', 'video')))
   if (isset($m[1]) && ctype_digit($m[1]))
   {
     $stmt = $dbh->prepare("SELECT * FROM `multimedia` WHERE `id` = ? AND `type` = ? LIMIT 1");
-    
+
     if ($stmt->execute(array($m[1], $type)))
     {
       $row = $stmt->fetch(PDO::FETCH_NAMED);
-      
+
       $path  = '/uploads/'. $row['model'] .'/'. date_format(new DateTime($row['created_at']), 'Y/m/d');
 
       $extension = array_shift(explode('?', end(explode('.', $filename))));
@@ -55,7 +55,7 @@ if (in_array($type, array('image', 'video')))
       {
         // Send Content-Type and the X-SendFile header
         header("Content-Type: ". $content_type);
-        header("X-SendFile: " . dirname(__FILE__) . $path);
+        header("X-SendFile: /www/vhosts/collectorsquest.com/shared/uploads/" . $path);
 
         exit;
       }
