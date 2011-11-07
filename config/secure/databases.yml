@@ -4,9 +4,8 @@ all:
     param:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_com;host=cq-mysql-master
-      username:  collectorsquest
-      password:  rM6aKxoKKwUX4r
-      encoding:   utf8
+      username:   collectorsquest
+      password:   rM6aKxoKKwUX4r
       persistent: true
       pooling:    true
 
@@ -15,9 +14,8 @@ all:
     param:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_blog;host=cq-mysql-master
-      username:  collectorsquest
-      password:  rM6aKxoKKwUX4r
-      encoding:   utf8
+      username:   collectorsquest
+      password:   rM6aKxoKKwUX4r
       persistent: true
       pooling:    true
 
@@ -26,9 +24,8 @@ all:
     param:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_calendar;host=cq-mysql-master
-      username:  collectorsquest
-      password:  rM6aKxoKKwUX4r
-      encoding:   utf8
+      username:   collectorsquest
+      password:   rM6aKxoKKwUX4r
       persistent: true
       pooling:    true
 
