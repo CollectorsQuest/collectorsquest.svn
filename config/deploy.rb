@@ -2,7 +2,7 @@ set :application, "collectorsquest"
 set :domain,      "#{application}.com"
 set :deploy_to,   "/www/vhosts/#{domain}"
 
-set :repository,  "file://home/svn/collectorsquest/vhosts/#{domain}"
+set :repository,  "file:///home/svn/collectorsquest/vhosts/#{domain}"
 set :scm,         :subversion
 set :user,        "ubuntu"
 set :use_sudo,    true
