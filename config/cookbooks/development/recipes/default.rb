@@ -4,6 +4,10 @@ require_recipe "memcached"
 require_recipe "development::zend"
 require_recipe "development::vhosts"
 
+service "apache" do
+  action :restart
+end
+
 template "/etc/hosts" do
   mode "0644"
 end
@@ -16,7 +20,8 @@ package "capistrano"
 
 bash "Install Capifony" do
   code <<-EOH
-    gem update
+    gem install capistrano
     gem install capifony
+    gem update
   EOH
 end

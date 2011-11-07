@@ -35,5 +35,11 @@ service "zend" do
   action [ :enable, :start ]
 end
 
+service "apache" do
+  service_name "apache2"
+  supports :status => true, :restart => true
+  action [ :enable, :start ]
+end
+
 package "php-5.3-memcache-zend-server"
 package "php-5.3-imagick-zend-server"
