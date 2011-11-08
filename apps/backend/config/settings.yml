@@ -24,7 +24,7 @@ all:
     default_timezone:       America/New_York
     charset:                utf-8
 
-    enabled_modules:        [sfGuardAuth, sfGuardUser, sfGuardPermission, sfGuardGroup]
+    enabled_modules:        [sfGuardAuth, sfGuardUser, sfGuardPermission, sfGuardGroup, iceBackendModule]
     standard_helpers:       [Partial, Cache, Form, I18N, Text, cqBackend, cqGeneral, cqImages, cqJavascripts]
     sf_compat_10:           off
 
@@ -39,8 +39,14 @@ all:
     lazy_cache_key:         true
 
   .actions:
-    login_module:           sfGuardAuth
-    login_action:           signin
+    default_module:         iceBackendModule
+    default_action:         dashboard
 
-    secure_module:          sfGuardAuth
+    error_404_module:       iceBackendModule
+    error_404_action:       error404
+
+    login_module:           iceBackendModule
+    login_action:           signIn
+
+    secure_module:          iceBackendModule
     secure_action:          secure

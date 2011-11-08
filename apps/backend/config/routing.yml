@@ -1,13 +1,13 @@
 collectible_for_sale_export:
   url: /collectibleForSale/export
   param: { module: collectibleForSale, action: export }
-  
+
 collector_export:
   url: /collector/export
   param: { module: collectors, action: export }
-  
+
 collectible_for_sale:
-  class: sfPropel15RouteCollection
+  class: sfPropelORMRouteCollection
   options:
     model:                CollectibleForSale
     module:               collectibleForSale
@@ -16,7 +16,7 @@ collectible_for_sale:
     with_wildcard_routes: true
 
 comment:
-  class: sfPropel15RouteCollection
+  class: sfPropelORMRouteCollection
   options:
     model:                Comment
     module:               comments
@@ -25,7 +25,7 @@ comment:
     with_wildcard_routes: true
 
 promotion_transaction:
-  class: sfPropel15RouteCollection
+  class: sfPropelORMRouteCollection
   options:
     model:                PromotionTransaction
     module:               promotionTransaction
@@ -34,7 +34,7 @@ promotion_transaction:
     with_wildcard_routes: true
 
 promotion:
-  class: sfPropel15RouteCollection
+  class: sfPropelORMRouteCollection
   options:
     model:                Promotion
     module:               promotion
@@ -43,7 +43,7 @@ promotion:
     with_wildcard_routes: true
 
 package_transaction:
-  class: sfPropel15RouteCollection
+  class: sfPropelORMRouteCollection
   options:
     model:                PackageTransaction
     module:               packageTransaction
@@ -52,7 +52,7 @@ package_transaction:
     with_wildcard_routes: true
 
 package:
-  class: sfPropel15RouteCollection
+  class: sfPropelORMRouteCollection
   options:
     model:                Package
     module:               package
@@ -150,9 +150,13 @@ item_offers:
   param: { module: collectibleForSale, action: itemOffers }
 
 # default rules
-login:
-  url:   /login
-  param: { module: general, action: login }
+sso:
+  url:   /sso
+  param: { module: general, action: sso }
+
+openid:
+  url:   /openid
+  param: { module: general, action: openid }
 
 logout:
   url:   /logout

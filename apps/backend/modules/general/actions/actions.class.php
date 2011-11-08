@@ -10,10 +10,8 @@
  */
 class generalActions extends sfActions
 {
-  public function executeLogin()
+  public function executeIndex()
   {
-    $this->renderPartial('sfAdminDash/login');
-
     return sfView::NONE;
   }
 }
