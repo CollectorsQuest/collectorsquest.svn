@@ -15,7 +15,7 @@ if node[:sphinx][:use_stemmer]
   end
 
   execute "Extract libstemmer source" do
-    cwd "/tmp/sphinx-r2935"
+    cwd "/tmp"
     command "tar -C /tmp/sphinx-r#{node[:sphinx][:revision]} -zxf libstemmer_c.tgz"
     not_if { ::File.exists?("/tmp/sphinx-r#{node[:sphinx][:revision]}/libstemmer_c/src_c") }
   end
