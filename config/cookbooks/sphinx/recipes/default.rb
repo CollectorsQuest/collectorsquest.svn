@@ -53,22 +53,3 @@ bash "Build and Install Sphinx Search" do
   EOH
   not_if { ::File.exists?("#{node[:sphinx][:install_path]}/bin/searchd") && system("#{node[:sphinx][:install_path]}/bin/searchd -h | grep -q 'Sphinx #{node[:sphinx][:version]}'") }
 end
-
-directory "/var/lib/sphinx" do
-  owner "www-data"
-  group "www-data"
-  mode "0755"
-  action :create
-end
-
-link "/etc/init.d/sphinx" do
-  to "/www/init.d/sphinx"
-  not_if "test -L /etc/init.d/sphinx"
-  notifies :start, "service[sphinx]"
-end
-
-service "sphinx" do
-  service_name "sphinx"
-  supports :status => false, :start => true, :restart => true
-  action [ :enable, :start ]
-end
