@@ -150,13 +150,9 @@ item_offers:
   param: { module: collectibleForSale, action: itemOffers }
 
 # default rules
-sso:
-  url:   /sso
-  param: { module: general, action: sso }
-
-openid:
-  url:   /openid
-  param: { module: general, action: openid }
+ga:
+  url:   /ga
+  param: { module: general, action: godAuth }
 
 logout:
   url:   /logout
