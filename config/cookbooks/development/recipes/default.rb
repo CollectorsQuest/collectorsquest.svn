@@ -20,8 +20,8 @@ package "capistrano"
 
 bash "Install Capifony" do
   code <<-EOH
-    gem install capistrano
-    gem install capifony
-    gem update
+    /usr/bin/gem install capistrano
+    /usr/bin/gem install capifony
+    /usr/bin/gem update
   EOH
 end
