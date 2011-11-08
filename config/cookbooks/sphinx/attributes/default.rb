@@ -1,6 +1,8 @@
 default[:sphinx][:install_path] = "/opt/sphinx"
 default[:sphinx][:version]      = '2.0.1-beta'
+default[:sphinx][:revision]     = '2935'
 default[:sphinx][:url]          = "http://sphinxsearch.com/files/sphinx-#{sphinx[:version]}.tar.gz"
+default[:sphinx][:repository]   = "http://sphinxsearch.googlecode.com/svn/trunk/"
 default[:sphinx][:stemmer_url]  = "http://snowball.tartarus.org/dist/libstemmer_c.tgz"
 
 # tunable options

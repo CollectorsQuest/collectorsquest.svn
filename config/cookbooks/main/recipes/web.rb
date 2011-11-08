@@ -16,6 +16,14 @@ bash "Update /www from subversion" do
   EOH
 end
 
+bash "Update /www permissions" do
+  code <<-EOH
+    chmod -R 777 /www/tmp
+    chown -R www-data:www-data /www/tmp
+    chown -R www-data:www-data /www/logs
+  EOH
+end
+
 execute "Update all PEAR packages" do
   command "/usr/local/zend/bin/pear upgrade-all"
 end

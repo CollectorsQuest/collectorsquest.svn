@@ -324,7 +324,7 @@ class searchActions extends cqActions
     );
 
     // http://www.sphinxsearch.com/docs/current.html#api-func-query
-    $result = $sphinx->query(trim($q, ' &'), 'main_collectibles');
+    $result = $sphinx->query(trim($q, ' &'), sprintf('%s_collectibles', sfConfig::get('sf_environment')));
 
     if ($result['total'] > 0)
     {
@@ -376,7 +376,7 @@ class searchActions extends cqActions
     );
 
     // http://www.sphinxsearch.com/docs/current.html#api-func-query
-    $result = $sphinx->query(trim($q, ' &'), 'main_collections');
+    $result = $sphinx->query(trim($q, ' &'), sprintf('%s_collections', sfConfig::get('sf_environment')));
 
     if ($result['total'] > 0)
     {
@@ -427,7 +427,7 @@ class searchActions extends cqActions
     );
 
     // http://www.sphinxsearch.com/docs/current.html#api-func-query
-    $result = $sphinx->query(trim($q, ' &'), 'main_collectors');
+    $result = $sphinx->query(trim($q, ' &'), sprintf('%s_collectors', sfConfig::get('sf_environment')));
 
     if ($result['total'] > 0)
     {
@@ -485,7 +485,7 @@ class searchActions extends cqActions
     );
 
     // http://www.sphinxsearch.com/docs/current.html#api-func-query
-    $result = $sphinx->query(trim($q, ' &'), 'main_blog');
+    $result = $sphinx->query(trim($q, ' &'), sprintf('%s_blog', sfConfig::get('sf_environment')));
 
     if ($result['total'] > 0)
     {

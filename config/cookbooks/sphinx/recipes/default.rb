@@ -7,9 +7,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ execute "Extract Sphinx source" do
   not_if { ::File.exists?("/tmp/sphinx-#{node[:sphinx][:version]}") }
 end
 
-if node[:sphinx][:use_stemmer] 
+if node[:sphinx][:use_stemmer]
   remote_file "/tmp/libstemmer_c.tgz" do
     source node[:sphinx][:stemmer_url]
     not_if { ::File.exists?("/tmp/libstemmer_c.tgz") }
@@ -52,4 +52,23 @@ bash "Build and Install Sphinx Search" do
     make install
   EOH
   not_if { ::File.exists?("#{node[:sphinx][:install_path]}/bin/searchd") && system("#{node[:sphinx][:install_path]}/bin/searchd -h | grep -q 'Sphinx #{node[:sphinx][:version]}'") }
+end
+
+directory "/var/lib/sphinx" do
+  owner "www-data"
+  group "www-data"
+  mode "0755"
+  action :create
+end
+
+link "/etc/init.d/sphinx" do
+  to "/www/init.d/sphinx"
+  not_if "test -L /etc/init.d/sphinx"
+  notifies :start, "service[sphinx]"
+end
+
+service "sphinx" do
+  service_name "sphinx"
+  supports :status => false, :start => true, :restart => true
+  action [ :enable, :start ]
 end
