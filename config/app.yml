@@ -7,6 +7,10 @@ all:
   shopify_domain_name: "collectorsquest.myshopify.com"
   admin_email_id: no-reply@collectorsquest.com
 
+  god_auth:
+    secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
+    timeout:  3600
+
   paypal:
     api_username: "dvds_api1.collectorsquest.com"
     api_password: ""
@@ -57,6 +61,10 @@ stg:
     static_domain: "http://static.collectorsquest.stg"
     multimedia_domain: "http://multimedia.collectorsquest.stg"
 
+  god_auth:
+    secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
+    timeout:  3600
+
   paypal:
     ## Setting for Pay Via PayPal Pro SANDBOX Account.
     api_username: ""
@@ -87,6 +95,10 @@ dev:
     www_domain: "http://www.collectorsquest.dev/"
     static_domain: "http://static.collectorsquest.dev/"
     multimedia_domain: "http://multimedia.collectorsquest.dev"
+
+  god_auth:
+    secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
+    timeout:  3600
 
   paypal:
     api_username: zecho2_1307375459_biz_api1.mail.bg

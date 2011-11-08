@@ -17,14 +17,16 @@ class generalActions extends sfActions
 
   public function executeGodAuth(sfWebRequest $request)
   {
-    $secret = sfConfig::get('app_god_auth');
+    $secret = sfConfig::get('app_god_auth_secret');
+    $timeout = sfConfig::get('app_god_auth_timeout');
+
     $user = 'kangov';
     $roles = 'developer';
 
-    $value = $user .'-'. $roles .'-'. time() .'-'. $_SERVER['HTTP_USER_AGENT'];
-    $cookie = $value .'-'. hash_hmac('sha1', $value, $secret);
+    $value = $user .'-'. $roles .'-'. time();
+    $cookie = $value .'-'. hash_hmac('sha1', $value .'-'. $_SERVER['HTTP_USER_AGENT'], $secret);
 
-    setcookie("ga", $cookie, time()+3600, "/", ".collectorsquest.dev", 0, 1);
+    setcookie("ga", $cookie, time()+$timeout, "/", ".collectorsquest.dev", 0, 1);
 
     $this->redirect($request->getParameter('ref', '@homepage'));
   }

@@ -1,5 +1,7 @@
 all:
-  god_auth: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
+  god_auth:
+    secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
+    timeout:  3600
 
   paypal:
     api_username: "dvds_api1.collectorsquest.com"

@@ -4,6 +4,7 @@ require_recipe "zend"
 require_recipe "zend::xsendfile"
 require_recipe "zend::browscap"
 require_recipe "zend::passenger"
+require_recipe "zend::modperl"
 
 execute "Checkout /www from subversion" do
   command "svn co -q --non-interactive --trust-server-cert svn://184.73.239.190/server /www"

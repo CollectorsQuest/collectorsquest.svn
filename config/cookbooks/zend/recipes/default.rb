@@ -28,6 +28,8 @@ apt_repository "zend" do
 end
 
 package "zend-server-ce-php-#{node[:zend][:php][:version]}"
+package "php-5.3-memcache-zend-server"
+package "php-5.3-imagick-zend-server"
 
 service "zend" do
   service_name "zend-server"
@@ -40,6 +42,3 @@ service "apache" do
   supports :status => true, :restart => true
   action [ :enable, :start ]
 end
-
-package "php-5.3-memcache-zend-server"
-package "php-5.3-imagick-zend-server"
