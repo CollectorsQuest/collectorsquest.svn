@@ -1,12 +1,17 @@
 package "rubygems"
 package "ruby-dev"
+package "libopenssl-ruby"
 package "libcurl4-openssl-dev"
 
-execute "Updating RubyGems" do
-  command "/usr/bin/gem install --no-rdoc --no-ri rubygems-update && /var/lib/gems/1.8/bin/update_rubygems"
-end
-execute "Installing RubyGems bundle" do
-  command "/usr/bin/gem install --no-rdoc --no-ri bundle"
+bash "Installing/Updating gems" do
+  code <<-EOH
+    /usr/bin/gem install --no-rdoc --no-ri rubygems-update
+    /var/lib/gems/1.8/bin/update_rubygems
+
+    /usr/bin/gem install --no-rdoc --no-ri bundle
+    /usr/bin/gem install --no-rdoc --no-ri passenger
+    /usr/bin/gem install --no-rdoc --no-ri rake
+  EOH
 end
 
 directory "/tmp/bundler" do
@@ -28,7 +33,7 @@ execute "Install deployinator gems" do
 end
 
 execute "Install Passenger Apache2 module" do
-  command "/usr/bin/gem install --no-rdoc --no-ri passenger && /var/lib/gems/1.8/bin/passenger-install-apache2-module -a"
+  command "/usr/bin/gem install --no-rdoc --no-ri passenger && /usr/bin/passenger-install-apache2-module -a"
   not_if "test -e /var/lib/gems/1.8/gems/passenger-3.0.9/ext/apache2/mod_passenger.so"
 end
 
