@@ -25,7 +25,7 @@ class collectionsActions extends cqActions
     $c = new Criteria();
     $c->setDistinct();
     $c->add(CollectionPeer::NUM_ITEMS, 0, Criteria::NOT_EQUAL);
-    $c->addJoin(CollectionPeer::COLLECTOR_ID, CollectorPeer::ID);
+    $c->addJoin(CollectionPeer::COLLECTOR_ID, CollectorPeer::ID, Criteria::LEFT_JOIN);
 
     if ($filter = $request->getParameter('filter'))
     {
@@ -61,7 +61,6 @@ class collectionsActions extends cqActions
       if ($collector = CollectorPeer::retrieveBySlug($collector_slug))
       {
         $c->add(CollectorPeer::SLUG, $collector_slug);
-        $c->addJoin(CollectionPeer::COLLECTOR_ID, CollectorPeer::ID, Criteria::LEFT_JOIN);
         $c->addDescendingOrderByColumn(CollectionPeer::CREATED_AT);
 
         $this->addBreadcrumb(sprintf($this->__('Collections of %s'), $collector->getDisplayName()), '@collections_by_collector='. $collector_slug);
