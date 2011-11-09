@@ -26,7 +26,7 @@ class generalActions extends sfActions
     $value = $user .'-'. $roles .'-'. time();
     $cookie = $value .'-'. hash_hmac('sha1', $value .'-'. $_SERVER['HTTP_USER_AGENT'], $secret);
 
-    setcookie("ga", $cookie, time()+$timeout, "/", ".collectorsquest.dev", 0, 1);
+    setcookie("ga", $cookie, time()+$timeout, "/", ".collectorsquest.com", 0, 1);
 
     $this->redirect($request->getParameter('ref', '@homepage'));
   }

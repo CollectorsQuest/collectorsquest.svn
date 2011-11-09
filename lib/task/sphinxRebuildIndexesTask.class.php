@@ -53,7 +53,7 @@ EOF;
       // Create a temporary Sphinx config file
       $conf = tempnam('/www/tmp', 'sphinx_config_');
 
-      $files = sfFinder::type('file')->name('/sphinx\.?(.*)?\.conf$/')->maxdepth(1)->in(sfConfig::get('sf_config_dir'));
+      $files = sfFinder::type('file')->sort_by_name()->name('/sphinx\.?(.*)?\.conf$/')->maxdepth(1)->in(sfConfig::get('sf_config_dir'));
       foreach ($files as $file)
       {
         file_put_contents($conf, file_get_contents($file), FILE_APPEND);
