@@ -1,6 +1,6 @@
 Vagrant::Config.run do |config|
   config.vm.box = "collectorsquest"
-  config.vm.box_url = "http://collectorsquest.s3.amazonaws.com/virtualbox/collectorsquest-2011-11-08.box"
+  config.vm.box_url = "http://collectorsquest.s3.amazonaws.com/virtualbox/collectorsquest-2011-11-02.box"
 
   # If you want to specify the host OS, create a file 'platform'
   # in the same directory as the .vagrant file.
@@ -31,6 +31,7 @@ Vagrant::Config.run do |config|
     chef.cookbooks_path = "../cookbooks"
 
     chef.add_recipe("main")
+    chef.add_recipe("main::subversion")
     chef.add_recipe("main::database")
     chef.add_recipe("main::web")
     chef.add_recipe("development")
