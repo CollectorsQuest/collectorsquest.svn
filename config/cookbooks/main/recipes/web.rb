@@ -34,7 +34,9 @@ bash "Install Symfony 1.4.x from PEAR" do
   code <<-EOH
     /usr/local/zend/bin/pear update-channels
     /usr/local/zend/bin/pear channel-discover pear.symfony-project.com
+    /usr/local/zend/bin/pear channel-discover zend.googlecode.com/svn
     /usr/local/zend/bin/pear upgrade symfony/symfony
+    /usr/local/zend/bin/pear upgrade zend/zend
   EOH
 end
 
