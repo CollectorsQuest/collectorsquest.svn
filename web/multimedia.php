@@ -34,7 +34,7 @@ if (in_array($type, array('image', 'video')))
     if ($stmt->execute(array($m[1], $type)))
     {
       $row = $stmt->fetch(PDO::FETCH_NAMED);
-
+      
       $path  = '/uploads/'. $row['model'] .'/'. date_format(new DateTime($row['created_at']), 'Y/m/d');
 
       $extension = array_shift(explode('?', end(explode('.', $filename))));
@@ -55,7 +55,7 @@ if (in_array($type, array('image', 'video')))
       {
         // Send Content-Type and the X-SendFile header
         header("Content-Type: ". $content_type);
-        header("X-SendFile: /www/vhosts/collectorsquest.com/shared/uploads/" . $path);
+        header("X-SendFile: /www/vhosts/collectorsquest.com/shared/" . $path);
 
         exit;
       }
