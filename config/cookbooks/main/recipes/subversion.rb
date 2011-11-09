@@ -18,5 +18,6 @@ bash "Update /www permissions" do
     chmod -R 777 /www/tmp
     chown -R www-data:www-data /www/tmp
     chown -R www-data:www-data /www/logs
+    chown -R www-data:www-data /www/vhosts/collectorsquest.com/shared
   EOH
 end
