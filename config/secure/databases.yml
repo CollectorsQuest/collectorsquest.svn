@@ -27,6 +27,15 @@ all:
       username:   collectorsquest
       password:   rM6aKxoKKwUX4r
 
+  queue:
+    class:        sfPropelDatabase
+    param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
+      username:   collectorsquest
+      password:   rM6aKxoKKwUX4r
+      encoding:   utf8
+
 stg:
   propel:
     class:        sfPropelDatabase
