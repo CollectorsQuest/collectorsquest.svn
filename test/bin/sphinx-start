@@ -2,8 +2,7 @@
 
 DIR="$( cd -P "$( dirname "$0" )" && pwd )"
 
-mkdir -p /www/tmp/sphinx/en/kolko_test
-mkdir -p /www/tmp/sphinx/bg/kolko_test
+mkdir -p /www/tmp/sphinx/website
 
 if [ -f /tmp/searchd.pid ];
 then
@@ -13,4 +12,4 @@ fi;
 cat $DIR/sphinx.conf > $DIR/sphinx.running.conf
 cat $DIR/../../config/sphinx/* >> $DIR/sphinx.running.conf
 
-/opt/sphinx/bin/searchd --config $DIR/sphinx.running.conf -i test_products_en
+/opt/sphinx/bin/searchd --config $DIR/sphinx.running.conf

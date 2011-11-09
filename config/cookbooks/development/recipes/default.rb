@@ -20,8 +20,8 @@ package "capistrano"
 
 bash "Install Capifony" do
   code <<-EOH
-    /usr/bin/gem install capistrano
-    /usr/bin/gem install capifony
+    /usr/bin/gem install --no-rdoc --no-ri capistrano
+    /usr/bin/gem install --no-rdoc --no-ri capifony
     /usr/bin/gem update
   EOH
 end
