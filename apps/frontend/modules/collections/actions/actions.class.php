@@ -87,11 +87,9 @@ class collectionsActions extends cqActions
 
     $pager = new sfPropelPager('Collection', $per_page);
     $pager->setCriteria($c);
-    $pager->setPeerMethod('doSelectJoinCollector');
-    $pager->setPeerCountMethod('doCountJoinCollector');
 
-	// Added By Prakash Panchal On 31-Mar-2011.
-	$snPage = ($this->getRequestParameter('jpage')) ? $this->getRequestParameter('jpage', 1) : $this->getRequestParameter('page', 1);
+    // Added By Prakash Panchal On 31-Mar-2011.
+    $snPage = ($this->getRequestParameter('jpage')) ? $this->getRequestParameter('jpage', 1) : $this->getRequestParameter('page', 1);
 
     $pager->setPage($snPage);
     $pager->init();

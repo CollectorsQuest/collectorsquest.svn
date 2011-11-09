@@ -9,6 +9,7 @@ class marketplaceComponents extends sfComponents
   public function executeListing($request)
   {
     $c = new Criteria();
+    $c->addJoin(CollectibleForSalePeer::COLLECTIBLE_ID, CollectiblePeer::ID);
 
     $search = array();
     if ($request->getParameter('page'))
@@ -26,9 +27,9 @@ class marketplaceComponents extends sfComponents
       $crit = $c->getNewCriterion(CollectiblePeer::DESCRIPTION, $pks_DESCRIPTION, Criteria::CUSTOM);
       $crit->addOr($c->getNewCriterion(CollectiblePeer::NAME, $pks_NAME, Criteria::CUSTOM));
       $crit->addOr($c->getNewCriterion(CollectionCategoryPeer::NAME, $pks_CATEGORY, Criteria::CUSTOM));
-      
-      //Search in category name
-      $c->addJoin(CollectiblePeer::COLLECTION_ID, CollectionPeer::ID, Criteria::LEFT_JOIN);
+
+      // Search in category name
+      $c->addJoin(CollectionPeer::ID, CollectiblePeer::COLLECTION_ID, Criteria::LEFT_JOIN);
       $c->addJoin(CollectionPeer::COLLECTION_CATEGORY_ID, CollectionCategoryPeer::ID, Criteria::LEFT_JOIN);
       $c->addAnd($crit);
     }
@@ -77,8 +78,6 @@ class marketplaceComponents extends sfComponents
       $c->add(CollectibleForSalePeer::IS_SOLD, false);
       $c->addDescendingOrderByColumn(CollectibleForSalePeer::CREATED_AT);
     }
-
-    $c->addJoin(CollectibleForSalePeer::COLLECTIBLE_ID, CollectiblePeer::ID);
 
     $pager = new sfPropelPager('CollectibleForSale', 10);
     $pager->setCriteria($c);
