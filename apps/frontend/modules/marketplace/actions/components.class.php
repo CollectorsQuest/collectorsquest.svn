@@ -29,8 +29,8 @@ class marketplaceComponents extends sfComponents
       $crit->addOr($c->getNewCriterion(CollectionCategoryPeer::NAME, $pks_CATEGORY, Criteria::CUSTOM));
 
       // Search in category name
-      $c->addJoin(CollectionPeer::ID, CollectiblePeer::COLLECTION_ID, Criteria::LEFT_JOIN);
-      $c->addJoin(CollectionPeer::COLLECTION_CATEGORY_ID, CollectionCategoryPeer::ID, Criteria::LEFT_JOIN);
+      // $c->addJoin(CollectionPeer::ID, CollectiblePeer::COLLECTION_ID, Criteria::LEFT_JOIN);
+      // $c->addJoin(CollectionPeer::COLLECTION_CATEGORY_ID, CollectionCategoryPeer::ID, Criteria::LEFT_JOIN);
       $c->addAnd($crit);
     }
 
