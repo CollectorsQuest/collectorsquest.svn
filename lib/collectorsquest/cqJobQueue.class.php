@@ -28,6 +28,8 @@ class cqJobQueue extends Zend_Queue
         )
       );
 
+      cqStatic::loadZendFramework();
+
       $adapter = new Zend_Queue_Adapter_Db($options);
       self::$_queue[$name] = new cqJobQueue($adapter, $options);
     }
