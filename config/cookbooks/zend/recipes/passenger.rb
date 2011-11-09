@@ -5,8 +5,8 @@ package "libcurl4-openssl-dev"
 
 bash "Installing/Updating gems" do
   code <<-EOH
-    /usr/bin/gem install --no-rdoc --no-ri rubygems-update
-    /var/lib/gems/1.8/bin/update_rubygems
+    /usr/bin/gem install --no-rdoc --no-ri --version=1.3.6 rubygems-update
+    /var/lib/gems/1.8/bin/update_rubygems --version=1.3.6
 
     /usr/bin/gem install --no-rdoc --no-ri bundle
     /usr/bin/gem install --no-rdoc --no-ri passenger
