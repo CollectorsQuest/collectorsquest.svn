@@ -19,6 +19,17 @@ all:
       public_key:  "6LdACwsAAAAAAE5tZTcYG47Lth2jzxxZeXAbll-Z"
       private_key: "6LdACwsAAAAAAM19l6G0lFk4F560SWvBM2k5M9L0"
 
+  credentials:
+    amazon:      "0Q4JCH5ZFJ3WBVP7N9R2"
+    yahoo:       "hbaTeUTV34GucRooge4L.uEQiK_wcbb2eMx6yUWAEUoQrdOPCIdj_2yTAbvt1QVryEc8WFUbu00X4hyEbUKLwg--"
+    akismet:     "8fd3f2fddbaa"
+    google_maps: "ABQIAAAAFWhrOd_LZ8oN4w-vkUWughQAU-WnqYQCO7zppSGvHR51tCrN4xRY0TaQWDhMG_uhoslQtMZplJu3gg"
+    disqus_user_key:    "rCJyPA1GJlX3hoF3tdSdrGbbeGBeI7I9G1Qspd5QuR6AiCscBxREmoo1SLBnlJyf"
+    disqus_forum_key:   "nqopSzGkkro8tc53AgA3DNW56WSYBbZRetdoNPE8whwKY7b7dvELc05Nm9Yq5nMD"
+    recaptcha:
+      public_key:  "6LdACwsAAAAAAE5tZTcYG47Lth2jzxxZeXAbll-Z"
+      private_key: "6LdACwsAAAAAAM19l6G0lFk4F560SWvBM2k5M9L0"
+
 stg:
   paypal:
     api_username: "vijay._1222841690_biz_api1.gmail.com"
