@@ -115,8 +115,8 @@ classes:
       id:                      ~
       collection_category_id:  { type: smallint, foreignClass: CollectionCategory, foreignReference: id, required: false, onDelete: setnull }
       collector_id:            { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
-      name:                    { type: varchar, size: 128, required: true, primaryString: true }
-      slug:                    { type: varchar, size: 140, required: true }
+      name:                    { type: varchar, size: 255, required: true, primaryString: true }
+      slug:                    { type: varchar, size: 128, required: true }
       description:             { type: longvarchar, required: true }
       num_items:               { type: integer, required: true, default: 0 }
       num_views:               { type: integer, required: true, default: 0 }
@@ -138,6 +138,7 @@ classes:
       id:         { type: smallint, primaryKey: true }
       parent_id:  { type: integer, default: 0, required: false }
       name:       { type: varchar, size: 64, required: true, primaryString: true }
+      slug:       { type: varchar, size: 64, required: true }
       score:      { type: integer, required: false, default: 0 }
 
   CollectionCategoryField:
@@ -153,7 +154,7 @@ classes:
       id: ~
       collector_id:      { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
       collection_id:     { type: integer, foreignClass: Collection, foreignReference: id, required: true, onDelete: cascade }
-      name:              { type: varchar, size: 128, required: true, primaryString: true }
+      name:              { type: varchar, size: 255, required: true, primaryString: true }
       slug:              { type: varchar, size: 128, index: unique }
       description:       { type: longvarchar, required: true }
       num_comments:      { type: integer, required: true, default: 0 }

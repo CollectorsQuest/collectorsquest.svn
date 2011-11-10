@@ -33,7 +33,7 @@ abstract class BaseCollectibleForm extends BaseFormPropel
       'id'                => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'collector_id'      => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id')),
       'collection_id'     => new sfValidatorPropelChoice(array('model' => 'Collection', 'column' => 'id')),
-      'name'              => new sfValidatorString(array('max_length' => 128)),
+      'name'              => new sfValidatorString(array('max_length' => 255)),
       'slug'              => new sfValidatorString(array('max_length' => 128, 'required' => false)),
       'description'       => new sfValidatorString(),
       'num_comments'      => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),

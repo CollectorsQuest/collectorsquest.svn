@@ -41,9 +41,9 @@ class CollectionTableMap extends TableMap
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
     $this->addForeignKey('COLLECTION_CATEGORY_ID', 'CollectionCategoryId', 'SMALLINT', 'collection_category', 'ID', false, null, null);
     $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
-    $this->addColumn('NAME', 'Name', 'VARCHAR', true, 128, null);
+    $this->addColumn('NAME', 'Name', 'VARCHAR', true, 255, null);
     $this->getColumn('NAME', false)->setPrimaryString(true);
-    $this->addColumn('SLUG', 'Slug', 'VARCHAR', true, 140, null);
+    $this->addColumn('SLUG', 'Slug', 'VARCHAR', true, 128, null);
     $this->addColumn('DESCRIPTION', 'Description', 'LONGVARCHAR', true, null, null);
     $this->addColumn('NUM_ITEMS', 'NumItems', 'INTEGER', true, null, 0);
     $this->addColumn('NUM_VIEWS', 'NumViews', 'INTEGER', true, null, 0);

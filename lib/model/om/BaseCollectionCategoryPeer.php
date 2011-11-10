@@ -27,13 +27,13 @@ abstract class BaseCollectionCategoryPeer
   const TM_CLASS = 'CollectionCategoryTableMap';
 
   /** The total number of columns. */
-  const NUM_COLUMNS = 4;
+  const NUM_COLUMNS = 5;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
   /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-  const NUM_HYDRATE_COLUMNS = 4;
+  const NUM_HYDRATE_COLUMNS = 5;
 
   /** the column name for the ID field */
   const ID = 'collection_category.ID';
@@ -43,6 +43,9 @@ abstract class BaseCollectionCategoryPeer
 
   /** the column name for the NAME field */
   const NAME = 'collection_category.NAME';
+
+  /** the column name for the SLUG field */
+  const SLUG = 'collection_category.SLUG';
 
   /** the column name for the SCORE field */
   const SCORE = 'collection_category.SCORE';
@@ -66,12 +69,12 @@ abstract class BaseCollectionCategoryPeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'ParentId', 'Name', 'Score', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'parentId', 'name', 'score', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::PARENT_ID, self::NAME, self::SCORE, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'PARENT_ID', 'NAME', 'SCORE', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'parent_id', 'name', 'score', ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+    BasePeer::TYPE_PHPNAME => array ('Id', 'ParentId', 'Name', 'Slug', 'Score', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'parentId', 'name', 'slug', 'score', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::PARENT_ID, self::NAME, self::SLUG, self::SCORE, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'PARENT_ID', 'NAME', 'SLUG', 'SCORE', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'parent_id', 'name', 'slug', 'score', ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
   );
 
   /**
@@ -81,12 +84,12 @@ abstract class BaseCollectionCategoryPeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'ParentId' => 1, 'Name' => 2, 'Score' => 3, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'parentId' => 1, 'name' => 2, 'score' => 3, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::PARENT_ID => 1, self::NAME => 2, self::SCORE => 3, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'PARENT_ID' => 1, 'NAME' => 2, 'SCORE' => 3, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'parent_id' => 1, 'name' => 2, 'score' => 3, ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'ParentId' => 1, 'Name' => 2, 'Slug' => 3, 'Score' => 4, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'parentId' => 1, 'name' => 2, 'slug' => 3, 'score' => 4, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::PARENT_ID => 1, self::NAME => 2, self::SLUG => 3, self::SCORE => 4, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'PARENT_ID' => 1, 'NAME' => 2, 'SLUG' => 3, 'SCORE' => 4, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'parent_id' => 1, 'name' => 2, 'slug' => 3, 'score' => 4, ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, )
   );
 
   /**
@@ -164,6 +167,7 @@ abstract class BaseCollectionCategoryPeer
       $criteria->addSelectColumn(CollectionCategoryPeer::ID);
       $criteria->addSelectColumn(CollectionCategoryPeer::PARENT_ID);
       $criteria->addSelectColumn(CollectionCategoryPeer::NAME);
+      $criteria->addSelectColumn(CollectionCategoryPeer::SLUG);
       $criteria->addSelectColumn(CollectionCategoryPeer::SCORE);
     }
     else
@@ -171,6 +175,7 @@ abstract class BaseCollectionCategoryPeer
       $criteria->addSelectColumn($alias . '.ID');
       $criteria->addSelectColumn($alias . '.PARENT_ID');
       $criteria->addSelectColumn($alias . '.NAME');
+      $criteria->addSelectColumn($alias . '.SLUG');
       $criteria->addSelectColumn($alias . '.SCORE');
     }
   }

@@ -14,12 +14,14 @@ abstract class BaseCollectionCategoryFormFilter extends BaseFormFilterPropel
     $this->setWidgets(array(
       'parent_id' => new sfWidgetFormFilterInput(),
       'name'      => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'slug'      => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'score'     => new sfWidgetFormFilterInput(),
     ));
 
     $this->setValidators(array(
       'parent_id' => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
       'name'      => new sfValidatorPass(array('required' => false)),
+      'slug'      => new sfValidatorPass(array('required' => false)),
       'score'     => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
     ));
 
@@ -41,6 +43,7 @@ abstract class BaseCollectionCategoryFormFilter extends BaseFormFilterPropel
       'id'        => 'Number',
       'parent_id' => 'Number',
       'name'      => 'Text',
+      'slug'      => 'Text',
       'score'     => 'Number',
     );
   }

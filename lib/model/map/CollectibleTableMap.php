@@ -41,7 +41,7 @@ class CollectibleTableMap extends TableMap
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
     $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
     $this->addForeignKey('COLLECTION_ID', 'CollectionId', 'INTEGER', 'collection', 'ID', true, null, null);
-    $this->addColumn('NAME', 'Name', 'VARCHAR', true, 128, null);
+    $this->addColumn('NAME', 'Name', 'VARCHAR', true, 255, null);
     $this->getColumn('NAME', false)->setPrimaryString(true);
     $this->addColumn('SLUG', 'Slug', 'VARCHAR', false, 128, null);
     $this->addColumn('DESCRIPTION', 'Description', 'LONGVARCHAR', true, null, null);

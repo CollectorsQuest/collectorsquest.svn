@@ -44,6 +44,12 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
   protected $name;
 
   /**
+   * The value for the slug field.
+   * @var        string
+   */
+  protected $slug;
+
+  /**
    * The value for the score field.
    * Note: this column has a database default value of: 0
    * @var        int
@@ -137,6 +143,16 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
   }
 
   /**
+   * Get the [slug] column value.
+   * 
+   * @return     string
+   */
+  public function getSlug()
+  {
+    return $this->slug;
+  }
+
+  /**
    * Get the [score] column value.
    * 
    * @return     int
@@ -213,6 +229,28 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
   }
 
   /**
+   * Set the value of [slug] column.
+   * 
+   * @param      string $v new value
+   * @return     CollectionCategory The current object (for fluent API support)
+   */
+  public function setSlug($v)
+  {
+    if ($v !== null)
+    {
+      $v = (string) $v;
+    }
+
+    if ($this->slug !== $v)
+    {
+      $this->slug = $v;
+      $this->modifiedColumns[] = CollectionCategoryPeer::SLUG;
+    }
+
+    return $this;
+  }
+
+  /**
    * Set the value of [score] column.
    * 
    * @param      int $v new value
@@ -280,7 +318,8 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
       $this->parent_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
       $this->name = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-      $this->score = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
+      $this->slug = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+      $this->score = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -290,7 +329,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 4; // 4 = CollectionCategoryPeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 5; // 5 = CollectionCategoryPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -758,6 +797,9 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
         return $this->getName();
         break;
       case 3:
+        return $this->getSlug();
+        break;
+      case 4:
         return $this->getScore();
         break;
       default:
@@ -793,7 +835,8 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $keys[0] => $this->getId(),
       $keys[1] => $this->getParentId(),
       $keys[2] => $this->getName(),
-      $keys[3] => $this->getScore(),
+      $keys[3] => $this->getSlug(),
+      $keys[4] => $this->getScore(),
     );
     if ($includeForeignObjects)
     {
@@ -855,6 +898,9 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
         $this->setName($value);
         break;
       case 3:
+        $this->setSlug($value);
+        break;
+      case 4:
         $this->setScore($value);
         break;
     }
@@ -884,7 +930,8 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
     if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
     if (array_key_exists($keys[1], $arr)) $this->setParentId($arr[$keys[1]]);
     if (array_key_exists($keys[2], $arr)) $this->setName($arr[$keys[2]]);
-    if (array_key_exists($keys[3], $arr)) $this->setScore($arr[$keys[3]]);
+    if (array_key_exists($keys[3], $arr)) $this->setSlug($arr[$keys[3]]);
+    if (array_key_exists($keys[4], $arr)) $this->setScore($arr[$keys[4]]);
   }
 
   /**
@@ -899,6 +946,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectionCategoryPeer::ID)) $criteria->add(CollectionCategoryPeer::ID, $this->id);
     if ($this->isColumnModified(CollectionCategoryPeer::PARENT_ID)) $criteria->add(CollectionCategoryPeer::PARENT_ID, $this->parent_id);
     if ($this->isColumnModified(CollectionCategoryPeer::NAME)) $criteria->add(CollectionCategoryPeer::NAME, $this->name);
+    if ($this->isColumnModified(CollectionCategoryPeer::SLUG)) $criteria->add(CollectionCategoryPeer::SLUG, $this->slug);
     if ($this->isColumnModified(CollectionCategoryPeer::SCORE)) $criteria->add(CollectionCategoryPeer::SCORE, $this->score);
 
     return $criteria;
@@ -965,6 +1013,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
     $copyObj->setId($this->getId());
     $copyObj->setParentId($this->getParentId());
     $copyObj->setName($this->getName());
+    $copyObj->setSlug($this->getSlug());
     $copyObj->setScore($this->getScore());
 
     if ($deepCopy)
@@ -1730,6 +1779,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
     $this->id = null;
     $this->parent_id = null;
     $this->name = null;
+    $this->slug = null;
     $this->score = null;
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;

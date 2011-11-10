@@ -355,7 +355,9 @@ sfPropelBehavior::add(
         'to' => CollectorPeer::SLUG
       ),
       'separator' => '-',
-      'permanent' => false
+      'permanent' => false,
+      'lowercase' => true,
+      'chars' => 64
     )
   )
 );

@@ -9,11 +9,13 @@
  * @method     CollectionCategoryQuery orderById($order = Criteria::ASC) Order by the id column
  * @method     CollectionCategoryQuery orderByParentId($order = Criteria::ASC) Order by the parent_id column
  * @method     CollectionCategoryQuery orderByName($order = Criteria::ASC) Order by the name column
+ * @method     CollectionCategoryQuery orderBySlug($order = Criteria::ASC) Order by the slug column
  * @method     CollectionCategoryQuery orderByScore($order = Criteria::ASC) Order by the score column
  *
  * @method     CollectionCategoryQuery groupById() Group by the id column
  * @method     CollectionCategoryQuery groupByParentId() Group by the parent_id column
  * @method     CollectionCategoryQuery groupByName() Group by the name column
+ * @method     CollectionCategoryQuery groupBySlug() Group by the slug column
  * @method     CollectionCategoryQuery groupByScore() Group by the score column
  *
  * @method     CollectionCategoryQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
@@ -42,11 +44,13 @@
  * @method     CollectionCategory findOneById(int $id) Return the first CollectionCategory filtered by the id column
  * @method     CollectionCategory findOneByParentId(int $parent_id) Return the first CollectionCategory filtered by the parent_id column
  * @method     CollectionCategory findOneByName(string $name) Return the first CollectionCategory filtered by the name column
+ * @method     CollectionCategory findOneBySlug(string $slug) Return the first CollectionCategory filtered by the slug column
  * @method     CollectionCategory findOneByScore(int $score) Return the first CollectionCategory filtered by the score column
  *
  * @method     array findById(int $id) Return CollectionCategory objects filtered by the id column
  * @method     array findByParentId(int $parent_id) Return CollectionCategory objects filtered by the parent_id column
  * @method     array findByName(string $name) Return CollectionCategory objects filtered by the name column
+ * @method     array findBySlug(string $slug) Return CollectionCategory objects filtered by the slug column
  * @method     array findByScore(int $score) Return CollectionCategory objects filtered by the score column
  *
  * @package    propel.generator.lib.model.om
@@ -263,6 +267,34 @@ abstract class BaseCollectionCategoryQuery extends ModelCriteria
             }
         }
         return $this->addUsingAlias(CollectionCategoryPeer::NAME, $name, $comparison);
+    }
+
+    /**
+     * Filter the query on the slug column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterBySlug('fooValue');   // WHERE slug = 'fooValue'
+     * $query->filterBySlug('%fooValue%'); // WHERE slug LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $slug The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectionCategoryQuery The current query, for fluid interface
+     */
+    public function filterBySlug($slug = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($slug)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $slug)) {
+                $slug = str_replace('*', '%', $slug);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectionCategoryPeer::SLUG, $slug, $comparison);
     }
 
     /**

@@ -241,7 +241,9 @@ sfPropelBehavior::add(
         'to' => CollectionPeer::SLUG
       ),
       'separator' => '-',
-      'permanent' => false
+      'permanent' => false,
+      'lowercase' => true,
+      'chars' => 128
     )
   )
 );

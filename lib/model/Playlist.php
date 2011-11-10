@@ -126,7 +126,9 @@ sfPropelBehavior::add(
         'to' => PlaylistPeer::SLUG
       ),
       'separator' => '-',
-      'permanent' => false
+      'permanent' => false,
+      'lowercase' => true,
+      'chars' => 64
     )
   )
 );
