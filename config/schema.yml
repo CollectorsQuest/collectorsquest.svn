@@ -113,15 +113,15 @@ classes:
   Collection:
     columns:
       id:                      ~
-      collection_category_id:  { type: smallint, foreignClass: CollectionCategory, foreignReference: id, required: false, onDelete: setnull }
-      collector_id:            { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
+      collection_category_id:  { type: integer, required: false, foreignClass: CollectionCategory, foreignReference: id, onDelete: setnull }
+      collector_id:            { type: integer, required: true, foreignClass: Collector, foreignReference: id, onDelete: cascade }
       name:                    { type: varchar, size: 255, required: true, primaryString: true }
       slug:                    { type: varchar, size: 128, required: true }
       description:             { type: longvarchar, required: true }
-      num_items:               { type: integer, required: true, default: 0 }
-      num_views:               { type: integer, required: true, default: 0 }
-      num_comments:            { type: integer, required: true, default: 0 }
-      num_ratings:             { type: integer, required: true, default: 0 }
+      num_items:               { type: integer, required: false, default: 0 }
+      num_views:               { type: integer, required: false, default: 0 }
+      num_comments:            { type: integer, required: false, default: 0 }
+      num_ratings:             { type: integer, required: false, default: 0 }
       score:                   { type: integer, required: false, default: 0 }
       is_public:               { type: boolean, default: true }
       is_featured:             { type: boolean, default: false }
@@ -135,7 +135,7 @@ classes:
 
   CollectionCategory:
     columns:
-      id:         { type: smallint, primaryKey: true }
+      id:         { type: smallint, autoIncrement: true, primaryKey: true }
       parent_id:  { type: integer, default: 0, required: false }
       name:       { type: varchar, size: 64, required: true, primaryString: true }
       slug:       { type: varchar, size: 64, required: true }
@@ -144,7 +144,7 @@ classes:
   CollectionCategoryField:
     columns:
       id:                  ~
-      collection_category_id:  ~
+      collection_category_id:  { type: integer, required: true, foreignClass: CollectionCategory, foreignReference: id, onDelete: cascade }
       custom_field_id:     ~
     uniques:
       collection_category_field: [collection_category_id, custom_field_id]
@@ -157,9 +157,9 @@ classes:
       name:              { type: varchar, size: 255, required: true, primaryString: true }
       slug:              { type: varchar, size: 128, index: unique }
       description:       { type: longvarchar, required: true }
-      num_comments:      { type: integer, required: true, default: 0 }
-      score:             { type: integer, required: true, default: 0 }
-      position:          { type: integer, required: true, default: 0 }
+      num_comments:      { type: integer, required: false, default: 0 }
+      score:             { type: integer, required: false, default: 0 }
+      position:          { type: integer, required: false, default: 0 }
       is_name_automatic: { type: boolean, default: false }
 
     propel_behaviors:
@@ -330,7 +330,7 @@ classes:
     columns:
       id:           ~
       video_id:     ~
-      collection_category_id:  ~
+      collection_category_id:  { type: integer, required: true, foreignClass: CollectionCategory, foreignReference: id, onDelete: cascade }
       created_at:   ~
 
   Playlist:
@@ -392,9 +392,9 @@ classes:
       day:          { type: date }
       model:        { type: char, size: 64, required: true }
       model_id:     { type: integer }
-      views:        { type: integer, default: 0 }
-      ratings:      { type: integer, default: 0 }
-      score:        { type: integer, default: 0 }
+      views:        { type: integer, required: false, default: 0 }
+      ratings:      { type: integer, required: false, default: 0 }
+      score:        { type: integer, required: false, default: 0 }
       updated_at:   ~
       created_at:   ~
     uniques:
@@ -413,8 +413,8 @@ classes:
       eblob:             longvarchar
       start_date:        date
       end_date:          date
+      position:          { type: tinyint, required: false, default: 0 }
       is_active:         { type: boolean, default: true, required: true }
-      position:          { type: tinyint, default: true, required: false }
 
   Package:
     columns:

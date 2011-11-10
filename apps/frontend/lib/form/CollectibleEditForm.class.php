@@ -13,6 +13,7 @@ class CollectibleEditForm extends BaseCollectibleForm
 
     $this->getWidgetSchema()->setFormFormatterName('frontend');
     $this->validatorSchema['slug'] = new sfValidatorPass();
+    $this->validatorSchema->setPostValidator(new sfValidatorPass());
 
     $this->widgetSchema['thumbnail'] = new sfWidgetFormInputFile();
     $this->validatorSchema['thumbnail'] = new sfValidatorFile(array('required' => false));

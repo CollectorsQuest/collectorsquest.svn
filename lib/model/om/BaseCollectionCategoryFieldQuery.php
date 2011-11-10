@@ -287,7 +287,7 @@ abstract class BaseCollectionCategoryFieldQuery extends ModelCriteria
      *
      * @return    CollectionCategoryFieldQuery The current query, for fluid interface
      */
-    public function joinCollectionCategory($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinCollectionCategory($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('CollectionCategory');
@@ -322,7 +322,7 @@ abstract class BaseCollectionCategoryFieldQuery extends ModelCriteria
      *
      * @return    CollectionCategoryQuery A secondary query class using the current class as primary query
      */
-    public function useCollectionCategoryQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useCollectionCategoryQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinCollectionCategory($relationAlias, $joinType)

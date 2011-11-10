@@ -48,8 +48,8 @@ class FeaturedTableMap extends TableMap
     $this->addColumn('EBLOB', 'Eblob', 'LONGVARCHAR', false, null, null);
     $this->addColumn('START_DATE', 'StartDate', 'DATE', false, null, null);
     $this->addColumn('END_DATE', 'EndDate', 'DATE', false, null, null);
-    $this->addColumn('IS_ACTIVE', 'IsActive', 'BOOLEAN', true, 1, true);
     $this->addColumn('POSITION', 'Position', 'TINYINT', false, null, 0);
+    $this->addColumn('IS_ACTIVE', 'IsActive', 'BOOLEAN', true, 1, true);
     // validators
   }
 

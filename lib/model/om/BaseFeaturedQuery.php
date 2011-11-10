@@ -16,8 +16,8 @@
  * @method     FeaturedQuery orderByEblob($order = Criteria::ASC) Order by the eblob column
  * @method     FeaturedQuery orderByStartDate($order = Criteria::ASC) Order by the start_date column
  * @method     FeaturedQuery orderByEndDate($order = Criteria::ASC) Order by the end_date column
- * @method     FeaturedQuery orderByIsActive($order = Criteria::ASC) Order by the is_active column
  * @method     FeaturedQuery orderByPosition($order = Criteria::ASC) Order by the position column
+ * @method     FeaturedQuery orderByIsActive($order = Criteria::ASC) Order by the is_active column
  *
  * @method     FeaturedQuery groupById() Group by the id column
  * @method     FeaturedQuery groupByFeaturedTypeId() Group by the featured_type_id column
@@ -29,8 +29,8 @@
  * @method     FeaturedQuery groupByEblob() Group by the eblob column
  * @method     FeaturedQuery groupByStartDate() Group by the start_date column
  * @method     FeaturedQuery groupByEndDate() Group by the end_date column
- * @method     FeaturedQuery groupByIsActive() Group by the is_active column
  * @method     FeaturedQuery groupByPosition() Group by the position column
+ * @method     FeaturedQuery groupByIsActive() Group by the is_active column
  *
  * @method     FeaturedQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     FeaturedQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
@@ -49,8 +49,8 @@
  * @method     Featured findOneByEblob(string $eblob) Return the first Featured filtered by the eblob column
  * @method     Featured findOneByStartDate(string $start_date) Return the first Featured filtered by the start_date column
  * @method     Featured findOneByEndDate(string $end_date) Return the first Featured filtered by the end_date column
- * @method     Featured findOneByIsActive(boolean $is_active) Return the first Featured filtered by the is_active column
  * @method     Featured findOneByPosition(int $position) Return the first Featured filtered by the position column
+ * @method     Featured findOneByIsActive(boolean $is_active) Return the first Featured filtered by the is_active column
  *
  * @method     array findById(int $id) Return Featured objects filtered by the id column
  * @method     array findByFeaturedTypeId(int $featured_type_id) Return Featured objects filtered by the featured_type_id column
@@ -62,8 +62,8 @@
  * @method     array findByEblob(string $eblob) Return Featured objects filtered by the eblob column
  * @method     array findByStartDate(string $start_date) Return Featured objects filtered by the start_date column
  * @method     array findByEndDate(string $end_date) Return Featured objects filtered by the end_date column
- * @method     array findByIsActive(boolean $is_active) Return Featured objects filtered by the is_active column
  * @method     array findByPosition(int $position) Return Featured objects filtered by the position column
+ * @method     array findByIsActive(boolean $is_active) Return Featured objects filtered by the is_active column
  *
  * @package    propel.generator.lib.model.om
  */
@@ -540,32 +540,6 @@ abstract class BaseFeaturedQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the is_active column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByIsActive(true); // WHERE is_active = true
-     * $query->filterByIsActive('yes'); // WHERE is_active = true
-     * </code>
-     *
-     * @param     boolean|string $isActive The value to use as filter.
-     *              Non-boolean arguments are converted using the following rules:
-     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
-     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
-     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    FeaturedQuery The current query, for fluid interface
-     */
-    public function filterByIsActive($isActive = null, $comparison = null)
-    {
-        if (is_string($isActive)) {
-            $is_active = in_array(strtolower($isActive), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
-        }
-        return $this->addUsingAlias(FeaturedPeer::IS_ACTIVE, $isActive, $comparison);
-    }
-
-    /**
      * Filter the query on the position column
      *
      * Example usage:
@@ -603,6 +577,32 @@ abstract class BaseFeaturedQuery extends ModelCriteria
             }
         }
         return $this->addUsingAlias(FeaturedPeer::POSITION, $position, $comparison);
+    }
+
+    /**
+     * Filter the query on the is_active column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByIsActive(true); // WHERE is_active = true
+     * $query->filterByIsActive('yes'); // WHERE is_active = true
+     * </code>
+     *
+     * @param     boolean|string $isActive The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    FeaturedQuery The current query, for fluid interface
+     */
+    public function filterByIsActive($isActive = null, $comparison = null)
+    {
+        if (is_string($isActive)) {
+            $is_active = in_array(strtolower($isActive), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+        return $this->addUsingAlias(FeaturedPeer::IS_ACTIVE, $isActive, $comparison);
     }
 
     /**

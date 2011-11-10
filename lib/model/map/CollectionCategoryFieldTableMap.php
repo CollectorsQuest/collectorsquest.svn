@@ -39,7 +39,7 @@ class CollectionCategoryFieldTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-    $this->addForeignKey('COLLECTION_CATEGORY_ID', 'CollectionCategoryId', 'INTEGER', 'collection_category', 'ID', false, null, null);
+    $this->addForeignKey('COLLECTION_CATEGORY_ID', 'CollectionCategoryId', 'INTEGER', 'collection_category', 'ID', true, null, null);
     $this->addForeignKey('CUSTOM_FIELD_ID', 'CustomFieldId', 'INTEGER', 'custom_field', 'ID', false, null, null);
     // validators
   }
@@ -49,7 +49,7 @@ class CollectionCategoryFieldTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('CollectionCategory', 'CollectionCategory', RelationMap::MANY_TO_ONE, array('collection_category_id' => 'id', ), null, null);
+    $this->addRelation('CollectionCategory', 'CollectionCategory', RelationMap::MANY_TO_ONE, array('collection_category_id' => 'id', ), 'CASCADE', null);
     $this->addRelation('CustomField', 'CustomField', RelationMap::MANY_TO_ONE, array('custom_field_id' => 'id', ), null, null);
   }
 

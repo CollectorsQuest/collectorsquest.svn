@@ -514,7 +514,7 @@ abstract class BaseCollectionCategoryQuery extends ModelCriteria
      *
      * @return    CollectionCategoryQuery The current query, for fluid interface
      */
-    public function joinCollectionCategoryField($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinCollectionCategoryField($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('CollectionCategoryField');
@@ -549,7 +549,7 @@ abstract class BaseCollectionCategoryQuery extends ModelCriteria
      *
      * @return    CollectionCategoryFieldQuery A secondary query class using the current class as primary query
      */
-    public function useCollectionCategoryFieldQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useCollectionCategoryFieldQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinCollectionCategoryField($relationAlias, $joinType)
@@ -587,7 +587,7 @@ abstract class BaseCollectionCategoryQuery extends ModelCriteria
      *
      * @return    CollectionCategoryQuery The current query, for fluid interface
      */
-    public function joinVideoCollectionCategory($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinVideoCollectionCategory($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('VideoCollectionCategory');
@@ -622,7 +622,7 @@ abstract class BaseCollectionCategoryQuery extends ModelCriteria
      *
      * @return    VideoCollectionCategoryQuery A secondary query class using the current class as primary query
      */
-    public function useVideoCollectionCategoryQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useVideoCollectionCategoryQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinVideoCollectionCategory($relationAlias, $joinType)

@@ -225,28 +225,34 @@ class manageActions extends cqActions
 
     $form = new CollectibleEditForm($collectible);
 
-    $itemForSale = $collectible->getForSaleInformation();
-    if (!$itemForSale)
+    if ($this->bIsSeller = $this->getUser()->hasCredential('seller'))
     {
-      $itemForSale = new CollectibleForSale();
-      $itemForSale->setCollectibleId($collectible->getId());
-    }
+      $itemForSale = $collectible->getForSaleInformation();
+      if (!$itemForSale)
+      {
+        $itemForSale = new CollectibleForSale();
+        $itemForSale->setCollectibleId($collectible->getId());
+      }
 
-    $omItemForSaleForm = new CollectibleForSaleForm($itemForSale);
-    $this->bIsSeller = $this->getUser()->hasCredential('seller');
+      $omItemForSaleForm = new CollectibleForSaleForm($itemForSale);
+    }
 
     if ($request->isMethod('post'))
     {
       $form->bind($request->getParameter('collectible'), $request->getFiles('collectible'));
-      $omItemForSaleForm->bind($request->getParameter($omItemForSaleForm->getName()));
 
-      if ($form->isValid() && $omItemForSaleForm->isValid())
+      if ($this->bIsSeller && isset($omItemForSaleForm))
+      {
+        $omItemForSaleForm->bind($request->getParameter($omItemForSaleForm->getName()));
+      }
+
+      if ($form->isValid())
       {
         $form->save();
 
-        if ($this->getUser()->hasCredential('seller'))
+        if ($this->bIsSeller)
         {
-          if ($omItemForSaleForm->save())
+          if (isset($omItemForSaleForm) && $omItemForSaleForm->save())
           {
             if ($omItemForSaleForm->getValue('is_ready'))
             {
@@ -278,7 +284,7 @@ class manageActions extends cqActions
     $this->collectible = $collectible;
 
     $this->form = $form;
-    $this->omItemForSaleForm = $omItemForSaleForm;
+    $this->omItemForSaleForm = isset($omItemForSaleForm) ? $omItemForSaleForm : null;
 
     $this->addBreadcrumb($this->__('Your Collections'), '@manage_collections');
     $this->addBreadcrumb($collection->getName(), '@collection_by_slug?id=' . $collection->getId() . '&slug=' . $collection->getSlug());

@@ -21,14 +21,15 @@ class Collectible extends BaseCollectible
       $position = (int) $stmt->fetch(PDO::FETCH_COLUMN);
       $this->setPosition($position + 1);
 
-      $q = CollectibleQuery::create()
-        ->filterByDeletedAt(null, Criteria::ISNULL)
-        ->filterByCollectionId($this->getCollectionId());
-
-      $num_items = $q->count($con);
-      $collection = $this->getCollection($con);
-      $collection->setNumItems($num_items);
-      $collection->save();
+      if ($collection = $this->getCollection($con))
+      {
+        $q = CollectibleQuery::create()
+           ->filterByDeletedAt(null, Criteria::ISNULL)
+           ->filterByCollectionId($this->getCollectionId());
+        $num_items = $q->count($con);
+        $collection->setNumItems($num_items);
+        $collection->save();
+      }
     }
 
     parent::save($con);

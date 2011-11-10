@@ -24,8 +24,8 @@ abstract class BaseFeaturedForm extends BaseFormPropel
       'eblob'            => new sfWidgetFormTextarea(),
       'start_date'       => new sfWidgetFormDate(),
       'end_date'         => new sfWidgetFormDate(),
-      'is_active'        => new sfWidgetFormInputCheckbox(),
       'position'         => new sfWidgetFormInputText(),
+      'is_active'        => new sfWidgetFormInputCheckbox(),
     ));
 
     $this->setValidators(array(
@@ -39,8 +39,8 @@ abstract class BaseFeaturedForm extends BaseFormPropel
       'eblob'            => new sfValidatorString(array('required' => false)),
       'start_date'       => new sfValidatorDate(array('required' => false)),
       'end_date'         => new sfValidatorDate(array('required' => false)),
-      'is_active'        => new sfValidatorBoolean(),
       'position'         => new sfValidatorInteger(array('min' => -128, 'max' => 127, 'required' => false)),
+      'is_active'        => new sfValidatorBoolean(),
     ));
 
     $this->widgetSchema->setNameFormat('featured[%s]');

@@ -407,6 +407,12 @@ abstract class BaseCollectionCategoryPeer
     // Invalidate objects in CollectionPeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     CollectionPeer::clearInstancePool();
+    // Invalidate objects in CollectionCategoryFieldPeer instance pool,
+    // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+    CollectionCategoryFieldPeer::clearInstancePool();
+    // Invalidate objects in VideoCollectionCategoryPeer instance pool,
+    // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+    VideoCollectionCategoryPeer::clearInstancePool();
   }
 
   /**
@@ -572,6 +578,11 @@ abstract class BaseCollectionCategoryPeer
       $criteria = $values->buildCriteria(); // build Criteria from CollectionCategory object
     }
 
+    if ($criteria->containsKey(CollectionCategoryPeer::ID) && $criteria->keyContainsValue(CollectionCategoryPeer::ID) )
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key ('.CollectionCategoryPeer::ID.')');
+    }
+
 
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
@@ -655,6 +666,7 @@ abstract class BaseCollectionCategoryPeer
       // use transaction because $criteria could contain info
       // for more than one table or we could emulating ON DELETE CASCADE, etc.
       $con->beginTransaction();
+      $affectedRows += CollectionCategoryPeer::doOnDeleteCascade(new Criteria(CollectionCategoryPeer::DATABASE_NAME), $con);
       CollectionCategoryPeer::doOnDeleteSetNull(new Criteria(CollectionCategoryPeer::DATABASE_NAME), $con);
       $affectedRows += BasePeer::doDeleteAll(CollectionCategoryPeer::TABLE_NAME, $con, CollectionCategoryPeer::DATABASE_NAME);
       // Because this db requires some delete cascade/set null emulation, we have to
@@ -715,6 +727,10 @@ abstract class BaseCollectionCategoryPeer
       
       // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
       $c = clone $criteria;
+      $affectedRows += CollectionCategoryPeer::doOnDeleteCascade($c, $con);
+      
+      // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+      $c = clone $criteria;
       CollectionCategoryPeer::doOnDeleteSetNull($c, $con);
       
       // Because this db requires some delete cascade/set null emulation, we have to
@@ -742,6 +758,45 @@ abstract class BaseCollectionCategoryPeer
       $con->rollBack();
       throw $e;
     }
+  }
+
+  /**
+   * This is a method for emulating ON DELETE CASCADE for DBs that don't support this
+   * feature (like MySQL or SQLite).
+   *
+   * This method is not very speedy because it must perform a query first to get
+   * the implicated records and then perform the deletes by calling those Peer classes.
+   *
+   * This method should be used within a transaction if possible.
+   *
+   * @param      Criteria $criteria
+   * @param      PropelPDO $con
+   * @return     int The number of affected rows (if supported by underlying database driver).
+   */
+  protected static function doOnDeleteCascade(Criteria $criteria, PropelPDO $con)
+  {
+    // initialize var to track total num of affected rows
+    $affectedRows = 0;
+
+    // first find the objects that are implicated by the $criteria
+    $objects = CollectionCategoryPeer::doSelect($criteria, $con);
+    foreach ($objects as $obj)
+    {
+
+
+      // delete related CollectionCategoryField objects
+      $criteria = new Criteria(CollectionCategoryFieldPeer::DATABASE_NAME);
+      
+      $criteria->add(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, $obj->getId());
+      $affectedRows += CollectionCategoryFieldPeer::doDelete($criteria, $con);
+
+      // delete related VideoCollectionCategory objects
+      $criteria = new Criteria(VideoCollectionCategoryPeer::DATABASE_NAME);
+      
+      $criteria->add(VideoCollectionCategoryPeer::COLLECTION_CATEGORY_ID, $obj->getId());
+      $affectedRows += VideoCollectionCategoryPeer::doDelete($criteria, $con);
+    }
+    return $affectedRows;
   }
 
   /**

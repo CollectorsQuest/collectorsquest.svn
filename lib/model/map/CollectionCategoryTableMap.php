@@ -36,7 +36,7 @@ class CollectionCategoryTableMap extends TableMap
     $this->setPhpName('CollectionCategory');
     $this->setClassname('CollectionCategory');
     $this->setPackage('lib.model');
-    $this->setUseIdGenerator(false);
+    $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'SMALLINT', true, null, null);
     $this->addColumn('PARENT_ID', 'ParentId', 'INTEGER', false, null, 0);
@@ -54,8 +54,8 @@ class CollectionCategoryTableMap extends TableMap
   {
     $this->addRelation('CollectorInterview', 'CollectorInterview', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), 'SET NULL', null, 'CollectorInterviews');
     $this->addRelation('Collection', 'Collection', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), 'SET NULL', null, 'Collections');
-    $this->addRelation('CollectionCategoryField', 'CollectionCategoryField', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), null, null, 'CollectionCategoryFields');
-    $this->addRelation('VideoCollectionCategory', 'VideoCollectionCategory', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), null, null, 'VideoCollectionCategorys');
+    $this->addRelation('CollectionCategoryField', 'CollectionCategoryField', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), 'CASCADE', null, 'CollectionCategoryFields');
+    $this->addRelation('VideoCollectionCategory', 'VideoCollectionCategory', RelationMap::ONE_TO_MANY, array('id' => 'collection_category_id', ), 'CASCADE', null, 'VideoCollectionCategorys');
   }
 
   /**

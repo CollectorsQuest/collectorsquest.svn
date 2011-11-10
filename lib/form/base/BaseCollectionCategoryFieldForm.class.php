@@ -15,13 +15,13 @@ abstract class BaseCollectionCategoryFieldForm extends BaseFormPropel
   {
     $this->setWidgets(array(
       'id'                     => new sfWidgetFormInputHidden(),
-      'collection_category_id' => new sfWidgetFormPropelChoice(array('model' => 'CollectionCategory', 'add_empty' => true)),
+      'collection_category_id' => new sfWidgetFormPropelChoice(array('model' => 'CollectionCategory', 'add_empty' => false)),
       'custom_field_id'        => new sfWidgetFormPropelChoice(array('model' => 'CustomField', 'add_empty' => true)),
     ));
 
     $this->setValidators(array(
       'id'                     => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
-      'collection_category_id' => new sfValidatorPropelChoice(array('model' => 'CollectionCategory', 'column' => 'id', 'required' => false)),
+      'collection_category_id' => new sfValidatorPropelChoice(array('model' => 'CollectionCategory', 'column' => 'id')),
       'custom_field_id'        => new sfValidatorPropelChoice(array('model' => 'CustomField', 'column' => 'id', 'required' => false)),
     ));
 

@@ -65,11 +65,11 @@ abstract class BaseFeaturedPeer
   /** the column name for the END_DATE field */
   const END_DATE = 'featured.END_DATE';
 
-  /** the column name for the IS_ACTIVE field */
-  const IS_ACTIVE = 'featured.IS_ACTIVE';
-
   /** the column name for the POSITION field */
   const POSITION = 'featured.POSITION';
+
+  /** the column name for the IS_ACTIVE field */
+  const IS_ACTIVE = 'featured.IS_ACTIVE';
 
   /** The default string format for model objects of the related table **/
   const DEFAULT_STRING_FORMAT = 'YAML';
@@ -90,11 +90,11 @@ abstract class BaseFeaturedPeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'FeaturedTypeId', 'FeaturedModel', 'FeaturedId', 'TreeLeft', 'TreeRight', 'TreeScope', 'Eblob', 'StartDate', 'EndDate', 'IsActive', 'Position', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'featuredTypeId', 'featuredModel', 'featuredId', 'treeLeft', 'treeRight', 'treeScope', 'eblob', 'startDate', 'endDate', 'isActive', 'position', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::FEATURED_TYPE_ID, self::FEATURED_MODEL, self::FEATURED_ID, self::TREE_LEFT, self::TREE_RIGHT, self::TREE_SCOPE, self::EBLOB, self::START_DATE, self::END_DATE, self::IS_ACTIVE, self::POSITION, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'FEATURED_TYPE_ID', 'FEATURED_MODEL', 'FEATURED_ID', 'TREE_LEFT', 'TREE_RIGHT', 'TREE_SCOPE', 'EBLOB', 'START_DATE', 'END_DATE', 'IS_ACTIVE', 'POSITION', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'featured_type_id', 'featured_model', 'featured_id', 'tree_left', 'tree_right', 'tree_scope', 'eblob', 'start_date', 'end_date', 'is_active', 'position', ),
+    BasePeer::TYPE_PHPNAME => array ('Id', 'FeaturedTypeId', 'FeaturedModel', 'FeaturedId', 'TreeLeft', 'TreeRight', 'TreeScope', 'Eblob', 'StartDate', 'EndDate', 'Position', 'IsActive', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'featuredTypeId', 'featuredModel', 'featuredId', 'treeLeft', 'treeRight', 'treeScope', 'eblob', 'startDate', 'endDate', 'position', 'isActive', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::FEATURED_TYPE_ID, self::FEATURED_MODEL, self::FEATURED_ID, self::TREE_LEFT, self::TREE_RIGHT, self::TREE_SCOPE, self::EBLOB, self::START_DATE, self::END_DATE, self::POSITION, self::IS_ACTIVE, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'FEATURED_TYPE_ID', 'FEATURED_MODEL', 'FEATURED_ID', 'TREE_LEFT', 'TREE_RIGHT', 'TREE_SCOPE', 'EBLOB', 'START_DATE', 'END_DATE', 'POSITION', 'IS_ACTIVE', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'featured_type_id', 'featured_model', 'featured_id', 'tree_left', 'tree_right', 'tree_scope', 'eblob', 'start_date', 'end_date', 'position', 'is_active', ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
   );
 
@@ -105,11 +105,11 @@ abstract class BaseFeaturedPeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'FeaturedTypeId' => 1, 'FeaturedModel' => 2, 'FeaturedId' => 3, 'TreeLeft' => 4, 'TreeRight' => 5, 'TreeScope' => 6, 'Eblob' => 7, 'StartDate' => 8, 'EndDate' => 9, 'IsActive' => 10, 'Position' => 11, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'featuredTypeId' => 1, 'featuredModel' => 2, 'featuredId' => 3, 'treeLeft' => 4, 'treeRight' => 5, 'treeScope' => 6, 'eblob' => 7, 'startDate' => 8, 'endDate' => 9, 'isActive' => 10, 'position' => 11, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::FEATURED_TYPE_ID => 1, self::FEATURED_MODEL => 2, self::FEATURED_ID => 3, self::TREE_LEFT => 4, self::TREE_RIGHT => 5, self::TREE_SCOPE => 6, self::EBLOB => 7, self::START_DATE => 8, self::END_DATE => 9, self::IS_ACTIVE => 10, self::POSITION => 11, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'FEATURED_TYPE_ID' => 1, 'FEATURED_MODEL' => 2, 'FEATURED_ID' => 3, 'TREE_LEFT' => 4, 'TREE_RIGHT' => 5, 'TREE_SCOPE' => 6, 'EBLOB' => 7, 'START_DATE' => 8, 'END_DATE' => 9, 'IS_ACTIVE' => 10, 'POSITION' => 11, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'featured_type_id' => 1, 'featured_model' => 2, 'featured_id' => 3, 'tree_left' => 4, 'tree_right' => 5, 'tree_scope' => 6, 'eblob' => 7, 'start_date' => 8, 'end_date' => 9, 'is_active' => 10, 'position' => 11, ),
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'FeaturedTypeId' => 1, 'FeaturedModel' => 2, 'FeaturedId' => 3, 'TreeLeft' => 4, 'TreeRight' => 5, 'TreeScope' => 6, 'Eblob' => 7, 'StartDate' => 8, 'EndDate' => 9, 'Position' => 10, 'IsActive' => 11, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'featuredTypeId' => 1, 'featuredModel' => 2, 'featuredId' => 3, 'treeLeft' => 4, 'treeRight' => 5, 'treeScope' => 6, 'eblob' => 7, 'startDate' => 8, 'endDate' => 9, 'position' => 10, 'isActive' => 11, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::FEATURED_TYPE_ID => 1, self::FEATURED_MODEL => 2, self::FEATURED_ID => 3, self::TREE_LEFT => 4, self::TREE_RIGHT => 5, self::TREE_SCOPE => 6, self::EBLOB => 7, self::START_DATE => 8, self::END_DATE => 9, self::POSITION => 10, self::IS_ACTIVE => 11, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'FEATURED_TYPE_ID' => 1, 'FEATURED_MODEL' => 2, 'FEATURED_ID' => 3, 'TREE_LEFT' => 4, 'TREE_RIGHT' => 5, 'TREE_SCOPE' => 6, 'EBLOB' => 7, 'START_DATE' => 8, 'END_DATE' => 9, 'POSITION' => 10, 'IS_ACTIVE' => 11, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'featured_type_id' => 1, 'featured_model' => 2, 'featured_id' => 3, 'tree_left' => 4, 'tree_right' => 5, 'tree_scope' => 6, 'eblob' => 7, 'start_date' => 8, 'end_date' => 9, 'position' => 10, 'is_active' => 11, ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
   );
 
@@ -195,8 +195,8 @@ abstract class BaseFeaturedPeer
       $criteria->addSelectColumn(FeaturedPeer::EBLOB);
       $criteria->addSelectColumn(FeaturedPeer::START_DATE);
       $criteria->addSelectColumn(FeaturedPeer::END_DATE);
-      $criteria->addSelectColumn(FeaturedPeer::IS_ACTIVE);
       $criteria->addSelectColumn(FeaturedPeer::POSITION);
+      $criteria->addSelectColumn(FeaturedPeer::IS_ACTIVE);
     }
     else
     {
@@ -210,8 +210,8 @@ abstract class BaseFeaturedPeer
       $criteria->addSelectColumn($alias . '.EBLOB');
       $criteria->addSelectColumn($alias . '.START_DATE');
       $criteria->addSelectColumn($alias . '.END_DATE');
-      $criteria->addSelectColumn($alias . '.IS_ACTIVE');
       $criteria->addSelectColumn($alias . '.POSITION');
+      $criteria->addSelectColumn($alias . '.IS_ACTIVE');
     }
   }
 

@@ -88,18 +88,18 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
   protected $end_date;
 
   /**
-   * The value for the is_active field.
-   * Note: this column has a database default value of: true
-   * @var        boolean
-   */
-  protected $is_active;
-
-  /**
    * The value for the position field.
    * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $position;
+
+  /**
+   * The value for the is_active field.
+   * Note: this column has a database default value of: true
+   * @var        boolean
+   */
+  protected $is_active;
 
   /**
    * Flag to prevent endless save loop, if this object is referenced
@@ -126,8 +126,8 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
     $this->tree_left = 0;
     $this->tree_right = 0;
     $this->tree_scope = 0;
-    $this->is_active = true;
     $this->position = 0;
+    $this->is_active = true;
   }
 
   /**
@@ -321,16 +321,6 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
   }
 
   /**
-   * Get the [is_active] column value.
-   * 
-   * @return     boolean
-   */
-  public function getIsActive()
-  {
-    return $this->is_active;
-  }
-
-  /**
    * Get the [position] column value.
    * 
    * @return     int
@@ -338,6 +328,16 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
   public function getPosition()
   {
     return $this->position;
+  }
+
+  /**
+   * Get the [is_active] column value.
+   * 
+   * @return     boolean
+   */
+  public function getIsActive()
+  {
+    return $this->is_active;
   }
 
   /**
@@ -565,6 +565,28 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
   }
 
   /**
+   * Set the value of [position] column.
+   * 
+   * @param      int $v new value
+   * @return     Featured The current object (for fluent API support)
+   */
+  public function setPosition($v)
+  {
+    if ($v !== null)
+    {
+      $v = (int) $v;
+    }
+
+    if ($this->position !== $v)
+    {
+      $this->position = $v;
+      $this->modifiedColumns[] = FeaturedPeer::POSITION;
+    }
+
+    return $this;
+  }
+
+  /**
    * Sets the value of the [is_active] column.
    * Non-boolean arguments are converted using the following rules:
    *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
@@ -598,28 +620,6 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [position] column.
-   * 
-   * @param      int $v new value
-   * @return     Featured The current object (for fluent API support)
-   */
-  public function setPosition($v)
-  {
-    if ($v !== null)
-    {
-      $v = (int) $v;
-    }
-
-    if ($this->position !== $v)
-    {
-      $this->position = $v;
-      $this->modifiedColumns[] = FeaturedPeer::POSITION;
-    }
-
-    return $this;
-  }
-
-  /**
    * Indicates whether the columns in this object are only set to default values.
    *
    * This method can be used in conjunction with isModified() to indicate whether an object is both
@@ -644,12 +644,12 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
         return false;
       }
 
-      if ($this->is_active !== true)
+      if ($this->position !== 0)
       {
         return false;
       }
 
-      if ($this->position !== 0)
+      if ($this->is_active !== true)
       {
         return false;
       }
@@ -687,8 +687,8 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
       $this->eblob = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
       $this->start_date = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
       $this->end_date = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-      $this->is_active = ($row[$startcol + 10] !== null) ? (boolean) $row[$startcol + 10] : null;
-      $this->position = ($row[$startcol + 11] !== null) ? (int) $row[$startcol + 11] : null;
+      $this->position = ($row[$startcol + 10] !== null) ? (int) $row[$startcol + 10] : null;
+      $this->is_active = ($row[$startcol + 11] !== null) ? (boolean) $row[$startcol + 11] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -1101,10 +1101,10 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
         return $this->getEndDate();
         break;
       case 10:
-        return $this->getIsActive();
+        return $this->getPosition();
         break;
       case 11:
-        return $this->getPosition();
+        return $this->getIsActive();
         break;
       default:
         return null;
@@ -1145,8 +1145,8 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
       $keys[7] => $this->getEblob(),
       $keys[8] => $this->getStartDate(),
       $keys[9] => $this->getEndDate(),
-      $keys[10] => $this->getIsActive(),
-      $keys[11] => $this->getPosition(),
+      $keys[10] => $this->getPosition(),
+      $keys[11] => $this->getIsActive(),
     );
     return $result;
   }
@@ -1210,10 +1210,10 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
         $this->setEndDate($value);
         break;
       case 10:
-        $this->setIsActive($value);
+        $this->setPosition($value);
         break;
       case 11:
-        $this->setPosition($value);
+        $this->setIsActive($value);
         break;
     }
   }
@@ -1249,8 +1249,8 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
     if (array_key_exists($keys[7], $arr)) $this->setEblob($arr[$keys[7]]);
     if (array_key_exists($keys[8], $arr)) $this->setStartDate($arr[$keys[8]]);
     if (array_key_exists($keys[9], $arr)) $this->setEndDate($arr[$keys[9]]);
-    if (array_key_exists($keys[10], $arr)) $this->setIsActive($arr[$keys[10]]);
-    if (array_key_exists($keys[11], $arr)) $this->setPosition($arr[$keys[11]]);
+    if (array_key_exists($keys[10], $arr)) $this->setPosition($arr[$keys[10]]);
+    if (array_key_exists($keys[11], $arr)) $this->setIsActive($arr[$keys[11]]);
   }
 
   /**
@@ -1272,8 +1272,8 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
     if ($this->isColumnModified(FeaturedPeer::EBLOB)) $criteria->add(FeaturedPeer::EBLOB, $this->eblob);
     if ($this->isColumnModified(FeaturedPeer::START_DATE)) $criteria->add(FeaturedPeer::START_DATE, $this->start_date);
     if ($this->isColumnModified(FeaturedPeer::END_DATE)) $criteria->add(FeaturedPeer::END_DATE, $this->end_date);
-    if ($this->isColumnModified(FeaturedPeer::IS_ACTIVE)) $criteria->add(FeaturedPeer::IS_ACTIVE, $this->is_active);
     if ($this->isColumnModified(FeaturedPeer::POSITION)) $criteria->add(FeaturedPeer::POSITION, $this->position);
+    if ($this->isColumnModified(FeaturedPeer::IS_ACTIVE)) $criteria->add(FeaturedPeer::IS_ACTIVE, $this->is_active);
 
     return $criteria;
   }
@@ -1345,8 +1345,8 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
     $copyObj->setEblob($this->getEblob());
     $copyObj->setStartDate($this->getStartDate());
     $copyObj->setEndDate($this->getEndDate());
-    $copyObj->setIsActive($this->getIsActive());
     $copyObj->setPosition($this->getPosition());
+    $copyObj->setIsActive($this->getIsActive());
     if ($makeNew)
     {
       $copyObj->setNew(true);
@@ -1408,8 +1408,8 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
     $this->eblob = null;
     $this->start_date = null;
     $this->end_date = null;
-    $this->is_active = null;
     $this->position = null;
+    $this->is_active = null;
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;
     $this->clearAllReferences();

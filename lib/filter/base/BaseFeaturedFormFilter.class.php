@@ -21,8 +21,8 @@ abstract class BaseFeaturedFormFilter extends BaseFormFilterPropel
       'eblob'            => new sfWidgetFormFilterInput(),
       'start_date'       => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),
       'end_date'         => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),
-      'is_active'        => new sfWidgetFormChoice(array('choices' => array('' => 'yes or no', 1 => 'yes', 0 => 'no'))),
       'position'         => new sfWidgetFormFilterInput(),
+      'is_active'        => new sfWidgetFormChoice(array('choices' => array('' => 'yes or no', 1 => 'yes', 0 => 'no'))),
     ));
 
     $this->setValidators(array(
@@ -35,8 +35,8 @@ abstract class BaseFeaturedFormFilter extends BaseFormFilterPropel
       'eblob'            => new sfValidatorPass(array('required' => false)),
       'start_date'       => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDate(array('required' => false)), 'to_date' => new sfValidatorDate(array('required' => false)))),
       'end_date'         => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDate(array('required' => false)), 'to_date' => new sfValidatorDate(array('required' => false)))),
-      'is_active'        => new sfValidatorChoice(array('required' => false, 'choices' => array('', 1, 0))),
       'position'         => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
+      'is_active'        => new sfValidatorChoice(array('required' => false, 'choices' => array('', 1, 0))),
     ));
 
     $this->widgetSchema->setNameFormat('featured_filters[%s]');
@@ -64,8 +64,8 @@ abstract class BaseFeaturedFormFilter extends BaseFormFilterPropel
       'eblob'            => 'Text',
       'start_date'       => 'Date',
       'end_date'         => 'Date',
-      'is_active'        => 'Boolean',
       'position'         => 'Number',
+      'is_active'        => 'Boolean',
     );
   }
 }

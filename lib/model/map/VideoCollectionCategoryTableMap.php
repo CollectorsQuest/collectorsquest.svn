@@ -40,7 +40,7 @@ class VideoCollectionCategoryTableMap extends TableMap
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
     $this->addForeignKey('VIDEO_ID', 'VideoId', 'INTEGER', 'video', 'ID', false, null, null);
-    $this->addForeignKey('COLLECTION_CATEGORY_ID', 'CollectionCategoryId', 'INTEGER', 'collection_category', 'ID', false, null, null);
+    $this->addForeignKey('COLLECTION_CATEGORY_ID', 'CollectionCategoryId', 'INTEGER', 'collection_category', 'ID', true, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     // validators
   }
@@ -51,7 +51,7 @@ class VideoCollectionCategoryTableMap extends TableMap
   public function buildRelations()
   {
     $this->addRelation('Video', 'Video', RelationMap::MANY_TO_ONE, array('video_id' => 'id', ), null, null);
-    $this->addRelation('CollectionCategory', 'CollectionCategory', RelationMap::MANY_TO_ONE, array('collection_category_id' => 'id', ), null, null);
+    $this->addRelation('CollectionCategory', 'CollectionCategory', RelationMap::MANY_TO_ONE, array('collection_category_id' => 'id', ), 'CASCADE', null);
   }
 
   /**

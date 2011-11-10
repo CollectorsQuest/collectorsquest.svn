@@ -39,16 +39,16 @@ class CollectionTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-    $this->addForeignKey('COLLECTION_CATEGORY_ID', 'CollectionCategoryId', 'SMALLINT', 'collection_category', 'ID', false, null, null);
+    $this->addForeignKey('COLLECTION_CATEGORY_ID', 'CollectionCategoryId', 'INTEGER', 'collection_category', 'ID', false, null, null);
     $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
     $this->addColumn('NAME', 'Name', 'VARCHAR', true, 255, null);
     $this->getColumn('NAME', false)->setPrimaryString(true);
     $this->addColumn('SLUG', 'Slug', 'VARCHAR', true, 128, null);
     $this->addColumn('DESCRIPTION', 'Description', 'LONGVARCHAR', true, null, null);
-    $this->addColumn('NUM_ITEMS', 'NumItems', 'INTEGER', true, null, 0);
-    $this->addColumn('NUM_VIEWS', 'NumViews', 'INTEGER', true, null, 0);
-    $this->addColumn('NUM_COMMENTS', 'NumComments', 'INTEGER', true, null, 0);
-    $this->addColumn('NUM_RATINGS', 'NumRatings', 'INTEGER', true, null, 0);
+    $this->addColumn('NUM_ITEMS', 'NumItems', 'INTEGER', false, null, 0);
+    $this->addColumn('NUM_VIEWS', 'NumViews', 'INTEGER', false, null, 0);
+    $this->addColumn('NUM_COMMENTS', 'NumComments', 'INTEGER', false, null, 0);
+    $this->addColumn('NUM_RATINGS', 'NumRatings', 'INTEGER', false, null, 0);
     $this->addColumn('SCORE', 'Score', 'INTEGER', false, null, 0);
     $this->addColumn('IS_PUBLIC', 'IsPublic', 'BOOLEAN', false, 1, true);
     $this->addColumn('IS_FEATURED', 'IsFeatured', 'BOOLEAN', false, 1, false);
