@@ -357,6 +357,7 @@ sfPropelBehavior::add(
       'separator' => '-',
       'permanent' => false,
       'lowercase' => true,
+      'ascii' => true,
       'chars' => 64
     )
   )

@@ -118,7 +118,9 @@ sfPropelBehavior::add(
         'to' => VideoPeer::SLUG
       ),
       'separator' => '-',
-      'permanent' => false
+      'permanent' => false,
+      'ascii' => true,
+      'chars' => 64
     )
   )
 );
