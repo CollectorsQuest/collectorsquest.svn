@@ -1197,7 +1197,7 @@ abstract class BaseCollectorPeer
    */
   static public function getUniqueColumnNames()
   {
-    return array(array('facebook_id'));
+    return array(array('facebook_id'), array('slug'), array('email'));
   }
 
   // symfony_behaviors behavior

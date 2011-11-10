@@ -41,7 +41,7 @@ abstract class BaseCollectorForm extends BaseFormPropel
 
     $this->setValidators(array(
       'id'                  => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
-      'facebook_id'         => new sfValidatorString(array('max_length' => 64, 'required' => false)),
+      'facebook_id'         => new sfValidatorString(array('max_length' => 20, 'required' => false)),
       'username'            => new sfValidatorString(array('max_length' => 64)),
       'display_name'        => new sfValidatorString(array('max_length' => 64)),
       'slug'                => new sfValidatorString(array('max_length' => 64, 'required' => false)),
@@ -66,7 +66,11 @@ abstract class BaseCollectorForm extends BaseFormPropel
     ));
 
     $this->validatorSchema->setPostValidator(
-      new sfValidatorPropelUnique(array('model' => 'Collector', 'column' => array('facebook_id')))
+      new sfValidatorAnd(array(
+        new sfValidatorPropelUnique(array('model' => 'Collector', 'column' => array('facebook_id'))),
+        new sfValidatorPropelUnique(array('model' => 'Collector', 'column' => array('slug'))),
+        new sfValidatorPropelUnique(array('model' => 'Collector', 'column' => array('email'))),
+      ))
     );
 
     $this->widgetSchema->setNameFormat('collector[%s]');

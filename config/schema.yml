@@ -7,14 +7,14 @@ classes:
   Collector:
     columns:
       id:             ~
-      facebook_id:    { type: varchar, size: 64, required: false, index: unique }
+      facebook_id:    { type: varchar, size: 20, required: false, index: unique }
       username:       { type: varchar, size: 64, required: true }
       display_name:   { type: varchar, size: 64, required: true, primaryString: true }
-      slug:           varchar(64)
+      slug:           { type: varchar, size: 64, index: unique }
       sha1_password:  { type: varchar, size: 40, required: true }
       salt:           { type: varchar, size: 32, required: true }
       score:          { type: integer, required: false, default: 0 }
-      email:          { type: varchar, size: 128, required: true }
+      email:          { type: varchar, size: 128, required: true, index: unique }
       user_type:      { type: char, sqlType: "ENUM('Collector','Seller')", default: Collector, required: true }
       items_allowed:         integer
       what_you_collect:      { type: varchar, size: 255, required: false }
@@ -135,7 +135,7 @@ classes:
 
   CollectionCategory:
     columns:
-      id:         { type: smallint, autoIncrement: true, primaryKey: true }
+      id:  ~
       parent_id:  { type: integer, default: 0, required: false }
       name:       { type: varchar, size: 64, required: true, primaryString: true }
       slug:       { type: varchar, size: 64, required: true }

@@ -3,44 +3,41 @@
 # It "suspends judgement" for fkey relationships until are tables are set.
 SET FOREIGN_KEY_CHECKS = 0;
 
-#-----------------------------------------------------------------------------
-#-- tag
-#-----------------------------------------------------------------------------
+-- ---------------------------------------------------------------------
+-- tag
+-- ---------------------------------------------------------------------
 
 DROP TABLE IF EXISTS `tag`;
 
-
 CREATE TABLE `tag`
 (
-	`id` INTEGER  NOT NULL AUTO_INCREMENT,
-	`name` VARCHAR(100),
-	`is_triple` TINYINT,
-	`triple_namespace` VARCHAR(100),
-	`triple_key` VARCHAR(100),
-	`triple_value` VARCHAR(100),
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`name` VARCHAR(128),
+	`slug` VARCHAR(255),
+	`is_triple` TINYINT(1) DEFAULT 0,
+	`triple_namespace` VARCHAR(128),
+	`triple_key` VARCHAR(128),
+	`triple_value` VARCHAR(128),
 	PRIMARY KEY (`id`),
-	KEY `name`(`name`),
-	KEY `triple1`(`triple_namespace`),
-	KEY `triple2`(`triple_key`),
-	KEY `triple3`(`triple_value`)
+	INDEX `tag_I_1` (`name`),
+	INDEX `tag_I_2` (`triple_namespace`, `triple_key`)
 ) ENGINE=InnoDB;
 
-#-----------------------------------------------------------------------------
-#-- tagging
-#-----------------------------------------------------------------------------
+-- ---------------------------------------------------------------------
+-- tagging
+-- ---------------------------------------------------------------------
 
 DROP TABLE IF EXISTS `tagging`;
 
-
 CREATE TABLE `tagging`
 (
-	`id` INTEGER  NOT NULL AUTO_INCREMENT,
-	`tag_id` INTEGER  NOT NULL,
-	`taggable_model` VARCHAR(30),
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`tag_id` INTEGER NOT NULL,
+	`taggable_model` VARCHAR(50),
 	`taggable_id` INTEGER,
 	PRIMARY KEY (`id`),
-	KEY `tag`(`tag_id`),
-	KEY `taggable`(`taggable_model`, `taggable_id`),
+	INDEX `tagging_I_1` (`taggable_model`, `taggable_id`),
+	INDEX `tagging_FI_1` (`tag_id`),
 	CONSTRAINT `tagging_FK_1`
 		FOREIGN KEY (`tag_id`)
 		REFERENCES `tag` (`id`)

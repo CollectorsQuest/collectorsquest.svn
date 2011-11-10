@@ -39,7 +39,7 @@ class CollectorTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-    $this->addColumn('FACEBOOK_ID', 'FacebookId', 'VARCHAR', false, 64, null);
+    $this->addColumn('FACEBOOK_ID', 'FacebookId', 'VARCHAR', false, 20, null);
     $this->addColumn('USERNAME', 'Username', 'VARCHAR', true, 64, null);
     $this->addColumn('DISPLAY_NAME', 'DisplayName', 'VARCHAR', true, 64, null);
     $this->getColumn('DISPLAY_NAME', false)->setPrimaryString(true);
