@@ -2,12 +2,10 @@
 
 /**
  * Data object containing the SQL and PHP code to migrate the database
- * up to version 1320672277.
- * Generated on 2011-11-07 08:24:37 by root
+ * up to version 1320927776.
  */
-class PropelMigration_1320672277
+class PropelMigration_1320927776
 {
-
   public function preUp($manager)
   {
     // add the pre-migration code here
@@ -15,7 +13,20 @@ class PropelMigration_1320672277
 
   public function postUp($manager)
   {
-    // add the post-migration code here
+    /** @var $collectibles Collectible[] */
+    $collectibles = CollectibleQuery::create()
+                  ->setFormatter(ModelCriteria::FORMAT_ON_DEMAND)
+                  ->find();
+
+    foreach ($collectibles as $collectible)
+    {
+      $name = $collectible->getName();
+      $collectible->setName($name . ' ');
+      $collectible->save();
+
+      $collectible->setName($name);
+      $collectible->save();
+    }
   }
 
   public function preDown($manager)
@@ -36,9 +47,7 @@ class PropelMigration_1320672277
    */
   public function getUpSQL()
   {
-    return array(
-      'propel' => "ALTER TABLE `tag` ADD `slug` VARCHAR(255) NOT NULL DEFAULT '' AFTER `name`;",
-    );
+    return array();
   }
 
   /**
@@ -49,8 +58,6 @@ class PropelMigration_1320672277
    */
   public function getDownSQL()
   {
-    return array(
-      'propel' => "ALTER TABLE `tag` DROP IF EXISTS `slug`;",
-    );
+    return array();
   }
 }
