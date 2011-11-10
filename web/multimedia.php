@@ -1,5 +1,7 @@
 <?php
 
+date_default_timezone_set('America/New_York');
+
 $parts = explode('.collectorsquest.', $_SERVER['SERVER_NAME']);
 if (count($parts) != 2)
 {
@@ -34,7 +36,7 @@ if (in_array($type, array('image', 'video')))
     if ($stmt->execute(array($m[1], $type)))
     {
       $row = $stmt->fetch(PDO::FETCH_NAMED);
-      
+
       $path  = '/uploads/'. $row['model'] .'/'. date_format(new DateTime($row['created_at']), 'Y/m/d');
 
       $extension = array_shift(explode('?', end(explode('.', $filename))));
