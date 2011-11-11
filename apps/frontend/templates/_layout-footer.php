@@ -30,12 +30,13 @@
     }
   ?>
 </div>
-<div id="loading" class="rounded"><img src="/images/loading.large.gif" alt="Loading, please wait..."
-                                       style="margin-top: 100px;"/></div>
+<div id="loading" class="rounded">
+  <img src="/images/loading.large.gif" alt="Loading, please wait..." style="margin-top: 100px;"/></div>
 <div id="fb-root"></div>
 
 <?php include_partial('global/javascripts'); ?>
 <?php include_partial('global/ad_slots'); ?>
+<?php // include_partial('global/olark'); ?>
 
 <?php cqStats::timing('collectorsquest.modules.'. $sf_context->getModuleName() .'.'. $sf_context->getActionName(), cqTimer::getInstance()->getElapsedTime()); ?>
 <!-- Page generated in <?= cqTimer::getInstance()->getElapsedTime(); ?> seconds //-->
