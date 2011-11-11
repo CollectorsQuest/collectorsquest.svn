@@ -36,7 +36,7 @@
 
 <?php include_partial('global/javascripts'); ?>
 <?php include_partial('global/ad_slots'); ?>
-<?php // include_partial('global/olark'); ?>
+<?php include_partial('global/olark'); ?>
 
 <?php cqStats::timing('collectorsquest.modules.'. $sf_context->getModuleName() .'.'. $sf_context->getActionName(), cqTimer::getInstance()->getElapsedTime()); ?>
 <!-- Page generated in <?= cqTimer::getInstance()->getElapsedTime(); ?> seconds //-->
