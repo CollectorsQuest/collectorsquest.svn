@@ -21,7 +21,8 @@ class ProjectConfiguration extends sfProjectConfiguration
       'sfFormExtraPlugin', 'sfGuardPlugin', 'sfGravatarPlugin'
     );
     $this->enablePlugins(
-      'iceBehaviorsPlugin', 'iceLibsPlugin', 'iceTaggablePlugin', 'iceBackendPlugin'
+      'iceAssetsPlugin', 'iceBehaviorsPlugin', 'iceLibsPlugin',
+      'iceTaggablePlugin', 'iceBackendPlugin'
     );
   }
 }

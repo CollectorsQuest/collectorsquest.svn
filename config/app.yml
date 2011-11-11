@@ -11,6 +11,9 @@ all:
     secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
     timeout:  3600
 
+  ice_assets:
+    domain: cqcdns.com
+
   paypal:
     api_username: "dvds_api1.collectorsquest.com"
     api_password: ""
@@ -62,6 +65,9 @@ stg:
     static_domain: "http://static.collectorsquest.stg"
     multimedia_domain: "http://multimedia.collectorsquest.stg"
 
+  ice_assets:
+    domain: cqcdns.stg
+
   god_auth:
     secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
     timeout:  3600
@@ -97,6 +103,9 @@ dev:
     www_domain: "http://www.collectorsquest.dev/"
     static_domain: "http://static.collectorsquest.dev/"
     multimedia_domain: "http://multimedia.collectorsquest.dev"
+
+  ice_assets:
+    domain: cqcdns.dev
 
   god_auth:
     secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
