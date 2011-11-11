@@ -2,9 +2,13 @@
 
 class PropelMigration_1320938840
 {
-  public function preUp($manager)
+  /**
+   * @param  PropelMigrationManager  $manager
+   */
+  public function preUp(PropelMigrationManager $manager)
   {
-    $con = Propel::getConnection('propel', Propel::CONNECTION_WRITE);
+    /** @var $pdo PDO */
+    $pdo = $manager->getPdoConnection('propel');
 
     $sql = "
       SELECT email, COUNT(collector.id) AS accounts
@@ -15,7 +19,7 @@ class PropelMigration_1320938840
        ORDER BY accounts DESC
     ";
 
-    $stmt = $con->prepare($sql);
+    $stmt = $pdo->prepare($sql);
     $stmt->execute();
     $emails = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
     $stmt->closeCursor();
@@ -26,24 +30,27 @@ class PropelMigration_1320938840
 
       CollectorQuery::disableSoftDelete();
 
-      $collectors = CollectorQuery::create()->filterByEmail($email)->find($con);
+      $collectors = CollectorQuery::create()->filterByEmail($email)->find();
       for ($i=1; $i<count($collectors); $i++)
       {
         $collectors[$i]->setEmail(str_replace('@', '+'. $collectors[$i]->getId() .'@', $email));
-        $collectors[$i]->save($con);
+        $collectors[$i]->save();
       }
     }
 
     /** @var $collectors Collector[] */
-    $collectors = CollectorQuery::create()->filterByUsername('fb%', Criteria::LIKE)->find($con);
+    $collectors = CollectorQuery::create()->filterByUsername('fb%', Criteria::LIKE)->find();
     foreach ($collectors as $collector)
     {
       $collector->setFacebookId(str_replace('fb', '', $collector->getUserName()));
-      $collector->save($con);
+      $collector->save();
     }
   }
 
-  public function postUp($manager)
+  /**
+   * @param  PropelMigrationManager  $manager
+   */
+  public function postUp(PropelMigrationManager $manager)
   {
 
   }

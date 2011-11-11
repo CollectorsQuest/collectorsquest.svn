@@ -8,7 +8,7 @@ class manageComponents extends sfComponents
       0 => array(
         'text' => 'View Your Profile',
         'icon' => 'note',
-        'route' => '@collector_by_slug?slug='. $this->getUser()->getSlug()
+        'route' => '@collector_by_id?id='.$this->getUser()->getId().'&slug='.$this->getUser()->getSlug()
       )
     );
 
@@ -21,7 +21,7 @@ class manageComponents extends sfComponents
       0 => array(
         'text' => 'View Your Profile',
         'icon' => 'note',
-        'route' => '@collector_by_slug?slug='. $this->getUser()->getSlug()
+        'route' => '@collector_by_id?id='.$this->getUser()->getId().'&slug='.$this->getUser()->getSlug()
       )
     );
 

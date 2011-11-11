@@ -8,7 +8,7 @@ CREATE TABLE `collector_interview` (
   `collection_id` int(11) DEFAULT NULL,
   `title` varchar(128) NOT NULL,
   `catch_phrase` varchar(128) NOT NULL,
-  `is_active` tinyint(4) DEFAULT '0',
+  `is_active` tinyint(1) DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `collector_interview_FI_1` (`collector_id`),

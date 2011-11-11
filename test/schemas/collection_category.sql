@@ -5,6 +5,7 @@ CREATE TABLE `collection_category` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `parent_id` int(11) DEFAULT '0',
   `name` varchar(64) NOT NULL,
+  `slug` varchar(64) NOT NULL,
   `score` int(11) DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

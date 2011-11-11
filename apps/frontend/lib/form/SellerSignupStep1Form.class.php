@@ -3,8 +3,9 @@
 class SellerSignupStep1Form extends BaseFormPropel
 {
   public function setup()
-  {  
-      $recaptcha = sfConfig::get('app_api_recaptcha');
+  {
+    $recaptcha = sfConfig::get('app_api_recaptcha');
+
   	// Set Widgets
     $this->setWidgets(array(
       'username'       		=> new sfWidgetFormInputText(),
@@ -12,17 +13,17 @@ class SellerSignupStep1Form extends BaseFormPropel
       'password_again' 		=> new sfWidgetFormInputPassword(),
       'display_name'   		=> new sfWidgetFormInputText(),
       'email'          		=> new sfWidgetFormInputText(),
-	  
+
       'what_you_collect'	=> new sfWidgetFormInputText(),
       'what_you_sell'		=> new sfWidgetFormInputText(),
 
 //      'captcha'    => new sfWidgetFormReCaptcha(array('pubic_key' => $recaptcha['public_key']))
     ));
 
-	// Set Validators
+	  // Set Validators
     $this->setValidators(array(
       'username'       => new sfValidatorString(array('max_length' => 50, 'required' => true), array('required' => 'Please enter username')),
-      'password'       => new sfValidatorString(array('min_length' => 6, 'max_length' => 50, 'required' => true), 
+      'password'       => new sfValidatorString(array('min_length' => 6, 'max_length' => 50, 'required' => true),
 	  											array('required' => 'Please enter password',
 													  'min_length'	=> 'Password must be min 6 and max 50 characters long',
 													  'max_length'	=> 'Password must be min 6 and max 50 characters long'
@@ -30,10 +31,10 @@ class SellerSignupStep1Form extends BaseFormPropel
       'password_again' => new sfValidatorPass(),
       'display_name'   => new sfValidatorString(array('max_length' => 50, 'required' => true), array('required' => 'Please enter display name')),
       'email'          => new sfValidatorEmail(array('required' => true), array('required' => 'Please enter email')),
-	  
+
       'what_you_collect'	=> new sfValidatorString(array('max_length' => 255, 'required' => false)),
       'what_you_sell'   	=> new sfValidatorString(array('max_length' => 255, 'required' => true), array('required' => 'Please enter what you sell')),
-	  
+
 //      'captcha'    => new sfValidatorReCaptcha(array('private_key' => $recaptcha['private_key']))
     ));
 
@@ -41,6 +42,10 @@ class SellerSignupStep1Form extends BaseFormPropel
       new sfValidatorPropelUnique(
         array('model' => 'Collector', 'column' => 'username'),
         array('invalid' => 'This username is already taken, please choose another one!')
+      ),
+      new sfValidatorPropelUnique(
+        array('model' => 'Collector', 'column' => 'email'),
+        array('invalid' => 'This email already has an account, did you forget your password?')
       ),
       new sfValidatorSchemaCompare(
         'password', sfValidatorSchemaCompare::EQUAL, 'password_again',
@@ -58,6 +63,7 @@ class SellerSignupStep1Form extends BaseFormPropel
 
     parent::setup();
   }
+
   public function getModelName()
   {
     return 'Collector';

@@ -8,7 +8,7 @@ CREATE TABLE `playlist` (
   `description` text NOT NULL,
   `type` varchar(64) NOT NULL,
   `length` int(11) DEFAULT NULL,
-  `is_published` tinyint(4) DEFAULT NULL,
+  `is_published` tinyint(1) DEFAULT NULL,
   `published_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)

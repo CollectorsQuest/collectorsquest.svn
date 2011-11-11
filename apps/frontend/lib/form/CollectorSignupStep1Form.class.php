@@ -5,14 +5,14 @@ class CollectorSignupStep1Form extends BaseFormPropel
   public function setup()
   {
     $recaptcha = sfConfig::get('app_api_recaptcha');
-	
+
     $this->setWidgets(array(
       'username'       => new sfWidgetFormInputText(),
       'password'       => new sfWidgetFormInputPassword(),
       'password_again' => new sfWidgetFormInputPassword(),
       'display_name'   => new sfWidgetFormInputText(),
       'email'          => new sfWidgetFormInputText(),
-	  
+
 //      'captcha'    => new sfWidgetFormReCaptcha(array('public_key' => $recaptcha['public_key']))
     ));
 
@@ -22,7 +22,7 @@ class CollectorSignupStep1Form extends BaseFormPropel
       'password_again' => new sfValidatorPass(),
       'display_name'   => new sfValidatorString(array('max_length' => 50, 'required' => true)),
       'email'          => new sfValidatorEmail(array('required' => true)),
-	  
+
 //      'captcha'    => new sfValidatorReCaptcha(array('private_key' => $recaptcha['private_key']))
     ));
 
@@ -30,6 +30,10 @@ class CollectorSignupStep1Form extends BaseFormPropel
       new sfValidatorPropelUnique(
         array('model' => 'Collector', 'column' => 'username'),
         array('invalid' => 'This username is already taken, please choose another one!')
+      ),
+      new sfValidatorPropelUnique(
+        array('model' => 'Collector', 'column' => 'email'),
+        array('invalid' => 'This email already has an account, did you forget your password?')
       ),
       new sfValidatorSchemaCompare(
         'password', sfValidatorSchemaCompare::EQUAL, 'password_again',

@@ -9,7 +9,7 @@ CREATE TABLE `custom_value` (
   `value_text` varchar(255) DEFAULT NULL,
   `value_date` date DEFAULT NULL,
   `value_numeric` float DEFAULT NULL,
-  `value_bool` tinyint(4) DEFAULT '0',
+  `value_bool` tinyint(1) DEFAULT '0',
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),

@@ -45,6 +45,10 @@ class CollectorSignupForm extends BaseFormPropel
         array('model' => 'Collector', 'column' => 'username'),
         array('invalid' => 'This username is already taken, please choose another one!')
       ),
+      new sfValidatorPropelUnique(
+        array('model' => 'Collector', 'column' => 'email'),
+        array('invalid' => 'This email already has an account, did you forget your password?')
+      ),
       new sfValidatorSchemaCompare(
         'password', sfValidatorSchemaCompare::EQUAL, 'password_again',
         array('throw_global_error' => true),

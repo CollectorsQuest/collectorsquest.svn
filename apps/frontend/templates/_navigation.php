@@ -59,7 +59,7 @@
       <div class="<?php echo ($active == 'profile') ? 'icon active' : 'icon' ?>">
         <img src="/images/s.gif" width="40" height="50" alt="<?= __('Your Profile'); ?>">
       </div>
-      <?= link_to(__('Your&nbsp; Profile'), '@collector_by_slug?slug='. $sf_user->getSlug()); ?>
+      <?= link_to(__('Your&nbsp; Profile'), '@collector_by_id?id='.$sf_user->getId().'&slug='. $sf_user->getSlug()); ?>
     </div>
     <div class="span-2 collections">
       <div class="<?php echo ($active == 'collections') ? 'icon active' : 'icon' ?>">

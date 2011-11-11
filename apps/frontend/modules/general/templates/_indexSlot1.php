@@ -5,7 +5,7 @@
         <?php
           echo link_to(
             image_tag('s.gif', array('width' => 40, 'height' => 50, 'alt_title' => __('Your Profile'))),
-            '@collector_by_slug?slug='. $sf_user->getSlug(),
+            '@collector_by_id?id='.$sf_user->getId().'&slug='.$sf_user->getSlug(),
             array('title' => __('Your Profile'))
           );
         ?>

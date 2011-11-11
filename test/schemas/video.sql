@@ -11,7 +11,7 @@ CREATE TABLE `video` (
   `filename` varchar(128) DEFAULT NULL,
   `thumb_small` varchar(128) DEFAULT NULL,
   `thumb_large` varchar(128) DEFAULT NULL,
-  `is_published` tinyint(4) DEFAULT NULL,
+  `is_published` tinyint(1) DEFAULT NULL,
   `published_at` datetime DEFAULT NULL,
   `uploaded_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
