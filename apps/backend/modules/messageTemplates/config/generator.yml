@@ -1,16 +1,15 @@
 generator:
-  class: sfPropelGenerator
+  class: IcePropelGenerator
   param:
     model_class:           MessageTemplate
-    theme:                 admin15
+    theme:                 bootstrap
     non_verbose_templates: true
     with_show:             false
     singular:              MessageTemplate
     plural:                MessageTemplates
     route_prefix:          message_template
     with_propel_route:     1
-    actions_base_class:    sfActions
-    css:                   backend/empty.css
+    actions_base_class:    cqBackendActions
 
     config:
       actions: ~

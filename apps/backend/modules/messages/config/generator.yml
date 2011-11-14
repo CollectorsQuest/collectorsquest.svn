@@ -1,16 +1,15 @@
 generator:
-  class: sfPropelGenerator
+  class: IcePropelGenerator
   param:
     model_class:           PrivateMessage
-    theme:                 admin15
+    theme:                 bootstrap
     non_verbose_templates: true
     with_show:             false
     singular:              PrivateMessage
     plural:                PrivateMessages
     route_prefix:          private_message
     with_propel_route:     1
-    actions_base_class:    sfActions
-    css:                   backend/empty.css
+    actions_base_class:    cqBackendActions
 
     config:
       actions: ~
