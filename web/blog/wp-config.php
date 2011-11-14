@@ -1,10 +1,5 @@
 <?php
 
-define('DB_NAME', 'collectorsquest_dev');
-define('DB_USER', 'root');
-define('DB_PASSWORD', '');
-define('DB_HOST', 'cq-mysql-master');
-
 include dirname(__FILE__) .'/../../config/secure/wp-config.php';
 
 define('SECRET_KEY', 'ipx$\"\'GQ!;[Mm`~X}wNat}FG#&S7}8C MsqoNbx/ii8,QL~=.I*BMlm>%i_` H>[');
