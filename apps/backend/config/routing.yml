@@ -160,7 +160,7 @@ logout:
 
 homepage:
   url:   /
-  param: { module: sfAdminDash, action: dashboard }
+  param: { module: iceBackendModule, action: dashboard }
 
 # generic rules
 default_index:

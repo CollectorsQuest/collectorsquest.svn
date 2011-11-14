@@ -6,18 +6,19 @@ class backendConfiguration extends sfApplicationConfiguration
 
   public function configure()
   {
+    ;
   }
 
   public function generateFrontendUrl($name, $parameters = array())
   {
-    return sfConfig::get('app_cq_www_domain') . $this->getFrontendRouting()->generate($name, $parameters);
+    return sfConfig::get('app_www_domain') . $this->getFrontendRouting()->generate($name, $parameters, true);
   }
 
   public function getFrontendRouting()
   {
     if (!$this->frontendRouting)
     {
-      $this->frontendRouting = new sfPatternRouting(new sfEventDispatcher());
+      $this->frontendRouting = new IcePatternRouting(new sfEventDispatcher());
 
       $config = new sfRoutingConfigHandler();
       $routes = $config->evaluate(array(sfConfig::get('sf_apps_dir').'/frontend/config/routing.yml'));

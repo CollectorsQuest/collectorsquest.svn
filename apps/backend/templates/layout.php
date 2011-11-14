@@ -4,15 +4,11 @@
     <?php include_http_metas() ?>
     <?php include_metas() ?>
     <?php include_title() ?>
-    <link rel="shortcut icon" href="/favicon.ico" />
 
-    <?php include_stylesheets(); ?>
-    <?php include_javascripts(); ?>
-
+    <link rel="shortcut icon" href="/images/favicon.ico" />
+    <?php include_partial('iceBackendModule/head'); ?>
   </head>
   <body>
-    <?php include_component('sfAdminDash','header'); ?>
-    <?php echo $sf_content ?>
-    <?php include_partial('sfAdminDash/footer'); ?>
+    <?php include_component('iceBackendModule', 'body', array('content' => $sf_content)); ?>
   </body>
 </html>
