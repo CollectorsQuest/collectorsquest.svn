@@ -54,6 +54,6 @@
 <?php
   if (!$sf_user->isOwnerOf($message))
   {
-    include_partial('messages/reply', array('message' => $message));
+    include_component('messages', 'reply', array('message' => $message));
   }
 ?>

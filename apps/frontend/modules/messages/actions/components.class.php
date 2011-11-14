@@ -1,6 +1,6 @@
 <?php
 
-class messagesComponents extends sfComponents
+class messagesComponents extends cqComponents
 {
   public function executeSidebar()
   {
@@ -25,6 +25,23 @@ class messagesComponents extends sfComponents
         'route' => '@messages_sent'
       )
     );
+
+    return sfView::SUCCESS;
+  }
+
+  public function executeReply()
+  {
+    /** @var $message PrivateMessage */
+    $message = $this->getVar('message');
+
+    $this->form = new PrivateMessageForm();
+    $this->form->setDefaults(array(
+      'id' => $message->getId(),
+      'sender' => $message->getSender(),
+      'subject' => $message->getSubject()
+    ));
+
+    $this->message = $message;
 
     return sfView::SUCCESS;
   }

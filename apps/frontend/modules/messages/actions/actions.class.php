@@ -139,21 +139,15 @@ class messagesActions extends cqActions
 
   public function executeCompose(sfWebRequest $request)
   {
-    $message = null;
+    $post = $request->getParameter('message');
+    $message = PrivateMessagePeer::retrieveByPK($post['id']);
 
-    if ($request->isMethod('post') && $request->getParameter('message[id]'))
-    {
-      /** @var $message PrivateMessage */
-      $message = PrivateMessagePeer::retrieveByPK($request->getParameter('message[id]'));
-      if ($message && $message->getSender() == $request->getParameter('message[receiver]'))
-      {
-        sfForm::disableCSRFProtection();
-      }
-    }
+    // A shortcut for clarity
+    $sender = $this->getCollector();
 
-    $form = new PrivateMessageForm();
+    $form = new PrivateMessageForm($message);
     $form->setDefaults(array(
-      'sender' => $this->getUser()->getId(),
+      'sender' => $sender->getId(),
       'subject' => $request->getParameter('subject'))
     );
 
@@ -168,9 +162,6 @@ class messagesActions extends cqActions
         /** @var $receiver Collector */
         foreach ($collectors as $receiver)
         {
-          // A shortcut for clarity
-          $sender = $this->getCollector();
-
           $options = array(
             'thread' => ($message instanceof PrivateMessage) ? $message->getThread() : null,
             'subject' => $form->getValue('subject'),

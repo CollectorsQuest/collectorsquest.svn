@@ -12,6 +12,7 @@ class PrivateMessageForm extends BasePrivateMessageForm
 {
   public function configure()
   {
+    $this->widgetSchema['id'] = new sfWidgetFormInputHidden();
     $this->widgetSchema['sender'] = new sfWidgetFormInputHidden();
     $this->widgetSchema['receiver'] = new sfWidgetFormPropelSelectMany(array('model' => 'Collector'));
     $this->widgetSchema->setNameFormat('message[%s]');

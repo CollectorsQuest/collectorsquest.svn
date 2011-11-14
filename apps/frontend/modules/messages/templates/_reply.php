@@ -2,7 +2,6 @@
 <a name="reply"></a>
 <form id="messages-reply" action="<?= url_for('@message_compose'); ?>" method="post">
   <input type="hidden" name="message[id]" id="message_id" value="<?= $message->getId(); ?>">
-  <input type="hidden" name="message[sender]" id="message_sender" value="<?= $sf_user->getId(); ?>">
 
   <div class="span-3" style="text-align: right;">Reply To:</div>
   <div class="prepend-1 span-14 last">
@@ -22,7 +21,8 @@
   <div class="span-3" style="text-align: right;">Message:</div>
   <div class="prepend-1 span-14 last">
     <div style="background: #E9E9E9; width: 512px; padding: 5px;">
-      <textarea name="message[body]" id="message_body" style="width: 500px; height: 100px; min-height: 100px; margin: 0;"><?= !empty($body) ? $body : null; ?></textarea>
+      <?php echo cq_textarea_tag($form, 'body', array('width' => 500, 'height' => 200, 'rich' => false)); ?>
+      <?= $form['body']->renderError(); ?>
     </div>
   </div>
   <div class="clear">&nbsp;</div>
@@ -30,6 +30,9 @@
   <div class="span-17" style="text-align: right;">
     <?php cq_button_submit(__('Send Reply'), null, 'float: right;'); ?>
   </div>
+
+  <?= $form['sender']; ?>
+  <?= $form['_csrf_token']; ?>
 </form>
 
 <?php cq_javascript_tag(); ?>
@@ -42,7 +45,7 @@ $(document).ready(function()
   {
     $('#message_subject').val(value);
     $('#message_body').focus();
-    
+
     return(value);
   },
   {
