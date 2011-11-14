@@ -11,7 +11,7 @@ if (SF_ENV == 'staging')
   define('DB_PASSWORD', 'KC93pNXux7x4FP');
   define('DB_HOST', 'cql-mysql-master');
 }
-else if (SF_ENV == 'prod')
+else if (SF_ENV != 'dev')
 {
   define('DB_NAME', 'collectorsquest_blog');
   define('DB_USER', 'collectorsquest');
