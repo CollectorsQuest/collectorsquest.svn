@@ -60,7 +60,13 @@ EOF;
       // Create a temporary Sphinx config file
       $conf = tempnam('/www/tmp', 'sphinx_config_');
 
-      $files = sfFinder::type('file')->sort_by_name()->name('/sphinx\.?(.*)?\.conf$/')->maxdepth(1)->in(sfConfig::get('sf_config_dir'));
+      $files = sfFinder::type('file')
+             ->sort_by_name()
+             ->follow_link()
+             ->name('/(.*)\.conf$/')
+             ->maxdepth(1)
+             ->in(sfConfig::get('sf_config_dir').'/sphinx/');
+
       foreach ($files as $file)
       {
         file_put_contents($conf, file_get_contents($file), FILE_APPEND);
@@ -82,5 +88,7 @@ EOF;
       // Remove the temp config file
       unlink($conf);
     }
+
+    return 0;
   }
 }
