@@ -98,7 +98,7 @@ class ajaxActions extends cqActions
     $track->addChild('annotation', htmlentities($video->getDescription()));
     $track->addChild('location', 'http://www.collectorsquest.com/uploads/videos'. $video->getFilenameSrc());
     $track->addChild('image', 'http://www.collectorsquest.com/uploads/videos'. $video->getThumbLargeSrc());
-    $track->addChild('info', sfConfig::get('app_domain_name'));
+    $track->addChild('info', 'http://'. sfConfig::get('app_domain_name'));
 
     $videos = $video->getTagRelatedVideos(4);
     if (empty($videos))
@@ -115,7 +115,7 @@ class ajaxActions extends cqActions
       $track->addChild('location', 'http://www.collectorsquest.com/uploads/videos'. $video->getFilenameSrc(true));
       $track->addChild('image', 'http://www.collectorsquest.com/uploads/videos'. $video->getThumbLargeSrc(true));
       $track->addChild('date', $video->getPublishedAt());
-      $track->addChild('info', sfConfig::get('app_domain_name'));
+      $track->addChild('info', 'http://'. sfConfig::get('app_domain_name'));
     }
 
     $this->getResponse()->setContentType('application/xml');

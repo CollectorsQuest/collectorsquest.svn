@@ -27,6 +27,13 @@ EOF;
 
   protected function execute($arguments = array(), $options = array())
   {
+    // We need to run this task with root or www-data users
+    if (!in_array(get_current_user(), array('root', 'www-data')))
+    {
+      $this->logBlock('You must run this task with root or www-data priviliges!', 'ERROR');
+      return false;
+    }
+
     $indexes = array();
 
     if (empty($arguments["indexes"]))
@@ -61,8 +68,15 @@ EOF;
 
       // Add the main configuration file
       file_put_contents($conf, file_get_contents('/www/etc/sphinx/sphinx.conf'), FILE_APPEND);
-
       $cmd = sprintf('/opt/sphinx/bin/indexer --rotate --config %s %s', $conf, implode(' ', $indexes));
+
+      if (get_current_user() == 'root')
+      {
+        chown($conf, 'www-data');
+        $cmd = 'sudo -u www-data '. $cmd;
+      }
+
+      // Run the command
       passthru($cmd);
 
       // Remove the temp config file

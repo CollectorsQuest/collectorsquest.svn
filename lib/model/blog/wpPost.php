@@ -16,13 +16,13 @@ class wpPost extends BasewpPost
 
   public function getPostUrl()
   {
-    return sfConfig::get('app_domain_name').'/blog/'.$this->getPostDate('Y/m/d').'/'.$this->getPostName();
+    return 'http://'. sfConfig::get('app_domain_name') .'/blog/'.$this->getPostDate('Y/m/d').'/'.$this->getPostName();
   }
 
   public function getPostExcerpt($length = 250, $truncate_string = '...')
   {
     $excerpt = parent::getPostExcerpt();
-    
+
     if (empty($excerpt))
     {
       $excerpt = strip_tags(str_replace(

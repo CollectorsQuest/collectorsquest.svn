@@ -24,7 +24,7 @@ class Playlist extends BasePlaylist
       $track->addChild('location', 'http://www.collectorsquest.com/uploads/videos'. $video->getFilenameSrc());
       $track->addChild('image', 'http://www.collectorsquest.com/uploads/videos'. $video->getThumbLargeSrc(true));
       $track->addChild('date', $video->getPublishedAt());
-      $track->addChild('info', sfConfig::get('app_domain_name'));
+      $track->addChild('info', 'http://'. sfConfig::get('app_domain_name'));
     }
 
     return $playlist->asXML();
