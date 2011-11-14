@@ -8,7 +8,7 @@ set :user,        "ubuntu"
 set :use_sudo,    true
 set :group_writable, false
 
-set :symfony_lib, "/www/libs/symfony-1.3.x"
+set :symfony_lib, "/www/libs/symfony-1.4.x"
 set :php_bin,     "/usr/local/zend/bin/php"
 
 role :web,        "collectorsquest.com"
