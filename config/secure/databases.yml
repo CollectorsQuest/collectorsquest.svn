@@ -5,7 +5,7 @@ all:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_com;host=cq-mysql-master
       username:   collectorsquest
-      password:   rM6aKxoKKwUX4r
+      password:   "TYN9KJ76gpy7fq"
       encoding:   utf8
       persistent: true
       pooling:    true
@@ -16,7 +16,7 @@ all:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_blog;host=cq-mysql-master
       username:   collectorsquest
-      password:   rM6aKxoKKwUX4r
+      password:   "TYN9KJ76gpy7fq"
       encoding:   utf8
 
   calendar:
@@ -25,7 +25,7 @@ all:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_calendar;host=cq-mysql-master
       username:   collectorsquest
-      password:   rM6aKxoKKwUX4r
+      password:   "TYN9KJ76gpy7fq"
 
   queue:
     class:        sfPropelDatabase
@@ -33,7 +33,7 @@ all:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
       username:   collectorsquest
-      password:   rM6aKxoKKwUX4r
+      password:   "TYN9KJ76gpy7fq"
       encoding:   utf8
 
 stg:
@@ -43,7 +43,7 @@ stg:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
       username:   staging
-      password:   "24QU2FJGLmA9vf"
+      password:   "KC93pNXux7x4FP"
       encoding:   utf8
       persistent: true
       pooling:    true
@@ -54,7 +54,7 @@ stg:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
       username:   staging
-      password:   "24QU2FJGLmA9vf"
+      password:   "KC93pNXux7x4FP"
       encoding:   utf8
 
   calendar:
@@ -63,7 +63,7 @@ stg:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
       username:   staging
-      password:   "24QU2FJGLmA9vf"
+      password:   "KC93pNXux7x4FP"
       encoding:   utf8
 
   queue:
@@ -72,5 +72,5 @@ stg:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
       username:   staging
-      password:   24QU2FJGLmA9vf
+      password:   "KC93pNXux7x4FP"
       encoding:   utf8
