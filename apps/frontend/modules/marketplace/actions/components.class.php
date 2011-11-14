@@ -62,7 +62,7 @@ class marketplaceComponents extends sfComponents
     }
     if ($search['condition'] = $this->getRequestParameter('condition', @$search['condition']))
     {
-      $c->addJoin(CollectibleForSalePeer::CONDITION, "'" . $search['condition'] . "'");
+      $c->add(CollectibleForSalePeer::CONDITION, $search['condition']);
     }
 
     if ($search['addtional_listing'] = $this->getRequestParameter('addtional_listing', @$search['addtional_listing']))

@@ -10,7 +10,6 @@
  */
 class marketplaceActions extends cqActions
 {
-
   /**
    * @param  sfWebRequest  $request
    * @return string

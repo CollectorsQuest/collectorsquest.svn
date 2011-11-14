@@ -4,8 +4,8 @@
  * This is for correct IDE code suggests
  *
  * @method cqUser getUser()
- * @method sfWebRequest getRequest()
- * @method sfWebResponse getResponse()
+ * @method cqWebRequest getRequest()
+ * @method cqWebResponse getResponse()
  */
 class cqComponents extends sfComponents
 {

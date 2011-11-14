@@ -276,7 +276,7 @@ marketplace_item_offer:
 marketplace_category_by_slug:
   url: /marketplace/:id/:slug
   class: sfPropelRoute
-  options: { model: CollectionCategory, type: object }
+  options: { model: CollectionCategory, type: object, method: getObjectForRoute }
   param: { module: marketplace, action: index }
   requirements:
     id: \d+

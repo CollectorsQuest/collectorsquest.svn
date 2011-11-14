@@ -1,8 +1,9 @@
 <?php
 
 /**
- * @method cqWebResponse getResponse()
  * @method sfPropelRoute getRoute()
+ * @method cqWebResponse getResponse()
+ * @method cqWebRequest getRequest()
  * @method cqUser getUser()
  */
 class cqActions extends sfActions
