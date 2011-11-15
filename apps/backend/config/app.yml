@@ -35,7 +35,7 @@ all:
           Playlists:
             url: playlist
 
-      Marketplace Info:
+      Marketplace:
         items:
           Marketplace:
             url: marketplace_list
@@ -55,6 +55,9 @@ all:
 
       Everything Else:
         items:
+          Featured Weeks:
+            url: featured_weeks
+
           Comments:
             url: comment
             image: theme/icons/language.png

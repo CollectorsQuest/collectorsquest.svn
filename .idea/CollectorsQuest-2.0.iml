@@ -44,7 +44,6 @@
       <excludeFolder url="file://$MODULE_DIR$/../../server/libs/symfony-1.4.x/test" />
     </content>
     <content url="file://$MODULE_DIR$">
-      <excludeFolder url="file://$MODULE_DIR$/cache" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/iceBackendPlugin/data/generator/sfPropelModule/bootstrap/skeleton" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/sfPropelORMPlugin/test" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/sfTaskExtraPlugin/lib/task/generator/skeleton" />

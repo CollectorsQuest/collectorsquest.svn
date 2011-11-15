@@ -1,0 +1,36 @@
+generator:
+  class: IcePropelGenerator
+  param:
+    model_class:           Featured
+    theme:                 bootstrap
+    non_verbose_templates: true
+    with_show:             false
+    singular:              FeaturedWeek
+    plural:                FeaturedWeeks
+    route_prefix:          featured_weeks
+    with_propel_route:     1
+    actions_base_class:    cqBackendActions
+
+    config:
+      actions: ~
+      fields:
+        id: { label: ID }
+        start_date: { label: Start, date_format: 'MM/dd/yyyy' }
+        end_date: { label: End, date_format: 'MM/dd/yyyy' }
+        is_active: { label: "Active?" }
+        list_title: { label: "Title & Homepage Text" }
+
+      list:
+        title: Featured Weeks
+        display: [=id, _list_title, is_active, start_date, end_date]
+        sort: [end_date, desc]
+
+      filter:
+        display: [featured_id, is_active]
+        fields:
+          featured_id:
+            widgetOptions: { with_empty: false }
+
+      form:    ~
+      edit:    ~
+      new:     ~
