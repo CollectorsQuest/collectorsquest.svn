@@ -81,7 +81,7 @@ private_message:
 message_template:
   class: sfPropelRouteCollection
   options:
-    model:                MessageTemplate
+    model:                PrivateMessageTemplate
     module:               messageTemplates
     prefix_path:          /messageTemplates
     column:               id

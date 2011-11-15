@@ -22,6 +22,7 @@ generator:
       list:
         title: Collections
         display: [id, collection_category, collector, =name, tag_string, count_collectibles, score, created_at]
+        sort: [created_at, desc]
         actions: []
         batch_actions: []
       filter:
