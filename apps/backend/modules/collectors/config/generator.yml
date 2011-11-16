@@ -13,19 +13,33 @@ generator:
 
     config:
       actions: ~
+
       fields:
         id: { label: ID }
         display_name: { label: Display Name }
         list_count_collections: { label: Collections }
-        created_at: { label: Since, date_format: 'MM/yyyy' }
+        list_spam_score: { label: Spam }
+        list_auto_login: { label: '' }
+        created_at: { label: Since, date_format: 'MM/dd/yyyy' }
         is_public: { label: "Public?" }
+
       list:
-        display: [id, =username, display_name, email, _list_count_collections, created_at, _auto_login]
-        actions: {}
+        title: Collectors
+        display: [id, =username, display_name, email, _list_count_collections, _list_spam_score, created_at]
+        sort: [created_at, desc]
+        object_actions:
+          _edit: ~
+          _delete: ~
+          autologin: { label: "Auto Login", action: autoLogin }
+        actions:
+          export: { label: "Export to CSV", action: export }
+
       filter:
-        #display: [username, display_name, email, created_at]
+        display: [username, display_name, email]
+
       form:
         class: CollectorEditForm
+
       edit:
         fields:
           password: { label: Password, help: "If you do not want to change the password, leave the field empty" }

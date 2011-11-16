@@ -355,7 +355,7 @@ class Collector extends BaseCollector
   {
     $params = array(
       'user_id' => $this->getId(),
-      'alias' => $this->getDisplayName(),
+      'alias' => $this->getUsername(),
       'enduser_ip' => IceStatic::getUserIpAddress(),
       'password_hash' => substr($this->getSha1Password(), 0, 12),
       'email_identity' => $this->getEmail(),

@@ -11,7 +11,7 @@ class backendConfiguration extends sfApplicationConfiguration
 
   public function generateFrontendUrl($name, $parameters = array())
   {
-    return sfConfig::get('app_www_domain') . $this->getFrontendRouting()->generate($name, $parameters, true);
+    return 'http://'. sfConfig::get('app_www_domain') . $this->getFrontendRouting()->generate($name, $parameters, true);
   }
 
   public function getFrontendRouting()
