@@ -13,7 +13,6 @@ classes:
       slug:           { type: varchar, size: 64, index: unique }
       sha1_password:  { type: varchar, size: 40, required: true }
       salt:           { type: varchar, size: 32, required: true }
-      score:          { type: integer, required: false, default: 0 }
       email:          { type: varchar, size: 128, required: true, index: unique }
       user_type:      { type: char, sqlType: "ENUM('Collector','Seller')", default: Collector, required: true }
       items_allowed:         integer
@@ -23,6 +22,9 @@ classes:
       annually_spend:        { type: float, default: 0 }
       most_expensive_item:   { type: float, default: 0 }
       company:               { type: varchar, size: 255, required: false }
+      score:          { type: integer, required: false, default: 0 }
+      spam_score:     { type: integer, required: false, default: 0 }
+      is_spam:        { type: boolean, default: true }
       is_public:      { type: boolean, default: true }
       session_id:     { type: varchar, size: 32 }
       last_seen_at:   timestamp

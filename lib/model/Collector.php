@@ -4,6 +4,11 @@ class Collector extends BaseCollector
 {
   protected $profile = null;
 
+  public function postSave(PropelPDO $con = null)
+  {
+
+  }
+
   public function isOwnerOf($something)
   {
     if (is_object($something) && method_exists($something, 'getCollectorId'))
@@ -344,6 +349,47 @@ class Collector extends BaseCollector
     $criteria->addDescendingOrderByColumn(CollectorGeocachePeer::ID);
 
     return CollectorGeocachePeer::doSelectOne($criteria);
+  }
+
+  public function sendToImpermium()
+  {
+    $params = array(
+      'user_id' => $this->getId(),
+      'alias' => $this->getDisplayName(),
+      'enduser_ip' => IceStatic::getUserIpAddress(),
+      'password_hash' => substr($this->getSha1Password(), 0, 12),
+      'email_identity' => $this->getEmail(),
+      'zip' => $this->getProfile()->getZipPostal(),
+      'user_url' => $this->getProfile()->getWebsiteUrl(),
+      'profile_permalink' => 'http://www.collectorsquest.com/collector/'. $this->getId() .'/'. $this->getSlug(),
+      'http_headers' => array(
+        "HTTP_ACCEPT_LANGUAGE" => $_SERVER["HTTP_ACCEPT_LANGUAGE"],
+        "HTTP_REFERER" => $_SERVER["HTTP_REFERER"],
+        "HTTP_ACCEPT_CHARSET" => $_SERVER["HTTP_ACCEPT_CHARSET"],
+        "HTTP_KEEP_ALIVE" => $_SERVER["HTTP_KEEP_ALIVE"],
+        "HTTP_ACCEPT_ENCODING" => $_SERVER["HTTP_ACCEPT_ENCODING"],
+        "HTTP_CONNECTION" => $_SERVER["HTTP_CONNECTION"],
+        "HTTP_ACCEPT" => $_SERVER["HTTP_ACCEPT"],
+        "HTTP_USER_AGENT" => $_SERVER["HTTP_USER_AGENT"]
+      )
+    );
+
+    try
+    {
+      $impermium = cqStatic::getImpermiumClient();
+      $response = $impermium->api('user/account', $params, sfConfig::get('sf_environment') !== 'prod');
+
+      if (!empty($response['spam_classifier']) && is_array($response['spam_classifier']))
+      {
+        $this->setIsSpam($response['spam_classifier']['label'] == 'spam' ? true : false);
+        $this->setSpamScore($response['spam_classifier']['score']);
+        $this->save();
+      }
+    }
+    catch (ImpermiumApiException $e)
+    {
+      ;
+    }
   }
 }
 

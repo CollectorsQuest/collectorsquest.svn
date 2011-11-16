@@ -380,6 +380,9 @@ class CollectorPeer extends BaseCollectorPeer
     {
       $collector_profile->save();
       $collector->save();
+
+      // Send the profile data to Impermium to analyse
+      $collector->sendToImpermium();
     }
     catch (PropelException $e)
     {
@@ -396,9 +399,9 @@ class CollectorPeer extends BaseCollectorPeer
     $criteria->clearSelectColumns();
     $criteria->addSelectColumn(self::ID);
     $criteria->addSelectColumn(self::DISPLAY_NAME);
-    
+
     $criteria->add(self::DISPLAY_NAME, sprintf('%%%s%%', $q), Criteria::LIKE);
-    
+
     return self::doSelectStmt($criteria)->fetchAll(PDO::FETCH_KEY_PAIR);
   }
 

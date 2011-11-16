@@ -67,13 +67,6 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   protected $salt;
 
   /**
-   * The value for the score field.
-   * Note: this column has a database default value of: 0
-   * @var        int
-   */
-  protected $score;
-
-  /**
    * The value for the email field.
    * @var        string
    */
@@ -130,6 +123,27 @@ abstract class BaseCollector extends BaseObject  implements Persistent
    * @var        string
    */
   protected $company;
+
+  /**
+   * The value for the score field.
+   * Note: this column has a database default value of: 0
+   * @var        int
+   */
+  protected $score;
+
+  /**
+   * The value for the spam_score field.
+   * Note: this column has a database default value of: 0
+   * @var        int
+   */
+  protected $spam_score;
+
+  /**
+   * The value for the is_spam field.
+   * Note: this column has a database default value of: true
+   * @var        boolean
+   */
+  protected $is_spam;
 
   /**
    * The value for the is_public field.
@@ -255,11 +269,13 @@ abstract class BaseCollector extends BaseObject  implements Persistent
    */
   public function applyDefaultValues()
   {
-    $this->score = 0;
     $this->user_type = 'Collector';
     $this->purchases_per_year = 0;
     $this->annually_spend = 0;
     $this->most_expensive_item = 0;
+    $this->score = 0;
+    $this->spam_score = 0;
+    $this->is_spam = true;
     $this->is_public = true;
   }
 
@@ -341,16 +357,6 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   public function getSalt()
   {
     return $this->salt;
-  }
-
-  /**
-   * Get the [score] column value.
-   * 
-   * @return     int
-   */
-  public function getScore()
-  {
-    return $this->score;
   }
 
   /**
@@ -441,6 +447,36 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   public function getCompany()
   {
     return $this->company;
+  }
+
+  /**
+   * Get the [score] column value.
+   * 
+   * @return     int
+   */
+  public function getScore()
+  {
+    return $this->score;
+  }
+
+  /**
+   * Get the [spam_score] column value.
+   * 
+   * @return     int
+   */
+  public function getSpamScore()
+  {
+    return $this->spam_score;
+  }
+
+  /**
+   * Get the [is_spam] column value.
+   * 
+   * @return     boolean
+   */
+  public function getIsSpam()
+  {
+    return $this->is_spam;
   }
 
   /**
@@ -818,28 +854,6 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [score] column.
-   * 
-   * @param      int $v new value
-   * @return     Collector The current object (for fluent API support)
-   */
-  public function setScore($v)
-  {
-    if ($v !== null)
-    {
-      $v = (int) $v;
-    }
-
-    if ($this->score !== $v)
-    {
-      $this->score = $v;
-      $this->modifiedColumns[] = CollectorPeer::SCORE;
-    }
-
-    return $this;
-  }
-
-  /**
    * Set the value of [email] column.
    * 
    * @param      string $v new value
@@ -1038,6 +1052,83 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Set the value of [score] column.
+   * 
+   * @param      int $v new value
+   * @return     Collector The current object (for fluent API support)
+   */
+  public function setScore($v)
+  {
+    if ($v !== null)
+    {
+      $v = (int) $v;
+    }
+
+    if ($this->score !== $v)
+    {
+      $this->score = $v;
+      $this->modifiedColumns[] = CollectorPeer::SCORE;
+    }
+
+    return $this;
+  }
+
+  /**
+   * Set the value of [spam_score] column.
+   * 
+   * @param      int $v new value
+   * @return     Collector The current object (for fluent API support)
+   */
+  public function setSpamScore($v)
+  {
+    if ($v !== null)
+    {
+      $v = (int) $v;
+    }
+
+    if ($this->spam_score !== $v)
+    {
+      $this->spam_score = $v;
+      $this->modifiedColumns[] = CollectorPeer::SPAM_SCORE;
+    }
+
+    return $this;
+  }
+
+  /**
+   * Sets the value of the [is_spam] column.
+   * Non-boolean arguments are converted using the following rules:
+   *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+   *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+   * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+   * 
+   * @param      boolean|integer|string $v The new value
+   * @return     Collector The current object (for fluent API support)
+   */
+  public function setIsSpam($v)
+  {
+    if ($v !== null)
+    {
+      if (is_string($v))
+      {
+        $v = in_array(strtolower($v), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+      }
+      else
+      {
+        $v = (boolean) $v;
+      }
+    }
+
+    if ($this->is_spam !== $v)
+    {
+      $this->is_spam = $v;
+      $this->modifiedColumns[] = CollectorPeer::IS_SPAM;
+    }
+
+    return $this;
+  }
+
+  /**
    * Sets the value of the [is_public] column.
    * Non-boolean arguments are converted using the following rules:
    *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
@@ -1198,11 +1289,6 @@ abstract class BaseCollector extends BaseObject  implements Persistent
    */
   public function hasOnlyDefaultValues()
   {
-      if ($this->score !== 0)
-      {
-        return false;
-      }
-
       if ($this->user_type !== 'Collector')
       {
         return false;
@@ -1219,6 +1305,21 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       }
 
       if ($this->most_expensive_item !== 0)
+      {
+        return false;
+      }
+
+      if ($this->score !== 0)
+      {
+        return false;
+      }
+
+      if ($this->spam_score !== 0)
+      {
+        return false;
+      }
+
+      if ($this->is_spam !== true)
       {
         return false;
       }
@@ -1258,22 +1359,24 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->slug = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
       $this->sha1_password = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
       $this->salt = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-      $this->score = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
-      $this->email = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-      $this->user_type = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-      $this->items_allowed = ($row[$startcol + 10] !== null) ? (int) $row[$startcol + 10] : null;
-      $this->what_you_collect = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-      $this->purchases_per_year = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
-      $this->what_you_sell = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
-      $this->annually_spend = ($row[$startcol + 14] !== null) ? (double) $row[$startcol + 14] : null;
-      $this->most_expensive_item = ($row[$startcol + 15] !== null) ? (double) $row[$startcol + 15] : null;
-      $this->company = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
-      $this->is_public = ($row[$startcol + 17] !== null) ? (boolean) $row[$startcol + 17] : null;
-      $this->session_id = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
-      $this->last_seen_at = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
-      $this->deleted_at = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
-      $this->created_at = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
-      $this->updated_at = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+      $this->email = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+      $this->user_type = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+      $this->items_allowed = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
+      $this->what_you_collect = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+      $this->purchases_per_year = ($row[$startcol + 11] !== null) ? (int) $row[$startcol + 11] : null;
+      $this->what_you_sell = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+      $this->annually_spend = ($row[$startcol + 13] !== null) ? (double) $row[$startcol + 13] : null;
+      $this->most_expensive_item = ($row[$startcol + 14] !== null) ? (double) $row[$startcol + 14] : null;
+      $this->company = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+      $this->score = ($row[$startcol + 16] !== null) ? (int) $row[$startcol + 16] : null;
+      $this->spam_score = ($row[$startcol + 17] !== null) ? (int) $row[$startcol + 17] : null;
+      $this->is_spam = ($row[$startcol + 18] !== null) ? (boolean) $row[$startcol + 18] : null;
+      $this->is_public = ($row[$startcol + 19] !== null) ? (boolean) $row[$startcol + 19] : null;
+      $this->session_id = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
+      $this->last_seen_at = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
+      $this->deleted_at = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+      $this->created_at = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
+      $this->updated_at = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -1283,7 +1386,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 23; // 23 = CollectorPeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 25; // 25 = CollectorPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -2015,51 +2118,57 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         return $this->getSalt();
         break;
       case 7:
-        return $this->getScore();
-        break;
-      case 8:
         return $this->getEmail();
         break;
-      case 9:
+      case 8:
         return $this->getUserType();
         break;
-      case 10:
+      case 9:
         return $this->getItemsAllowed();
         break;
-      case 11:
+      case 10:
         return $this->getWhatYouCollect();
         break;
-      case 12:
+      case 11:
         return $this->getPurchasesPerYear();
         break;
-      case 13:
+      case 12:
         return $this->getWhatYouSell();
         break;
-      case 14:
+      case 13:
         return $this->getAnnuallySpend();
         break;
-      case 15:
+      case 14:
         return $this->getMostExpensiveItem();
         break;
-      case 16:
+      case 15:
         return $this->getCompany();
         break;
+      case 16:
+        return $this->getScore();
+        break;
       case 17:
-        return $this->getIsPublic();
+        return $this->getSpamScore();
         break;
       case 18:
-        return $this->getSessionId();
+        return $this->getIsSpam();
         break;
       case 19:
-        return $this->getLastSeenAt();
+        return $this->getIsPublic();
         break;
       case 20:
-        return $this->getDeletedAt();
+        return $this->getSessionId();
         break;
       case 21:
-        return $this->getCreatedAt();
+        return $this->getLastSeenAt();
         break;
       case 22:
+        return $this->getDeletedAt();
+        break;
+      case 23:
+        return $this->getCreatedAt();
+        break;
+      case 24:
         return $this->getUpdatedAt();
         break;
       default:
@@ -2099,22 +2208,24 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $keys[4] => $this->getSlug(),
       $keys[5] => $this->getSha1Password(),
       $keys[6] => $this->getSalt(),
-      $keys[7] => $this->getScore(),
-      $keys[8] => $this->getEmail(),
-      $keys[9] => $this->getUserType(),
-      $keys[10] => $this->getItemsAllowed(),
-      $keys[11] => $this->getWhatYouCollect(),
-      $keys[12] => $this->getPurchasesPerYear(),
-      $keys[13] => $this->getWhatYouSell(),
-      $keys[14] => $this->getAnnuallySpend(),
-      $keys[15] => $this->getMostExpensiveItem(),
-      $keys[16] => $this->getCompany(),
-      $keys[17] => $this->getIsPublic(),
-      $keys[18] => $this->getSessionId(),
-      $keys[19] => $this->getLastSeenAt(),
-      $keys[20] => $this->getDeletedAt(),
-      $keys[21] => $this->getCreatedAt(),
-      $keys[22] => $this->getUpdatedAt(),
+      $keys[7] => $this->getEmail(),
+      $keys[8] => $this->getUserType(),
+      $keys[9] => $this->getItemsAllowed(),
+      $keys[10] => $this->getWhatYouCollect(),
+      $keys[11] => $this->getPurchasesPerYear(),
+      $keys[12] => $this->getWhatYouSell(),
+      $keys[13] => $this->getAnnuallySpend(),
+      $keys[14] => $this->getMostExpensiveItem(),
+      $keys[15] => $this->getCompany(),
+      $keys[16] => $this->getScore(),
+      $keys[17] => $this->getSpamScore(),
+      $keys[18] => $this->getIsSpam(),
+      $keys[19] => $this->getIsPublic(),
+      $keys[20] => $this->getSessionId(),
+      $keys[21] => $this->getLastSeenAt(),
+      $keys[22] => $this->getDeletedAt(),
+      $keys[23] => $this->getCreatedAt(),
+      $keys[24] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -2224,51 +2335,57 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         $this->setSalt($value);
         break;
       case 7:
-        $this->setScore($value);
-        break;
-      case 8:
         $this->setEmail($value);
         break;
-      case 9:
+      case 8:
         $this->setUserType($value);
         break;
-      case 10:
+      case 9:
         $this->setItemsAllowed($value);
         break;
-      case 11:
+      case 10:
         $this->setWhatYouCollect($value);
         break;
-      case 12:
+      case 11:
         $this->setPurchasesPerYear($value);
         break;
-      case 13:
+      case 12:
         $this->setWhatYouSell($value);
         break;
-      case 14:
+      case 13:
         $this->setAnnuallySpend($value);
         break;
-      case 15:
+      case 14:
         $this->setMostExpensiveItem($value);
         break;
-      case 16:
+      case 15:
         $this->setCompany($value);
         break;
+      case 16:
+        $this->setScore($value);
+        break;
       case 17:
-        $this->setIsPublic($value);
+        $this->setSpamScore($value);
         break;
       case 18:
-        $this->setSessionId($value);
+        $this->setIsSpam($value);
         break;
       case 19:
-        $this->setLastSeenAt($value);
+        $this->setIsPublic($value);
         break;
       case 20:
-        $this->setDeletedAt($value);
+        $this->setSessionId($value);
         break;
       case 21:
-        $this->setCreatedAt($value);
+        $this->setLastSeenAt($value);
         break;
       case 22:
+        $this->setDeletedAt($value);
+        break;
+      case 23:
+        $this->setCreatedAt($value);
+        break;
+      case 24:
         $this->setUpdatedAt($value);
         break;
     }
@@ -2302,22 +2419,24 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     if (array_key_exists($keys[4], $arr)) $this->setSlug($arr[$keys[4]]);
     if (array_key_exists($keys[5], $arr)) $this->setSha1Password($arr[$keys[5]]);
     if (array_key_exists($keys[6], $arr)) $this->setSalt($arr[$keys[6]]);
-    if (array_key_exists($keys[7], $arr)) $this->setScore($arr[$keys[7]]);
-    if (array_key_exists($keys[8], $arr)) $this->setEmail($arr[$keys[8]]);
-    if (array_key_exists($keys[9], $arr)) $this->setUserType($arr[$keys[9]]);
-    if (array_key_exists($keys[10], $arr)) $this->setItemsAllowed($arr[$keys[10]]);
-    if (array_key_exists($keys[11], $arr)) $this->setWhatYouCollect($arr[$keys[11]]);
-    if (array_key_exists($keys[12], $arr)) $this->setPurchasesPerYear($arr[$keys[12]]);
-    if (array_key_exists($keys[13], $arr)) $this->setWhatYouSell($arr[$keys[13]]);
-    if (array_key_exists($keys[14], $arr)) $this->setAnnuallySpend($arr[$keys[14]]);
-    if (array_key_exists($keys[15], $arr)) $this->setMostExpensiveItem($arr[$keys[15]]);
-    if (array_key_exists($keys[16], $arr)) $this->setCompany($arr[$keys[16]]);
-    if (array_key_exists($keys[17], $arr)) $this->setIsPublic($arr[$keys[17]]);
-    if (array_key_exists($keys[18], $arr)) $this->setSessionId($arr[$keys[18]]);
-    if (array_key_exists($keys[19], $arr)) $this->setLastSeenAt($arr[$keys[19]]);
-    if (array_key_exists($keys[20], $arr)) $this->setDeletedAt($arr[$keys[20]]);
-    if (array_key_exists($keys[21], $arr)) $this->setCreatedAt($arr[$keys[21]]);
-    if (array_key_exists($keys[22], $arr)) $this->setUpdatedAt($arr[$keys[22]]);
+    if (array_key_exists($keys[7], $arr)) $this->setEmail($arr[$keys[7]]);
+    if (array_key_exists($keys[8], $arr)) $this->setUserType($arr[$keys[8]]);
+    if (array_key_exists($keys[9], $arr)) $this->setItemsAllowed($arr[$keys[9]]);
+    if (array_key_exists($keys[10], $arr)) $this->setWhatYouCollect($arr[$keys[10]]);
+    if (array_key_exists($keys[11], $arr)) $this->setPurchasesPerYear($arr[$keys[11]]);
+    if (array_key_exists($keys[12], $arr)) $this->setWhatYouSell($arr[$keys[12]]);
+    if (array_key_exists($keys[13], $arr)) $this->setAnnuallySpend($arr[$keys[13]]);
+    if (array_key_exists($keys[14], $arr)) $this->setMostExpensiveItem($arr[$keys[14]]);
+    if (array_key_exists($keys[15], $arr)) $this->setCompany($arr[$keys[15]]);
+    if (array_key_exists($keys[16], $arr)) $this->setScore($arr[$keys[16]]);
+    if (array_key_exists($keys[17], $arr)) $this->setSpamScore($arr[$keys[17]]);
+    if (array_key_exists($keys[18], $arr)) $this->setIsSpam($arr[$keys[18]]);
+    if (array_key_exists($keys[19], $arr)) $this->setIsPublic($arr[$keys[19]]);
+    if (array_key_exists($keys[20], $arr)) $this->setSessionId($arr[$keys[20]]);
+    if (array_key_exists($keys[21], $arr)) $this->setLastSeenAt($arr[$keys[21]]);
+    if (array_key_exists($keys[22], $arr)) $this->setDeletedAt($arr[$keys[22]]);
+    if (array_key_exists($keys[23], $arr)) $this->setCreatedAt($arr[$keys[23]]);
+    if (array_key_exists($keys[24], $arr)) $this->setUpdatedAt($arr[$keys[24]]);
   }
 
   /**
@@ -2336,7 +2455,6 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectorPeer::SLUG)) $criteria->add(CollectorPeer::SLUG, $this->slug);
     if ($this->isColumnModified(CollectorPeer::SHA1_PASSWORD)) $criteria->add(CollectorPeer::SHA1_PASSWORD, $this->sha1_password);
     if ($this->isColumnModified(CollectorPeer::SALT)) $criteria->add(CollectorPeer::SALT, $this->salt);
-    if ($this->isColumnModified(CollectorPeer::SCORE)) $criteria->add(CollectorPeer::SCORE, $this->score);
     if ($this->isColumnModified(CollectorPeer::EMAIL)) $criteria->add(CollectorPeer::EMAIL, $this->email);
     if ($this->isColumnModified(CollectorPeer::USER_TYPE)) $criteria->add(CollectorPeer::USER_TYPE, $this->user_type);
     if ($this->isColumnModified(CollectorPeer::ITEMS_ALLOWED)) $criteria->add(CollectorPeer::ITEMS_ALLOWED, $this->items_allowed);
@@ -2346,6 +2464,9 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectorPeer::ANNUALLY_SPEND)) $criteria->add(CollectorPeer::ANNUALLY_SPEND, $this->annually_spend);
     if ($this->isColumnModified(CollectorPeer::MOST_EXPENSIVE_ITEM)) $criteria->add(CollectorPeer::MOST_EXPENSIVE_ITEM, $this->most_expensive_item);
     if ($this->isColumnModified(CollectorPeer::COMPANY)) $criteria->add(CollectorPeer::COMPANY, $this->company);
+    if ($this->isColumnModified(CollectorPeer::SCORE)) $criteria->add(CollectorPeer::SCORE, $this->score);
+    if ($this->isColumnModified(CollectorPeer::SPAM_SCORE)) $criteria->add(CollectorPeer::SPAM_SCORE, $this->spam_score);
+    if ($this->isColumnModified(CollectorPeer::IS_SPAM)) $criteria->add(CollectorPeer::IS_SPAM, $this->is_spam);
     if ($this->isColumnModified(CollectorPeer::IS_PUBLIC)) $criteria->add(CollectorPeer::IS_PUBLIC, $this->is_public);
     if ($this->isColumnModified(CollectorPeer::SESSION_ID)) $criteria->add(CollectorPeer::SESSION_ID, $this->session_id);
     if ($this->isColumnModified(CollectorPeer::LAST_SEEN_AT)) $criteria->add(CollectorPeer::LAST_SEEN_AT, $this->last_seen_at);
@@ -2420,7 +2541,6 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $copyObj->setSlug($this->getSlug());
     $copyObj->setSha1Password($this->getSha1Password());
     $copyObj->setSalt($this->getSalt());
-    $copyObj->setScore($this->getScore());
     $copyObj->setEmail($this->getEmail());
     $copyObj->setUserType($this->getUserType());
     $copyObj->setItemsAllowed($this->getItemsAllowed());
@@ -2430,6 +2550,9 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $copyObj->setAnnuallySpend($this->getAnnuallySpend());
     $copyObj->setMostExpensiveItem($this->getMostExpensiveItem());
     $copyObj->setCompany($this->getCompany());
+    $copyObj->setScore($this->getScore());
+    $copyObj->setSpamScore($this->getSpamScore());
+    $copyObj->setIsSpam($this->getIsSpam());
     $copyObj->setIsPublic($this->getIsPublic());
     $copyObj->setSessionId($this->getSessionId());
     $copyObj->setLastSeenAt($this->getLastSeenAt());
@@ -4649,7 +4772,6 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $this->slug = null;
     $this->sha1_password = null;
     $this->salt = null;
-    $this->score = null;
     $this->email = null;
     $this->user_type = null;
     $this->items_allowed = null;
@@ -4659,6 +4781,9 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $this->annually_spend = null;
     $this->most_expensive_item = null;
     $this->company = null;
+    $this->score = null;
+    $this->spam_score = null;
+    $this->is_spam = null;
     $this->is_public = null;
     $this->session_id = null;
     $this->last_seen_at = null;

@@ -26,6 +26,7 @@ all:
     google_maps: "ABQIAAAAFWhrOd_LZ8oN4w-vkUWughQAU-WnqYQCO7zppSGvHR51tCrN4xRY0TaQWDhMG_uhoslQtMZplJu3gg"
     disqus_user_key:    "rCJyPA1GJlX3hoF3tdSdrGbbeGBeI7I9G1Qspd5QuR6AiCscBxREmoo1SLBnlJyf"
     disqus_forum_key:   "nqopSzGkkro8tc53AgA3DNW56WSYBbZRetdoNPE8whwKY7b7dvELc05Nm9Yq5nMD"
+    impermium: "6eed575e07cc2431293287a570d0afd0c3efde87"
     recaptcha:
       public_key:  "6LdACwsAAAAAAE5tZTcYG47Lth2jzxxZeXAbll-Z"
       private_key: "6LdACwsAAAAAAM19l6G0lFk4F560SWvBM2k5M9L0"

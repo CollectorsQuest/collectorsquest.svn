@@ -13,7 +13,6 @@
  * @method     CollectorQuery orderBySlug($order = Criteria::ASC) Order by the slug column
  * @method     CollectorQuery orderBySha1Password($order = Criteria::ASC) Order by the sha1_password column
  * @method     CollectorQuery orderBySalt($order = Criteria::ASC) Order by the salt column
- * @method     CollectorQuery orderByScore($order = Criteria::ASC) Order by the score column
  * @method     CollectorQuery orderByEmail($order = Criteria::ASC) Order by the email column
  * @method     CollectorQuery orderByUserType($order = Criteria::ASC) Order by the user_type column
  * @method     CollectorQuery orderByItemsAllowed($order = Criteria::ASC) Order by the items_allowed column
@@ -23,6 +22,9 @@
  * @method     CollectorQuery orderByAnnuallySpend($order = Criteria::ASC) Order by the annually_spend column
  * @method     CollectorQuery orderByMostExpensiveItem($order = Criteria::ASC) Order by the most_expensive_item column
  * @method     CollectorQuery orderByCompany($order = Criteria::ASC) Order by the company column
+ * @method     CollectorQuery orderByScore($order = Criteria::ASC) Order by the score column
+ * @method     CollectorQuery orderBySpamScore($order = Criteria::ASC) Order by the spam_score column
+ * @method     CollectorQuery orderByIsSpam($order = Criteria::ASC) Order by the is_spam column
  * @method     CollectorQuery orderByIsPublic($order = Criteria::ASC) Order by the is_public column
  * @method     CollectorQuery orderBySessionId($order = Criteria::ASC) Order by the session_id column
  * @method     CollectorQuery orderByLastSeenAt($order = Criteria::ASC) Order by the last_seen_at column
@@ -37,7 +39,6 @@
  * @method     CollectorQuery groupBySlug() Group by the slug column
  * @method     CollectorQuery groupBySha1Password() Group by the sha1_password column
  * @method     CollectorQuery groupBySalt() Group by the salt column
- * @method     CollectorQuery groupByScore() Group by the score column
  * @method     CollectorQuery groupByEmail() Group by the email column
  * @method     CollectorQuery groupByUserType() Group by the user_type column
  * @method     CollectorQuery groupByItemsAllowed() Group by the items_allowed column
@@ -47,6 +48,9 @@
  * @method     CollectorQuery groupByAnnuallySpend() Group by the annually_spend column
  * @method     CollectorQuery groupByMostExpensiveItem() Group by the most_expensive_item column
  * @method     CollectorQuery groupByCompany() Group by the company column
+ * @method     CollectorQuery groupByScore() Group by the score column
+ * @method     CollectorQuery groupBySpamScore() Group by the spam_score column
+ * @method     CollectorQuery groupByIsSpam() Group by the is_spam column
  * @method     CollectorQuery groupByIsPublic() Group by the is_public column
  * @method     CollectorQuery groupBySessionId() Group by the session_id column
  * @method     CollectorQuery groupByLastSeenAt() Group by the last_seen_at column
@@ -120,7 +124,6 @@
  * @method     Collector findOneBySlug(string $slug) Return the first Collector filtered by the slug column
  * @method     Collector findOneBySha1Password(string $sha1_password) Return the first Collector filtered by the sha1_password column
  * @method     Collector findOneBySalt(string $salt) Return the first Collector filtered by the salt column
- * @method     Collector findOneByScore(int $score) Return the first Collector filtered by the score column
  * @method     Collector findOneByEmail(string $email) Return the first Collector filtered by the email column
  * @method     Collector findOneByUserType(string $user_type) Return the first Collector filtered by the user_type column
  * @method     Collector findOneByItemsAllowed(int $items_allowed) Return the first Collector filtered by the items_allowed column
@@ -130,6 +133,9 @@
  * @method     Collector findOneByAnnuallySpend(double $annually_spend) Return the first Collector filtered by the annually_spend column
  * @method     Collector findOneByMostExpensiveItem(double $most_expensive_item) Return the first Collector filtered by the most_expensive_item column
  * @method     Collector findOneByCompany(string $company) Return the first Collector filtered by the company column
+ * @method     Collector findOneByScore(int $score) Return the first Collector filtered by the score column
+ * @method     Collector findOneBySpamScore(int $spam_score) Return the first Collector filtered by the spam_score column
+ * @method     Collector findOneByIsSpam(boolean $is_spam) Return the first Collector filtered by the is_spam column
  * @method     Collector findOneByIsPublic(boolean $is_public) Return the first Collector filtered by the is_public column
  * @method     Collector findOneBySessionId(string $session_id) Return the first Collector filtered by the session_id column
  * @method     Collector findOneByLastSeenAt(string $last_seen_at) Return the first Collector filtered by the last_seen_at column
@@ -144,7 +150,6 @@
  * @method     array findBySlug(string $slug) Return Collector objects filtered by the slug column
  * @method     array findBySha1Password(string $sha1_password) Return Collector objects filtered by the sha1_password column
  * @method     array findBySalt(string $salt) Return Collector objects filtered by the salt column
- * @method     array findByScore(int $score) Return Collector objects filtered by the score column
  * @method     array findByEmail(string $email) Return Collector objects filtered by the email column
  * @method     array findByUserType(string $user_type) Return Collector objects filtered by the user_type column
  * @method     array findByItemsAllowed(int $items_allowed) Return Collector objects filtered by the items_allowed column
@@ -154,6 +159,9 @@
  * @method     array findByAnnuallySpend(double $annually_spend) Return Collector objects filtered by the annually_spend column
  * @method     array findByMostExpensiveItem(double $most_expensive_item) Return Collector objects filtered by the most_expensive_item column
  * @method     array findByCompany(string $company) Return Collector objects filtered by the company column
+ * @method     array findByScore(int $score) Return Collector objects filtered by the score column
+ * @method     array findBySpamScore(int $spam_score) Return Collector objects filtered by the spam_score column
+ * @method     array findByIsSpam(boolean $is_spam) Return Collector objects filtered by the is_spam column
  * @method     array findByIsPublic(boolean $is_public) Return Collector objects filtered by the is_public column
  * @method     array findBySessionId(string $session_id) Return Collector objects filtered by the session_id column
  * @method     array findByLastSeenAt(string $last_seen_at) Return Collector objects filtered by the last_seen_at column
@@ -468,46 +476,6 @@ abstract class BaseCollectorQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the score column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByScore(1234); // WHERE score = 1234
-     * $query->filterByScore(array(12, 34)); // WHERE score IN (12, 34)
-     * $query->filterByScore(array('min' => 12)); // WHERE score > 12
-     * </code>
-     *
-     * @param     mixed $score The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectorQuery The current query, for fluid interface
-     */
-    public function filterByScore($score = null, $comparison = null)
-    {
-        if (is_array($score)) {
-            $useMinMax = false;
-            if (isset($score['min'])) {
-                $this->addUsingAlias(CollectorPeer::SCORE, $score['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($score['max'])) {
-                $this->addUsingAlias(CollectorPeer::SCORE, $score['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-        return $this->addUsingAlias(CollectorPeer::SCORE, $score, $comparison);
-    }
-
-    /**
      * Filter the query on the email column
      *
      * Example usage:
@@ -805,6 +773,112 @@ abstract class BaseCollectorQuery extends ModelCriteria
             }
         }
         return $this->addUsingAlias(CollectorPeer::COMPANY, $company, $comparison);
+    }
+
+    /**
+     * Filter the query on the score column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByScore(1234); // WHERE score = 1234
+     * $query->filterByScore(array(12, 34)); // WHERE score IN (12, 34)
+     * $query->filterByScore(array('min' => 12)); // WHERE score > 12
+     * </code>
+     *
+     * @param     mixed $score The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorQuery The current query, for fluid interface
+     */
+    public function filterByScore($score = null, $comparison = null)
+    {
+        if (is_array($score)) {
+            $useMinMax = false;
+            if (isset($score['min'])) {
+                $this->addUsingAlias(CollectorPeer::SCORE, $score['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($score['max'])) {
+                $this->addUsingAlias(CollectorPeer::SCORE, $score['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CollectorPeer::SCORE, $score, $comparison);
+    }
+
+    /**
+     * Filter the query on the spam_score column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterBySpamScore(1234); // WHERE spam_score = 1234
+     * $query->filterBySpamScore(array(12, 34)); // WHERE spam_score IN (12, 34)
+     * $query->filterBySpamScore(array('min' => 12)); // WHERE spam_score > 12
+     * </code>
+     *
+     * @param     mixed $spamScore The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorQuery The current query, for fluid interface
+     */
+    public function filterBySpamScore($spamScore = null, $comparison = null)
+    {
+        if (is_array($spamScore)) {
+            $useMinMax = false;
+            if (isset($spamScore['min'])) {
+                $this->addUsingAlias(CollectorPeer::SPAM_SCORE, $spamScore['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($spamScore['max'])) {
+                $this->addUsingAlias(CollectorPeer::SPAM_SCORE, $spamScore['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CollectorPeer::SPAM_SCORE, $spamScore, $comparison);
+    }
+
+    /**
+     * Filter the query on the is_spam column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByIsSpam(true); // WHERE is_spam = true
+     * $query->filterByIsSpam('yes'); // WHERE is_spam = true
+     * </code>
+     *
+     * @param     boolean|string $isSpam The value to use as filter.
+     *              Non-boolean arguments are converted using the following rules:
+     *                * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
+     *                * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
+     *              Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorQuery The current query, for fluid interface
+     */
+    public function filterByIsSpam($isSpam = null, $comparison = null)
+    {
+        if (is_string($isSpam)) {
+            $is_spam = in_array(strtolower($isSpam), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
+        }
+        return $this->addUsingAlias(CollectorPeer::IS_SPAM, $isSpam, $comparison);
     }
 
     /**
