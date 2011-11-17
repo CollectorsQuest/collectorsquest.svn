@@ -10,7 +10,10 @@
  */
 class manageActions extends cqActions
 {
-
+  /**
+   * @param  sfWebRequest  $request
+   * @return string
+   */
   public function executeProfile(sfWebRequest $request)
   {
     /**
@@ -30,6 +33,9 @@ class manageActions extends cqActions
 
         // Clear the Geo Cache
         CollectorGeocacheQuery::create()->filterByCollectorId($collector->getId())->delete();
+
+        // Send the profile data to Impermium to analyse
+        $collector->sendToImpermium('UPDATE');
 
         $this->getUser()->setFlash('success', 'Your profile/account information was updated.');
       }
@@ -356,6 +362,10 @@ class manageActions extends cqActions
     return sfView::SUCCESS;
   }
 
+  /**
+   * @param  sfWebRequest  $request
+   * @return string
+   */
   public function executeCollectibles(sfWebRequest $request)
   {
     /* @var $collection Collection */
@@ -433,9 +443,7 @@ class manageActions extends cqActions
         }
         catch (PropelException $e)
         {
-          $this->sendEmail('zecho23@gmail.com', 'BULK DEBUG', $e->getMessage() . "\n" . $e->getTraceAsString());
-//          echo $e->getMessage();
-          //currently just skip the errors
+          // currently just skip the errors
         }
 
         $this->getUser()->setFlash('success', 'Collectible data saved');

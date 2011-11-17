@@ -382,7 +382,7 @@ class CollectorPeer extends BaseCollectorPeer
       $collector->save();
 
       // Send the profile data to Impermium to analyse
-      $collector->sendToImpermium();
+      $collector->sendToImpermium('CREATE');
     }
     catch (PropelException $e)
     {

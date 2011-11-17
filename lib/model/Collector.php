@@ -351,10 +351,11 @@ class Collector extends BaseCollector
     return CollectorGeocachePeer::doSelectOne($criteria);
   }
 
-  public function sendToImpermium()
+  public function sendToImpermium($opration = 'UPDATE')
   {
     $params = array(
       'user_id' => $this->getId(),
+      'operation' => $opration,
       'alias' => $this->getUsername(),
       'enduser_ip' => IceStatic::getUserIpAddress(),
       'password_hash' => substr($this->getSha1Password(), 0, 12),
