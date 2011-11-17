@@ -13,4 +13,14 @@ class featuredWeeksActions extends autoFeaturedWeeksActions
 
     return $query;
   }
+
+  public function executeEdit(sfWebRequest $request)
+  {
+    parent::executeEdit($request);
+
+    $this->form->setDefault('title', $this->FeaturedWeek->title);
+    $this->form->setDefault('homepage_text', $this->FeaturedWeek->homepage_text);
+
+    return sfView::SUCCESS;
+  }
 }

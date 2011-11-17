@@ -41,9 +41,9 @@ generator:
         class: CollectorEditForm
 
       edit:
+        title: Edit Collector <small>(%%USERNAME%%)</small>
         fields:
           password: { label: Password, help: "If you do not want to change the password, leave the field empty" }
-        title: Edit Collector
         display: [display_name, email, password, photo, is_public]
 
-      new:     ~
+      new: ~
