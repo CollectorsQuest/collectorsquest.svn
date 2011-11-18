@@ -110,8 +110,7 @@ class cqUser extends sfBasicSecurityUser
         // collector exists and password OK?
         if ($collector && $cookie['password'] == $collector->getSha1Password())
         {
-          $this->Authenticate(true, $collector);
-          $authenticated = true;
+          $authenticated = $this->Authenticate(true, $collector);
         }
         else
         {

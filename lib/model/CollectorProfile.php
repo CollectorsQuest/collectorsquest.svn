@@ -147,10 +147,12 @@ class CollectorProfile extends BaseCollectorProfile
 
   public function getWebsiteUrl()
   {
-    $website = $this->getWebsite();
-    $website = cqStatic::formatUrl($website);
+    if ($website = $this->getWebsite())
+    {
+      return cqStatic::formatUrl($website);
+    }
 
-    return $website;
+    return null;
   }
 
   public function setPreferences($v)
