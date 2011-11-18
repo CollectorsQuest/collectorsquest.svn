@@ -15,6 +15,32 @@ class cqUser extends sfBasicSecurityUser
     self::$_facebook_data = $this->getAttribute('data', null, 'icepique/user/facebook');
   }
 
+  /**
+   * @return integer
+   */
+  public function getId()
+  {
+    if ($this->isAuthenticated() && ($collector = $this->getCollector()))
+    {
+      return $collector->getId();
+    }
+
+    return 0;
+  }
+
+  /**
+   * @return string
+   */
+  public function getSlug()
+  {
+    if ($this->isAuthenticated() && ($collector = $this->getCollector()))
+    {
+      return $collector->getSlug();
+    }
+
+    return 'n-a';
+  }
+
   public function Authenticate($boolean, $collector = null, $remember = false)
   {
     if ($collector === null)
