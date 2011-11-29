@@ -25,7 +25,7 @@ all:
     currency_code: USD
 
     url: "https://www.paypal.com/cgi-bin/webscr"
-    merchant_account: "myackanich@collectorsquest.com"
+    merchant_account: "custserv@collectorsquest.com"
 
     currency: USD
     #URL as module/action

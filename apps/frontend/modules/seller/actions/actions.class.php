@@ -375,7 +375,7 @@ class sellerActions extends cqActions
 
 //        list ($amAPIData['FIRSTNAME'], $amAPIData['LASTNAME']) = explode(' ', $this->getUser()->getCollector()->getDisplayName());
 //        $location = $this->getUser()->getCollector()->getLastCollectorGeocache();
-//        
+//
         $amAPIData['FIRSTNAME'] = $request->getParameter('first_name');
         $amAPIData['LASTNAME'] = $request->getParameter('last_name');
         $amAPIData['STREET'] = $request->getParameter('street');
@@ -411,7 +411,7 @@ class sellerActions extends cqActions
           . '&SHIPPINGAMT=0'
           . '&TAXAMT=0'
         ;
-        
+
         $omPayPalPro = new PayPal($amAPIData['API_USERNAME'], $amAPIData['API_PASSWORD'], $amAPIData['API_SIGNATURE'], $amAPIData['API_URL'], $amAPIData['IS_ONLINE']);
         $amResponse = $omPayPalPro->hash_call($amAPIData['PAYMENT_METHOD'], $ssNvpString);
 
@@ -419,7 +419,7 @@ class sellerActions extends cqActions
         {
 //          echo "<pre>";
 //          print_r($amResponse);
-//          
+//
 //          if ('SUCCESS' == strtoupper($amResponse['ACK'])) {
 //            echo '<strong>Success</strong>';
 //          }
@@ -686,6 +686,8 @@ class sellerActions extends cqActions
         $this->redirect('@seller_become?id=' . $this->getUser()->getCollector()->getId());
       }
     }
+
+    return sfView::NONE;
   }
 
 }

@@ -266,10 +266,10 @@ $countries = array_merge($top, $countries);
                       <div class="text_valignnew">Country:</div>
                     </td>
                     <td>
-                      <?php 
+                      <?php
                         $country = new sfWidgetFormI18nChoiceCountry(array('choices' => $countries, 'add_empty' => true), array('style' => 'width: 142px;')) ;
                         $country->setDefault($sf_request->getParameter('country'));
-                        echo $country->render('country'); 
+                        echo $country->render('country');
                         ?>
                     </td>
                   </tr>
@@ -331,24 +331,25 @@ $countries = array_merge($top, $countries);
   </tr>
 </table>
 <?php
-echo form_tag(sfConfig::get("app_paypal_url"), array('name' => 'frmpaypal', 'id' => 'frmpaypal', 'method' => 'post'));
-// Paypal Details
-echo input_hidden_tag('item_number');
-echo input_hidden_tag('item_name');
-echo input_hidden_tag('custom');
-echo input_hidden_tag('amount');
-echo input_hidden_tag('invoice');
-echo input_hidden_tag('on0');
-echo input_hidden_tag('cmd', '_xclick');
-echo input_hidden_tag('shipping', 0);
-echo input_hidden_tag('tax', 0);
-echo input_hidden_tag('no_note', '1');
-echo input_hidden_tag('business', sfConfig::get("app_paypal_merchant_account"));
-echo input_hidden_tag('currency_code', sfConfig::get("app_paypal_currency"));
-echo input_hidden_tag('currency', sfConfig::get("app_paypal_currency"));
-echo input_hidden_tag('return', url_for(sfConfig::get("app_paypal_return_url"), true));
-echo input_hidden_tag('cancel', url_for(sfConfig::get("app_paypal_cancel_url"), true));
-echo input_hidden_tag('notify_url', url_for(sfConfig::get("app_paypal_notify_url"), true));
+  echo form_tag(sfConfig::get("app_paypal_url"), array('name' => 'frmpaypal', 'id' => 'frmpaypal', 'method' => 'post'));
+
+  // Paypal Details
+  echo input_hidden_tag('item_number');
+  echo input_hidden_tag('item_name');
+  echo input_hidden_tag('custom');
+  echo input_hidden_tag('amount');
+  echo input_hidden_tag('invoice');
+  echo input_hidden_tag('on0');
+  echo input_hidden_tag('cmd', '_xclick');
+  echo input_hidden_tag('shipping', 0);
+  echo input_hidden_tag('tax', 0);
+  echo input_hidden_tag('no_note', '1');
+  echo input_hidden_tag('business', sfConfig::get("app_paypal_merchant_account"));
+  echo input_hidden_tag('currency_code', sfConfig::get("app_paypal_currency"));
+  echo input_hidden_tag('currency', sfConfig::get("app_paypal_currency"));
+  echo input_hidden_tag('return', url_for(sfConfig::get("app_paypal_return_url"), true));
+  echo input_hidden_tag('cancel', url_for(sfConfig::get("app_paypal_cancel_url"), true));
+  echo input_hidden_tag('notify_url', url_for(sfConfig::get("app_paypal_notify_url"), true));
 ?>
 </form>
 <div class="clearfix append-bottom">&nbsp;</div>
@@ -372,9 +373,9 @@ echo input_hidden_tag('notify_url', url_for(sfConfig::get("app_paypal_notify_url
   {
     var numberOfItems = jQuery("#items_allowed").val();
     var bTermCondition = true;
-	
+
     console.log(numberOfItems);
-  
+
     if(!numberOfItems)
     {
       alert('Please Choose a Plan');
