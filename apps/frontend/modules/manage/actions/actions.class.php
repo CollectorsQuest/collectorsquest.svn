@@ -210,7 +210,7 @@ class manageActions extends cqActions
     }
     else
     {
-      $collectible = CollectiblePeer::retrieveByPK($request->getParameter('collectible[id]'));
+      $collectible = CollectiblePeer::retrieveByPK($request->getParameter('id'));
       $collection = $collectible->getCollection();
     }
     $this->forward404Unless($collectible && $this->getUser()->isOwnerOf($collectible));

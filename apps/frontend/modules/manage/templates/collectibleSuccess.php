@@ -1,7 +1,7 @@
 <?php use_helper('Form'); ?>
 <br class="clear" />
 
-<form action="<?php echo url_for('@manage_collectible'); ?>" method="post" enctype="multipart/form-data">
+<form action="<?php echo url_for('@manage_collectible?id='. $collectible->getId()); ?>" method="post" enctype="multipart/form-data">
   <div class="span-4" style="text-align: right;">
     <?php echo cq_label_for($form, 'name', __('Name:')); ?>
     <div class="required"><?php echo __('(required)'); ?></div>

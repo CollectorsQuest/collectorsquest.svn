@@ -72,7 +72,7 @@ class manageComponents extends sfComponents
 
   public function executeSidebarCollectible()
   {
-    $collectible = CollectiblePeer::retrieveByPK($this->getRequestParameter('id', $this->getRequestParameter('collectible[id]')));
+    $collectible = CollectiblePeer::retrieveByPK($this->getRequestParameter('id'));
 
     if ($collectible instanceof Collectible)
     {
