@@ -18,6 +18,16 @@
 # limitations under the License.
 #
 
+package "rubygems"
+package "libopenssl-ruby"
+
+bash "Install and run apt-repair-sources" do
+  code <<-EOH
+    /usr/bin/gem install --no-rdoc --no-ri  apt-repair-sources
+    /usr/bin/apt-repair-sources --fix-it-for-me
+  EOH
+end
+
 # Run apt-get update to create the stamp file
 execute "apt-get-update" do
   command "apt-get update"

@@ -50,12 +50,7 @@
 
 <br clear="all">
 <div class="span-19 last" style="margin-bottom: 25px">
-  <?php
-    include_partial(
-      'global/pager',
-      array('pager' => $pager, 'options' => array('url' => '@collections','update' => 'contents'))
-    );
-  ?>
+  <?php include_partial('global/pager', array('pager' => $pager)); ?>
 </div>
 
 <?php if (!$sf_user->isAuthenticated()): ?>
