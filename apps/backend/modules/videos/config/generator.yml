@@ -18,7 +18,7 @@ generator:
         is_published: { label: "Published?" }
       list:
         title: Videos
-        display: [id, type, =title, length, is_published, published_at]
+        display: [id, type, _list_title, length, is_published, published_at]
       filter:
         display: [title, type, is_published]
       form:    ~
