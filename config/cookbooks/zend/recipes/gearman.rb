@@ -7,7 +7,7 @@ execute "Install Gearman PHP module" do
 end
 
 template "/usr/local/zend/etc/ext.d/gearman.ini" do
-  source "browscap.ini"
+  source "gearman.ini"
   mode "0664"
 end
 
