@@ -12,5 +12,5 @@ end
 link "/usr/local/zend/etc/conf.d/browscap.ini" do
   to "/usr/local/zend/etc/ext.d/browscap.ini"
   not_if "test -L /usr/local/zend/etc/conf.d/browscap.ini"
-  notifies :restart, "service[zend]"
+  notifies :restart, "service[apache]"
 end
