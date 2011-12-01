@@ -5,6 +5,7 @@ require_recipe "zend::xsendfile"
 require_recipe "zend::browscap"
 require_recipe "zend::passenger"
 require_recipe "zend::modperl"
+require_recipe "zend::gearman"
 
 execute "Update all PEAR packages" do
   command "/usr/local/zend/bin/pear upgrade-all"

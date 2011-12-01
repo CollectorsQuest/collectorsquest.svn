@@ -7,7 +7,7 @@ require_recipe "cron"
 require_recipe "tmpreaper"
 
 # Packages for optimizing JPEG and PNG images
-package "libjpeg-progs"
+package "jpegoptim"
 package "optipng"
 
 # require_recipe "oh-my-zsh"
