@@ -24,7 +24,7 @@ Vagrant::Config.run do |config|
   end
 
   config.vm.customize do |vm|
-    vm.name = "CollectorsQuest"
+    vm.name = "Collectors Quest"
     vm.memory_size = 2048
     vm.cpu_count = 2
   end

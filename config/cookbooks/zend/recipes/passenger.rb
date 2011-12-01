@@ -34,7 +34,7 @@ end
 
 execute "Install Passenger Apache2 module" do
   command "/usr/bin/gem install --no-rdoc --no-ri passenger && /usr/bin/passenger-install-apache2-module -a"
-  not_if "test -e /usr/lib/ruby/gems/1.8/gems/passenger-3.0.9/ext/apache2/mod_passenger.so"
+  not_if "test -e /usr/lib/ruby/gems/1.8/gems/passenger-3.0.11/ext/apache2/mod_passenger.so"
 end
 
 template "/etc/apache2/mods-available/passenger.conf" do

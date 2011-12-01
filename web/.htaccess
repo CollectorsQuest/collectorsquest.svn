@@ -1,5 +1,9 @@
 Options +FollowSymLinks +ExecCGI
 
+<IfModule pagespeed_module>
+  ModPagespeedDisallow */combine.php*
+</IfModule>
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
 

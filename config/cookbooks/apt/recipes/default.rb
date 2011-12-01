@@ -24,7 +24,7 @@ package "libopenssl-ruby"
 bash "Install and run apt-repair-sources" do
   code <<-EOH
     /usr/bin/gem install --no-rdoc --no-ri  apt-repair-sources
-    /usr/bin/apt-repair-sources --fix-it-for-me
+    /var/lib/gems/1.8/bin/apt-repair-sources --fix-it-for-me
   EOH
 end
 
