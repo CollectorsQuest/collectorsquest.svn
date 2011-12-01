@@ -31,6 +31,11 @@ package "zend-server-ce-php-#{node[:zend][:php][:version]}"
 package "php-5.3-memcache-zend-server"
 package "php-5.3-imagick-zend-server"
 
+link "/usr/bin/php" do
+  to "/usr/local/zend/bin/php"
+  not_if "test -L /usr/bin/php"
+end
+
 service "zend" do
   service_name "zend-server"
   supports :status => true, :restart => true
