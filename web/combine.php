@@ -43,7 +43,7 @@ while (list(,$element) = each($elements))
   if ('/' == $element[0])
   {
     $path = realpath($webdir . $element);
-  } 
+  }
   else
   {
     $path = realpath($base .'/'. $element);
@@ -62,6 +62,7 @@ $lastmodified = $lastmodified + $revision;
 $hash = $lastmodified .'-'. md5($_GET['files']) .'-'. $revision;
 header ("Etag: \"". $hash ."\"");
 
+header("Vary: Accept-Encoding");
 header("Last-Modified: ".gmdate("D, d M Y H:i:s", $lastmodified)." GMT");
 header("Expires: ".gmdate("D, d M Y H:i:s", $lastmodified + 2592000)." GMT");
 
@@ -148,7 +149,7 @@ else
     if ('/' == $element[0])
     {
       $path = realpath($webdir . $element);
-    } 
+    }
     else
     {
       $path = realpath($base .'/'. $element);

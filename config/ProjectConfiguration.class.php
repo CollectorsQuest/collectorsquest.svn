@@ -20,9 +20,10 @@ class ProjectConfiguration extends sfProjectConfiguration
       'sfPropelORMPlugin', 'sfPropelMigrationsLightPlugin',
       'sfFormExtraPlugin', 'sfGuardPlugin', 'sfGravatarPlugin'
     );
+
     $this->enablePlugins(
       'iceAssetsPlugin', 'iceBehaviorsPlugin', 'iceLibsPlugin',
-      'iceTaggablePlugin', 'iceBackendPlugin'
+      'iceTaggablePlugin', 'iceBackendPlugin', 'iceJobQueuePlugin'
     );
   }
 }
