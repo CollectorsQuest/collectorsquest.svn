@@ -342,6 +342,8 @@ $countries = array_merge($top, $countries);
   echo input_hidden_tag('on0');
   echo input_hidden_tag('cmd', '_xclick');
   echo input_hidden_tag('shipping', 0);
+  echo input_hidden_tag('shipping2', 0);
+  echo input_hidden_tag('no_shipping', 1);
   echo input_hidden_tag('tax', 0);
   echo input_hidden_tag('no_note', '1');
   echo input_hidden_tag('business', sfConfig::get("app_paypal_merchant_account"));
