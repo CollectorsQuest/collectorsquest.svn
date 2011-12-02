@@ -31,10 +31,20 @@ all:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_queue;host=cq-mysql-master
       username:   collectorsquest
       password:   "TYN9KJ76gpy7fq"
       encoding:   utf8
+
+  icepique:
+      class:        sfPropelDatabase
+      param:
+        classname:  PropelPDO
+        dsn:        mysql:dbname=collectorsquest_com;host=cq-mysql-master
+        username:   collectorsquest
+        password:   "TYN9KJ76gpy7fq"
+        encoding:   utf8
+
 
 stg:
   propel:
@@ -67,6 +77,15 @@ stg:
       encoding:   utf8
 
   queue:
+    class:        sfPropelDatabase
+    param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
+      username:   staging
+      password:   "KC93pNXux7x4FP"
+      encoding:   utf8
+
+  icepique:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO

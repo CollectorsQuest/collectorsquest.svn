@@ -5,7 +5,7 @@ all:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_com;host=cq-mysql-master
       username:   collectorsquest
-      password:   
+      password:
       encoding:   utf8
       persistent: true
       pooling:    true
@@ -16,7 +16,7 @@ all:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_blog;host=cq-mysql-master
       username:   collectorsquest
-      password:   
+      password:
       encoding:   utf8
       persistent: true
       pooling:    true
@@ -27,7 +27,7 @@ all:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_calendar;host=cq-mysql-master
       username:   collectorsquest
-      password:   
+      password:
       encoding:   utf8
       persistent: true
       pooling:    true
@@ -38,35 +38,53 @@ all:
       classname:  PropelPDO
       dsn:        mysql:dbname=collectorsquest_queue;host=cq-mysql-master
       username:   collectorsquest
-      password:   
+      password:
       encoding:   utf8
       persistent: true
       pooling:    true
+
+  icepique:
+    class:        sfPropelDatabase
+    param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_com;host=cq-mysql-master
+      username:   collectorsquest
+      password:
+      encoding:   utf8
+      persistent: true
+      pooling:    true
+
 
 stg:
   propel:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_com;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
 
   blog:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_blog;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
 
   calendar:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_calendar;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
 
   queue:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_queue;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
+
+  icepique:
+    class:        sfPropelDatabase
+    param:
+      classname:  PropelPDO
+      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
 
 dev:
   propel:
@@ -118,6 +136,14 @@ dev:
       dsn:        mysql:dbname=collectorsquest_dev;host=cq-mysql-master
       username:   root
       password:
+
+  icepique:
+    param:
+      classname:  DebugPDO
+      dsn:        mysql:dbname=collectorsquest_dev;host=cq-mysql-master
+      username:   root
+      password:
+
 
 test:
   propel:
