@@ -14,8 +14,8 @@ class FeaturedWeekForm extends BaseFeaturedForm
     $this->setWidgets(array(
       'title'            => new sfWidgetFormInputText(),
       'homepage_text'    => new sfWidgetFormTextarea(),
-      'start_date'       => new sfWidgetFormDate(),
-      'end_date'         => new sfWidgetFormDate(),
+      'start_date'       => new sfWidgetFormJQueryDate(),
+      'end_date'         => new sfWidgetFormJQueryDate(),
       'is_active'        => new sfWidgetFormInputCheckbox(),
     ));
 

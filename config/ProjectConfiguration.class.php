@@ -16,15 +16,10 @@ class ProjectConfiguration extends sfProjectConfiguration
 
     $this->dispatcher->connect('application.throw_exception', array('cqStatic', 'exceptionNotifier'));
 
+    $this->enablePlugins('sfPropelORMPlugin', 'sfGuardPlugin', 'sfGravatarPlugin', 'sfTaskExtraPlugin');
     $this->enablePlugins(
-      'sfPropelORMPlugin', 'sfPropelMigrationsLightPlugin',
-      'sfFormExtraPlugin', 'sfGuardPlugin', 'sfGravatarPlugin'
-    );
-
-    $this->enablePlugins(
-      'iceAssetsPlugin', 'iceBehaviorsPlugin', 'iceLibsPlugin',
-      'iceTaggablePlugin', 'iceBackendPlugin', 'iceJobQueuePlugin',
-      'iceCrontabPlugin'
+      'iceAssetsPlugin', 'iceBehaviorsPlugin', 'iceLibsPlugin', 'iceTaggablePlugin',
+      'iceBackendPlugin', 'iceJobQueuePlugin', 'iceCrontabPlugin'
     );
   }
 }

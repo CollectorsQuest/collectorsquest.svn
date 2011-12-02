@@ -45,6 +45,9 @@ generator:
           end_date:
             label: End Date
             attributes: { class: span2 }
+          is_active:
+            label: "Active?"
+            attributes: { class: 'yes_no' }
       edit:
         title: Edit Featured Week
       new:
