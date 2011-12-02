@@ -23,7 +23,8 @@ class ProjectConfiguration extends sfProjectConfiguration
 
     $this->enablePlugins(
       'iceAssetsPlugin', 'iceBehaviorsPlugin', 'iceLibsPlugin',
-      'iceTaggablePlugin', 'iceBackendPlugin', 'iceJobQueuePlugin'
+      'iceTaggablePlugin', 'iceBackendPlugin', 'iceJobQueuePlugin',
+      'iceCrontabPlugin'
     );
   }
 }
