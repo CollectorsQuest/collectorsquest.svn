@@ -38,10 +38,17 @@ directory "/var/lib/sphinx" do
   action :create
 end
 
+directory "/var/lib/sphinx/website" do
+  owner "www-data"
+  group "www-data"
+  mode "0755"
+  action :create
+end
+
 link "/etc/init.d/sphinx" do
   to "/www/init.d/sphinx"
   not_if "test -L /etc/init.d/sphinx"
-  notifies :start, "service[sphinx]"
+  notifies :restart, "service[sphinx]"
 end
 
 service "sphinx" do

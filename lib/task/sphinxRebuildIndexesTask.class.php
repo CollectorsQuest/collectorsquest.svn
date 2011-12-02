@@ -30,7 +30,7 @@ EOF;
     // We need to run this task with root or www-data users
     if (!in_array(get_current_user(), array('root', 'www-data')))
     {
-      $this->logBlock('You must run this task with root or www-data priviliges!', 'ERROR');
+      $this->logBlock('You must run this task with root or www-data priviliges!', 'error');
       return false;
     }
 
