@@ -41,7 +41,7 @@ class CollectorsquestJobQueueCallbacks extends IceJobQueueCallbacks
       $files = $f->in($path);
       foreach ($files as $file)
       {
-        $cmd = '/usr/bin/jpegoptim --quiet --preserve --strip-all '. $file;
+        $cmd = 'nice -n 19 /usr/bin/jpegoptim --quiet --preserve --strip-all '. $file;
         @exec($cmd);
       }
 
