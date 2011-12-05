@@ -36,7 +36,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER insert_collectible AFTER INSERT ON collectible
+/*!50003 CREATE*/ /*!50017 DEFINER=`test`@`localhost`*/ /*!50003 TRIGGER insert_collectible AFTER INSERT ON collectible
   FOR EACH ROW BEGIN
     IF (@DISABLE_TRIGER <> 1 OR @DISABLE_TRIGER IS NULL) THEN
       UPDATE collection SET collection.num_items = collection.num_items + 1
@@ -57,7 +57,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER delete_collectible BEFORE DELETE ON collectible
+/*!50003 CREATE*/ /*!50017 DEFINER=`test`@`localhost`*/ /*!50003 TRIGGER delete_collectible BEFORE DELETE ON collectible
   FOR EACH ROW BEGIN
     IF (@DISABLE_TRIGER <> 1 OR @DISABLE_TRIGER IS NULL) THEN
       UPDATE collection SET collection.num_items = collection.num_items - 1

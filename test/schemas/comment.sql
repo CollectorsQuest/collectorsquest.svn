@@ -38,7 +38,7 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER insert_comment AFTER INSERT ON comment
+/*!50003 CREATE*/ /*!50017 DEFINER=`test`@`localhost`*/ /*!50003 TRIGGER insert_comment AFTER INSERT ON comment
   FOR EACH ROW BEGIN
     IF (@DISABLE_TRIGER <> 1 OR @DISABLE_TRIGER IS NULL) THEN
       UPDATE collection SET collection.num_comments = collection.num_comments + 1
@@ -61,7 +61,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER delete_comment BEFORE DELETE ON comment
+/*!50003 CREATE*/ /*!50017 DEFINER=`test`@`localhost`*/ /*!50003 TRIGGER delete_comment BEFORE DELETE ON comment
   FOR EACH ROW BEGIN
     IF (@DISABLE_TRIGER <> 1 OR @DISABLE_TRIGER IS NULL) THEN
       UPDATE collection SET collection.num_comments = collection.num_comments - 1

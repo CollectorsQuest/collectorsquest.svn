@@ -93,3 +93,19 @@ stg:
       username:   staging
       password:   "KC93pNXux7x4FP"
       encoding:   utf8
+
+
+test:
+  propel:
+    param:
+      classname:  DebugPDO
+      dsn:        mysql:dbname=collectorsquest_test;host=cq-mysql-master
+      username:   test
+      password:   r4BBPRyt628YDF
+
+  blog:
+    param:
+      classname:  DebugPDO
+      dsn:        mysql:dbname=collectorsquest_test;host=cq-mysql-master
+      username:   test
+      password:   r4BBPRyt628YDF
