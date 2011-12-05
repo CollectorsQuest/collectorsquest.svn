@@ -1,6 +1,8 @@
 <?php
+
 include_stylesheets_for_form($form);
 include_javascripts_for_form($form);
+
 /**
  * @var $collectible Collectible
  * @var $collection Collection
@@ -13,16 +15,16 @@ include_javascripts_for_form($form);
   <?php echo $form->renderHiddenFields() ?>
   <?php foreach ($form->getEmbeddedForms() as $index => $subform): ?>
     <?php
-    $data = $form->getDefault($index);
-    $collectible = CollectiblePeer::retrieveByPK($data['id']);
+      $data = $form->getDefault($index);
+      $collectible = CollectiblePeer::retrieveByPK($data['id']);
     ?>
-    <?php include_partial('manage/collectible_form', array('form'=>$form[$index], 'collectible'=>$collectible))  ?>
+    <?php include_partial('manage/collectible_form', array('form' => $form[$index], 'collectible' => $collectible))  ?>
     <hr/><br clear="all">
   <?php endforeach; ?>
-</table>
-<div class="span-18">
-  <?php cq_button_submit(__('Save Changes and edit next >'), null, 'float: right;'); ?>
-</div>
+
+  <div class="span-18">
+    <?php cq_button_submit(__('Save Changes and edit next >'), null, 'float: right;'); ?>
+  </div>
 </form>
 
 <script src="/js/jquery/tags.js" type="text/javascript"></script>

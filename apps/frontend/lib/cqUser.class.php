@@ -50,6 +50,10 @@ class cqUser extends sfBasicSecurityUser
 
     if ($collector instanceof Collector)
     {
+      $this->clearCredentials();
+      $this->getAttributeHolder()->removeNamespace('collector');
+      $this->getAttributeHolder()->removeNamespace('seller');
+
       if ($boolean == true)
       {
         $this->addCredential(strtolower($collector->getUserType()));
@@ -71,9 +75,6 @@ class cqUser extends sfBasicSecurityUser
       }
       else if ($boolean == false)
       {
-        $this->clearCredentials();
-        $this->getAttributeHolder()->removeNamespace('collector');
-        $this->getAttributeHolder()->removeNamespace('seller');
         $this->setAuthenticated(false);
 
         setCookie('remember', null, 0, '/', str_replace('http://www', '', sfConfig::get('app_cq_www_domain')));

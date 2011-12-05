@@ -10,6 +10,7 @@ class ManageCollectiblesForm extends sfForm
   public function configure()
   {
     $i = 0;
+
     /* @var $collectible Collectible */
     foreach ($this->getDefault('collectibles') as $item)
     {
