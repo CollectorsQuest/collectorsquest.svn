@@ -58,6 +58,7 @@ $(function()
     filter_hide: true,
     firstselected: true,
     filter_selected: true,
+    width: '388px',
     newel: false
   });
 

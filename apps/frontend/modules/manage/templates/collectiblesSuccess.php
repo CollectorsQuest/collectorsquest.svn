@@ -33,11 +33,12 @@ include_javascripts_for_form($form);
     {
       json_url: '<?php echo url_for('@ajax_autocomplete?section=tags'); ?>',
       maxshownitems: 10,
-      cache: false,
+      cache: true,
       filter_case: true,
       filter_hide: true,
       firstselected: true,
       filter_selected: true,
+      width: '388px',
       newel: true
     });
 

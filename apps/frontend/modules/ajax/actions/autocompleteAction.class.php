@@ -30,7 +30,7 @@ class autocompleteAction extends cqAjaxAction
     $stmt = iceModelTagPeer::doSelectStmt($c);
     while ($row = $stmt->fetch(PDO::FETCH_NUM))
     {
-      $tags[] = array('caption' => $row[1], 'value' => $row[1]);
+      $tags[] = array('key' => $row[1], 'value' => $row[1]);
     }
 
     return $this->json($tags);
@@ -55,7 +55,7 @@ class autocompleteAction extends cqAjaxAction
     $stmt = CollectorPeer::doSelectStmt($c);
     while ($row = $stmt->fetch(PDO::FETCH_NUM))
     {
-      $collectors[] = array('caption' => sprintf('%s (%s)', $row[2], $row[1]), 'value' => $row[0]);
+      $collectors[] = array('key' => sprintf('%s (%s)', $row[2], $row[1]), 'value' => $row[0]);
     }
 
     return $this->json($collectors);
