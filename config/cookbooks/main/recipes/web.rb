@@ -7,6 +7,9 @@ require_recipe "zend::passenger"
 require_recipe "zend::modperl"
 require_recipe "zend::gearman"
 
+# require_recipe "zend::functional"
+# require_recipe "zend::scached"
+
 execute "Update all PEAR packages" do
   command "/usr/local/zend/bin/pear upgrade-all"
 end

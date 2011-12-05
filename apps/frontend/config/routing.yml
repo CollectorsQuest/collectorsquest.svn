@@ -364,11 +364,12 @@ manage_collection_by_slug:
   class: sfPropelRoute
   options: { model: Collection, type: object, method: getObjectForRoute }
   param: { module: manage, action: collection }
-  requirements: { id: '\d+', slug: '[\-\w\.]+' }
+  requirements: { id: '\d+', slug: '[\-\w\.]+', sf_method: [get, post] }
 
 manage_collection:
   url:  /manage/collection
   param: { module: manage, action: collection }
+  requirements: { sf_method: [get, post] }
 
 manage_collectibles_by_slug:
   url:  /manage/collectibles/:id/:slug
@@ -385,7 +386,7 @@ manage_collectible_by_slug:
   class: sfPropelRoute
   options: { model: Collectible, type: object, method: getObjectForRoute }
   param: { module: manage, action: collectible }
-  requirements: { id: '\d+', slug: '[\-\w\.]+' }
+  requirements: { id: '\d+', slug: '[\-\w\.]+', sf_method: [get, post] }
 
 manage_collectible:
   url:  /manage/collectible

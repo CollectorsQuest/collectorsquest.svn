@@ -1,6 +1,6 @@
 <br class="clear" />
 
-<form action="<?php echo url_for('@manage_collection'); ?>" method="post" enctype="multipart/form-data">
+<form action="<?php echo url_for('@manage_collection_by_slug?id='. $collection->getId().'&slug='. $collection->getSlug()); ?>" method="post" enctype="multipart/form-data">
   <div class="span-4" style="text-align: right;">
     Category:
   </div>
