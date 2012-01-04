@@ -29,7 +29,7 @@ class cqSessionStorage extends sfSessionStorage
     }
     else
     {
-      if (($b = get_browser(null, false)) && ($b->cookies === '0'))
+      if (($b = @get_browser(null, false)) && ($b->cookies === '0'))
       {
         return;
       }

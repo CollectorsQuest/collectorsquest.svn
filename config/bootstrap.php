@@ -10,8 +10,7 @@ if (!defined('SVN_REVISION'))
   }
   else
   {
-    $svn = file(dirname(__FILE__).'/../.svn/entries');
-    define('SVN_REVISION', (int) $svn[3]); unset($svn);
+    define('SVN_REVISION', 1);
   }
 }
 

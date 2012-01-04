@@ -51,8 +51,8 @@ stg:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
-      username:   staging
+      dsn:        mysql:dbname=collectorsquest;host=collectorsquest-db.my.phpcloud.com
+      username:   collectorsquest
       password:   "KC93pNXux7x4FP"
       encoding:   utf8
       persistent: true
@@ -62,8 +62,8 @@ stg:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
-      username:   staging
+      dsn:        mysql:dbname=collectorsquest;host=collectorsquest-db.my.phpcloud.com
+      username:   collectorsquest
       password:   "KC93pNXux7x4FP"
       encoding:   utf8
 
@@ -71,8 +71,8 @@ stg:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
-      username:   staging
+      dsn:        mysql:dbname=collectorsquest;host=collectorsquest-db.my.phpcloud.com
+      username:   collectorsquest
       password:   "KC93pNXux7x4FP"
       encoding:   utf8
 
@@ -80,8 +80,8 @@ stg:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
-      username:   staging
+      dsn:        mysql:dbname=collectorsquest;host=collectorsquest-db.my.phpcloud.com
+      username:   collectorsquest
       password:   "KC93pNXux7x4FP"
       encoding:   utf8
 

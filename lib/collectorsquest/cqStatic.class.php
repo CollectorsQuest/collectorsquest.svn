@@ -69,7 +69,7 @@ class cqStatic extends IceStatic
   {
     include dirname(__FILE__).'/../vendor/Impermium.class.php';
 
-    return new Impermium(sfConfig::get('app_credentials_impermium'));
+    return new Impermium(sfConfig::get('app_credentials_impermium'), '3.0');
   }
 
   /**

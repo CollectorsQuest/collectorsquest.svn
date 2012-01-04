@@ -15,12 +15,15 @@ generator:
       actions: ~
       fields:
         id: { label: ID }
+        tags_string: { label: Tags }
       list:
         title: Collection Categories
-        display: [id, parent_id, name, tags_string, score]
+        display: [id, parent, name, tags_string, score]
       filter:
-        display: [name]
+        display: [parent, name]
       form:
-        display: [parent_id, name, tags, score]
-      edit:    ~
-      new:     ~
+        display: [parent, name, tags, score]
+      edit:
+        title: Edit Collection Category
+      new:
+        title: New Collection Category

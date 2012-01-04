@@ -1,37 +1,42 @@
 <?php
 
-
 /**
  * Skeleton subclass for performing query and update operations on the 'collection_category' table.
  *
- * 
- *
- * You should add additional methods to this class to meet the
- * application requirements.  This class will only be generated as
- * long as it does not already exist in the output directory.
- *
  * @package    propel.generator.lib.model
  */
-class CollectionCategoryQuery extends BaseCollectionCategoryQuery {
+class CollectionCategoryQuery extends BaseCollectionCategoryQuery
+{
+  /**
+   * @param string | CollectionCatregory $category
+   * @param string $criteria
+   *
+   * @return CollectionCategoryQuery
+   */
+  public function filterByParent($category = null, $criteria = Criteria::EQUAL)
+  {
+    if (is_numeric($category))
+    {
+      $category = CollectionCategoryQuery::create()->findOneById($category);
+    }
 
-	/**
-	 * Returns a new CollectionCategoryQuery object.
-	 *
-	 * @param     string $modelAlias The alias of a model in the query
-	 * @param     Criteria $criteria Optional Criteria to build the query from
-	 *
-	 * @return    CollectionCategoryQuery
-	 */
-	public static function create($modelAlias = null, $criteria = null)
-	{
-		if ($criteria instanceof CollectionCategoryQuery) {
-			return $criteria;
-		}
-		$query = new self('propel', 'CollectionCategory', $modelAlias);
-		if ($criteria instanceof Criteria) {
-			$query->mergeWith($criteria);
-		}
-		return $query;
-	}
+    $parent_id = ($category instanceof CollectionCategory) ? $category->getId() : 0;
+    $this->filterByParentId($parent_id, $criteria);
 
-} // CollectionCategoryQuery
+    return $this;
+  }
+
+	public function isParent()
+  {
+    $this->filterByParentId(0, Criteria::EQUAL);
+
+    return $this;
+  }
+
+  public function isNotParent()
+  {
+    $this->filterByParentId(0, Criteria::GREATER_THAN);
+
+    return $this;
+  }
+}

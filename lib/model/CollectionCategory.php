@@ -7,6 +7,11 @@ class CollectionCategory extends BaseCollectionCategory
     return $this->getName();
   }
 
+  public function getParent()
+  {
+    return CollectionCategoryQuery::create()->findOneById($this->getParentId());
+  }
+
   public function getCountFields()
   {
     $c = new Criteria();
