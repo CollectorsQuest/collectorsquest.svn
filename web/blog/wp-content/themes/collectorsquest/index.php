@@ -72,7 +72,7 @@
       <p><?php the_tags(); ?></p>
       <iframe src="http://www.facebook.com/plugins/like.php?href=<?php the_permalink(); ?>&amp;layout=standard&amp;show_faces=true&amp;width=728&amp;action=like&amp;font=trebuchet+ms&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:728px; height:80px;" allowTransparency="true"></iframe>
 
-      <a href="<?php the_permalink(); ?>">Permalink</a> | 
+      <a href="<?php the_permalink(); ?>">Permalink</a> |
       <?php edit_post_link('Edit', '', ' | '); ?>  <?php comments_popup_link('Add a comment &#187;', '1 Comment &#187;', '% Comments &#187;'); ?>
     </div>
     <div class="clear">&nbsp;</div>
@@ -123,7 +123,7 @@
   }
 
   $layout = file_get_contents(
-    "http://www.collectorsquest.com/_blog/index?_session_id=". $_COOKIE['frontend'] ."&key=". $key .'&env='. SF_ENV
+    "http://www.collectorsquest.dev/_blog/index?_session_id=". $_COOKIE['frontend'] ."&key=". $key .'&env='. SF_ENV
   );
 
   echo str_replace(

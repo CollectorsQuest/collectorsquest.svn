@@ -1,5 +1,3 @@
-
-
 function toggleClass(element, className) {
     var e = ref(element);
     if (!e) return;
@@ -60,48 +58,45 @@ function findAncestorByClass(element, className) {
 
 var selectedThemeColor='blank';
 function onChangeColor(color){
-var oldTheme=document.getElementById('theme_color_'+selectedThemeColor+'_img');
-var newTheme=document.getElementById('theme_color_'+color+'_img');
+    var oldTheme=document.getElementById('theme_color_'+selectedThemeColor+'_img');
+    var newTheme=document.getElementById('theme_color_'+color+'_img');
 
-var embedColor=document.getElementById('embedColor');
-embedColor.value=color;
+    var embedColor=document.getElementById('embedColor');
+    embedColor.value=color;
 
-removeClass(oldTheme,'radio_selected');
-addClass(newTheme,'radio_selected');
-selectedThemeColor=color;
-onUpdatePreviewImage();
-return false;
+    removeClass(oldTheme,'radio_selected');
+    addClass(newTheme,'radio_selected');
+    selectedThemeColor=color;
+    onUpdatePreviewImage();
+    return false;
 }
 
 function onUpdatePreviewImage(){
-var previewImage=document.getElementById('watch-customize-embed-theme-preview');
-var showBorderCheckBox=document.getElementById('show_border_checkbox');
-var embedColor=document.getElementById('embedColor');
-var border=(!showBorderCheckBox.checked?'_nb':'');
-var prevUrl=document.getElementById('prevUrl');
+    var previewImage=document.getElementById('watch-customize-embed-theme-preview');
+    var showBorderCheckBox=document.getElementById('show_border_checkbox');
+    var embedColor=document.getElementById('embedColor');
+    var border=(!showBorderCheckBox.checked?'_nb':'');
+    var prevUrl=document.getElementById('prevUrl');
 
-selectedThemeColor=embedColor.value;
-previewImage.src=prevUrl.value+'preview_embed_'+selectedThemeColor+'_sm'+border+'.gif';
-//previewImage.src='http://www.youtube.com/img/preview_embed_'+selectedThemeColor+'_sm'+border+'.gif';
+    selectedThemeColor=embedColor.value;
+    previewImage.src=prevUrl.value+'preview_embed_'+selectedThemeColor+'_sm'+border+'.gif';
+    //previewImage.src='http://www.youtube.com/img/preview_embed_'+selectedThemeColor+'_sm'+border+'.gif';
 }
 
 function loaded()
 {
-var previewImage=document.getElementById('watch-customize-embed-theme-preview');
-var showBorderCheckBox=document.getElementById('show_border_checkbox');
-var embedColor=document.getElementById('embedColor');
-var prevUrl=document.getElementById('prevUrl');
-var border=(!showBorderCheckBox.checked?'_nb':'');
+    var previewImage=document.getElementById('watch-customize-embed-theme-preview');
+    var showBorderCheckBox=document.getElementById('show_border_checkbox');
+    var embedColor=document.getElementById('embedColor');
+    var prevUrl=document.getElementById('prevUrl');
+    var border=(!showBorderCheckBox.checked?'_nb':'');
 
-selectedThemeColor="blank";
+    selectedThemeColor="blank";
 
-onChangeColor(embedColor.value);
-previewImage.src=prevUrl.value+'preview_embed_'+selectedThemeColor+'_sm'+border+'.gif';
-	
+    onChangeColor(embedColor.value);
+    previewImage.src=prevUrl.value+'preview_embed_'+selectedThemeColor+'_sm'+border+'.gif';	
 }
 window.onload = loaded;
-
-
 
 jQuery(function($){
 	$(".size-chooser a").click(function(e){

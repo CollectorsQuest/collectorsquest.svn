@@ -1,43 +1,66 @@
-=== Smart YouTube ===
+=== Smart YouTube PRO ===
 Contributors: freediver
 Donate link: https://www.networkforgood.org/donation/MakeDonation.aspx?ORGID2=520781390
-Tags: youtube, video, play, media, Post, posts, admin
+Tags: youtube, video, play, media, Post, posts, admin, metacafe, liveleak, vimeo, facebook, thumbnails
 Requires at least: 2.0
 Tested up to: 3.3
 Stable tag: trunk
 
-Smart Youtube plugin allows you to insert full featured YouTube videos into your post, comments and in RSS feed. 
+Smart Youtube is a professional WordPress Video plugin that allows you to easily insert videos/playlists into your post, comments and in your RSS feed. The plugin is designed to be small and fast and not use any external resources.
 
 == Description == 
 
-Smart Youtube is a Wordpress Youtube Plugin that allows you to easily insert Youtube videos/playlists in your post, comments and in RSS feed. 
+Smart Youtube is one of the most popular WordPress plugins, with more than 1,000,000 downloads to date..
 
-The main purpose of the plugin is to correctly embed youtube videos into your blog post. The video will be shown in full in your RSS feed as well.
-
-Smart youtube also supports playback of high quality videos, works on iPhone, produces xHTML valid code (unlike YouTube embed code), allows you to view videos in fullscreen,  supports YouTube playlists (normal/HD) and the new outube IFRAME embed code.
+From version 4.0 Smart Youtube changed the name to Smart Youtube PRO and now also supports playback of **Youtube, Vimeo, Metacafe, Liveleak and Facebook** high quality videos, **works on iPhone & iPad**, produces xHTML valid code (unlike YouTube embed code), allows you to view videos in fullscreen, has **video thumbnails support**, has robust widget support and much more.
 
 The plugin is designed to be small and fast and not use any external resources. It has a number of customizable options.
 
 Main Features:
 
-* Easily embeds YouTube videos (normal/HD, both youtube.com and youtu.be links)
-* Embed YouTube playlist (normal/HD)
-* Supports latest high quality video protocols (360p and HD quality 720p)
-* Allows full YouTube customization (colors, border, size, full screen...)
-* Supports video deep linking (starting at desired point with &start=time parameter)
+* Easily embeds YouTube, Vimeo, Metacafe, Liveleak and Facebook videos (normal/HD mode)
 * Works on iPhone, iPad and iPod
+* Embed YouTube playlist (normal/HD)
+* Supports latest high definition video protocols
+* Extract video thumbnails in your archive/category posts
+* Provides a sidebar widget for videos as well
+* Supports video deep linking (starting at desired point with &start=time parameter)
+* Autoplay videos, autoplay only the first video on the page (if multiple vidoes)
+* Show video in Colorbox
 * Supports migrated blogs from Wordpress.com
 * Supports migration from other Youtube plugins such as wp-youtube
-* Provides a sidebar widget for videos as well
 * Produces xHTML valid code
-* Very fast and light, no extra scripts needed
 
-Plugin by Vladimir Prelovac. Looking for <a href="http://www.prelovac.com/vladimir/services">WordPress Consulting</a>?
+
+Example:
+http://www.youtube.com/watch?v=zlfKdbWwruY
+
+Plugin by Vladimir Prelovac. Also check out <a href="http://managewp.com">ManageWP - WordPress management service</a>.
 
 
 == Changelog ==
 
-= 3.9 =
+= 4.0.3 =
+* More bug fixes
+	
+= 4.0.2 =
+* Bug fix release
+
+= 4.0 =
+* Major release
+* Added support for Vimeo, Metacafe, Liveleak and Facebook videos
+* New, much better, sidebar Widget support
+* Extract Video thumbnails to show in your excerpts on categories/archive pages
+* Show video in Colorbox
+* Now parses http:// and httpv:// videos just the same
+* Option to autoplay only the first video on the page
+* Plugin localization support
+
+= 3.9.1 =
+* Support for [WiziApp](http://www.wiziapp.com/ "WiziApp") 
+* Bug fixes
+
+= 3.9.0 =
 * Support for no-branding player 
 * Fixed a bug with two dashes in name
 
@@ -136,15 +159,31 @@ Thanks.
 3. Use the Options page to change your options
 4. When you want to display Youtube video in your post, copy the video URL to your post and change http:// to httpv:// (notice the 'v' character)
 
-The video will be automatically embedded to your post in the proper way.
+TTo use the video in your posts, paste YouTube video URL with httpv:// (notice the 'v').
+
+Important: The URL should just be copied into your post normally and the letter 'v' added, do not create a clickable link!
 
 Example: httpv://www.youtube.com/watch?v=OWfksMD4PAg
 
-If you want to post a high quality/HD video  you would use httpvh:// ('vh' for video high)
+If you want to embed High/HD Quality video use httpvh:// instead (Video High Defintion).
 
-To embed a playlist use extension 'vp'
+Vimeo Example: httpv://vimeo.com/27287078
 
-httpvp://www.youtube.com/view_play_list?p=528026B4F7B34094
+Metacafe Example: httpvh://vww.metacafe.com/watch/7815470/harry_potter_and_the_deathly_hallows_dvd_interview/
+
+Live Leak Example: httpv://www.liveleak.com/view?i=cad_1322822486
+
+To embed playlists use httpvp:// (eg. httpvp://www.youtube.com/view_play_list?p=528026B4F7B34094)
+
+Smart Youtube also supports migrated blogs from Wordpress.com using [youtube=youtubeadresss]
+
+    httpv:// - regular video
+    httpvh:// - high/HD quality
+    httpvp:// - playlist
+    httpvhp:// - HD playlist
+    [youtube=youtubeadresss] - supported for blogs migrated from wordpress.com
+
+
 
 Additionally, you can set how do you want the video to be displayed in your RSS feed. Smart Youtube can show the preview image of the video (automatically grabbed from Youtube), the link to the video, or both. I recommend enabling only the preview image.
 
