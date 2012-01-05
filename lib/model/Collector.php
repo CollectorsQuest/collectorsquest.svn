@@ -356,14 +356,18 @@ class Collector extends BaseCollector
     $params = array(
       'user_id' => $this->getId(),
       'operation' => $opration,
-      'alias' => $this->getUsername(),
-      'enduser_ip' => IceStatic::getUserIpAddress(),
+      'alias' => $this->getDisplayName(),
       'password_hash' => substr($this->getSha1Password(), 0, 12),
       'email_identity' => $this->getEmail(),
       'zip' => $this->getProfile()->getZipPostal(),
       'user_url' => $this->getProfile()->getWebsiteUrl(),
-      'profile_permalink' => 'http://www.collectorsquest.com/collector/'. $this->getId() .'/'. $this->getSlug(),
-      'http_headers' => array(
+      'profile_permalink' => 'http://www.collectorsquest.com/collector/'. $this->getId() .'/'. $this->getSlug()
+    );
+
+    if (php_sapi_name() !== 'cli')
+    {
+      $params['enduser_ip'] = IceStatic::getUserIpAddress();
+      $params['http_headers'] = array(
         "HTTP_ACCEPT_LANGUAGE" => $_SERVER["HTTP_ACCEPT_LANGUAGE"],
         "HTTP_REFERER" => $_SERVER["HTTP_REFERER"],
         "HTTP_ACCEPT_CHARSET" => @$_SERVER["HTTP_ACCEPT_CHARSET"],
@@ -372,8 +376,8 @@ class Collector extends BaseCollector
         "HTTP_CONNECTION" => $_SERVER["HTTP_CONNECTION"],
         "HTTP_ACCEPT" => $_SERVER["HTTP_ACCEPT"],
         "HTTP_USER_AGENT" => $_SERVER["HTTP_USER_AGENT"]
-      )
-    );
+      );
+    }
 
     try
     {
@@ -406,14 +410,19 @@ class Collector extends BaseCollector
       'platform' => 'website',
       'type' => 'other',
       'author-email' => $this->getEmail(),
-      'author-ip' => IceStatic::getUserIpAddress(),
       'author-logged-in' => ($operation == 'UPDATE') ? 'true' : 'false',
       'author-name' => $this->getDisplayName(),
       'author-url' => $this->getProfile()->getWebsiteUrl(),
-      'content' => $content,
       'document-permalink' => 'http://www.collectorsquest.com/collector/'. $this->getId() .'/'. $this->getSlug(),
-      'referrer' => $_SERVER["HTTP_REFERER"],
-      'http-headers' =>
+      'content' => $content,
+      'async' => 'false'
+    );
+
+    if (php_sapi_name() !== 'cli')
+    {
+      $params['author-ip'] = IceStatic::getUserIpAddress();
+      $params['referrer'] = $_SERVER["HTTP_REFERER"];
+      $params['http-headers'] =
         "HTTP_ACCEPT_LANGUAGE: ". $_SERVER["HTTP_ACCEPT_LANGUAGE"] ."\n".
         "HTTP_REFERER: ". $_SERVER["HTTP_REFERER"] ."\n".
         "HTTP_ACCEPT_CHARSET: ". @$_SERVER["HTTP_ACCEPT_CHARSET"] ."\n".
@@ -421,9 +430,9 @@ class Collector extends BaseCollector
         "HTTP_ACCEPT_ENCODING: ". $_SERVER["HTTP_ACCEPT_ENCODING"] ."\n".
         "HTTP_CONNECTION: ". $_SERVER["HTTP_CONNECTION"] ."\n".
         "HTTP_ACCEPT: ". $_SERVER["HTTP_ACCEPT"] ."\n".
-        "HTTP_USER_AGENT: ". $_SERVER["HTTP_USER_AGENT"],
-      'async' => 'false'
-    );
+        "HTTP_USER_AGENT: ". $_SERVER["HTTP_USER_AGENT"];
+
+    }
 
     try
     {
