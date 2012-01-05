@@ -3,7 +3,7 @@ all:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_com;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_com;host=master.cwvkronpbfrx.us-east-1.rds.amazonaws.com
       username:   collectorsquest
       password:   "TYN9KJ76gpy7fq"
       encoding:   utf8
@@ -14,7 +14,7 @@ all:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_blog;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_blog;host=master.cwvkronpbfrx.us-east-1.rds.amazonaws.com
       username:   collectorsquest
       password:   "TYN9KJ76gpy7fq"
       encoding:   utf8
@@ -23,7 +23,7 @@ all:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_calendar;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_calendar;host=master.cwvkronpbfrx.us-east-1.rds.amazonaws.com
       username:   collectorsquest
       password:   "TYN9KJ76gpy7fq"
 
@@ -31,7 +31,7 @@ all:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_queue;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_queue;host=master.cwvkronpbfrx.us-east-1.rds.amazonaws.com
       username:   collectorsquest
       password:   "TYN9KJ76gpy7fq"
       encoding:   utf8
@@ -40,7 +40,7 @@ all:
       class:        sfPropelDatabase
       param:
         classname:  PropelPDO
-        dsn:        mysql:dbname=collectorsquest_com;host=cq-mysql-master
+        dsn:        mysql:dbname=collectorsquest_com;host=master.cwvkronpbfrx.us-east-1.rds.amazonaws.com
         username:   collectorsquest
         password:   "TYN9KJ76gpy7fq"
         encoding:   utf8
@@ -89,7 +89,7 @@ stg:
     class:        sfPropelDatabase
     param:
       classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_stg;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_stg;host=master.cwvkronpbfrx.us-east-1.rds.amazonaws.com
       username:   staging
       password:   "KC93pNXux7x4FP"
       encoding:   utf8
