@@ -19,7 +19,10 @@ class PropelMigration_1321524757
     $collectors = CollectorQuery::create()->setFormatter(ModelCriteria::FORMAT_ON_DEMAND)->find();
     foreach ($collectors as $collector)
     {
-      $collector->sendToImpermium();
+      $collector->sendToImpermium('UPDATE');
+      sleep(1);
+
+      $collector->sendToDefensio('UPDATE');
       sleep(1);
     }
   }
