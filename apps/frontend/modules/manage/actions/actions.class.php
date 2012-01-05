@@ -37,6 +37,9 @@ class manageActions extends cqActions
         // Send the profile data to Impermium to analyse
         $collector->sendToImpermium('UPDATE');
 
+        // Send the profile data to Defensio to analyse
+        $collector->sendToDefensio('UPDATE');
+
         $this->getUser()->setFlash('success', 'Your profile/account information was updated.');
       }
       else

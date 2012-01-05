@@ -18,14 +18,14 @@ generator:
         id: { label: ID }
         display_name: { label: Display Name }
         list_count_collections: { label: Collections }
-        list_spam_score: { label: Spam }
+        list_spaminess: { label: Spaminess }
         list_auto_login: { label: '' }
         created_at: { label: Since, date_format: 'MM/dd/yyyy' }
         is_public: { label: "Public?" }
 
       list:
         title: Collectors
-        display: [id, =username, display_name, email, _list_count_collections, _list_spam_score, created_at]
+        display: [id, =username, display_name, email, _list_count_collections, _list_spaminess, created_at]
         sort: [created_at, desc]
         object_actions:
           _edit: ~
@@ -35,7 +35,10 @@ generator:
           export: { label: "Export to CSV", action: export }
 
       filter:
-        display: [username, display_name, email]
+        fields:
+          spaminess: { label: Spaminess }
+          is_spam: { label: "Spam?" }
+        display: [username, display_name, email, spaminess, is_spam]
 
       form:
         class: CollectorEditForm

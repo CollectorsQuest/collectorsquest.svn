@@ -12,28 +12,21 @@ class CollectorFormFilter extends BaseCollectorFormFilter
 {
   public function configure()
   {
-      $this->useFields(array(
-              'username',
-              'display_name',
-              'email',
-              'what_you_collect',
-              'what_you_sell',
-              'company',
-              'user_type',
-              'annually_spend',
-              'created_at',
-                             ));
-
-      $this->setWidget('user_type', new sfWidgetFormChoice(array('choices'=>$this->getCollectorTypes())));
-      $this->setValidator('user_type', new sfValidatorChoice(array('choices'=>$this->getCollectorTypes(), 'required'=>false)));
+    $this->widgetSchema['spaminess'] = new sfWidgetFormChoice(array(
+      'choices' => array('' => '', 'green' => 'Green', 'yellow' => 'Yellow', 'red' => 'Red')
+    ));
+    $this->validatorSchema['spaminess'] = new sfValidatorChoice(array(
+      'required' => false,
+      'choices' => array('', 'green', 'yellow', 'red')
+    ));
   }
 
   public function getCollectorTypes()
   {
-      return array(
-          '' => '',
-          'Collector' => 'Collector',
-          'Seller' => 'Seller',
-                   );
+    return array(
+      '' => '',
+      'Collector' => 'Collector',
+      'Seller' => 'Seller',
+    );
   }
 }

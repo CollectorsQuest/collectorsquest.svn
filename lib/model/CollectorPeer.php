@@ -383,6 +383,9 @@ class CollectorPeer extends BaseCollectorPeer
 
       // Send the profile data to Impermium to analyse
       $collector->sendToImpermium('CREATE');
+
+      // Send the profile data to Defensio to analyse
+      $collector->sendToDefensio('CREATE');
     }
     catch (PropelException $e)
     {

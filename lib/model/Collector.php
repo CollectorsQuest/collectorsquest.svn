@@ -383,7 +383,7 @@ class Collector extends BaseCollector
       if (!empty($response['spam_classifier']) && is_array($response['spam_classifier']))
       {
         $this->setIsSpam($response['spam_classifier']['label'] == 'spam' ? true : false);
-        $this->setSpamScore($response['spam_classifier']['score']);
+        $this->setSpamScore(100 * $response['spam_classifier']['score']);
         $this->save();
       }
     }
@@ -391,6 +391,57 @@ class Collector extends BaseCollector
     {
       ;
     }
+  }
+
+  public function sendToDefensio($operation = 'UPDATE')
+  {
+    $content = implode(' ', array(
+      $this->getProfile()->getAbout(),
+      $this->getProfile()->getCollecting(),
+      $this->getProfile()->getCollections(),
+      $this->getProfile()->getInterests()
+    ));
+
+    $params = array(
+      'platform' => 'website',
+      'type' => 'other',
+      'author-email' => $this->getEmail(),
+      'author-ip' => IceStatic::getUserIpAddress(),
+      'author-logged-in' => ($operation == 'UPDATE') ? 'true' : 'false',
+      'author-name' => $this->getDisplayName(),
+      'author-url' => $this->getProfile()->getWebsiteUrl(),
+      'content' => $content,
+      'document-permalink' => 'http://www.collectorsquest.com/collector/'. $this->getId() .'/'. $this->getSlug(),
+      'referrer' => $_SERVER["HTTP_REFERER"],
+      'http-headers' =>
+        "HTTP_ACCEPT_LANGUAGE: ". $_SERVER["HTTP_ACCEPT_LANGUAGE"] ."\n".
+        "HTTP_REFERER: ". $_SERVER["HTTP_REFERER"] ."\n".
+        "HTTP_ACCEPT_CHARSET: ". @$_SERVER["HTTP_ACCEPT_CHARSET"] ."\n".
+        "HTTP_KEEP_ALIVE: ". @$_SERVER["HTTP_KEEP_ALIVE"] ."\n".
+        "HTTP_ACCEPT_ENCODING: ". $_SERVER["HTTP_ACCEPT_ENCODING"] ."\n".
+        "HTTP_CONNECTION: ". $_SERVER["HTTP_CONNECTION"] ."\n".
+        "HTTP_ACCEPT: ". $_SERVER["HTTP_ACCEPT"] ."\n".
+        "HTTP_USER_AGENT: ". $_SERVER["HTTP_USER_AGENT"],
+      'async' => 'false'
+    );
+
+    try
+    {
+      $defensio = cqStatic::getDefensioClient();
+      $result = $defensio->postDocument($params);
+
+      if (is_array($result) && (int) $result[0] == 200)
+      {
+        $this->setIsSpam((string) $result[1]->allow == 'false' ? true : false);
+        $this->setSpamScore(100 * (float) $result[1]->spaminess);
+        $this->save();
+      }
+    }
+    catch (Exception $e)
+    {
+      ;
+    }
+
   }
 }
 
