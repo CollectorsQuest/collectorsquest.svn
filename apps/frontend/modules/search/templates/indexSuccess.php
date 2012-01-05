@@ -152,56 +152,64 @@ $(function()
     navSelector: "#search-tab-collectibles div.pagination",
     nextSelector: "#search-tab-collectibles div.pagination span.next a",
     itemSelector: "div#search-collectibles",
-    loadingText: '<?= __('Loading the next page...'); ?>',
+    loading: {
+      img: '/images/loading.gif',
+      msgText: '<?= __('Loading the next page...'); ?>',
+      finishedMsg: '<?= __('No more pages to load'); ?>'
+    },
     loadingMsgRevealSpeed: 0,
     bufferPx: 80,
     extraScrollPx: 0,
-    donetext: '<?= __('No more pages to load'); ?>',
     debug: false,
-    animate: false,
-    loadingImg: '/images/loading.gif'
+    animate: false
   };
 
   opts[1] = {
     navSelector: "#search-tab-collections div.pagination",
     nextSelector: "#search-tab-collections div.pagination span.next a",
     itemSelector: "div#search-collections",
-    loadingText: '<?= __('Loading the next page...'); ?>',
+    loading: {
+      img: '/images/loading.gif',
+      msgText: '<?= __('Loading the next page...'); ?>',
+      finishedMsg: '<?= __('No more pages to load'); ?>'
+    },
     loadingMsgRevealSpeed: 0,
     bufferPx: 80,
     extraScrollPx: 0,
-    donetext: '<?= __('No more pages to load'); ?>',
     debug: false,
-    animate: false,
-    loadingImg: '/images/loading.gif'
+    animate: false
   };
 
   opts[2] = {
     navSelector: "#search-tab-collectors div.pagination",
     nextSelector: "#search-tab-collectors div.pagination span.next a",
     itemSelector: "div#search-collectors",
-    loadingText: '<?= __('Loading the next page...'); ?>',
+    loading: {
+      img: '/images/loading.gif',
+      msgText: '<?= __('Loading the next page...'); ?>',
+      finishedMsg: '<?= __('No more pages to load'); ?>'
+    },
     loadingMsgRevealSpeed: 0,
     bufferPx: 80,
     extraScrollPx: 0,
-    donetext: '<?= __('No more pages to load'); ?>',
     debug: false,
-    animate: false,
-    loadingImg: '/images/loading.gif'
+    animate: false
   };
 
   opts[3] = {
     navSelector: "#search-tab-blog div.pagination",
     nextSelector: "#search-tab-blog div.pagination span.next a",
     itemSelector: "div#search-blog",
-    loadingText: '<?= __('Loading the next page...'); ?>',
+    loading: {
+      img: '/images/loading.gif',
+      msgText: '<?= __('Loading the next page...'); ?>',
+      finishedMsg: '<?= __('No more pages to load'); ?>'
+    },
     loadingMsgRevealSpeed: 0,
     bufferPx: 80,
     extraScrollPx: 0,
-    donetext: '<?= __('No more pages to load'); ?>',
     debug: false,
-    animate: false,
-    loadingImg: '/images/loading.gif'
+    animate: false
   };
 
   var $tabs = <?= json_encode($tabs); ?>;

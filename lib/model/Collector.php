@@ -431,7 +431,6 @@ class Collector extends BaseCollector
         "HTTP_CONNECTION: ". $_SERVER["HTTP_CONNECTION"] ."\n".
         "HTTP_ACCEPT: ". $_SERVER["HTTP_ACCEPT"] ."\n".
         "HTTP_USER_AGENT: ". $_SERVER["HTTP_USER_AGENT"];
-
     }
 
     try
