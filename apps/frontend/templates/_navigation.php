@@ -1,10 +1,20 @@
 <div id="navigation" class="span-13 rounded-bottom">
   <div style="float: left;">
     <?php
-      echo link_to(
-        image_tag('frontend/logo.png', array('id' => 'header-logo', 'align' => 'left', 'style' => 'margin: -54px -35px 0 10px;')),
-        '@homepage'
-      );
+      if (sfConfig::get('sf_environment') === 'staging')
+      {
+        echo link_to(
+          image_tag('frontend/logo-staging.png', array('align' => 'left', 'style' => 'margin: -54px -35px 0 10px;')),
+          '@homepage'
+        );
+      }
+      else
+      {
+        echo link_to(
+          image_tag('frontend/logo.png', array('id' => 'header-logo', 'align' => 'left', 'style' => 'margin: -54px -35px 0 10px;')),
+          '@homepage'
+        );
+      }
     ?>
   </div>
 
