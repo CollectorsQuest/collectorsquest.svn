@@ -67,9 +67,21 @@ class cqStatic extends IceStatic
    */
   static public function getImpermiumClient()
   {
-    include dirname(__FILE__).'/../vendor/Impermium.class.php';
+    include_once dirname(__FILE__).'/../vendor/Impermium.class.php';
 
     return new Impermium(sfConfig::get('app_credentials_impermium'), '3.0');
+  }
+
+  /**
+   * Get an Defensio() object
+   *
+   * @return Defensio
+   */
+  static public function getDefensioClient()
+  {
+    include_once dirname(__FILE__).'/../vendor/Defensio.class.php';
+
+    return new Defensio(sfConfig::get('app_credentials_defensio'));
   }
 
   /**
