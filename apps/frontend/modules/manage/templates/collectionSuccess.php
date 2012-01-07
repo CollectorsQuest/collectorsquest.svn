@@ -86,7 +86,8 @@ $(function()
     theme_advanced_resizing: true
   });
 
-  $('#collection_tags').fcbkcomplete({
+  $('#collection_tags').fcbkcomplete(
+  {
     json_url: '<?= url_for('@ajax_autocomplete?section=tags'); ?>',
     maxshownitems: 10,
     cache: true,
@@ -94,6 +95,8 @@ $(function()
     filter_hide: true,
     firstselected: true,
     filter_selected: true,
+    addoncomma: true,
+    input_min_size: 2,
     width: '388px',
     newel: true
   });

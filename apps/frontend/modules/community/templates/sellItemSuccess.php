@@ -186,16 +186,19 @@ if($bSeller):
 			theme_advanced_resizing: true
 		  });
 
-		  $('#collection_tags').fcbkcomplete({
-			json_url: '<?php echo  url_for('@ajax_autocomplete?section=tags'); ?>',
-			maxshownitems: 10,
-			cache: true,
-			filter_case: true,
-			filter_hide: true,
-			firstselected: true,
-			filter_selected: true,
-      width: '388px',
-			newel: true
+		  $('#collection_tags').fcbkcomplete(
+      {
+        json_url: '<?php echo  url_for('@ajax_autocomplete?section=tags'); ?>',
+        maxshownitems: 10,
+        cache: true,
+        filter_case: true,
+        filter_hide: true,
+        firstselected: true,
+        filter_selected: true,
+        addoncomma: true,
+        input_min_size: 2,
+        width: '388px',
+        newel: true
 		  });
 		});
 		function ajaxChooseItem(snCollectionId)

@@ -40,6 +40,8 @@ include_javascripts_for_form($form);
       filter_hide: true,
       firstselected: true,
       filter_selected: true,
+      addoncomma: true,
+      input_min_size: 2,
       width: '388px',
       newel: true
     });

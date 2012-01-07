@@ -124,7 +124,7 @@ $(function()
     firstselected: true,
     filter_selected: true,
     addoncomma: true,
-    input_min_size: 3,
+    input_min_size: 2,
     width: '388px',
     newel: true
   });
