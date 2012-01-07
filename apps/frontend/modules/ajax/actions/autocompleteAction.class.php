@@ -55,7 +55,7 @@ class autocompleteAction extends cqAjaxAction
     $stmt = CollectorPeer::doSelectStmt($c);
     while ($row = $stmt->fetch(PDO::FETCH_NUM))
     {
-      $collectors[] = array('key' => sprintf('%s (%s)', $row[2], $row[1]), 'value' => $row[0]);
+      $collectors[] = array('key' => $row[0], 'value' => sprintf('%s (%s)', $row[2], $row[1]));
     }
 
     return $this->json($collectors);

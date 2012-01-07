@@ -52,6 +52,7 @@ $(function()
 {
   $('#message_receiver').fcbkcomplete({
     json_url: '<?= url_for('@ajax_autocomplete?section=collectors'); ?>',
+    maxitems: 1,
     maxshownitems: 10,
     cache: false,
     filter_case: true,

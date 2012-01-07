@@ -123,6 +123,8 @@ $(function()
     filter_hide: true,
     firstselected: true,
     filter_selected: true,
+    addoncomma: true,
+    input_min_size: 3,
     width: '388px',
     newel: true
   });
