@@ -61,4 +61,3 @@ if ($xhprof_on)
    $xhprof_runs = new XHProfRuns_Default();
    $xhprof_runs->save_run($xhprof_data, SF_APP);
  }
-

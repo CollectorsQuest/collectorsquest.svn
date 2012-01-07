@@ -1,6 +1,6 @@
 all:
   ice_backend:
-    site: "Collectors Quest"
+    site: "CollectorsQuest.com"
     logo: /images/backend/logo.png
 
     categories:

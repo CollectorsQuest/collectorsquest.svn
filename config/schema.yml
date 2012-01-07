@@ -14,7 +14,7 @@ classes:
       sha1_password:  { type: varchar, size: 40, required: true }
       salt:           { type: varchar, size: 32, required: true }
       email:          { type: varchar, size: 128, required: true, index: unique }
-      user_type:      { type: char, sqlType: "ENUM('Collector','Seller')", default: Collector, required: true }
+      user_type:      { type: char, sqlType: "ENUM('Collector','Seller')", default: "Collector", required: true }
       items_allowed:         integer
       what_you_collect:      { type: varchar, size: 255, required: false }
       purchases_per_year:    { type: integer, default: 0 }

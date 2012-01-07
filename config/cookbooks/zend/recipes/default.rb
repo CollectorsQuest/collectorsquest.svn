@@ -36,6 +36,19 @@ link "/usr/bin/php" do
   not_if "test -L /usr/bin/php"
 end
 
+directory "/usr/local/zend/var/apps/http/collectorsquest.com" do
+  recursive true
+  owner "zend"
+  group "zend"
+  mode "0755"
+  action :create
+end
+
+link "/usr/local/zend/var/apps/http/collectorsquest.com/80" do
+  to "/www/vhosts/collectorsquest.com/releases"
+  not_if "test -L /usr/local/zend/var/apps/http/collectorsquest.com/80"
+end
+
 service "zend" do
   service_name "zend-server"
   supports :status => true, :restart => true
