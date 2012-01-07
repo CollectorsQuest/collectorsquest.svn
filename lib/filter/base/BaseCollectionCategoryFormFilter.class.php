@@ -14,7 +14,7 @@ abstract class BaseCollectionCategoryFormFilter extends BaseFormFilterPropel
     $this->setWidgets(array(
       'parent_id' => new sfWidgetFormFilterInput(),
       'name'      => new sfWidgetFormFilterInput(array('with_empty' => false)),
-      'slug'      => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'slug'      => new sfWidgetFormFilterInput(),
       'score'     => new sfWidgetFormFilterInput(),
     ));
 

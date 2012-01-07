@@ -58,7 +58,7 @@ abstract class BaseCollectorProfileForm extends BaseFormPropel
       'interests'       => new sfValidatorString(array('required' => false)),
       'is_featured'     => new sfValidatorBoolean(array('required' => false)),
       'is_seller'       => new sfValidatorBoolean(array('required' => false)),
-      'is_image_auto'   => new sfValidatorBoolean(),
+      'is_image_auto'   => new sfValidatorBoolean(array('required' => false)),
       'preferences'     => new sfValidatorString(array('required' => false)),
       'notifications'   => new sfValidatorString(array('required' => false)),
       'updated_at'      => new sfValidatorDateTime(array('required' => false)),

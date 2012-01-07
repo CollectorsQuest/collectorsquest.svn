@@ -42,7 +42,7 @@ class CollectionCategoryTableMap extends TableMap
     $this->addColumn('PARENT_ID', 'ParentId', 'INTEGER', false, null, 0);
     $this->addColumn('NAME', 'Name', 'VARCHAR', true, 64, null);
     $this->getColumn('NAME', false)->setPrimaryString(true);
-    $this->addColumn('SLUG', 'Slug', 'VARCHAR', true, 64, null);
+    $this->addColumn('SLUG', 'Slug', 'VARCHAR', false, 64, null);
     $this->addColumn('SCORE', 'Score', 'INTEGER', false, null, 0);
     // validators
   }

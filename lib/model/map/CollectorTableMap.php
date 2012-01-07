@@ -55,9 +55,9 @@ class CollectorTableMap extends TableMap
     $this->addColumn('ANNUALLY_SPEND', 'AnnuallySpend', 'FLOAT', false, null, 0);
     $this->addColumn('MOST_EXPENSIVE_ITEM', 'MostExpensiveItem', 'FLOAT', false, null, 0);
     $this->addColumn('COMPANY', 'Company', 'VARCHAR', false, 255, null);
-    $this->addColumn('SCORE', 'Score', 'INTEGER', true, null, 0);
-    $this->addColumn('SPAM_SCORE', 'SpamScore', 'INTEGER', true, null, 0);
-    $this->addColumn('IS_SPAM', 'IsSpam', 'BOOLEAN', false, 1, true);
+    $this->addColumn('SCORE', 'Score', 'INTEGER', false, null, 0);
+    $this->addColumn('SPAM_SCORE', 'SpamScore', 'INTEGER', false, null, 0);
+    $this->addColumn('IS_SPAM', 'IsSpam', 'BOOLEAN', false, 1, false);
     $this->addColumn('IS_PUBLIC', 'IsPublic', 'BOOLEAN', false, 1, true);
     $this->addColumn('SESSION_ID', 'SessionId', 'VARCHAR', false, 32, null);
     $this->addColumn('LAST_SEEN_AT', 'LastSeenAt', 'TIMESTAMP', false, null, null);

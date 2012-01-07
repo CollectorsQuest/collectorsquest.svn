@@ -56,7 +56,7 @@ class CollectorProfileTableMap extends TableMap
     $this->addColumn('INTERESTS', 'Interests', 'LONGVARCHAR', false, null, null);
     $this->addColumn('IS_FEATURED', 'IsFeatured', 'BOOLEAN', false, 1, false);
     $this->addColumn('IS_SELLER', 'IsSeller', 'BOOLEAN', false, 1, false);
-    $this->addColumn('IS_IMAGE_AUTO', 'IsImageAuto', 'BOOLEAN', true, 1, true);
+    $this->addColumn('IS_IMAGE_AUTO', 'IsImageAuto', 'BOOLEAN', false, 1, true);
     $this->addColumn('PREFERENCES', 'Preferences', 'LONGVARCHAR', false, null, null);
     $this->addColumn('NOTIFICATIONS', 'Notifications', 'LONGVARCHAR', false, null, null);
     $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);

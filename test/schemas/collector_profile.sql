@@ -20,7 +20,7 @@ CREATE TABLE `collector_profile` (
   `interests` text,
   `is_featured` tinyint(1) DEFAULT '0',
   `is_seller` tinyint(1) DEFAULT '0',
-  `is_image_auto` tinyint(1) NOT NULL DEFAULT '1',
+  `is_image_auto` tinyint(1) DEFAULT '1',
   `preferences` text,
   `notifications` text,
   `updated_at` datetime DEFAULT NULL,

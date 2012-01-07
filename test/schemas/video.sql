@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS `video`;
 CREATE TABLE `video` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(64) NOT NULL,
-  `slug` varchar(64) NOT NULL,
+  `slug` varchar(64) DEFAULT NULL,
   `description` text NOT NULL,
   `type` varchar(64) NOT NULL,
   `length` int(11) DEFAULT NULL,

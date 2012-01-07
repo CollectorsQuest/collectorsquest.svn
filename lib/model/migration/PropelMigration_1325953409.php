@@ -49,25 +49,25 @@ class PropelMigration_1325953409
         ALTER TABLE `collectible` ADD `eblob` TEXT NULL AFTER `is_name_automatic`;
 
         ALTER TABLE `collection` CHANGE `name` `name` VARCHAR(255) NOT NULL;
-        ALTER TABLE `collection` CHANGE `slug` `slug` VARCHAR(128) NOT NULL;
-        ALTER TABLE `collection` CHANGE `num_items` `num_items` INTEGER NOT NULL DEFAULT 0;
-        ALTER TABLE `collection` CHANGE `num_views` `num_views` INTEGER NOT NULL DEFAULT 0;
-        ALTER TABLE `collection` CHANGE `num_comments` `num_comments` INTEGER NOT NULL DEFAULT 0;
-        ALTER TABLE `collection` CHANGE `num_ratings` `num_ratings` INTEGER NOT NULL DEFAULT 0;
+        ALTER TABLE `collection` CHANGE `slug` `slug` VARCHAR(128);
+        ALTER TABLE `collection` CHANGE `num_items` `num_items` INTEGER DEFAULT 0;
+        ALTER TABLE `collection` CHANGE `num_views` `num_views` INTEGER DEFAULT 0;
+        ALTER TABLE `collection` CHANGE `num_comments` `num_comments` INTEGER DEFAULT 0;
+        ALTER TABLE `collection` CHANGE `num_ratings` `num_ratings` INTEGER DEFAULT 0;
         ALTER TABLE `collection` CHANGE `score` `score` INTEGER DEFAULT 0 NOT NULL;
         ALTER TABLE `collection` ADD `eblob` TEXT NULL AFTER `rating_on`;
 
         ALTER TABLE `collection_category` CHANGE `name` `name` VARCHAR(64) NOT NULL;
-        ALTER TABLE `collection_category` CHANGE `slug` `slug` VARCHAR(64) NOT NULL;
+        ALTER TABLE `collection_category` CHANGE `slug` `slug` VARCHAR(64);
 
         ALTER TABLE `collector` CHANGE `username` `username` VARCHAR(64) NOT NULL;
-        ALTER TABLE `collector` CHANGE `slug` `slug` VARCHAR(64) NOT NULL;
+        ALTER TABLE `collector` CHANGE `slug` `slug` VARCHAR(64);
         ALTER TABLE `collector` CHANGE `sha1_password` `sha1_password` VARCHAR(40) NOT NULL;
         ALTER TABLE `collector` CHANGE `salt` `salt` VARCHAR(32) NOT NULL;
 
-        ALTER TABLE `collector` CHANGE `score` `score` INTEGER DEFAULT 0 NOT NULL;
-        ALTER TABLE `collector` CHANGE `spam_score` `spam_score` INTEGER DEFAULT 0 NOT NULL;
-        ALTER TABLE `collector` CHANGE `is_spam` `is_spam` TINYINT(1) DEFAULT 1;
+        ALTER TABLE `collector` CHANGE `score` `score` INTEGER DEFAULT 0;
+        ALTER TABLE `collector` CHANGE `spam_score` `spam_score` INTEGER DEFAULT 0;
+        ALTER TABLE `collector` CHANGE `is_spam` `is_spam` TINYINT(1) DEFAULT 0;
         ALTER TABLE `collector` CHANGE `is_public` `is_public` TINYINT(1) DEFAULT 1;
 
         ALTER TABLE `collector` CHANGE `session_id` `session_id` VARCHAR(32);

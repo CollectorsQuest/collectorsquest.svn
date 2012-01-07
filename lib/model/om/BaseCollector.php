@@ -140,7 +140,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
 
   /**
    * The value for the is_spam field.
-   * Note: this column has a database default value of: true
+   * Note: this column has a database default value of: false
    * @var        boolean
    */
   protected $is_spam;
@@ -281,7 +281,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $this->most_expensive_item = 0;
     $this->score = 0;
     $this->spam_score = 0;
-    $this->is_spam = true;
+    $this->is_spam = false;
     $this->is_public = true;
   }
 
@@ -1357,7 +1357,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         return false;
       }
 
-      if ($this->is_spam !== true)
+      if ($this->is_spam !== false)
       {
         return false;
       }

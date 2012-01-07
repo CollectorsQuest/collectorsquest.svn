@@ -13,7 +13,7 @@ abstract class BasePlaylistFormFilter extends BaseFormFilterPropel
   {
     $this->setWidgets(array(
       'title'        => new sfWidgetFormFilterInput(array('with_empty' => false)),
-      'slug'         => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'slug'         => new sfWidgetFormFilterInput(),
       'description'  => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'type'         => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'length'       => new sfWidgetFormFilterInput(),

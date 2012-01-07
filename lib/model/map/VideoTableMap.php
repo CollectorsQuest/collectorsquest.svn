@@ -40,7 +40,7 @@ class VideoTableMap extends TableMap
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
     $this->addColumn('TITLE', 'Title', 'VARCHAR', true, 64, null);
-    $this->addColumn('SLUG', 'Slug', 'VARCHAR', true, 64, null);
+    $this->addColumn('SLUG', 'Slug', 'VARCHAR', false, 64, null);
     $this->addColumn('DESCRIPTION', 'Description', 'LONGVARCHAR', true, null, null);
     $this->addColumn('TYPE', 'Type', 'VARCHAR', true, 64, null);
     $this->addColumn('LENGTH', 'Length', 'INTEGER', false, null, null);

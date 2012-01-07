@@ -7,29 +7,29 @@ classes:
   Collector:
     columns:
       id:             ~
-      facebook_id:    { type: varchar, size: 20, required: false, index: unique }
+      facebook_id:    { type: varchar, size: 20, index: unique }
       username:       { type: varchar, size: 64, required: true }
       display_name:   { type: varchar, size: 64, required: true, primaryString: true }
       slug:           { type: varchar, size: 64, required: true, index: unique }
       sha1_password:  { type: varchar, size: 40, required: true }
       salt:           { type: varchar, size: 32, required: true }
-      email:          { type: varchar, size: 128, required: false, index: unique }
+      email:          { type: varchar, size: 128, index: unique }
       user_type:      { type: char, sqlType: "ENUM('Collector','Seller')", default: "Collector", required: true }
       items_allowed:         integer
-      what_you_collect:      { type: varchar, size: 255, required: false }
+      what_you_collect:      { type: varchar, size: 255 }
       purchases_per_year:    { type: integer, default: 0 }
-      what_you_sell:         { type: varchar, size: 255, required: false }
+      what_you_sell:         { type: varchar, size: 255 }
       annually_spend:        { type: float, default: 0 }
       most_expensive_item:   { type: float, default: 0 }
-      company:               { type: varchar, size: 255, required: false }
-      score:          { type: integer, required: true, default: 0 }
-      spam_score:     { type: integer, required: true, default: 0 }
-      is_spam:        { type: boolean, default: true }
+      company:               { type: varchar, size: 255 }
+      score:          { type: integer, default: 0 }
+      spam_score:     { type: integer, default: 0 }
+      is_spam:        { type: boolean, default: false }
       is_public:      { type: boolean, default: true }
-      session_id:     { type: varchar, size: 32, required: false }
+      session_id:     { type: varchar, size: 32 }
       last_seen_at:   { type: timestamp }
 
-      eblob: { type: longvarchar, required: false, default: null }
+      eblob: { type: longvarchar, default: null }
 
     propel_behaviors:
       # archivable: ~
@@ -42,7 +42,7 @@ classes:
       collector_id:    { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
       collector_type:  { type: char, sqlType: "ENUM('Collector','Seller')", default: "Collector", required: true }
       birthday:        date
-      gender:          { type: char, sqlType: "ENUM('f','m')", required: false }
+      gender:          { type: char, sqlType: "ENUM('f','m')" }
       zip_postal:      varchar(10)
       country:         varchar(64)
       country_iso3166: varchar(2)
@@ -56,7 +56,7 @@ classes:
       interests:       longvarchar
       is_featured:     { type: boolean, default: false }
       is_seller:       { type: boolean, default: false }
-      is_image_auto:   { type: boolean, required: true, default: true }
+      is_image_auto:   { type: boolean, default: true }
       preferences:     longvarchar
       notifications:   longvarchar
       updated_at:      ~
@@ -77,8 +77,8 @@ classes:
     columns:
       id:  ~
       collector_id:            { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
-      collection_category_id:  { type: integer, foreignClass: CollectionCategory, foreignReference: id, required: false, onDelete: setnull }
-      collection_id:           { type: integer, foreignClass: Collection, foreignReference: id, required: false, onDelete: setnull }
+      collection_category_id:  { type: integer, foreignClass: CollectionCategory, foreignReference: id, onDelete: setnull }
+      collection_id:           { type: integer, foreignClass: Collection, foreignReference: id, onDelete: setnull }
       title:                   { type: varchar, size: 128, required: true, primaryString: true }
       catch_phrase:            { type: varchar, size: 128, required: true }
       is_active:               { type: boolean, default: false }
@@ -117,22 +117,22 @@ classes:
   Collection:
     columns:
       id:                      ~
-      collection_category_id:  { type: integer, required: false, foreignClass: CollectionCategory, foreignReference: id, onDelete: setnull }
+      collection_category_id:  { type: integer, foreignClass: CollectionCategory, foreignReference: id, onDelete: setnull }
       collector_id:            { type: integer, required: true, foreignClass: Collector, foreignReference: id, onDelete: cascade }
       name:                    { type: varchar, size: 255, required: true, primaryString: true }
-      slug:                    { type: varchar, size: 128, required: true }
+      slug:                    { type: varchar, size: 128 }
       description:             { type: longvarchar, required: true }
-      num_items:               { type: integer, required: true, default: 0 }
-      num_views:               { type: integer, required: true, default: 0 }
-      num_comments:            { type: integer, required: true, default: 0 }
-      num_ratings:             { type: integer, required: true, default: 0 }
-      score:                   { type: integer, required: true, default: 0 }
+      num_items:               { type: integer, default: 0 }
+      num_views:               { type: integer, default: 0 }
+      num_comments:            { type: integer, default: 0 }
+      num_ratings:             { type: integer, default: 0 }
+      score:                   { type: integer, default: 0 }
       is_public:               { type: boolean, default: true }
       is_featured:             { type: boolean, default: false }
       comments_on:             { type: boolean, default: true }
       rating_on:               { type: boolean, default: true }
 
-      eblob: { type: longvarchar, required: false, default: null }
+      eblob: { type: longvarchar, default: null }
 
     propel_behaviors:
       # archivable: ~
@@ -142,10 +142,10 @@ classes:
   CollectionCategory:
     columns:
       id:  ~
-      parent_id:  { type: integer, default: 0, required: false }
+      parent_id:  { type: integer, default: 0 }
       name:       { type: varchar, size: 64, required: true, primaryString: true }
-      slug:       { type: varchar, size: 64, required: true }
-      score:      { type: integer, required: false, default: 0 }
+      slug:       { type: varchar, size: 64 }
+      score:      { type: integer, default: 0 }
 
   CollectionCategoryField:
     columns:
@@ -163,12 +163,12 @@ classes:
       name:              { type: varchar, size: 255, required: true, primaryString: true }
       slug:              { type: varchar, size: 128, index: unique }
       description:       { type: longvarchar, required: true }
-      num_comments:      { type: integer, required: true, default: 0 }
-      score:             { type: integer, required: true, default: 0 }
-      position:          { type: integer, required: true, default: 0 }
+      num_comments:      { type: integer, default: 0 }
+      score:             { type: integer, default: 0 }
+      position:          { type: integer, default: 0 }
       is_name_automatic: { type: boolean, default: false }
 
-      eblob: { type: longvarchar, required: false, default: null }
+      eblob: { type: longvarchar, default: null }
 
     propel_behaviors:
       # archivable: ~
@@ -214,11 +214,11 @@ classes:
       model:       { type: char, size: 64, required: true }
       model_id:    { type: integer }
       type:        { type: char, sqlType: "ENUM('image','video')", default: image, required: true }
-      name:        { type: varchar, size: 128, required: false }
+      name:        { type: varchar, size: 128 }
       md5:         { type: char, size: 32, required: true }
-      colors:      { type: varchar(128), required: false }
-      orientation: { type: char, sqlType: "ENUM('landscape','portrait')", default: landscape, required: false }
-      source:      { type: varchar(255), required: false }
+      colors:      { type: varchar(128) }
+      orientation: { type: char, sqlType: "ENUM('landscape','portrait')", default: landscape }
+      source:      { type: varchar(255) }
       is_primary:  { type: boolean, default: false }
       updated_at:  ~
       created_at:  ~
@@ -248,7 +248,7 @@ classes:
       id:  ~
       subject:  { type: varchar, size: 255, required: true }
       body:  { type: longvarchar, required: true }
-      description:  { type: varchar, size: 255, required: false }
+      description:  { type: varchar, size: 255 }
       updated_at:  ~
       created_at:  ~
 
@@ -258,12 +258,12 @@ classes:
       disqus_id:       { type: char, size: 10 }
       parent_id:       { type: char, size: 10 }
       collection_id:   { type: integer, foreignClass: Collection, foreignReference: id, required: true, onDelete: cascade }
-      collectible_id:  { type: integer, foreignClass: Collectible, foreignReference: id, required: false, onDelete: setnull }
-      collector_id:    { type: integer, foreignClass: Collector, foreignReference: id, required: false, onDelete: cascade }
-      author_name:     { type: varchar, size: 128, required: false }
-      author_email:    { type: varchar, size: 128, required: false }
-      author_url:      { type: varchar, size: 255, required: false }
-      subject:         { type: varchar, size: 128, required: false }
+      collectible_id:  { type: integer, foreignClass: Collectible, foreignReference: id, onDelete: setnull }
+      collector_id:    { type: integer, foreignClass: Collector, foreignReference: id, onDelete: cascade }
+      author_name:     { type: varchar, size: 128 }
+      author_email:    { type: varchar, size: 128 }
+      author_url:      { type: varchar, size: 255 }
+      subject:         { type: varchar, size: 128 }
       body:            { type: longvarchar, required: true }
       ip_address:      { type: varchar, size: 15 }
       created_at:  ~
@@ -315,7 +315,7 @@ classes:
     columns:
       id: ~
       title:         { type: varchar, size: 64, required: true }
-      slug:          { type: varchar, size: 64, required: true }
+      slug:          { type: varchar, size: 64 }
       description:   { type: longvarchar, required: true }
       type:          { type: varchar, size: 64, required: true }
       length:        integer
@@ -345,7 +345,7 @@ classes:
     columns:
       id:            ~
       title:         { type: varchar, size: 64, required: true }
-      slug:          { type: varchar, size: 64, required: true }
+      slug:          { type: varchar, size: 64 }
       description:   { type: longvarchar, required: true }
       type:          { type: varchar, size: 64, required: true }
       length:        integer
@@ -400,9 +400,9 @@ classes:
       day:          { type: date }
       model:        { type: char, size: 64, required: true }
       model_id:     { type: integer }
-      views:        { type: integer, required: false, default: 0 }
-      ratings:      { type: integer, required: false, default: 0 }
-      score:        { type: integer, required: false, default: 0 }
+      views:        { type: integer, default: 0 }
+      ratings:      { type: integer, default: 0 }
+      score:        { type: integer, default: 0 }
       updated_at:   ~
       created_at:   ~
     uniques:
@@ -414,21 +414,21 @@ classes:
       id:                ~
       featured_type_id:  { type: tinyint, required: true }
       featured_model:    { type: varchar, size: 64, required: true }
-      featured_id:       { type: integer, required: false }
+      featured_id:       { type: integer }
       tree_left:         { type: integer, required: true, default: 0, nestedSetLeftKey: true }
       tree_right:        { type: integer, required: true, default: 0, nestedSetRightKey: true }
       tree_scope:        { type: integer, required: true, default: 0, treeScopeKey: true }
       eblob:             longvarchar
       start_date:        date
       end_date:          date
-      position:          { type: tinyint, required: false, default: 0 }
+      position:          { type: tinyint, default: 0 }
       is_active:         { type: boolean, default: true, required: true }
 
   Package:
     columns:
       id:                  ~
       package_name:        { type: varchar, size: 255, required: true }
-      package_description: { type: longvarchar, required: false }
+      package_description: { type: longvarchar }
       max_items_for_sale:  integer
       package_price:       float
       plan_type:           { type: char, sqlType: "ENUM('Casual','Power')", default: NULL, required: true }
@@ -450,7 +450,7 @@ classes:
     columns:
       id: ~
       promotion_name:   { type: varchar, size: 255, required: true }
-      promotion_desc:   { type: longvarchar, required: false }
+      promotion_desc:   { type: longvarchar }
       promotion_code:   { type: varchar, size: 255, required: true }
       amount:           float
       amount_type:      { type: char, sqlType: "ENUM('Fix','Percentage')", default: Fix, required: true }
