@@ -10,10 +10,6 @@ require_recipe "zend::gearman"
 # require_recipe "zend::functional"
 # require_recipe "zend::scached"
 
-execute "Update all PEAR packages" do
-  command "/usr/local/zend/bin/pear upgrade-all"
-end
-
 bash "Install Symfony 1.4.x from PEAR" do
   code <<-EOH
     /usr/local/zend/bin/pear update-channels
