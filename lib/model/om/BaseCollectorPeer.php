@@ -27,13 +27,13 @@ abstract class BaseCollectorPeer
   const TM_CLASS = 'CollectorTableMap';
 
   /** The total number of columns. */
-  const NUM_COLUMNS = 25;
+  const NUM_COLUMNS = 26;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
   /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-  const NUM_HYDRATE_COLUMNS = 25;
+  const NUM_HYDRATE_COLUMNS = 26;
 
   /** the column name for the ID field */
   const ID = 'collector.ID';
@@ -101,6 +101,9 @@ abstract class BaseCollectorPeer
   /** the column name for the LAST_SEEN_AT field */
   const LAST_SEEN_AT = 'collector.LAST_SEEN_AT';
 
+  /** the column name for the EBLOB field */
+  const EBLOB = 'collector.EBLOB';
+
   /** the column name for the DELETED_AT field */
   const DELETED_AT = 'collector.DELETED_AT';
 
@@ -129,12 +132,12 @@ abstract class BaseCollectorPeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'FacebookId', 'Username', 'DisplayName', 'Slug', 'Sha1Password', 'Salt', 'Email', 'UserType', 'ItemsAllowed', 'WhatYouCollect', 'PurchasesPerYear', 'WhatYouSell', 'AnnuallySpend', 'MostExpensiveItem', 'Company', 'Score', 'SpamScore', 'IsSpam', 'IsPublic', 'SessionId', 'LastSeenAt', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'facebookId', 'username', 'displayName', 'slug', 'sha1Password', 'salt', 'email', 'userType', 'itemsAllowed', 'whatYouCollect', 'purchasesPerYear', 'whatYouSell', 'annuallySpend', 'mostExpensiveItem', 'company', 'score', 'spamScore', 'isSpam', 'isPublic', 'sessionId', 'lastSeenAt', 'deletedAt', 'createdAt', 'updatedAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::FACEBOOK_ID, self::USERNAME, self::DISPLAY_NAME, self::SLUG, self::SHA1_PASSWORD, self::SALT, self::EMAIL, self::USER_TYPE, self::ITEMS_ALLOWED, self::WHAT_YOU_COLLECT, self::PURCHASES_PER_YEAR, self::WHAT_YOU_SELL, self::ANNUALLY_SPEND, self::MOST_EXPENSIVE_ITEM, self::COMPANY, self::SCORE, self::SPAM_SCORE, self::IS_SPAM, self::IS_PUBLIC, self::SESSION_ID, self::LAST_SEEN_AT, self::DELETED_AT, self::CREATED_AT, self::UPDATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'FACEBOOK_ID', 'USERNAME', 'DISPLAY_NAME', 'SLUG', 'SHA1_PASSWORD', 'SALT', 'EMAIL', 'USER_TYPE', 'ITEMS_ALLOWED', 'WHAT_YOU_COLLECT', 'PURCHASES_PER_YEAR', 'WHAT_YOU_SELL', 'ANNUALLY_SPEND', 'MOST_EXPENSIVE_ITEM', 'COMPANY', 'SCORE', 'SPAM_SCORE', 'IS_SPAM', 'IS_PUBLIC', 'SESSION_ID', 'LAST_SEEN_AT', 'DELETED_AT', 'CREATED_AT', 'UPDATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'facebook_id', 'username', 'display_name', 'slug', 'sha1_password', 'salt', 'email', 'user_type', 'items_allowed', 'what_you_collect', 'purchases_per_year', 'what_you_sell', 'annually_spend', 'most_expensive_item', 'company', 'score', 'spam_score', 'is_spam', 'is_public', 'session_id', 'last_seen_at', 'deleted_at', 'created_at', 'updated_at', ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, )
+    BasePeer::TYPE_PHPNAME => array ('Id', 'FacebookId', 'Username', 'DisplayName', 'Slug', 'Sha1Password', 'Salt', 'Email', 'UserType', 'ItemsAllowed', 'WhatYouCollect', 'PurchasesPerYear', 'WhatYouSell', 'AnnuallySpend', 'MostExpensiveItem', 'Company', 'Score', 'SpamScore', 'IsSpam', 'IsPublic', 'SessionId', 'LastSeenAt', 'Eblob', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'facebookId', 'username', 'displayName', 'slug', 'sha1Password', 'salt', 'email', 'userType', 'itemsAllowed', 'whatYouCollect', 'purchasesPerYear', 'whatYouSell', 'annuallySpend', 'mostExpensiveItem', 'company', 'score', 'spamScore', 'isSpam', 'isPublic', 'sessionId', 'lastSeenAt', 'eblob', 'deletedAt', 'createdAt', 'updatedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::FACEBOOK_ID, self::USERNAME, self::DISPLAY_NAME, self::SLUG, self::SHA1_PASSWORD, self::SALT, self::EMAIL, self::USER_TYPE, self::ITEMS_ALLOWED, self::WHAT_YOU_COLLECT, self::PURCHASES_PER_YEAR, self::WHAT_YOU_SELL, self::ANNUALLY_SPEND, self::MOST_EXPENSIVE_ITEM, self::COMPANY, self::SCORE, self::SPAM_SCORE, self::IS_SPAM, self::IS_PUBLIC, self::SESSION_ID, self::LAST_SEEN_AT, self::EBLOB, self::DELETED_AT, self::CREATED_AT, self::UPDATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'FACEBOOK_ID', 'USERNAME', 'DISPLAY_NAME', 'SLUG', 'SHA1_PASSWORD', 'SALT', 'EMAIL', 'USER_TYPE', 'ITEMS_ALLOWED', 'WHAT_YOU_COLLECT', 'PURCHASES_PER_YEAR', 'WHAT_YOU_SELL', 'ANNUALLY_SPEND', 'MOST_EXPENSIVE_ITEM', 'COMPANY', 'SCORE', 'SPAM_SCORE', 'IS_SPAM', 'IS_PUBLIC', 'SESSION_ID', 'LAST_SEEN_AT', 'EBLOB', 'DELETED_AT', 'CREATED_AT', 'UPDATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'facebook_id', 'username', 'display_name', 'slug', 'sha1_password', 'salt', 'email', 'user_type', 'items_allowed', 'what_you_collect', 'purchases_per_year', 'what_you_sell', 'annually_spend', 'most_expensive_item', 'company', 'score', 'spam_score', 'is_spam', 'is_public', 'session_id', 'last_seen_at', 'eblob', 'deleted_at', 'created_at', 'updated_at', ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, )
   );
 
   /**
@@ -144,12 +147,12 @@ abstract class BaseCollectorPeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'FacebookId' => 1, 'Username' => 2, 'DisplayName' => 3, 'Slug' => 4, 'Sha1Password' => 5, 'Salt' => 6, 'Email' => 7, 'UserType' => 8, 'ItemsAllowed' => 9, 'WhatYouCollect' => 10, 'PurchasesPerYear' => 11, 'WhatYouSell' => 12, 'AnnuallySpend' => 13, 'MostExpensiveItem' => 14, 'Company' => 15, 'Score' => 16, 'SpamScore' => 17, 'IsSpam' => 18, 'IsPublic' => 19, 'SessionId' => 20, 'LastSeenAt' => 21, 'DeletedAt' => 22, 'CreatedAt' => 23, 'UpdatedAt' => 24, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'facebookId' => 1, 'username' => 2, 'displayName' => 3, 'slug' => 4, 'sha1Password' => 5, 'salt' => 6, 'email' => 7, 'userType' => 8, 'itemsAllowed' => 9, 'whatYouCollect' => 10, 'purchasesPerYear' => 11, 'whatYouSell' => 12, 'annuallySpend' => 13, 'mostExpensiveItem' => 14, 'company' => 15, 'score' => 16, 'spamScore' => 17, 'isSpam' => 18, 'isPublic' => 19, 'sessionId' => 20, 'lastSeenAt' => 21, 'deletedAt' => 22, 'createdAt' => 23, 'updatedAt' => 24, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::FACEBOOK_ID => 1, self::USERNAME => 2, self::DISPLAY_NAME => 3, self::SLUG => 4, self::SHA1_PASSWORD => 5, self::SALT => 6, self::EMAIL => 7, self::USER_TYPE => 8, self::ITEMS_ALLOWED => 9, self::WHAT_YOU_COLLECT => 10, self::PURCHASES_PER_YEAR => 11, self::WHAT_YOU_SELL => 12, self::ANNUALLY_SPEND => 13, self::MOST_EXPENSIVE_ITEM => 14, self::COMPANY => 15, self::SCORE => 16, self::SPAM_SCORE => 17, self::IS_SPAM => 18, self::IS_PUBLIC => 19, self::SESSION_ID => 20, self::LAST_SEEN_AT => 21, self::DELETED_AT => 22, self::CREATED_AT => 23, self::UPDATED_AT => 24, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'FACEBOOK_ID' => 1, 'USERNAME' => 2, 'DISPLAY_NAME' => 3, 'SLUG' => 4, 'SHA1_PASSWORD' => 5, 'SALT' => 6, 'EMAIL' => 7, 'USER_TYPE' => 8, 'ITEMS_ALLOWED' => 9, 'WHAT_YOU_COLLECT' => 10, 'PURCHASES_PER_YEAR' => 11, 'WHAT_YOU_SELL' => 12, 'ANNUALLY_SPEND' => 13, 'MOST_EXPENSIVE_ITEM' => 14, 'COMPANY' => 15, 'SCORE' => 16, 'SPAM_SCORE' => 17, 'IS_SPAM' => 18, 'IS_PUBLIC' => 19, 'SESSION_ID' => 20, 'LAST_SEEN_AT' => 21, 'DELETED_AT' => 22, 'CREATED_AT' => 23, 'UPDATED_AT' => 24, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'facebook_id' => 1, 'username' => 2, 'display_name' => 3, 'slug' => 4, 'sha1_password' => 5, 'salt' => 6, 'email' => 7, 'user_type' => 8, 'items_allowed' => 9, 'what_you_collect' => 10, 'purchases_per_year' => 11, 'what_you_sell' => 12, 'annually_spend' => 13, 'most_expensive_item' => 14, 'company' => 15, 'score' => 16, 'spam_score' => 17, 'is_spam' => 18, 'is_public' => 19, 'session_id' => 20, 'last_seen_at' => 21, 'deleted_at' => 22, 'created_at' => 23, 'updated_at' => 24, ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, )
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'FacebookId' => 1, 'Username' => 2, 'DisplayName' => 3, 'Slug' => 4, 'Sha1Password' => 5, 'Salt' => 6, 'Email' => 7, 'UserType' => 8, 'ItemsAllowed' => 9, 'WhatYouCollect' => 10, 'PurchasesPerYear' => 11, 'WhatYouSell' => 12, 'AnnuallySpend' => 13, 'MostExpensiveItem' => 14, 'Company' => 15, 'Score' => 16, 'SpamScore' => 17, 'IsSpam' => 18, 'IsPublic' => 19, 'SessionId' => 20, 'LastSeenAt' => 21, 'Eblob' => 22, 'DeletedAt' => 23, 'CreatedAt' => 24, 'UpdatedAt' => 25, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'facebookId' => 1, 'username' => 2, 'displayName' => 3, 'slug' => 4, 'sha1Password' => 5, 'salt' => 6, 'email' => 7, 'userType' => 8, 'itemsAllowed' => 9, 'whatYouCollect' => 10, 'purchasesPerYear' => 11, 'whatYouSell' => 12, 'annuallySpend' => 13, 'mostExpensiveItem' => 14, 'company' => 15, 'score' => 16, 'spamScore' => 17, 'isSpam' => 18, 'isPublic' => 19, 'sessionId' => 20, 'lastSeenAt' => 21, 'eblob' => 22, 'deletedAt' => 23, 'createdAt' => 24, 'updatedAt' => 25, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::FACEBOOK_ID => 1, self::USERNAME => 2, self::DISPLAY_NAME => 3, self::SLUG => 4, self::SHA1_PASSWORD => 5, self::SALT => 6, self::EMAIL => 7, self::USER_TYPE => 8, self::ITEMS_ALLOWED => 9, self::WHAT_YOU_COLLECT => 10, self::PURCHASES_PER_YEAR => 11, self::WHAT_YOU_SELL => 12, self::ANNUALLY_SPEND => 13, self::MOST_EXPENSIVE_ITEM => 14, self::COMPANY => 15, self::SCORE => 16, self::SPAM_SCORE => 17, self::IS_SPAM => 18, self::IS_PUBLIC => 19, self::SESSION_ID => 20, self::LAST_SEEN_AT => 21, self::EBLOB => 22, self::DELETED_AT => 23, self::CREATED_AT => 24, self::UPDATED_AT => 25, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'FACEBOOK_ID' => 1, 'USERNAME' => 2, 'DISPLAY_NAME' => 3, 'SLUG' => 4, 'SHA1_PASSWORD' => 5, 'SALT' => 6, 'EMAIL' => 7, 'USER_TYPE' => 8, 'ITEMS_ALLOWED' => 9, 'WHAT_YOU_COLLECT' => 10, 'PURCHASES_PER_YEAR' => 11, 'WHAT_YOU_SELL' => 12, 'ANNUALLY_SPEND' => 13, 'MOST_EXPENSIVE_ITEM' => 14, 'COMPANY' => 15, 'SCORE' => 16, 'SPAM_SCORE' => 17, 'IS_SPAM' => 18, 'IS_PUBLIC' => 19, 'SESSION_ID' => 20, 'LAST_SEEN_AT' => 21, 'EBLOB' => 22, 'DELETED_AT' => 23, 'CREATED_AT' => 24, 'UPDATED_AT' => 25, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'facebook_id' => 1, 'username' => 2, 'display_name' => 3, 'slug' => 4, 'sha1_password' => 5, 'salt' => 6, 'email' => 7, 'user_type' => 8, 'items_allowed' => 9, 'what_you_collect' => 10, 'purchases_per_year' => 11, 'what_you_sell' => 12, 'annually_spend' => 13, 'most_expensive_item' => 14, 'company' => 15, 'score' => 16, 'spam_score' => 17, 'is_spam' => 18, 'is_public' => 19, 'session_id' => 20, 'last_seen_at' => 21, 'eblob' => 22, 'deleted_at' => 23, 'created_at' => 24, 'updated_at' => 25, ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, )
   );
 
   /**
@@ -246,6 +249,7 @@ abstract class BaseCollectorPeer
       $criteria->addSelectColumn(CollectorPeer::IS_PUBLIC);
       $criteria->addSelectColumn(CollectorPeer::SESSION_ID);
       $criteria->addSelectColumn(CollectorPeer::LAST_SEEN_AT);
+      $criteria->addSelectColumn(CollectorPeer::EBLOB);
       $criteria->addSelectColumn(CollectorPeer::DELETED_AT);
       $criteria->addSelectColumn(CollectorPeer::CREATED_AT);
       $criteria->addSelectColumn(CollectorPeer::UPDATED_AT);
@@ -274,6 +278,7 @@ abstract class BaseCollectorPeer
       $criteria->addSelectColumn($alias . '.IS_PUBLIC');
       $criteria->addSelectColumn($alias . '.SESSION_ID');
       $criteria->addSelectColumn($alias . '.LAST_SEEN_AT');
+      $criteria->addSelectColumn($alias . '.EBLOB');
       $criteria->addSelectColumn($alias . '.DELETED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
       $criteria->addSelectColumn($alias . '.UPDATED_AT');

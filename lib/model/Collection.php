@@ -234,6 +234,11 @@ sfPropelBehavior::add('Collection', array('IceTaggableBehavior'));
 
 sfPropelBehavior::add(
   'Collection',
+  array('PropelActAsEblobBehavior' => array('column' => 'eblob')
+));
+
+sfPropelBehavior::add(
+  'Collection',
   array(
     'PropelActAsSluggableBehavior' => array(
       'columns' => array(

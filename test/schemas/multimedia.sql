@@ -6,7 +6,7 @@ CREATE TABLE `multimedia` (
   `model` char(64) NOT NULL,
   `model_id` int(11) DEFAULT NULL,
   `type` enum('image','video') NOT NULL DEFAULT 'image',
-  `name` varchar(128) NOT NULL,
+  `name` varchar(128) DEFAULT NULL,
   `md5` char(32) NOT NULL,
   `colors` varchar(128) DEFAULT NULL,
   `orientation` enum('landscape','portrait') DEFAULT 'landscape',

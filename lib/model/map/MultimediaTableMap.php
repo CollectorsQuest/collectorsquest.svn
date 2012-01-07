@@ -42,7 +42,7 @@ class MultimediaTableMap extends TableMap
     $this->addColumn('MODEL', 'Model', 'CHAR', true, 64, null);
     $this->addColumn('MODEL_ID', 'ModelId', 'INTEGER', false, null, null);
     $this->addColumn('TYPE', 'Type', 'CHAR', true, null, 'image');
-    $this->addColumn('NAME', 'Name', 'VARCHAR', true, 128, null);
+    $this->addColumn('NAME', 'Name', 'VARCHAR', false, 128, null);
     $this->addColumn('MD5', 'Md5', 'CHAR', true, 32, null);
     $this->addColumn('COLORS', 'Colors', 'VARCHAR', false, 128, null);
     $this->addColumn('ORIENTATION', 'Orientation', 'CHAR', false, null, 'landscape');

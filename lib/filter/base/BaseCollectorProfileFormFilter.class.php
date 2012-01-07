@@ -13,7 +13,7 @@ abstract class BaseCollectorProfileFormFilter extends BaseFormFilterPropel
   {
     $this->setWidgets(array(
       'collector_id'    => new sfWidgetFormPropelChoice(array('model' => 'Collector', 'add_empty' => true)),
-      'collector_type'  => new sfWidgetFormFilterInput(),
+      'collector_type'  => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'birthday'        => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),
       'gender'          => new sfWidgetFormFilterInput(),
       'zip_postal'      => new sfWidgetFormFilterInput(),

@@ -468,3 +468,8 @@ sfPropelBehavior::add(
     )
   )
 );
+
+sfPropelBehavior::add(
+  'Collector',
+  array('PropelActAsEblobBehavior' => array('column' => 'eblob')
+));

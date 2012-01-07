@@ -27,13 +27,13 @@ abstract class BaseCollectiblePeer
   const TM_CLASS = 'CollectibleTableMap';
 
   /** The total number of columns. */
-  const NUM_COLUMNS = 13;
+  const NUM_COLUMNS = 14;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
   /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-  const NUM_HYDRATE_COLUMNS = 13;
+  const NUM_HYDRATE_COLUMNS = 14;
 
   /** the column name for the ID field */
   const ID = 'collectible.ID';
@@ -65,6 +65,9 @@ abstract class BaseCollectiblePeer
   /** the column name for the IS_NAME_AUTOMATIC field */
   const IS_NAME_AUTOMATIC = 'collectible.IS_NAME_AUTOMATIC';
 
+  /** the column name for the EBLOB field */
+  const EBLOB = 'collectible.EBLOB';
+
   /** the column name for the DELETED_AT field */
   const DELETED_AT = 'collectible.DELETED_AT';
 
@@ -93,12 +96,12 @@ abstract class BaseCollectiblePeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectorId', 'CollectionId', 'Name', 'Slug', 'Description', 'NumComments', 'Score', 'Position', 'IsNameAutomatic', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectorId', 'collectionId', 'name', 'slug', 'description', 'numComments', 'score', 'position', 'isNameAutomatic', 'deletedAt', 'createdAt', 'updatedAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTOR_ID, self::COLLECTION_ID, self::NAME, self::SLUG, self::DESCRIPTION, self::NUM_COMMENTS, self::SCORE, self::POSITION, self::IS_NAME_AUTOMATIC, self::DELETED_AT, self::CREATED_AT, self::UPDATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTOR_ID', 'COLLECTION_ID', 'NAME', 'SLUG', 'DESCRIPTION', 'NUM_COMMENTS', 'SCORE', 'POSITION', 'IS_NAME_AUTOMATIC', 'DELETED_AT', 'CREATED_AT', 'UPDATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'collector_id', 'collection_id', 'name', 'slug', 'description', 'num_comments', 'score', 'position', 'is_name_automatic', 'deleted_at', 'created_at', 'updated_at', ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectorId', 'CollectionId', 'Name', 'Slug', 'Description', 'NumComments', 'Score', 'Position', 'IsNameAutomatic', 'Eblob', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectorId', 'collectionId', 'name', 'slug', 'description', 'numComments', 'score', 'position', 'isNameAutomatic', 'eblob', 'deletedAt', 'createdAt', 'updatedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTOR_ID, self::COLLECTION_ID, self::NAME, self::SLUG, self::DESCRIPTION, self::NUM_COMMENTS, self::SCORE, self::POSITION, self::IS_NAME_AUTOMATIC, self::EBLOB, self::DELETED_AT, self::CREATED_AT, self::UPDATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTOR_ID', 'COLLECTION_ID', 'NAME', 'SLUG', 'DESCRIPTION', 'NUM_COMMENTS', 'SCORE', 'POSITION', 'IS_NAME_AUTOMATIC', 'EBLOB', 'DELETED_AT', 'CREATED_AT', 'UPDATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'collector_id', 'collection_id', 'name', 'slug', 'description', 'num_comments', 'score', 'position', 'is_name_automatic', 'eblob', 'deleted_at', 'created_at', 'updated_at', ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
   );
 
   /**
@@ -108,12 +111,12 @@ abstract class BaseCollectiblePeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectorId' => 1, 'CollectionId' => 2, 'Name' => 3, 'Slug' => 4, 'Description' => 5, 'NumComments' => 6, 'Score' => 7, 'Position' => 8, 'IsNameAutomatic' => 9, 'DeletedAt' => 10, 'CreatedAt' => 11, 'UpdatedAt' => 12, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectorId' => 1, 'collectionId' => 2, 'name' => 3, 'slug' => 4, 'description' => 5, 'numComments' => 6, 'score' => 7, 'position' => 8, 'isNameAutomatic' => 9, 'deletedAt' => 10, 'createdAt' => 11, 'updatedAt' => 12, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTOR_ID => 1, self::COLLECTION_ID => 2, self::NAME => 3, self::SLUG => 4, self::DESCRIPTION => 5, self::NUM_COMMENTS => 6, self::SCORE => 7, self::POSITION => 8, self::IS_NAME_AUTOMATIC => 9, self::DELETED_AT => 10, self::CREATED_AT => 11, self::UPDATED_AT => 12, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTOR_ID' => 1, 'COLLECTION_ID' => 2, 'NAME' => 3, 'SLUG' => 4, 'DESCRIPTION' => 5, 'NUM_COMMENTS' => 6, 'SCORE' => 7, 'POSITION' => 8, 'IS_NAME_AUTOMATIC' => 9, 'DELETED_AT' => 10, 'CREATED_AT' => 11, 'UPDATED_AT' => 12, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collector_id' => 1, 'collection_id' => 2, 'name' => 3, 'slug' => 4, 'description' => 5, 'num_comments' => 6, 'score' => 7, 'position' => 8, 'is_name_automatic' => 9, 'deleted_at' => 10, 'created_at' => 11, 'updated_at' => 12, ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectorId' => 1, 'CollectionId' => 2, 'Name' => 3, 'Slug' => 4, 'Description' => 5, 'NumComments' => 6, 'Score' => 7, 'Position' => 8, 'IsNameAutomatic' => 9, 'Eblob' => 10, 'DeletedAt' => 11, 'CreatedAt' => 12, 'UpdatedAt' => 13, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectorId' => 1, 'collectionId' => 2, 'name' => 3, 'slug' => 4, 'description' => 5, 'numComments' => 6, 'score' => 7, 'position' => 8, 'isNameAutomatic' => 9, 'eblob' => 10, 'deletedAt' => 11, 'createdAt' => 12, 'updatedAt' => 13, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTOR_ID => 1, self::COLLECTION_ID => 2, self::NAME => 3, self::SLUG => 4, self::DESCRIPTION => 5, self::NUM_COMMENTS => 6, self::SCORE => 7, self::POSITION => 8, self::IS_NAME_AUTOMATIC => 9, self::EBLOB => 10, self::DELETED_AT => 11, self::CREATED_AT => 12, self::UPDATED_AT => 13, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTOR_ID' => 1, 'COLLECTION_ID' => 2, 'NAME' => 3, 'SLUG' => 4, 'DESCRIPTION' => 5, 'NUM_COMMENTS' => 6, 'SCORE' => 7, 'POSITION' => 8, 'IS_NAME_AUTOMATIC' => 9, 'EBLOB' => 10, 'DELETED_AT' => 11, 'CREATED_AT' => 12, 'UPDATED_AT' => 13, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collector_id' => 1, 'collection_id' => 2, 'name' => 3, 'slug' => 4, 'description' => 5, 'num_comments' => 6, 'score' => 7, 'position' => 8, 'is_name_automatic' => 9, 'eblob' => 10, 'deleted_at' => 11, 'created_at' => 12, 'updated_at' => 13, ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
   );
 
   /**
@@ -198,6 +201,7 @@ abstract class BaseCollectiblePeer
       $criteria->addSelectColumn(CollectiblePeer::SCORE);
       $criteria->addSelectColumn(CollectiblePeer::POSITION);
       $criteria->addSelectColumn(CollectiblePeer::IS_NAME_AUTOMATIC);
+      $criteria->addSelectColumn(CollectiblePeer::EBLOB);
       $criteria->addSelectColumn(CollectiblePeer::DELETED_AT);
       $criteria->addSelectColumn(CollectiblePeer::CREATED_AT);
       $criteria->addSelectColumn(CollectiblePeer::UPDATED_AT);
@@ -214,6 +218,7 @@ abstract class BaseCollectiblePeer
       $criteria->addSelectColumn($alias . '.SCORE');
       $criteria->addSelectColumn($alias . '.POSITION');
       $criteria->addSelectColumn($alias . '.IS_NAME_AUTOMATIC');
+      $criteria->addSelectColumn($alias . '.EBLOB');
       $criteria->addSelectColumn($alias . '.DELETED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
       $criteria->addSelectColumn($alias . '.UPDATED_AT');

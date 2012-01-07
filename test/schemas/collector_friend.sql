@@ -3,8 +3,8 @@ DROP TABLE IF EXISTS `collector_friend`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `collector_friend` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `collector_id` int(11) DEFAULT NULL,
-  `friend_id` int(11) DEFAULT NULL,
+  `collector_id` int(11) NOT NULL,
+  `friend_id` int(11) NOT NULL,
   `created_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `collector_friend_FI_1` (`collector_id`),

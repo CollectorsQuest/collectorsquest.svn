@@ -99,13 +99,13 @@ test:
   propel:
     param:
       classname:  DebugPDO
-      dsn:        mysql:dbname=collectorsquest_test;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_test;host=127.0.0.1
       username:   test
       password:   r4BBPRyt628YDF
 
   blog:
     param:
       classname:  DebugPDO
-      dsn:        mysql:dbname=collectorsquest_test;host=cq-mysql-master
+      dsn:        mysql:dbname=collectorsquest_test;host=127.0.0.1
       username:   test
       password:   r4BBPRyt628YDF

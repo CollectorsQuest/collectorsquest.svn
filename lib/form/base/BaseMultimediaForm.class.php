@@ -33,7 +33,7 @@ abstract class BaseMultimediaForm extends BaseFormPropel
       'model'       => new sfValidatorString(array('max_length' => 64)),
       'model_id'    => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
       'type'        => new sfValidatorString(),
-      'name'        => new sfValidatorString(array('max_length' => 128)),
+      'name'        => new sfValidatorString(array('max_length' => 128, 'required' => false)),
       'md5'         => new sfValidatorString(array('max_length' => 32)),
       'colors'      => new sfValidatorString(array('max_length' => 128, 'required' => false)),
       'orientation' => new sfValidatorString(array('required' => false)),

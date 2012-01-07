@@ -165,6 +165,12 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   protected $last_seen_at;
 
   /**
+   * The value for the eblob field.
+   * @var        string
+   */
+  protected $eblob;
+
+  /**
    * The value for the deleted_at field.
    * @var        string
    */
@@ -547,6 +553,16 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     {
       return $dt->format($format);
     }
+  }
+
+  /**
+   * Get the [eblob] column value.
+   * 
+   * @return     string
+   */
+  public function getEblob()
+  {
+    return $this->eblob;
   }
 
   /**
@@ -1208,6 +1224,28 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Set the value of [eblob] column.
+   * 
+   * @param      string $v new value
+   * @return     Collector The current object (for fluent API support)
+   */
+  public function setEblob($v)
+  {
+    if ($v !== null)
+    {
+      $v = (string) $v;
+    }
+
+    if ($this->eblob !== $v)
+    {
+      $this->eblob = $v;
+      $this->modifiedColumns[] = CollectorPeer::EBLOB;
+    }
+
+    return $this;
+  }
+
+  /**
    * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -1374,9 +1412,10 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->is_public = ($row[$startcol + 19] !== null) ? (boolean) $row[$startcol + 19] : null;
       $this->session_id = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
       $this->last_seen_at = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
-      $this->deleted_at = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
-      $this->created_at = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
-      $this->updated_at = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
+      $this->eblob = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+      $this->deleted_at = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
+      $this->created_at = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
+      $this->updated_at = ($row[$startcol + 25] !== null) ? (string) $row[$startcol + 25] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -1386,7 +1425,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 25; // 25 = CollectorPeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 26; // 26 = CollectorPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -2163,12 +2202,15 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         return $this->getLastSeenAt();
         break;
       case 22:
-        return $this->getDeletedAt();
+        return $this->getEblob();
         break;
       case 23:
-        return $this->getCreatedAt();
+        return $this->getDeletedAt();
         break;
       case 24:
+        return $this->getCreatedAt();
+        break;
+      case 25:
         return $this->getUpdatedAt();
         break;
       default:
@@ -2223,9 +2265,10 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $keys[19] => $this->getIsPublic(),
       $keys[20] => $this->getSessionId(),
       $keys[21] => $this->getLastSeenAt(),
-      $keys[22] => $this->getDeletedAt(),
-      $keys[23] => $this->getCreatedAt(),
-      $keys[24] => $this->getUpdatedAt(),
+      $keys[22] => $this->getEblob(),
+      $keys[23] => $this->getDeletedAt(),
+      $keys[24] => $this->getCreatedAt(),
+      $keys[25] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -2380,12 +2423,15 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         $this->setLastSeenAt($value);
         break;
       case 22:
-        $this->setDeletedAt($value);
+        $this->setEblob($value);
         break;
       case 23:
-        $this->setCreatedAt($value);
+        $this->setDeletedAt($value);
         break;
       case 24:
+        $this->setCreatedAt($value);
+        break;
+      case 25:
         $this->setUpdatedAt($value);
         break;
     }
@@ -2434,9 +2480,10 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     if (array_key_exists($keys[19], $arr)) $this->setIsPublic($arr[$keys[19]]);
     if (array_key_exists($keys[20], $arr)) $this->setSessionId($arr[$keys[20]]);
     if (array_key_exists($keys[21], $arr)) $this->setLastSeenAt($arr[$keys[21]]);
-    if (array_key_exists($keys[22], $arr)) $this->setDeletedAt($arr[$keys[22]]);
-    if (array_key_exists($keys[23], $arr)) $this->setCreatedAt($arr[$keys[23]]);
-    if (array_key_exists($keys[24], $arr)) $this->setUpdatedAt($arr[$keys[24]]);
+    if (array_key_exists($keys[22], $arr)) $this->setEblob($arr[$keys[22]]);
+    if (array_key_exists($keys[23], $arr)) $this->setDeletedAt($arr[$keys[23]]);
+    if (array_key_exists($keys[24], $arr)) $this->setCreatedAt($arr[$keys[24]]);
+    if (array_key_exists($keys[25], $arr)) $this->setUpdatedAt($arr[$keys[25]]);
   }
 
   /**
@@ -2470,6 +2517,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectorPeer::IS_PUBLIC)) $criteria->add(CollectorPeer::IS_PUBLIC, $this->is_public);
     if ($this->isColumnModified(CollectorPeer::SESSION_ID)) $criteria->add(CollectorPeer::SESSION_ID, $this->session_id);
     if ($this->isColumnModified(CollectorPeer::LAST_SEEN_AT)) $criteria->add(CollectorPeer::LAST_SEEN_AT, $this->last_seen_at);
+    if ($this->isColumnModified(CollectorPeer::EBLOB)) $criteria->add(CollectorPeer::EBLOB, $this->eblob);
     if ($this->isColumnModified(CollectorPeer::DELETED_AT)) $criteria->add(CollectorPeer::DELETED_AT, $this->deleted_at);
     if ($this->isColumnModified(CollectorPeer::CREATED_AT)) $criteria->add(CollectorPeer::CREATED_AT, $this->created_at);
     if ($this->isColumnModified(CollectorPeer::UPDATED_AT)) $criteria->add(CollectorPeer::UPDATED_AT, $this->updated_at);
@@ -2556,6 +2604,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $copyObj->setIsPublic($this->getIsPublic());
     $copyObj->setSessionId($this->getSessionId());
     $copyObj->setLastSeenAt($this->getLastSeenAt());
+    $copyObj->setEblob($this->getEblob());
     $copyObj->setDeletedAt($this->getDeletedAt());
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
@@ -4787,6 +4836,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $this->is_public = null;
     $this->session_id = null;
     $this->last_seen_at = null;
+    $this->eblob = null;
     $this->deleted_at = null;
     $this->created_at = null;
     $this->updated_at = null;

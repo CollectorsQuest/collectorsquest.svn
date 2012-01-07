@@ -38,6 +38,7 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
 
   /**
    * The value for the collector_type field.
+   * Note: this column has a database default value of: 'Collector'
    * @var        string
    */
   protected $collector_type;
@@ -192,6 +193,7 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
    */
   public function applyDefaultValues()
   {
+    $this->collector_type = 'Collector';
     $this->is_featured = false;
     $this->is_seller = false;
     $this->is_image_auto = true;
@@ -1117,6 +1119,11 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
    */
   public function hasOnlyDefaultValues()
   {
+      if ($this->collector_type !== 'Collector')
+      {
+        return false;
+      }
+
       if ($this->is_featured !== false)
       {
         return false;

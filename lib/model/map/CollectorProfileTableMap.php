@@ -40,7 +40,7 @@ class CollectorProfileTableMap extends TableMap
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
     $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
-    $this->addColumn('COLLECTOR_TYPE', 'CollectorType', 'VARCHAR', false, 64, null);
+    $this->addColumn('COLLECTOR_TYPE', 'CollectorType', 'CHAR', true, null, 'Collector');
     $this->addColumn('BIRTHDAY', 'Birthday', 'DATE', false, null, null);
     $this->addColumn('GENDER', 'Gender', 'CHAR', false, null, null);
     $this->addColumn('ZIP_POSTAL', 'ZipPostal', 'VARCHAR', false, 10, null);

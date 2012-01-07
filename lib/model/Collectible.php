@@ -418,6 +418,11 @@ sfPropelBehavior::add('Collectible', array('IceTaggableBehavior'));
 
 sfPropelBehavior::add(
   'Collectible',
+  array('PropelActAsEblobBehavior' => array('column' => 'eblob')
+));
+
+sfPropelBehavior::add(
+  'Collectible',
   array(
     'PropelActAsSluggableBehavior' => array(
       'columns' => array(

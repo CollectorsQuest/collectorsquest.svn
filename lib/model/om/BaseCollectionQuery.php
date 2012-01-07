@@ -21,6 +21,7 @@
  * @method     CollectionQuery orderByIsFeatured($order = Criteria::ASC) Order by the is_featured column
  * @method     CollectionQuery orderByCommentsOn($order = Criteria::ASC) Order by the comments_on column
  * @method     CollectionQuery orderByRatingOn($order = Criteria::ASC) Order by the rating_on column
+ * @method     CollectionQuery orderByEblob($order = Criteria::ASC) Order by the eblob column
  * @method     CollectionQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     CollectionQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     CollectionQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
@@ -40,6 +41,7 @@
  * @method     CollectionQuery groupByIsFeatured() Group by the is_featured column
  * @method     CollectionQuery groupByCommentsOn() Group by the comments_on column
  * @method     CollectionQuery groupByRatingOn() Group by the rating_on column
+ * @method     CollectionQuery groupByEblob() Group by the eblob column
  * @method     CollectionQuery groupByDeletedAt() Group by the deleted_at column
  * @method     CollectionQuery groupByCreatedAt() Group by the created_at column
  * @method     CollectionQuery groupByUpdatedAt() Group by the updated_at column
@@ -94,6 +96,7 @@
  * @method     Collection findOneByIsFeatured(boolean $is_featured) Return the first Collection filtered by the is_featured column
  * @method     Collection findOneByCommentsOn(boolean $comments_on) Return the first Collection filtered by the comments_on column
  * @method     Collection findOneByRatingOn(boolean $rating_on) Return the first Collection filtered by the rating_on column
+ * @method     Collection findOneByEblob(string $eblob) Return the first Collection filtered by the eblob column
  * @method     Collection findOneByDeletedAt(string $deleted_at) Return the first Collection filtered by the deleted_at column
  * @method     Collection findOneByCreatedAt(string $created_at) Return the first Collection filtered by the created_at column
  * @method     Collection findOneByUpdatedAt(string $updated_at) Return the first Collection filtered by the updated_at column
@@ -113,6 +116,7 @@
  * @method     array findByIsFeatured(boolean $is_featured) Return Collection objects filtered by the is_featured column
  * @method     array findByCommentsOn(boolean $comments_on) Return Collection objects filtered by the comments_on column
  * @method     array findByRatingOn(boolean $rating_on) Return Collection objects filtered by the rating_on column
+ * @method     array findByEblob(string $eblob) Return Collection objects filtered by the eblob column
  * @method     array findByDeletedAt(string $deleted_at) Return Collection objects filtered by the deleted_at column
  * @method     array findByCreatedAt(string $created_at) Return Collection objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return Collection objects filtered by the updated_at column
@@ -725,6 +729,34 @@ abstract class BaseCollectionQuery extends ModelCriteria
             $rating_on = in_array(strtolower($ratingOn), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
         return $this->addUsingAlias(CollectionPeer::RATING_ON, $ratingOn, $comparison);
+    }
+
+    /**
+     * Filter the query on the eblob column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByEblob('fooValue');   // WHERE eblob = 'fooValue'
+     * $query->filterByEblob('%fooValue%'); // WHERE eblob LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $eblob The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectionQuery The current query, for fluid interface
+     */
+    public function filterByEblob($eblob = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($eblob)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $eblob)) {
+                $eblob = str_replace('*', '%', $eblob);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectionPeer::EBLOB, $eblob, $comparison);
     }
 
     /**

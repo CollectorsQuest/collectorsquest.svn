@@ -89,6 +89,6 @@ classes:
     skipSql: true
     columns:
       comment_id:            { type: integer, required: true, primaryKey: true, autoIncrement: true }
-      comment_author:        varchar(100)
+      comment_author:        { type: varchar, size: 100, sqlType: "TINYTEXT" }
       comment_author_email:  varchar(100)
       comment_date:          timestamp

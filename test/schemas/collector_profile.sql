@@ -4,7 +4,7 @@ DROP TABLE IF EXISTS `collector_profile`;
 CREATE TABLE `collector_profile` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `collector_id` int(11) NOT NULL,
-  `collector_type` varchar(64) DEFAULT NULL,
+  `collector_type` enum('Collector','Seller') NOT NULL DEFAULT 'Collector',
   `birthday` date DEFAULT NULL,
   `gender` enum('f','m') DEFAULT NULL,
   `zip_postal` varchar(10) DEFAULT NULL,

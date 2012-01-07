@@ -1,5 +1,7 @@
 # Sqlfile -> Database map
 lib.model.blog.schema.sql=blog
 lib.model.schema.sql=propel
+plugins.iceCrontabPlugin.lib.model.schema.sql=icepique
+plugins.iceJobQueuePlugin.lib.model.schema.sql=icepique
+plugins.iceTaggablePlugin.lib.model.schema.sql=propel
 plugins.sfGuardPlugin.lib.model.schema.sql=propel
-plugins.sfPropelActAsTaggableBehaviorPlugin.lib.model.schema.sql=propel

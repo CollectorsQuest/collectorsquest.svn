@@ -148,8 +148,6 @@ class collectorActions extends cqActions
             PrivateMessageTemplatePeer::COLLECTOR_SIGNUP_WELCOME, $collector->getId(), 1, array()
           );
 
-          $this->getUser()->setAttribute('user_type', $collector->getUserType(), 'seller');
-
           return $this->redirect('@manage_profile');
         }
       }

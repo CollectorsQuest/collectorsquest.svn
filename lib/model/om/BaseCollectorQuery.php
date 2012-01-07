@@ -28,6 +28,7 @@
  * @method     CollectorQuery orderByIsPublic($order = Criteria::ASC) Order by the is_public column
  * @method     CollectorQuery orderBySessionId($order = Criteria::ASC) Order by the session_id column
  * @method     CollectorQuery orderByLastSeenAt($order = Criteria::ASC) Order by the last_seen_at column
+ * @method     CollectorQuery orderByEblob($order = Criteria::ASC) Order by the eblob column
  * @method     CollectorQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     CollectorQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     CollectorQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
@@ -54,6 +55,7 @@
  * @method     CollectorQuery groupByIsPublic() Group by the is_public column
  * @method     CollectorQuery groupBySessionId() Group by the session_id column
  * @method     CollectorQuery groupByLastSeenAt() Group by the last_seen_at column
+ * @method     CollectorQuery groupByEblob() Group by the eblob column
  * @method     CollectorQuery groupByDeletedAt() Group by the deleted_at column
  * @method     CollectorQuery groupByCreatedAt() Group by the created_at column
  * @method     CollectorQuery groupByUpdatedAt() Group by the updated_at column
@@ -139,6 +141,7 @@
  * @method     Collector findOneByIsPublic(boolean $is_public) Return the first Collector filtered by the is_public column
  * @method     Collector findOneBySessionId(string $session_id) Return the first Collector filtered by the session_id column
  * @method     Collector findOneByLastSeenAt(string $last_seen_at) Return the first Collector filtered by the last_seen_at column
+ * @method     Collector findOneByEblob(string $eblob) Return the first Collector filtered by the eblob column
  * @method     Collector findOneByDeletedAt(string $deleted_at) Return the first Collector filtered by the deleted_at column
  * @method     Collector findOneByCreatedAt(string $created_at) Return the first Collector filtered by the created_at column
  * @method     Collector findOneByUpdatedAt(string $updated_at) Return the first Collector filtered by the updated_at column
@@ -165,6 +168,7 @@
  * @method     array findByIsPublic(boolean $is_public) Return Collector objects filtered by the is_public column
  * @method     array findBySessionId(string $session_id) Return Collector objects filtered by the session_id column
  * @method     array findByLastSeenAt(string $last_seen_at) Return Collector objects filtered by the last_seen_at column
+ * @method     array findByEblob(string $eblob) Return Collector objects filtered by the eblob column
  * @method     array findByDeletedAt(string $deleted_at) Return Collector objects filtered by the deleted_at column
  * @method     array findByCreatedAt(string $created_at) Return Collector objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return Collector objects filtered by the updated_at column
@@ -978,6 +982,34 @@ abstract class BaseCollectorQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the eblob column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByEblob('fooValue');   // WHERE eblob = 'fooValue'
+     * $query->filterByEblob('%fooValue%'); // WHERE eblob LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $eblob The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorQuery The current query, for fluid interface
+     */
+    public function filterByEblob($eblob = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($eblob)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $eblob)) {
+                $eblob = str_replace('*', '%', $eblob);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectorPeer::EBLOB, $eblob, $comparison);
+    }
+
+    /**
      * Filter the query on the deleted_at column
      *
      * Example usage:
@@ -1499,7 +1531,7 @@ abstract class BaseCollectorQuery extends ModelCriteria
      *
      * @return    CollectorQuery The current query, for fluid interface
      */
-    public function joinCollectorFriendRelatedByCollectorId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinCollectorFriendRelatedByCollectorId($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('CollectorFriendRelatedByCollectorId');
@@ -1534,7 +1566,7 @@ abstract class BaseCollectorQuery extends ModelCriteria
      *
      * @return    CollectorFriendQuery A secondary query class using the current class as primary query
      */
-    public function useCollectorFriendRelatedByCollectorIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useCollectorFriendRelatedByCollectorIdQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinCollectorFriendRelatedByCollectorId($relationAlias, $joinType)
@@ -1572,7 +1604,7 @@ abstract class BaseCollectorQuery extends ModelCriteria
      *
      * @return    CollectorQuery The current query, for fluid interface
      */
-    public function joinCollectorFriendRelatedByFriendId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinCollectorFriendRelatedByFriendId($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('CollectorFriendRelatedByFriendId');
@@ -1607,7 +1639,7 @@ abstract class BaseCollectorQuery extends ModelCriteria
      *
      * @return    CollectorFriendQuery A secondary query class using the current class as primary query
      */
-    public function useCollectorFriendRelatedByFriendIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useCollectorFriendRelatedByFriendIdQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinCollectorFriendRelatedByFriendId($relationAlias, $joinType)

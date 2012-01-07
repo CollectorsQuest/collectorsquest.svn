@@ -7,6 +7,7 @@ CREATE TABLE `term_relationship` (
   `model` varchar(30) DEFAULT NULL,
   `model_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
+  KEY `term_relationship_I_1` (`model`),
   KEY `term_relationship_FI_1` (`term_id`),
   CONSTRAINT `term_relationship_FK_1` FOREIGN KEY (`term_id`) REFERENCES `term` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

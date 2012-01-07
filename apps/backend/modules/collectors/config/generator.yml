@@ -30,7 +30,7 @@ generator:
         object_actions:
           _edit: ~
           _delete: ~
-          autologin: { label: "Auto Login", action: autoLogin }
+          autologin: { label: "Auto Login", action: autoLogin, params: { target: '_blank' } }
         actions:
           export: { label: "Export to CSV", action: export }
 

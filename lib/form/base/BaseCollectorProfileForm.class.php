@@ -42,7 +42,7 @@ abstract class BaseCollectorProfileForm extends BaseFormPropel
     $this->setValidators(array(
       'id'              => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'collector_id'    => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id')),
-      'collector_type'  => new sfValidatorString(array('max_length' => 64, 'required' => false)),
+      'collector_type'  => new sfValidatorString(),
       'birthday'        => new sfValidatorDate(array('required' => false)),
       'gender'          => new sfValidatorString(array('required' => false)),
       'zip_postal'      => new sfValidatorString(array('max_length' => 10, 'required' => false)),

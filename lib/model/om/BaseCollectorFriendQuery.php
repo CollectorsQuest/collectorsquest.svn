@@ -333,7 +333,7 @@ abstract class BaseCollectorFriendQuery extends ModelCriteria
      *
      * @return    CollectorFriendQuery The current query, for fluid interface
      */
-    public function joinCollectorRelatedByCollectorId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinCollectorRelatedByCollectorId($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('CollectorRelatedByCollectorId');
@@ -368,7 +368,7 @@ abstract class BaseCollectorFriendQuery extends ModelCriteria
      *
      * @return    CollectorQuery A secondary query class using the current class as primary query
      */
-    public function useCollectorRelatedByCollectorIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useCollectorRelatedByCollectorIdQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinCollectorRelatedByCollectorId($relationAlias, $joinType)
@@ -407,7 +407,7 @@ abstract class BaseCollectorFriendQuery extends ModelCriteria
      *
      * @return    CollectorFriendQuery The current query, for fluid interface
      */
-    public function joinCollectorRelatedByFriendId($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinCollectorRelatedByFriendId($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('CollectorRelatedByFriendId');
@@ -442,7 +442,7 @@ abstract class BaseCollectorFriendQuery extends ModelCriteria
      *
      * @return    CollectorQuery A secondary query class using the current class as primary query
      */
-    public function useCollectorRelatedByFriendIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useCollectorRelatedByFriendIdQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinCollectorRelatedByFriendId($relationAlias, $joinType)

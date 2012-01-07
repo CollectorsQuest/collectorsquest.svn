@@ -15,7 +15,7 @@ abstract class BaseMultimediaFormFilter extends BaseFormFilterPropel
       'model'       => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'model_id'    => new sfWidgetFormFilterInput(),
       'type'        => new sfWidgetFormFilterInput(array('with_empty' => false)),
-      'name'        => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'name'        => new sfWidgetFormFilterInput(),
       'md5'         => new sfWidgetFormFilterInput(array('with_empty' => false)),
       'colors'      => new sfWidgetFormFilterInput(),
       'orientation' => new sfWidgetFormFilterInput(),

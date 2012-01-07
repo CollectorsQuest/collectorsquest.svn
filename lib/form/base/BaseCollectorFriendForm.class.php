@@ -15,15 +15,15 @@ abstract class BaseCollectorFriendForm extends BaseFormPropel
   {
     $this->setWidgets(array(
       'id'           => new sfWidgetFormInputHidden(),
-      'collector_id' => new sfWidgetFormPropelChoice(array('model' => 'Collector', 'add_empty' => true)),
-      'friend_id'    => new sfWidgetFormPropelChoice(array('model' => 'Collector', 'add_empty' => true)),
+      'collector_id' => new sfWidgetFormPropelChoice(array('model' => 'Collector', 'add_empty' => false)),
+      'friend_id'    => new sfWidgetFormPropelChoice(array('model' => 'Collector', 'add_empty' => false)),
       'created_at'   => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
       'id'           => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
-      'collector_id' => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id', 'required' => false)),
-      'friend_id'    => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id', 'required' => false)),
+      'collector_id' => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id')),
+      'friend_id'    => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id')),
       'created_at'   => new sfValidatorDateTime(array('required' => false)),
     ));
 

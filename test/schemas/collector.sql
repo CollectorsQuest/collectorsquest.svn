@@ -6,11 +6,10 @@ CREATE TABLE `collector` (
   `facebook_id` varchar(20) DEFAULT NULL,
   `username` varchar(64) NOT NULL,
   `display_name` varchar(64) NOT NULL,
-  `slug` varchar(64) DEFAULT NULL,
+  `slug` varchar(64) NOT NULL,
   `sha1_password` varchar(40) NOT NULL,
   `salt` varchar(32) NOT NULL,
-  `score` int(11) DEFAULT '0',
-  `email` varchar(128) NOT NULL,
+  `email` varchar(128) DEFAULT NULL,
   `user_type` enum('Collector','Seller') NOT NULL DEFAULT 'Collector',
   `items_allowed` int(11) DEFAULT NULL,
   `what_you_collect` varchar(255) DEFAULT NULL,
@@ -19,16 +18,20 @@ CREATE TABLE `collector` (
   `annually_spend` float DEFAULT '0',
   `most_expensive_item` float DEFAULT '0',
   `company` varchar(255) DEFAULT NULL,
+  `score` int(11) NOT NULL DEFAULT '0',
+  `spam_score` int(11) NOT NULL DEFAULT '0',
+  `is_spam` tinyint(1) DEFAULT '1',
   `is_public` tinyint(1) DEFAULT '1',
   `session_id` varchar(32) DEFAULT NULL,
   `last_seen_at` datetime DEFAULT NULL,
+  `eblob` text,
   `deleted_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `collector_U_3` (`email`),
+  UNIQUE KEY `collector_U_2` (`slug`),
   UNIQUE KEY `collector_U_1` (`facebook_id`),
-  UNIQUE KEY `collector_U_2` (`slug`)
+  UNIQUE KEY `collector_U_3` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 LOCK TABLES `collector` WRITE;

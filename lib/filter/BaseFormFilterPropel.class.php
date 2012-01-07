@@ -5,8 +5,7 @@
  *
  * @package    CollectorsQuest
  * @subpackage filter
- * @author     Kiril Angov
- * @version    SVN: $Id: sfPropelFormFilterBaseTemplate.php 11675 2008-09-19 15:21:38Z fabien $
+ * @author     Collectors
  */
 abstract class BaseFormFilterPropel extends sfFormFilterPropel
 {

@@ -39,8 +39,8 @@ class CollectorFriendTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-    $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', false, null, null);
-    $this->addForeignKey('FRIEND_ID', 'FriendId', 'INTEGER', 'collector', 'ID', false, null, null);
+    $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
+    $this->addForeignKey('FRIEND_ID', 'FriendId', 'INTEGER', 'collector', 'ID', true, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     // validators
   }
