@@ -4,6 +4,7 @@ require_recipe "memcached"
 require_recipe "development::zend"
 require_recipe "development::vhosts"
 require_recipe "development::gearman"
+# require_recipe "development::subversion"
 
 service "apache" do
   action :restart

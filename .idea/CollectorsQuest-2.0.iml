@@ -2,7 +2,12 @@
 <module type="WEB_MODULE" version="4">
   <component name="DBNavigator.Module.ConnectionManager">
     <connections>
-      <connection driver-library="" driver="" url="" active="true" os-authentication="false" id="42174a6e-9290-4900-8ea7-609a6d52a968" name="MySQL" description="" database-type="UNKNOWN" user="" password="" charset="">
+      <connection driver-library="" driver="" url="" active="true" os-authentication="false" id="42174a6e-9290-4900-8ea7-609a6d52a968" name="MySQL" description="" database-type="UNKNOWN" user="" password="">
+        <details>
+          <charset value="UTF-8" />
+          <auto-commit value="false" />
+          <environment-type value="" />
+        </details>
         <object-filters>
           <object-type-filter use-master-settings="true">
             <object-type name="SCHEMA" enabled="true" />
