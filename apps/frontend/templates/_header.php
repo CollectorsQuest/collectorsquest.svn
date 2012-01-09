@@ -19,9 +19,9 @@
   </form>
   <div id="header-account">
     <?php if (!$sf_user->isAuthenticated()): ?>
-      <a href="<?php echo  url_for('@ajax_signup_choice'); ?>" id="header-signup"><b><?php echo  __('Sign up for an Account'); ?></b></a>
+      <a href="<?php echo  url_for('@ajax_signup_choice'); ?>" id="header-signup" onclick="return false;"><b><?php echo  __('Sign up for an Account'); ?></b></a>
       &nbsp;|&nbsp;
-      <a href="<?php echo  url_for('@ajax_login'); ?>" id="header-login"><?php echo  __('Sign in to Your Account'); ?></a>
+      <a href="<?php echo  url_for('@ajax_login'); ?>" id="header-login" onclick="return false;"><?php echo  __('Sign in to Your Account'); ?></a>
     <?php else: ?>
       <?php echo  sprintf(__('Hello again, %s'), '<b>'.$sf_user->getCollector().'</b>'); ?>!
       &nbsp;

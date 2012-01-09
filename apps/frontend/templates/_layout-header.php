@@ -36,11 +36,17 @@
   <!--[if lt IE 8]>
   <link rel="stylesheet" href="/css/frontend/ie.css" type="text/css" media="screen, projection"><![endif]-->
 
-  <?php if ('dev' == SF_ENV):  ?>
-    <script type="text/javascript" src="/js/jquery.js"></script>
-  <?php else:  ?>
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6/jquery.min.js"></script>
-  <?php endif;  ?>
+  <?php
+    // TODO: We are stuck at jquery version 1.5 because of jquery.beutytips.js
+    if ('dev' == SF_ENV)
+    {
+      echo '<script type="text/javascript" src="/js/jquery.js"></script>';
+    }
+    else
+    {
+      echo '<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>';
+    }
+  ?>
 
   <!--[if IE]><script type="text/javascript" src="/js/excanvas.js"></script><![endif]-->
 
