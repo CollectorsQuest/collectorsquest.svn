@@ -76,9 +76,9 @@
 
 /* Interaction Cues
 ----------------------------------*/
-.ui-state-highlight, .ui-widget-content .ui-state-highlight {border: 1px solid #d9bb73; border-right:  0; padding: 0.4em 0.3em 0.4em 0.4em; margin-top: -6px; margin-left: -1px; background: #F8FBE5 url(./images/frontend/highlight-bgr.png) repeat-y right; color: #060200; }
+.ui-state-highlight, .ui-widget-content .ui-state-highlight {border: 1px solid #d9bb73; border-right:  0; padding: 0.4em 0.3em 0.4em 0.4em; margin-top: -6px; margin-left: -1px; background: #F8FBE5 url(/images/frontend/highlight-bgr.png) repeat-y right; color: #060200; }
 .ui-state-highlight a, .ui-widget-content .ui-state-highlight a { color: #060200; }
-.ui-state-error, .ui-widget-content .ui-state-error {border: 1px solid #f8893f; border-right: 0; padding: 0.4em 0.3em 0.4em 0.4em; margin-top: -6px; margin-left: -1px; background: #fee4bd url(./images/frontend/errors-bgr.png) repeat-y right; color: #592003; }
+.ui-state-error, .ui-widget-content .ui-state-error {border: 1px solid #f8893f; border-right: 0; padding: 0.4em 0.3em 0.4em 0.4em; margin-top: -6px; margin-left: -1px; background: #fee4bd url(/images/frontend/errors-bgr.png) repeat-y right; color: #592003; }
 .ui-state-error a, .ui-widget-content .ui-state-error a { color: #592003; }
 .ui-state-error-text, .ui-widget-content .ui-state-error-text { color: #592003; }
 .ui-priority-primary, .ui-widget-content .ui-priority-primary { font-weight: bold; }
