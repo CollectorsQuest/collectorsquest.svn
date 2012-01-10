@@ -56,7 +56,7 @@ foreach ($spiders as $name => $pattern)
 /**
  * Record the XHProf run only if the page execution time is greater than 1 second
  */
-if ($_xhprof_on && ((isset($_GET['_profile']) && $_GET['_profile'] == '1') || (1 < microtime(true) - $_time_start)))
+if ($_xhprof_on && ((isset($_GET['_profile']) && $_GET['_profile'] == '1') || (2 < microtime(true) - $_time_start)))
 {
   // stop profiler
   $_xhprof_data = xhprof_disable();
