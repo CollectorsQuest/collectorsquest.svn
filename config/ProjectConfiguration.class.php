@@ -19,7 +19,7 @@ class ProjectConfiguration extends sfProjectConfiguration
     $this->enablePlugins('sfPropelORMPlugin', 'sfGuardPlugin', 'sfGravatarPlugin', 'sfTaskExtraPlugin');
     $this->enablePlugins(
       'iceAssetsPlugin', 'iceBehaviorsPlugin', 'iceLibsPlugin', 'iceTaggablePlugin',
-      'iceBackendPlugin', 'iceJobQueuePlugin', 'iceCrontabPlugin'
+      'iceBackendPlugin', 'iceJobQueuePlugin', 'iceCrontabPlugin', 'iceSpamControlPlugin'
     );
   }
 }

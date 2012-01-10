@@ -1,9 +1,9 @@
 include_recipe "percona::server"
 
-username = node[:percona][:username]
-password = node[:percona][:password]
-db       = node[:percona][:database]
-host     = node[:percona][:hostname]
+username = node.percona.username
+password = node.percona.password
+host = node.percona.hostname
+db = node.percona.database
 
 execute "create #{username} database user" do
   command %Q( mysql --execute="create user '#{username}'@'#{host}'

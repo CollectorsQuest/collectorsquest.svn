@@ -1,58 +1,57 @@
 all:
-  domain_name: "collectorsquest.com"
-  www_domain: "www.collectorsquest.com"
-  static_domain: "static.collectorsquest.com"
-  static_domain_name: "static.collectorsquest.com"
-  multimedia_domain: "multimedia.collectorsquest.com"
+  domain_name: "collectorsquest.dev"
+  www_domain: "www.collectorsquest.dev"
+  static_domain: "static.collectorsquest.dev"
+  multimedia_domain: "multimedia.collectorsquest.dev"
   shopify_domain_name: "collectorsquest.myshopify.com"
   admin_email_id: no-reply@collectorsquest.com
 
-  god_auth:
-    secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
-    timeout:  3600
+  cq:
+    www_domain: "http://www.collectorsquest.dev/"
+    static_domain: "http://static.collectorsquest.dev/"
+    multimedia_domain: "http://multimedia.collectorsquest.dev"
 
   ice_assets:
-    domain: cqcdns.com
-
-  paypal:
-    api_username: "dvds_api1.collectorsquest.com"
-    api_password: ""
-    api_signature: ""
-    api_url: "https://api-3t.paypal.com/nvp"
-    is_online: true
-    payment_method: doDirectPayment
-    payment_action: Sale
-    currency_code: USD
-
-    url: "https://www.paypal.com/cgi-bin/webscr"
-    merchant_account: "custserv@collectorsquest.com"
-
-    currency: USD
-    #URL as module/action
-    return_url: seller/updateOrder
-    cancel_url: seller/becomeSeller
-    notify_url: seller/callbackIPN
-
-  cq:
-    www_domain: "http://www.collectorsquest.com/"
-    static_domain: "http://static.collectorsquest.com/"
-    multimedia_domain: "http://multimedia.collectorsquest.com"
-
-  api:
-    amazon: ""
-    yahoo: ""
-    akismet: ""
-    google_maps: ""
-    disqus_user_key: ""
-    disqus_forum_key: ""
-    recaptcha:
-      public_key: ""
-      private_key: ""
+    domain: cqcdns.dev
 
   ice_libs:
     emails:
       sender: 'no-reply@collectorsquest.com'
       notify: 'developers@collectorsquest.com'
+
+  god_auth:
+    secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
+    timeout:  3600
+
+  credentials:
+    akismet: "8fd3f2fddbaa"
+    google_maps: "ABQIAAAAFWhrOd_LZ8oN4w-vkUWughQAU-WnqYQCO7zppSGvHR51tCrN4xRY0TaQWDhMG_uhoslQtMZplJu3gg"
+    disqus_user_key: "rCJyPA1GJlX3hoF3tdSdrGbbeGBeI7I9G1Qspd5QuR6AiCscBxREmoo1SLBnlJyf"
+    disqus_forum_key: "nqopSzGkkro8tc53AgA3DNW56WSYBbZRetdoNPE8whwKY7b7dvELc05Nm9Yq5nMD"
+    impermium: "6eed575e07cc2431293287a570d0afd0c3efde87"
+    defensio: "BB85A65A8118C50AA3918CB254A34176"
+
+    recaptcha:
+      public_key: "6LdACwsAAAAAAE5tZTcYG47Lth2jzxxZeXAbll-Z"
+      private_key: "6LdACwsAAAAAAM19l6G0lFk4F560SWvBM2k5M9L0"
+
+    facebook:
+      app_id: "293221397397430"
+      app_secret: "21b6fb4368bbe3bf4157afe83e6945d4"
+
+  paypal:
+    api_username: ""
+    api_password: ""
+    api_signature: ""
+    api_url: https://api-3t.sandbox.paypal.com/nvp
+    is_online: false
+
+    payment_action: Sale
+    currency_code: USD
+    payment_method: doDirectPayment
+
+    url: https://www.sandbox.paypal.com/cgi-bin/webscr
+    merchant_account: ""
 
 stg:
   domain_name: "collectorsquest.stg"
@@ -67,60 +66,3 @@ stg:
 
   ice_assets:
     domain: cqcdns.stg
-
-  god_auth:
-    secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
-    timeout:  3600
-
-  paypal:
-    ## Setting for Pay Via PayPal Pro SANDBOX Account.
-    api_username: ""
-    api_password: ""
-    api_signature: ""
-    api_url: https://api-3t.sandbox.paypal.com/nvp
-    is_online: false
-
-    payment_action: Sale
-    currency_code: USD
-    payment_method: doDirectPayment
-
-    ## Setting for Pay Via PayPal Pro SANDBOX Account.
-    url: https://www.sandbox.paypal.com/cgi-bin/webscr
-    merchant_account: prakash.virtueinfo_1302763980_biz@gmail.com
-
-    currency: USD
-    return_url: http://www.collectorsquest.stg/collector/updateOrder
-    cancel_url: http://www.collectorsquest.stg/collector/becomeSeller
-    notify_url: http://www.collectorsquest.stg/collector/callbackIPN
-
-dev:
-  domain_name: "collectorsquest.dev"
-  www_domain: "www.collectorsquest.dev"
-  static_domain: "static.collectorsquest.dev"
-  multimedia_domain: "multimedia.collectorsquest.dev"
-
-  cq:
-    www_domain: "http://www.collectorsquest.dev/"
-    static_domain: "http://static.collectorsquest.dev/"
-    multimedia_domain: "http://multimedia.collectorsquest.dev"
-
-  ice_assets:
-    domain: cqcdns.dev
-
-  god_auth:
-    secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
-    timeout:  3600
-
-  paypal:
-    api_username: zecho2_1307375459_biz_api1.mail.bg
-    api_password: 1307375482
-    api_signature: ARGZylcXa9FrdnmIO0iUQs0rR92RAgDpfU7OiYGf5M34hnxegFkGwxD8
-    api_url: https://api-3t.sandbox.paypal.com/nvp
-    is_online: false
-
-    payment_action: Sale
-    currency_code: USD
-    payment_method: doDirectPayment
-
-    url: https://www.sandbox.paypal.com/cgi-bin/webscr
-    merchant_account: zecho2_1260266487_biz@mail.bg

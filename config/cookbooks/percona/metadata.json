@@ -4,7 +4,7 @@
   "long_description": "",
   "maintainer": "Heavy Water Software Inc.",
   "maintainer_email": "darrin@heavywater.ca",
-  "license": "MIT",
+  "license": "Apache 2.0",
   "platforms": {
     "ubuntu": [
 
@@ -28,5 +28,5 @@
   },
   "recipes": {
   },
-  "version": "0.0.0"
+  "version": "0.1.1"
 }

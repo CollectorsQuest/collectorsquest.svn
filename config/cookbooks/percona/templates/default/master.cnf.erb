@@ -32,7 +32,6 @@ nice		= 0
 #
 # * Basic Settings
 #
-
 user		= mysql
 pid-file	= /var/run/mysqld/mysqld.pid
 socket		= /var/run/mysqld/mysqld.sock
@@ -42,7 +41,6 @@ datadir		= /var/lib/mysql
 tmpdir		= /tmp
 language	= /usr/share/mysql/english
 skip-external-locking
-
 #
 # For compatibility to other Debian packages that still use
 # libmysqlclient10 and libmysqlclient12.
@@ -54,27 +52,21 @@ bind-address		= 127.0.0.1
 #
 # * Fine Tuning
 #
-
-key_buffer		    = 16M
+key_buffer		= 16M
 max_allowed_packet	= 16M
 thread_stack		= 128K
-thread_cache_size   = 8
-
+thread_cache_size       = 8
 # This replaces the startup script and checks MyISAM tables if needed
 # the first time they are touched
-
-myisam-recover      = BACKUP
-max_connections     = 150
-table_cache         = 64
-thread_concurrency  = 10
-
+myisam-recover         = BACKUP
+#max_connections        = 100
+#table_cache            = 64
+#thread_concurrency     = 10
 #
 # * Query Cache Configuration
 #
-
 query_cache_limit	= 1M
-query_cache_size    = 64M
-
+query_cache_size        = 16M
 #
 # * Logging and Replication
 #
@@ -97,7 +89,7 @@ query_cache_size    = 64M
 server_id		= <%= @server_id %>
 log_bin			= /var/log/mysql/mysql-bin.log
 expire_logs_days	= 10
-max_binlog_size     = 100M
+max_binlog_size         = 100M
 #binlog_do_db		= include_database_name
 #binlog_ignore_db	= include_database_name
 #
@@ -105,14 +97,7 @@ max_binlog_size     = 100M
 #
 # InnoDB is enabled by default with a 10MB datafile in /var/lib/mysql/.
 # Read the manual for more InnoDB related options. There are many!
-
-innodb_buffer_pool_size = 256M
-innodb_log_buffer_size  = 8M
-innodb_file_per_table   = 1
-innodb_open_files       = 400
-innodb_io_capacity      = 400
-innodb_flush_method     = O_DIRECT
-
+#
 # * Security Features
 #
 # Read the manual, too, if you want chroot!
@@ -123,6 +108,8 @@ innodb_flush_method     = O_DIRECT
 # ssl-ca=/etc/mysql/cacert.pem
 # ssl-cert=/etc/mysql/server-cert.pem
 # ssl-key=/etc/mysql/server-key.pem
+
+
 
 [mysqldump]
 quick
