@@ -1,16 +1,19 @@
 <?php
 
-if (extension_loaded('xhprof') && mt_rand(1, 100) == 1)
+$_time_start = microtime(true);
+
+if (extension_loaded('xhprof') && ((isset($_GET['_profile']) && $_GET['_profile'] == '1') || mt_rand(1, 100) == 1))
 {
   xhprof_enable(
-    XHPROF_FLAGS_NO_BUILTINS | XHPROF_FLAGS_MEMORY,
+    XHPROF_FLAGS_CPU | XHPROF_FLAGS_NO_BUILTINS | XHPROF_FLAGS_MEMORY,
     array('ignored_functions' =>  array('call_user_func', 'call_user_func_array'))
   );
-  $xhprof_on = true;
+
+  $_xhprof_on = true;
 }
 else
 {
-  $xhprof_on = false;
+  $_xhprof_on = false;
 }
 
 require dirname(__FILE__) .'/../config/bootstrap.php';
@@ -50,14 +53,18 @@ foreach ($spiders as $name => $pattern)
   }
 }
 
-if ($xhprof_on)
+/**
+ * Record the XHProf run only if the page execution time is greater than 1 second
+ */
+if ($_xhprof_on && ((isset($_GET['_profile']) && $_GET['_profile'] == '1') || (1 < microtime(true) - $_time_start)))
 {
-   // stop profiler
-   $xhprof_data = xhprof_disable();
+  // stop profiler
+  $_xhprof_data = xhprof_disable();
 
-   include_once sfConfig::get('sf_lib_dir') ."/vendor/xhprof/xhprof_lib.php";
-   include_once sfConfig::get('sf_lib_dir') ."/vendor/xhprof/xhprof_runs.php";
+  include __DIR__ ."/../config/secure/xhprof.php";
+  include __DIR__ ."/../plugins/iceLibsPlugin/lib/vendor/xhprof/xhprof_lib.php";
+  include __DIR__ ."/../plugins/iceLibsPlugin/lib/vendor/xhprof/xhprof_runs.php";
 
-   $xhprof_runs = new XHProfRuns_Default();
-   $xhprof_runs->save_run($xhprof_data, SF_APP);
- }
+  $_xhprof_runs = new XHProfRuns_Default();
+  $_xhprof_run = $_xhprof_runs->save_run($_xhprof_data, 'autohop_'. SF_APP);
+}
