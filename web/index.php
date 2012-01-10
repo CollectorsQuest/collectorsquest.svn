@@ -61,7 +61,7 @@ if ($_xhprof_on && ((isset($_GET['_profile']) && $_GET['_profile'] == '1') || (1
   // stop profiler
   $_xhprof_data = xhprof_disable();
 
-  include __DIR__ ."/../config/secure/xhprof.php";
+  include __DIR__ ."/../config/xhprof.php";
   include __DIR__ ."/../plugins/iceLibsPlugin/lib/vendor/xhprof/xhprof_lib.php";
   include __DIR__ ."/../plugins/iceLibsPlugin/lib/vendor/xhprof/xhprof_runs.php";
 
