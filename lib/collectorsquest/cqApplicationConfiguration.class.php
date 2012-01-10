@@ -1,6 +1,8 @@
 <?php
 
-class cqApplicationConfiguration extends IceApplicationConfiguration
+require dirname(__FILE__).'/../../plugins/iceLibsPlugin/lib/config/IceApplicationConfiguration.class.php';
+
+class cqApplicationConfiguration extends sfApplicationConfiguration
 {
   /**
    * Various initializations.
