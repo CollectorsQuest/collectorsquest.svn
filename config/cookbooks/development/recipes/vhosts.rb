@@ -31,6 +31,6 @@ link "/www/vhosts/collectorsquest.com/current/config/databases.yml" do
 end
 
 link "/www/vhosts/cqcdns.dev" do
-  to "/mnt/vhosts/cqcdns.dev"
+  to "/mnt/vhosts/cqcdns.com"
   not_if "test -L /www/vhosts/cqcdns.dev"
 end
