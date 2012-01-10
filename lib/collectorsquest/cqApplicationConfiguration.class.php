@@ -2,7 +2,7 @@
 
 require dirname(__FILE__).'/../../plugins/iceLibsPlugin/lib/config/IceApplicationConfiguration.class.php';
 
-class cqApplicationConfiguration extends sfApplicationConfiguration
+class cqApplicationConfiguration extends IceApplicationConfiguration
 {
   /**
    * Various initializations.
