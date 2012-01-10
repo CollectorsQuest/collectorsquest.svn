@@ -4,7 +4,7 @@ all:
   static_domain: "static.collectorsquest.dev"
   multimedia_domain: "multimedia.collectorsquest.dev"
   shopify_domain_name: "collectorsquest.myshopify.com"
-  admin_email_id: no-reply@collectorsquest.com
+  admin_email_id: "no-reply@collectorsquest.com"
 
   cq:
     www_domain: "http://www.collectorsquest.dev/"
@@ -12,7 +12,7 @@ all:
     multimedia_domain: "http://multimedia.collectorsquest.dev"
 
   ice_assets:
-    domain: cqcdns.dev
+    domain: "cqcdns.dev"
 
   ice_libs:
     emails:
@@ -43,14 +43,14 @@ all:
     api_username: ""
     api_password: ""
     api_signature: ""
-    api_url: https://api-3t.sandbox.paypal.com/nvp
+    api_url: "https://api-3t.sandbox.paypal.com/nvp"
     is_online: false
 
-    payment_action: Sale
-    currency_code: USD
-    payment_method: doDirectPayment
+    payment_action: "Sale"
+    currency_code: "USD"
+    payment_method: "doDirectPayment"
 
-    url: https://www.sandbox.paypal.com/cgi-bin/webscr
+    url: "https://www.sandbox.paypal.com/cgi-bin/webscr"
     merchant_account: ""
 
 stg:
@@ -65,4 +65,4 @@ stg:
     multimedia_domain: "http://multimedia.collectorsquest.stg"
 
   ice_assets:
-    domain: cqcdns.stg
+    domain: "cqcdns.stg"

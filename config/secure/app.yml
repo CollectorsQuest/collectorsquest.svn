@@ -4,12 +4,15 @@ prod:
   static_domain: "static.collectorsquest.com"
   multimedia_domain: "multimedia.collectorsquest.com"
   shopify_domain_name: "collectorsquest.myshopify.com"
-  admin_email_id: no-reply@collectorsquest.com
+  admin_email_id: "no-reply@collectorsquest.com"
 
   cq:
     www_domain: "http://www.collectorsquest.com/"
     static_domain: "http://static.collectorsquest.com/"
     multimedia_domain: "http://multimedia.collectorsquest.com"
+
+  ice_assets:
+    domain: "cqcdns.com"
 
   god_auth:
     secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"

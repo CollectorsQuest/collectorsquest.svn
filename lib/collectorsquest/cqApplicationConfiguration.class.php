@@ -1,6 +1,6 @@
 <?php
 
-class cqApplicationConfiguration extends sfApplicationConfiguration
+class cqApplicationConfiguration extends IceApplicationConfiguration
 {
   /**
    * Various initializations.

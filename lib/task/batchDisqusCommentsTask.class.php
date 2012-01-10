@@ -31,9 +31,9 @@ EOF;
     $connection = $databaseManager->getDatabase($options['connection'])->getConnection();
 
     require sfConfig::get('sf_lib_dir').'/vendor/Disqus.class.php';
-    $disqus = new Disqus(sfConfig::get('app_api_disqus_user_key'), sfConfig::get('app_api_disqus_forum_key'));
+    $disqus = new Disqus(sfConfig::get('app_credentials_disqus_user_key'), sfConfig::get('app_credentials_disqus_forum_key'));
 
-    try 
+    try
     {
       $threads = $disqus->get_updated_threads(212346, date('Y-m-d\TH:i', strtotime(sprintf('%d hours ago', $options['hours']))));
     }

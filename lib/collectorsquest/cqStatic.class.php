@@ -97,6 +97,22 @@ class cqStatic extends IceStatic
     return parent::getSphinxClient($hostname, $culture);
   }
 
+  static public function getFacebookClient($credentials = array(), $file_upload = false)
+  {
+    if (empty($credentials))
+    {
+      $credentials = sfConfig::get('app_credentials_facebook');
+    }
+
+    $facebook = new IceFacebook(array(
+      'appId'  => $credentials['app_id'],
+      'secret' => $credentials['app_secret'],
+      'fileUpload' => $file_upload
+    ));
+
+    return $facebook;
+  }
+
   static public function weight_tags($tags, $steps = 6)
   {
     $min = 1e9;

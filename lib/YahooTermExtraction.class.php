@@ -5,7 +5,7 @@ class YahooTermExtraction
  	public static function exract($context, $query = null)
  	{
  	  $parameters = array(
- 	    'appid' => sfConfig::get('app_api_yahoo'),
+ 	    'appid' => sfConfig::get('app_credentials_yahoo'),
  	    'output' => 'php'
  	  );
  	  $post = array('context' => utf8_encode($context), 'query' => $query);
