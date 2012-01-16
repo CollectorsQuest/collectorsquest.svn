@@ -5,11 +5,13 @@
   );
 ?>
 
+<!--
 <div style="padding: 0 0 30px 40px;">
   <fb:login-button registration-url="<?= url_for('@collector_signup_facebook'); ?>"></fb:login-button>
   &nbsp;
   <?= __('We highly recommend that you use your Facebook profile to login / sign up!'); ?>
 </div>
+//-->
 
 <div id="collector_signup_1">
   <?php echo $form->renderGlobalErrors(); ?>

@@ -47,6 +47,22 @@ class PropelMigration_1326388994
           FOREIGN KEY (`collector_id`)
           REFERENCES `collector` (`id`)
       ) ENGINE=InnoDB;
+
+      DROP TABLE IF EXISTS `spam_control`;
+
+      CREATE TABLE `spam_control`
+      (
+      	`id` INTEGER NOT NULL AUTO_INCREMENT,
+      	`field` ENUM('email','phone','ip','regex','session') DEFAULT 'regex' NOT NULL,
+      	`value` VARCHAR(64) NOT NULL,
+      	`credentials` SET('read', 'create', 'edit', 'comment') DEFAULT 'read' NOT NULL,
+      	`is_banned` BOOL DEFAULT 0 NOT NULL,
+      	`is_throttled` BOOL DEFAULT 0 NOT NULL,
+      	`created_at` DATETIME,
+      	`updated_at` DATETIME,
+      	PRIMARY KEY (`id`),
+      	UNIQUE INDEX `spam_control_U_1` (`field`, `value`)
+      ) ENGINE=InnoDB;
     ");
   }
 
@@ -60,7 +76,9 @@ class PropelMigration_1326388994
   {
     return array('propel' => "
       ALTER TABLE `collector` DROP `locale`;
+
       DROP TABLE IF EXISTS `collector_email`;
+      DROP TABLE IF EXISTS `spam_control`;
     ");
   }
 }
