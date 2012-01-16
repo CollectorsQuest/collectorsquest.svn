@@ -15,20 +15,20 @@ abstract class BaseCollectorIdentifierForm extends BaseFormPropel
   {
     $this->setWidgets(array(
       'id'           => new sfWidgetFormInputHidden(),
-      'collector_id' => new sfWidgetFormPropelChoice(array('model' => 'Collector', 'add_empty' => true)),
+      'collector_id' => new sfWidgetFormPropelChoice(array('model' => 'Collector', 'add_empty' => false)),
       'identifier'   => new sfWidgetFormInputText(),
       'created_at'   => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
       'id'           => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
-      'collector_id' => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id', 'required' => false)),
+      'collector_id' => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id')),
       'identifier'   => new sfValidatorString(array('max_length' => 255, 'required' => false)),
       'created_at'   => new sfValidatorDateTime(array('required' => false)),
     ));
 
     $this->validatorSchema->setPostValidator(
-      new sfValidatorPropelUnique(array('model' => 'CollectorIdentifier', 'column' => array('collector_id', 'identifier')))
+      new sfValidatorPropelUnique(array('model' => 'CollectorIdentifier', 'column' => array('identifier')))
     );
 
     $this->widgetSchema->setNameFormat('collector_identifier[%s]');

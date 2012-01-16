@@ -2,19 +2,23 @@
 
 date_default_timezone_set('America/New_York');
 
-require_once '/www/libs/symfony-1.4.x/lib/autoload/sfCoreAutoload.class.php';
-sfCoreAutoload::register();
+require_once __DIR__.'/../plugins/iceLibsPlugin/lib/autoload/IceCoreAutoload.class.php';
+require_once __DIR__.'/../plugins/iceLibsPlugin/lib/autoload/SplClassLoader.class.php';
+IceCoreAutoload::register();
 
-class ProjectConfiguration extends sfProjectConfiguration
+/** Load the namespace for Neo4j client library */
+$classLoader = new SplClassLoader('Everyman', __DIR__ . '/../lib/vendor');
+$classLoader->register();
+
+class ProjectConfiguration extends IceProjectConfiguration
 {
   public function setup()
   {
     setlocale(LC_ALL, 'en_US.utf8');
+
     iconv_set_encoding('input_encoding', 'UTF-8');
     iconv_set_encoding('output_encoding', 'UTF-8');
     iconv_set_encoding('internal_encoding', 'UTF-8');
-
-    $this->dispatcher->connect('application.throw_exception', array('cqStatic', 'exceptionNotifier'));
 
     $this->enablePlugins('sfPropelORMPlugin', 'sfGuardPlugin', 'sfGravatarPlugin', 'sfTaskExtraPlugin');
     $this->enablePlugins(

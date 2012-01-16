@@ -15,6 +15,7 @@ abstract class BaseCollectionForm extends BaseFormPropel
   {
     $this->setWidgets(array(
       'id'                     => new sfWidgetFormInputHidden(),
+      'graph_id'               => new sfWidgetFormInputText(),
       'collection_category_id' => new sfWidgetFormPropelChoice(array('model' => 'CollectionCategory', 'add_empty' => true)),
       'collector_id'           => new sfWidgetFormPropelChoice(array('model' => 'Collector', 'add_empty' => false)),
       'name'                   => new sfWidgetFormInputText(),
@@ -29,14 +30,15 @@ abstract class BaseCollectionForm extends BaseFormPropel
       'is_featured'            => new sfWidgetFormInputCheckbox(),
       'comments_on'            => new sfWidgetFormInputCheckbox(),
       'rating_on'              => new sfWidgetFormInputCheckbox(),
-      'eblob'                  => new sfWidgetFormTextarea(),
       'deleted_at'             => new sfWidgetFormDateTime(),
+      'eblob'                  => new sfWidgetFormTextarea(),
       'created_at'             => new sfWidgetFormDateTime(),
       'updated_at'             => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
       'id'                     => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
+      'graph_id'               => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
       'collection_category_id' => new sfValidatorPropelChoice(array('model' => 'CollectionCategory', 'column' => 'id', 'required' => false)),
       'collector_id'           => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id')),
       'name'                   => new sfValidatorString(array('max_length' => 255)),
@@ -51,11 +53,15 @@ abstract class BaseCollectionForm extends BaseFormPropel
       'is_featured'            => new sfValidatorBoolean(array('required' => false)),
       'comments_on'            => new sfValidatorBoolean(array('required' => false)),
       'rating_on'              => new sfValidatorBoolean(array('required' => false)),
-      'eblob'                  => new sfValidatorString(array('required' => false)),
       'deleted_at'             => new sfValidatorDateTime(array('required' => false)),
+      'eblob'                  => new sfValidatorString(array('required' => false)),
       'created_at'             => new sfValidatorDateTime(array('required' => false)),
       'updated_at'             => new sfValidatorDateTime(array('required' => false)),
     ));
+
+    $this->validatorSchema->setPostValidator(
+      new sfValidatorPropelUnique(array('model' => 'Collection', 'column' => array('graph_id')))
+    );
 
     $this->widgetSchema->setNameFormat('collection[%s]');
 

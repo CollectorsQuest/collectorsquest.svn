@@ -3,8 +3,8 @@
 class SellerSignupForm extends BaseFormPropel
 {
   public function setup()
-  {  
-    $recaptcha = sfConfig::get('app_api_recaptcha');
+  {
+    $recaptcha = sfConfig::get('app_credentials_recaptcha');
 
     $years = array_combine(range(date('Y') - 100, date('Y')), range(date('Y') - 100, date('Y')));
 
@@ -26,7 +26,7 @@ class SellerSignupForm extends BaseFormPropel
 
     $this->setValidators(array(
       'username'       => new sfValidatorString(array('max_length' => 50, 'required' => true), array('required' => 'Please enter username')),
-      'password'       => new sfValidatorString(array('min_length' => 6, 'max_length' => 50, 'required' => true), 
+      'password'       => new sfValidatorString(array('min_length' => 6, 'max_length' => 50, 'required' => true),
 	  											array('required' => 'Please enter password',
 													  'min_length'	=> 'Password must be min 6 and max 50 characters long',
 													  'max_length'	=> 'Password must be min 6 and max 50 characters long'

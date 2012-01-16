@@ -125,6 +125,9 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
    */
   protected $alreadyInValidation = false;
 
+  // archivable behavior
+  protected $archiveOnDelete = true;
+
   /**
    * Applies default values to this object.
    * This method should be called from the object's constructor (or
@@ -893,16 +896,14 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
       $deleteQuery = CollectibleForSaleQuery::create()
         ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
-      // soft_delete behavior
-      if (!empty($ret) && CollectibleForSaleQuery::isSoftDeleteEnabled())
-      {
-        $this->keepUpdateDateUnchanged();
-        $this->setDeletedAt(time());
-        $this->save($con);
-        $this->postDelete($con);
-        $con->commit();
-        CollectibleForSalePeer::removeInstanceFromPool($this);
-        return;
+      // archivable behavior
+      if ($ret) {
+        if ($this->archiveOnDelete) {
+          // do nothing yet. The object will be archived later when calling CollectibleForSaleQuery::delete().
+        } else {
+          $deleteQuery->setArchiveOnDelete(false);
+          $this->archiveOnDelete = true;
+        }
       }
 
       // symfony_behaviors behavior
@@ -1911,33 +1912,115 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
     return (string) $this->exportTo(CollectibleForSalePeer::DEFAULT_STRING_FORMAT);
   }
 
-  // soft_delete behavior
+  // archivable behavior
   
   /**
-   * Bypass the soft_delete behavior and force a hard delete of the current object
+   * Get an archived version of the current object.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     CollectibleForSaleArchive An archive object, or null if the current object was never archived
    */
-  public function forceDelete(PropelPDO $con = null)
+  public function getArchive(PropelPDO $con = null)
   {
-    if($isSoftDeleteEnabled = CollectibleForSalePeer::isSoftDeleteEnabled())
-    {
-      CollectibleForSalePeer::disableSoftDelete();
+    if ($this->isNew()) {
+      return null;
     }
-    $this->delete($con);
-    if ($isSoftDeleteEnabled)
-    {
-      CollectibleForSalePeer::enableSoftDelete();
-    }
+    $archive = CollectibleForSaleArchiveQuery::create()
+      ->filterByPrimaryKey($this->getPrimaryKey())
+      ->findOne($con);
+  
+    return $archive;
   }
   
   /**
-   * Undelete a row that was soft_deleted
+   * Copy the data of the current object into a $archiveTablePhpName archive object.
+   * The archived object is then saved.
+   * If the current object has already been archived, the archived object
+   * is updated and not duplicated.
    *
-   * @return     int The number of rows affected by this update and any referring fk objects' save() operations.
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object is new
+   *
+   * @return     CollectibleForSaleArchive The archive object based on this object
    */
-  public function unDelete(PropelPDO $con = null)
+  public function archive(PropelPDO $con = null)
   {
-    $this->setDeletedAt(null);
-    return $this->save($con);
+    if ($this->isNew()) {
+      throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
+    }
+    if (!$archive = $this->getArchive($con)) {
+      $archive = new CollectibleForSaleArchive();
+      $archive->setPrimaryKey($this->getPrimaryKey());
+    }
+    $this->copyInto($archive, $deepCopy = false, $makeNew = false);
+    $archive->save($con);
+  
+    return $archive;
+  }
+  
+  /**
+   * Revert the the current object to the state it had when it was last archived.
+   * The object must be saved afterwards if the changes must persist.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object has no corresponding archive.
+   *
+   * @return CollectibleForSale The current object (for fluent API support)
+   */
+  public function restoreFromArchive(PropelPDO $con = null)
+  {
+    if (!$archive = $this->getArchive($con)) {
+      throw new PropelException('The current object has never been archived and cannot be restored');
+    }
+    $this->populateFromArchive($archive);
+  
+    return $this;
+  }
+  
+  /**
+   * Populates the the current object based on a $archiveTablePhpName archive object.
+   *
+   * @param      CollectibleForSaleArchive $archive An archived object based on the same class
+    * @param      Boolean $populateAutoIncrementPrimaryKeys 
+   *               If true, autoincrement columns are copied from the archive object.
+   *               If false, autoincrement columns are left intact.
+    *
+   * @return     CollectibleForSale The current object (for fluent API support)
+   */
+  public function populateFromArchive($archive, $populateAutoIncrementPrimaryKeys = false)
+  {
+    if ($populateAutoIncrementPrimaryKeys) {
+      $this->setId($archive->getId());
+    }
+    $this->setCollectibleId($archive->getCollectibleId());
+    $this->setPrice($archive->getPrice());
+    $this->setCondition($archive->getCondition());
+    $this->setIsPriceNegotiable($archive->getIsPriceNegotiable());
+    $this->setIsShippingFree($archive->getIsShippingFree());
+    $this->setIsSold($archive->getIsSold());
+    $this->setIsReady($archive->getIsReady());
+    $this->setQuantity($archive->getQuantity());
+    $this->setDeletedAt($archive->getDeletedAt());
+    $this->setCreatedAt($archive->getCreatedAt());
+    $this->setUpdatedAt($archive->getUpdatedAt());
+  
+    return $this;
+  }
+  
+  /**
+   * Removes the object from the database without archiving it.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     CollectibleForSale The current object (for fluent API support)
+   */
+  public function deleteWithoutArchive(PropelPDO $con = null)
+  {
+    $this->archiveOnDelete = false;
+    return $this->delete($con);
   }
 
   // timestampable behavior

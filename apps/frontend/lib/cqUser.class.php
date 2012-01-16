@@ -1,12 +1,9 @@
 <?php
 
-class cqUser extends sfBasicSecurityUser
+class cqUser extends IceSecurityUser
 {
   /** @var Collector */
   private static $collector = null;
-
-  /** @var array */
-  protected static $_facebook_data = null;
 
   public function __construct(sfEventDispatcher $dispatcher, sfStorage $storage, $options = array())
   {
@@ -41,54 +38,57 @@ class cqUser extends sfBasicSecurityUser
     return 'n-a';
   }
 
-  public function Authenticate($boolean, $collector = null, $remember = false)
+  /**
+   * @param  boolean  $boolean
+   * @param  Collector|null $collector
+   * @param  boolean  $remember
+   *
+   * @return boolean
+   */
+  public function Authenticate($boolean, Collector $collector = null, $remember = false)
   {
+    $this->clearAttributes();
+    $this->clearCredentials();
+
     if ($collector === null)
     {
       $collector = $this->getCollector();
     }
 
-    if ($collector instanceof Collector)
+    if ($boolean == false)
     {
-      $this->clearCredentials();
-      $this->getAttributeHolder()->removeNamespace('collector');
-      $this->getAttributeHolder()->removeNamespace('seller');
+      $this->setAuthenticated(false);
 
-      if ($boolean == true)
+      setCookie('remember', null, 0, '/', str_replace('http://www', '', sfConfig::get('app_www_domain')));
+      $_COOKIE['remember'] = null;
+
+      self::$collector = null;
+    }
+    else if ($collector instanceof Collector && $boolean == true)
+    {
+      $this->addCredential(strtolower($collector->getUserType()));
+
+      $this->setAttribute('id', $collector->getId(), 'collector');
+      $this->setAttribute('profile_id', $collector->getProfile()->getId(), 'collector');
+      $this->setAttribute('username', $collector->getUsername(), 'collector');
+      $this->setAttribute('email', $collector->getEmail(), 'collector');
+      $this->setAttribute('user_type', $collector->getUserType(), 'collector');
+
+      if ($remember)
       {
-        $this->addCredential(strtolower($collector->getUserType()));
-
-        $this->setAttribute('id', $collector->getId(), 'collector');
-        $this->setAttribute('profile_id', $collector->getProfile()->getId(), 'collector');
-        $this->setAttribute('username', $collector->getUsername(), 'collector');
-        $this->setAttribute('email', $collector->getEmail(), 'collector');
-        $this->setAttribute('user_type', $collector->getUserType(), 'collector');
-
-        if ($remember)
-        {
-          $cookie = serialize(array('username' => $collector->getUsername(), 'password' => $collector->getSha1Password()));
-          setCookie('remember', $cookie, time()+60*60*24*14, '/', str_replace('http://www', '', sfConfig::get('app_cq_www_domain')));
-        }
-
-        self::$collector = $collector;
-        $this->setAuthenticated(true);
-      }
-      else if ($boolean == false)
-      {
-        $this->setAuthenticated(false);
-
-        setCookie('remember', null, 0, '/', str_replace('http://www', '', sfConfig::get('app_cq_www_domain')));
-        $_COOKIE['remember'] = null;
-
-        self::$collector = null;
+        $cookie = serialize(array('username' => $collector->getUsername(), 'password' => $collector->getSha1Password()));
+        setCookie('remember', $cookie, time()+60*60*24*14, '/', str_replace('http://www', '', sfConfig::get('app_www_domain')));
       }
 
-      if (!$collector->isNew())
-      {
-        $collector->setLastSeenAt(time());
-        $collector->setSessionId(($boolean == true) ? session_id() : null);
-        $collector->save();
-      }
+      self::$collector = $collector;
+      $this->setAuthenticated(true);
+    }
+
+    if ($collector instanceof Collector && !$collector->isNew())
+    {
+      $collector->setLastSeenAt(time());
+      $collector->setSessionId(($boolean == true) ? session_id() : null);
+      $collector->save();
     }
 
     return true;
@@ -149,140 +149,17 @@ class cqUser extends sfBasicSecurityUser
     return self::$collector;
   }
 
-  /**
-   * Sets a flash variable that will be passed to the very next action.
-   *
-   * @param  string  $name       The name of the flash variable
-   * @param  string  $value      The value of the flash variable
-   * @param  bool    $persist    true if the flash have to persist for the following request (true by default)
-   * @param  string  $namespace
-   */
-  public function setFlash($name, $value, $persist = true, $namespace = 'symfony/user/sfUser')
+  public function getLogoutUrl($next = null)
   {
-    if (!$this->options['use_flash'])
-    {
-      return;
-    }
-
-    $this->setAttribute($name, $value, $namespace.'/flash');
-
-    if ($persist)
-    {
-      // clear removal flag
-      $this->attributeHolder->remove($name, null, $namespace.'/flash/remove');
-    }
-    else
-    {
-      $this->setAttribute($name, true, $namespace.'/flash/remove');
-    }
+    return '@logout?r='. $next;
   }
 
-  /**
-   * Gets a flash variable.
-   *
-   * @param  string   $name       The name of the flash variable
-   * @param  string   $default    The default value returned when named variable does not exist.
-   * @param  boolean  $delete     Whether to delete the flash after we get the value
-   * @param  string   $namespace
-   *
-   * @return mixed The value of the flash variable
-   */
-  public function getFlash($name, $default = null, $delete = false, $namespace = 'symfony/user/sfUser')
+  public function clearAttributes()
   {
-    if (!$this->options['use_flash'])
-    {
-      return $default;
-    }
+    parent::clearAttributes();
 
-    $value = $this->getAttribute($name, $default, $namespace.'/flash');
-
-    if ($delete == true)
-    {
-      // clear removal flag and value
-      $this->attributeHolder->remove($name, null, $namespace.'/flash/remove');
-      $this->attributeHolder->remove($name, null, $namespace.'/flash');
-    }
-
-    return $value;
-  }
-
-  /**
-   * Returns true if a flash variable of the specified name exists.
-   *
-   * @param  string  $name      The name of the flash variable
-   * @param  string  $namespace
-   *
-   * @return bool true if the variable exists, false otherwise
-   */
-  public function hasFlash($name, $namespace = 'symfony/user/sfUser')
-  {
-    if (!$this->options['use_flash'])
-    {
-      return false;
-    }
-
-    return $this->hasAttribute($name, $namespace.'/flash');
-  }
-
-  public function getFacebook($credentials = array(), $cookie = true)
-  {
-    if (empty($credentials))
-    {
-      $credentials = sfConfig::get('app_api_facebook');
-    }
-
-    $facebook = new Facebook(array(
-      'appId'  => $credentials['application_id'],
-      'secret' => $credentials['application_secret'],
-      'cookie' => $cookie
-    ));
-
-    return $facebook;
-  }
-
-  public function isFacebookAuthenticated()
-  {
-    return ($this->getFacebookSession() && $this->getFacebookId()) ? true : false;
-  }
-
-  public function getFacebookSession()
-  {
-    if ($facebook = $this->getFacebook())
-    {
-      return $facebook->getSession();
-    }
-
-    return null;
-  }
-
-  public function getFacebookData()
-  {
-    if (self::$_facebook_data == null)
-    {
-      $facebook = $this->getFacebook();
-
-      if ($facebook && $facebook->getSession())
-      {
-        try {
-          self::$_facebook_data = $facebook->api('/me');
-        }
-        catch (FacebookApiException $e)
-        {
-          ;
-        }
-      }
-
-      $this->setAttribute('data', self::$_facebook_data, 'icepique/user/facebook');
-    }
-
-    return self::$_facebook_data;
-  }
-
-  public function getFacebookId()
-  {
-    $data = $this->getFacebookData();
-
-    return (isset($data['id'])) ? $data['id'] : null;
+    $this->getAttributeHolder()->removeNamespace('collector');
+    $this->getAttributeHolder()->removeNamespace('seller');
   }
 
   public function __call($m, $a)

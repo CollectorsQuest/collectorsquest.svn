@@ -13,13 +13,14 @@ class generalActions extends cqActions
   /**
    * Executes index action
    *
-   * @param  sfWebRequest  $request A request object
    * @return string
    */
-  public function executeIndex(sfWebRequest $request)
+  public function executeIndex()
   {
     // Get the latest Blog post and its first image
     $blog_posts = wpPostPeer::getLatestPosts(6);
+
+    /** @var $blog_post wpPost */
     $blog_post = array_shift($blog_posts);
 
     $pattern = '/<img[^>]+src[\\s=\'"]+([^"\'>\\s]+)/is';
@@ -38,7 +39,7 @@ class generalActions extends cqActions
 
       if (isset($match[1]))
       {
-        if (cqStatic::isUrl($match[1]))
+        if (IceWebBrowser::isUrl($match[1]))
         {
           $blog_image = MultimediaPeer::createMultimediaFromUrl($blog_post, $match[1]);
         }
@@ -117,7 +118,7 @@ class generalActions extends cqActions
 
       if ($collector)
       {
-        $password = cqStatic::generatePassword();
+        $password = IceStatic::getUniquePassword();
         $collector->setPassword($password);
         $collector->save();
 
@@ -173,7 +174,7 @@ class generalActions extends cqActions
           {
             $welcomePage = $request->getReferer($this->getUser()->isAuthenticated() && $this->getUser()->hasCredential('seller') ? '@marketplace' : '@community');
           }
-          
+
           $goto = $this->getUser()->getAttribute('return_url', $request->getParameter('goto', $welcomePage), 'system');
           $this->getUser()->setAttribute('return_url', null, 'system');
 
@@ -207,11 +208,22 @@ class generalActions extends cqActions
     return sfView::SUCCESS;
   }
 
-  public function executeLogout()
+  public function executeLogout(sfWebRequest $request)
   {
     $this->getUser()->Authenticate(false);
+    $url = $request->getParameter('r', $this->getRequest()->getReferer());
 
-    $this->redirect('@community');
+    /**
+     * Handling errors where the $_GET['r'] is double urlencoded()
+     */
+    if (substr($url. 0, 13) == 'http%3A%2F%2F')
+    {
+      $url = urldecode($url);
+    }
+
+    $this->getUser()->setFlash('success', $this->__('You have successfully signed out of your account'));
+
+    return $this->redirect(!empty($url) ? $url : '@community');
   }
 
   public function executeRPXToken(sfWebRequest $request)
@@ -219,42 +231,30 @@ class generalActions extends cqActions
     $token = $request->getParameter('token');
     $this->forward404Unless($token);
 
-    include_once sfConfig::get('sf_lib_dir') . '/vendor/RPX.class.php';
+    include_once sfConfig::get('sf_lib_dir') . '/vendor/janrain/engage.auth.lib.php';
+    $credentials = sfConfig::get('app_credentials_rpxnow');
 
-    try
-    {
-      $rpx = new RPX();
-      $rpx->auth_info($token);
+    $result = engage_auth_info($credentials['api_key'], $token, ENGAGE_FORMAT_JSON, true);
+    $auth_info_array = engage_parse_result($result, ENGAGE_FORMAT_JSON, true);
 
-      $status = 'success';
-    }
-    catch (RPXException $e)
+    if ($result !== false && $auth_info_array['stat'] === 'ok')
     {
-      $status = 'failed';
-    }
+      $profile = $auth_info_array['profile'];
 
-    if ($status == 'success' && !empty($rpx->identifier))
-    {
       $c = new Criteria();
       $c->addJoin(CollectorPeer::ID, CollectorIdentifierPeer::COLLECTOR_ID);
-      $c->add(CollectorIdentifierPeer::IDENTIFIER, $rpx->identifier);
+      $c->add(CollectorIdentifierPeer::IDENTIFIER, $profile['identifier']);
 
-      if ($collector = CollectorPeer::doSelectOne($c))
+      if (!$collector = CollectorPeer::doSelectOne($c))
+      {
+        $collector = CollectorPeer::createFromRPXProfile($profile);
+      }
+
+      if ($collector instanceof Collector)
       {
         $this->getUser()->Authenticate(true, $collector, true);
 
-        return $this->redirect('community/spotlight');
-      }
-      else
-      {
-        // Automatically create an account for the informatio we got back from RPX
-        $collector = CollectorPeer::createFromRPX($rpx);
-
-        if ($collector)
-        {
-          $this->getUser()->Authenticate(true, $collector, true);
-          return $this->redirect('community/spotlight');
-        }
+        return $this->redirect('@collector_me');
       }
     }
 

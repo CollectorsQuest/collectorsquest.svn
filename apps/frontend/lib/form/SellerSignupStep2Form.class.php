@@ -6,7 +6,7 @@ class SellerSignupStep2Form extends BaseFormPropel
   {
 //	unset($this['username'], $this['password'], $this['display_name'],$this['email'], $this['what_you_collect'], $this['what_you_sell']);
 
-    $recaptcha = sfConfig::get('app_api_recaptcha');
+    $recaptcha = sfConfig::get('app_credentials_recaptcha');
 
     $years = array_combine(range(date('Y') - 100, date('Y')), range(date('Y') - 100, date('Y')));
 

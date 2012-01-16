@@ -30,6 +30,7 @@ end
 package "zend-server-ce-php-#{node[:zend][:php][:version]}"
 package "php-5.3-memcache-zend-server"
 package "php-5.3-imagick-zend-server"
+package "php-5.3-thrift-zend-server"
 
 link "/usr/bin/php" do
   to "/usr/local/zend/bin/php"

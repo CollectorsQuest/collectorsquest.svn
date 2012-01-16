@@ -5,7 +5,7 @@ CREATE TABLE `collectible_offer` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `collectible_id` int(11) NOT NULL,
   `collectible_for_sale_id` int(11) NOT NULL,
-  `collector_id` int(11) DEFAULT NULL,
+  `collector_id` int(11) NOT NULL,
   `price` float DEFAULT NULL,
   `status` enum('pending','counter','rejected','accepted') NOT NULL,
   `deleted_at` datetime DEFAULT NULL,

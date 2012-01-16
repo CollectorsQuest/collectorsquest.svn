@@ -9,6 +9,28 @@ class Collector extends BaseCollector
 
   }
 
+  public function getGraphId()
+  {
+    $graph_id = null;
+
+    if (!$this->isNew() && (!$graph_id = parent::getGraphId()))
+    {
+      $client = cqStatic::getNeo4jClient();
+
+      $node = $client->makeNode();
+      $node->setProperty('model', 'Collector');
+      $node->setProperty('model_id', $this->getId());
+      $node->save();
+
+      $graph_id = $node->getId();
+
+      $this->setGraphId($node->getId());
+      $this->save();
+    }
+
+    return $graph_id;
+  }
+
   public function isOwnerOf($something)
   {
     if (is_object($something) && method_exists($something, 'getCollectorId'))
@@ -285,64 +307,6 @@ class Collector extends BaseCollector
     }
   }
 
-  public function preDelete(PropelPDO $con = null)
-  {
-    // Deleting messages
-    $c = new Criteria();
-    $c->add(CollectorPeer::ID, PrivateMessagePeer::RECEIVER);
-    $c->addOr(CollectorPeer::ID, PrivateMessagePeer::SENDER);
-
-    $messages = PrivateMessagePeer::doSelect($c);
-    if (!empty($messages))
-    {
-      foreach ($messages as $message)
-      {
-        $message->setIsDeleted(true);
-        $message->save($con);
-      }
-    }
-
-    // Deleting collections
-    $collections = $this->getCollections();
-    if (!empty($collections))
-    {
-      /** @var $collection Collection */
-      foreach ($collections as $collection)
-      {
-        $collection->delete($con);
-      }
-    }
-
-    // Deleting comments
-    $comments = $this->getComments();
-    if (!empty($comments))
-    {
-      foreach ($comments as $comment)
-      {
-        $comment->delete($con);
-      }
-    }
-
-    return parent::preDelete($con);
-  }
-
-  public function __call($m, $a)
-  {
-    $c = new Criteria();
-    $c->add(CollectorProfilePeer::COLLECTOR_ID, $this->getId());
-
-    $profile = CollectorProfilePeer::doSelectOne($c);
-
-    if ($profile instanceof CollectorProfile && method_exists($profile, $m))
-    {
-      return call_user_func_array(array($profile, $m), $a);
-    }
-    else
-    {
-      return parent::__call($m, $a);
-    }
-  }
-
   public function getLastCollectorGeocache()
   {
     $criteria = new Criteria();
@@ -451,7 +415,122 @@ class Collector extends BaseCollector
     }
 
   }
+
+  /**
+   * @param string $action One of the ['follows', 'likes', 'owns', 'blocks']
+   * @param BaseObject $model
+   *
+   * @return boolean
+   */
+  public function graph($action = 'follows', BaseObject $model = null)
+  {
+    $client = cqStatic::getNeo4jClient();
+
+    if ($model !== null && method_exists($model, 'getGraphId'))
+    {
+      $active = $client->getNode($this->getGraphId());
+      $passive = $client->getNode($model->getGraphId());
+
+      try
+      {
+        return $active->relateTo($passive, $action)->save();
+      }
+      catch (\Everyman\Neo4j\Exception $e) { ; }
+    }
+
+    return false;
+  }
+
+  /**
+   * @param  null|PropelPDO  $con
+   * @return boolean
+   */
+  public function preDelete(PropelPDO $con = null)
+  {
+    /** @var $collections Collection[] */
+    if ($collections = $this->getCollections())
+    foreach ($collections as $collection)
+    {
+      $collection->delete($con);
+    }
+
+    /** @var $collectible_offers CollectibleOffer[] */
+    if ($collectible_offers = $this->getCollectibleOffers())
+    foreach ($collectible_offers as $collectible_offer)
+    {
+      $collectible_offer->delete($con);
+    }
+
+    /** @var $comments Comment[] */
+    if ($comments = $this->getComments())
+    foreach ($comments as $comment)
+    {
+      $comment->delete($con);
+    }
+
+    // Deleting private messages
+    $c = new Criteria();
+    $c->add(CollectorPeer::ID, PrivateMessagePeer::RECEIVER);
+    $c->addOr(CollectorPeer::ID, PrivateMessagePeer::SENDER);
+
+    /** @var $messages PrivateMessage[] */
+    $messages = PrivateMessagePeer::doSelect($c);
+    if (!empty($messages))
+    {
+      foreach ($messages as $message)
+      {
+        $message->setIsDeleted(true);
+        $message->save($con);
+      }
+    }
+
+    /** @var $collector_identifiers CollectorIdentifier[] */
+    if ($collector_identifiers = $this->getCollectorIdentifiers($con))
+    foreach ($collector_identifiers as $collector_identifier)
+    {
+      $collector_identifier->delete($con);
+    }
+
+    /** @var $collector_geocaches CollectorGeoCache[] */
+    if ($collector_geocaches = $this->getCollectorGeocaches($con))
+    foreach ($collector_geocaches as $collector_geocache)
+    {
+      $collector_geocache->delete($con);
+    }
+
+    /** @var $collector_profiles CollectorProfile[] */
+    if ($collector_profiles = $this->getCollectorProfiles($con))
+    foreach ($collector_profiles as $collector_profile)
+    {
+      $collector_profile->delete($con);
+    }
+
+    return parent::preDelete($con);
+  }
+
+  public function __call($m, $a)
+  {
+    $c = new Criteria();
+    $c->add(CollectorProfilePeer::COLLECTOR_ID, $this->getId());
+
+    $profile = CollectorProfilePeer::doSelectOne($c);
+
+    if ($profile instanceof CollectorProfile && method_exists($profile, $m))
+    {
+      return call_user_func_array(array($profile, $m), $a);
+    }
+    else
+    {
+      return parent::__call($m, $a);
+    }
+  }
+
 }
+
+sfPropelBehavior::add(
+  'Collector',
+  array('PropelActAsEblobBehavior' => array('column' => 'eblob')
+));
 
 sfPropelBehavior::add(
   'Collector', array(
@@ -468,8 +547,3 @@ sfPropelBehavior::add(
     )
   )
 );
-
-sfPropelBehavior::add(
-  'Collector',
-  array('PropelActAsEblobBehavior' => array('column' => 'eblob')
-));

@@ -15,7 +15,7 @@ abstract class BaseCollectorInterviewForm extends BaseFormPropel
   {
     $this->setWidgets(array(
       'id'                     => new sfWidgetFormInputHidden(),
-      'collector_id'           => new sfWidgetFormPropelChoice(array('model' => 'Collector', 'add_empty' => false)),
+      'collector_id'           => new sfWidgetFormPropelChoice(array('model' => 'Collector', 'add_empty' => true)),
       'collection_category_id' => new sfWidgetFormPropelChoice(array('model' => 'CollectionCategory', 'add_empty' => true)),
       'collection_id'          => new sfWidgetFormPropelChoice(array('model' => 'Collection', 'add_empty' => true)),
       'title'                  => new sfWidgetFormInputText(),
@@ -26,7 +26,7 @@ abstract class BaseCollectorInterviewForm extends BaseFormPropel
 
     $this->setValidators(array(
       'id'                     => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
-      'collector_id'           => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id')),
+      'collector_id'           => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id', 'required' => false)),
       'collection_category_id' => new sfValidatorPropelChoice(array('model' => 'CollectionCategory', 'column' => 'id', 'required' => false)),
       'collection_id'          => new sfValidatorPropelChoice(array('model' => 'Collection', 'column' => 'id', 'required' => false)),
       'title'                  => new sfValidatorString(array('max_length' => 128)),

@@ -27,16 +27,19 @@ abstract class BaseCollectorPeer
   const TM_CLASS = 'CollectorTableMap';
 
   /** The total number of columns. */
-  const NUM_COLUMNS = 26;
+  const NUM_COLUMNS = 28;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
   /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-  const NUM_HYDRATE_COLUMNS = 26;
+  const NUM_HYDRATE_COLUMNS = 28;
 
   /** the column name for the ID field */
   const ID = 'collector.ID';
+
+  /** the column name for the GRAPH_ID field */
+  const GRAPH_ID = 'collector.GRAPH_ID';
 
   /** the column name for the FACEBOOK_ID field */
   const FACEBOOK_ID = 'collector.FACEBOOK_ID';
@@ -83,6 +86,9 @@ abstract class BaseCollectorPeer
   /** the column name for the COMPANY field */
   const COMPANY = 'collector.COMPANY';
 
+  /** the column name for the LOCALE field */
+  const LOCALE = 'collector.LOCALE';
+
   /** the column name for the SCORE field */
   const SCORE = 'collector.SCORE';
 
@@ -101,11 +107,11 @@ abstract class BaseCollectorPeer
   /** the column name for the LAST_SEEN_AT field */
   const LAST_SEEN_AT = 'collector.LAST_SEEN_AT';
 
-  /** the column name for the EBLOB field */
-  const EBLOB = 'collector.EBLOB';
-
   /** the column name for the DELETED_AT field */
   const DELETED_AT = 'collector.DELETED_AT';
+
+  /** the column name for the EBLOB field */
+  const EBLOB = 'collector.EBLOB';
 
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'collector.CREATED_AT';
@@ -132,12 +138,12 @@ abstract class BaseCollectorPeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'FacebookId', 'Username', 'DisplayName', 'Slug', 'Sha1Password', 'Salt', 'Email', 'UserType', 'ItemsAllowed', 'WhatYouCollect', 'PurchasesPerYear', 'WhatYouSell', 'AnnuallySpend', 'MostExpensiveItem', 'Company', 'Score', 'SpamScore', 'IsSpam', 'IsPublic', 'SessionId', 'LastSeenAt', 'Eblob', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'facebookId', 'username', 'displayName', 'slug', 'sha1Password', 'salt', 'email', 'userType', 'itemsAllowed', 'whatYouCollect', 'purchasesPerYear', 'whatYouSell', 'annuallySpend', 'mostExpensiveItem', 'company', 'score', 'spamScore', 'isSpam', 'isPublic', 'sessionId', 'lastSeenAt', 'eblob', 'deletedAt', 'createdAt', 'updatedAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::FACEBOOK_ID, self::USERNAME, self::DISPLAY_NAME, self::SLUG, self::SHA1_PASSWORD, self::SALT, self::EMAIL, self::USER_TYPE, self::ITEMS_ALLOWED, self::WHAT_YOU_COLLECT, self::PURCHASES_PER_YEAR, self::WHAT_YOU_SELL, self::ANNUALLY_SPEND, self::MOST_EXPENSIVE_ITEM, self::COMPANY, self::SCORE, self::SPAM_SCORE, self::IS_SPAM, self::IS_PUBLIC, self::SESSION_ID, self::LAST_SEEN_AT, self::EBLOB, self::DELETED_AT, self::CREATED_AT, self::UPDATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'FACEBOOK_ID', 'USERNAME', 'DISPLAY_NAME', 'SLUG', 'SHA1_PASSWORD', 'SALT', 'EMAIL', 'USER_TYPE', 'ITEMS_ALLOWED', 'WHAT_YOU_COLLECT', 'PURCHASES_PER_YEAR', 'WHAT_YOU_SELL', 'ANNUALLY_SPEND', 'MOST_EXPENSIVE_ITEM', 'COMPANY', 'SCORE', 'SPAM_SCORE', 'IS_SPAM', 'IS_PUBLIC', 'SESSION_ID', 'LAST_SEEN_AT', 'EBLOB', 'DELETED_AT', 'CREATED_AT', 'UPDATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'facebook_id', 'username', 'display_name', 'slug', 'sha1_password', 'salt', 'email', 'user_type', 'items_allowed', 'what_you_collect', 'purchases_per_year', 'what_you_sell', 'annually_spend', 'most_expensive_item', 'company', 'score', 'spam_score', 'is_spam', 'is_public', 'session_id', 'last_seen_at', 'eblob', 'deleted_at', 'created_at', 'updated_at', ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, )
+    BasePeer::TYPE_PHPNAME => array ('Id', 'GraphId', 'FacebookId', 'Username', 'DisplayName', 'Slug', 'Sha1Password', 'Salt', 'Email', 'UserType', 'ItemsAllowed', 'WhatYouCollect', 'PurchasesPerYear', 'WhatYouSell', 'AnnuallySpend', 'MostExpensiveItem', 'Company', 'Locale', 'Score', 'SpamScore', 'IsSpam', 'IsPublic', 'SessionId', 'LastSeenAt', 'DeletedAt', 'Eblob', 'CreatedAt', 'UpdatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'graphId', 'facebookId', 'username', 'displayName', 'slug', 'sha1Password', 'salt', 'email', 'userType', 'itemsAllowed', 'whatYouCollect', 'purchasesPerYear', 'whatYouSell', 'annuallySpend', 'mostExpensiveItem', 'company', 'locale', 'score', 'spamScore', 'isSpam', 'isPublic', 'sessionId', 'lastSeenAt', 'deletedAt', 'eblob', 'createdAt', 'updatedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::GRAPH_ID, self::FACEBOOK_ID, self::USERNAME, self::DISPLAY_NAME, self::SLUG, self::SHA1_PASSWORD, self::SALT, self::EMAIL, self::USER_TYPE, self::ITEMS_ALLOWED, self::WHAT_YOU_COLLECT, self::PURCHASES_PER_YEAR, self::WHAT_YOU_SELL, self::ANNUALLY_SPEND, self::MOST_EXPENSIVE_ITEM, self::COMPANY, self::LOCALE, self::SCORE, self::SPAM_SCORE, self::IS_SPAM, self::IS_PUBLIC, self::SESSION_ID, self::LAST_SEEN_AT, self::DELETED_AT, self::EBLOB, self::CREATED_AT, self::UPDATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'GRAPH_ID', 'FACEBOOK_ID', 'USERNAME', 'DISPLAY_NAME', 'SLUG', 'SHA1_PASSWORD', 'SALT', 'EMAIL', 'USER_TYPE', 'ITEMS_ALLOWED', 'WHAT_YOU_COLLECT', 'PURCHASES_PER_YEAR', 'WHAT_YOU_SELL', 'ANNUALLY_SPEND', 'MOST_EXPENSIVE_ITEM', 'COMPANY', 'LOCALE', 'SCORE', 'SPAM_SCORE', 'IS_SPAM', 'IS_PUBLIC', 'SESSION_ID', 'LAST_SEEN_AT', 'DELETED_AT', 'EBLOB', 'CREATED_AT', 'UPDATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'graph_id', 'facebook_id', 'username', 'display_name', 'slug', 'sha1_password', 'salt', 'email', 'user_type', 'items_allowed', 'what_you_collect', 'purchases_per_year', 'what_you_sell', 'annually_spend', 'most_expensive_item', 'company', 'locale', 'score', 'spam_score', 'is_spam', 'is_public', 'session_id', 'last_seen_at', 'deleted_at', 'eblob', 'created_at', 'updated_at', ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, )
   );
 
   /**
@@ -147,12 +153,12 @@ abstract class BaseCollectorPeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'FacebookId' => 1, 'Username' => 2, 'DisplayName' => 3, 'Slug' => 4, 'Sha1Password' => 5, 'Salt' => 6, 'Email' => 7, 'UserType' => 8, 'ItemsAllowed' => 9, 'WhatYouCollect' => 10, 'PurchasesPerYear' => 11, 'WhatYouSell' => 12, 'AnnuallySpend' => 13, 'MostExpensiveItem' => 14, 'Company' => 15, 'Score' => 16, 'SpamScore' => 17, 'IsSpam' => 18, 'IsPublic' => 19, 'SessionId' => 20, 'LastSeenAt' => 21, 'Eblob' => 22, 'DeletedAt' => 23, 'CreatedAt' => 24, 'UpdatedAt' => 25, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'facebookId' => 1, 'username' => 2, 'displayName' => 3, 'slug' => 4, 'sha1Password' => 5, 'salt' => 6, 'email' => 7, 'userType' => 8, 'itemsAllowed' => 9, 'whatYouCollect' => 10, 'purchasesPerYear' => 11, 'whatYouSell' => 12, 'annuallySpend' => 13, 'mostExpensiveItem' => 14, 'company' => 15, 'score' => 16, 'spamScore' => 17, 'isSpam' => 18, 'isPublic' => 19, 'sessionId' => 20, 'lastSeenAt' => 21, 'eblob' => 22, 'deletedAt' => 23, 'createdAt' => 24, 'updatedAt' => 25, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::FACEBOOK_ID => 1, self::USERNAME => 2, self::DISPLAY_NAME => 3, self::SLUG => 4, self::SHA1_PASSWORD => 5, self::SALT => 6, self::EMAIL => 7, self::USER_TYPE => 8, self::ITEMS_ALLOWED => 9, self::WHAT_YOU_COLLECT => 10, self::PURCHASES_PER_YEAR => 11, self::WHAT_YOU_SELL => 12, self::ANNUALLY_SPEND => 13, self::MOST_EXPENSIVE_ITEM => 14, self::COMPANY => 15, self::SCORE => 16, self::SPAM_SCORE => 17, self::IS_SPAM => 18, self::IS_PUBLIC => 19, self::SESSION_ID => 20, self::LAST_SEEN_AT => 21, self::EBLOB => 22, self::DELETED_AT => 23, self::CREATED_AT => 24, self::UPDATED_AT => 25, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'FACEBOOK_ID' => 1, 'USERNAME' => 2, 'DISPLAY_NAME' => 3, 'SLUG' => 4, 'SHA1_PASSWORD' => 5, 'SALT' => 6, 'EMAIL' => 7, 'USER_TYPE' => 8, 'ITEMS_ALLOWED' => 9, 'WHAT_YOU_COLLECT' => 10, 'PURCHASES_PER_YEAR' => 11, 'WHAT_YOU_SELL' => 12, 'ANNUALLY_SPEND' => 13, 'MOST_EXPENSIVE_ITEM' => 14, 'COMPANY' => 15, 'SCORE' => 16, 'SPAM_SCORE' => 17, 'IS_SPAM' => 18, 'IS_PUBLIC' => 19, 'SESSION_ID' => 20, 'LAST_SEEN_AT' => 21, 'EBLOB' => 22, 'DELETED_AT' => 23, 'CREATED_AT' => 24, 'UPDATED_AT' => 25, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'facebook_id' => 1, 'username' => 2, 'display_name' => 3, 'slug' => 4, 'sha1_password' => 5, 'salt' => 6, 'email' => 7, 'user_type' => 8, 'items_allowed' => 9, 'what_you_collect' => 10, 'purchases_per_year' => 11, 'what_you_sell' => 12, 'annually_spend' => 13, 'most_expensive_item' => 14, 'company' => 15, 'score' => 16, 'spam_score' => 17, 'is_spam' => 18, 'is_public' => 19, 'session_id' => 20, 'last_seen_at' => 21, 'eblob' => 22, 'deleted_at' => 23, 'created_at' => 24, 'updated_at' => 25, ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, )
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'GraphId' => 1, 'FacebookId' => 2, 'Username' => 3, 'DisplayName' => 4, 'Slug' => 5, 'Sha1Password' => 6, 'Salt' => 7, 'Email' => 8, 'UserType' => 9, 'ItemsAllowed' => 10, 'WhatYouCollect' => 11, 'PurchasesPerYear' => 12, 'WhatYouSell' => 13, 'AnnuallySpend' => 14, 'MostExpensiveItem' => 15, 'Company' => 16, 'Locale' => 17, 'Score' => 18, 'SpamScore' => 19, 'IsSpam' => 20, 'IsPublic' => 21, 'SessionId' => 22, 'LastSeenAt' => 23, 'DeletedAt' => 24, 'Eblob' => 25, 'CreatedAt' => 26, 'UpdatedAt' => 27, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'graphId' => 1, 'facebookId' => 2, 'username' => 3, 'displayName' => 4, 'slug' => 5, 'sha1Password' => 6, 'salt' => 7, 'email' => 8, 'userType' => 9, 'itemsAllowed' => 10, 'whatYouCollect' => 11, 'purchasesPerYear' => 12, 'whatYouSell' => 13, 'annuallySpend' => 14, 'mostExpensiveItem' => 15, 'company' => 16, 'locale' => 17, 'score' => 18, 'spamScore' => 19, 'isSpam' => 20, 'isPublic' => 21, 'sessionId' => 22, 'lastSeenAt' => 23, 'deletedAt' => 24, 'eblob' => 25, 'createdAt' => 26, 'updatedAt' => 27, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::GRAPH_ID => 1, self::FACEBOOK_ID => 2, self::USERNAME => 3, self::DISPLAY_NAME => 4, self::SLUG => 5, self::SHA1_PASSWORD => 6, self::SALT => 7, self::EMAIL => 8, self::USER_TYPE => 9, self::ITEMS_ALLOWED => 10, self::WHAT_YOU_COLLECT => 11, self::PURCHASES_PER_YEAR => 12, self::WHAT_YOU_SELL => 13, self::ANNUALLY_SPEND => 14, self::MOST_EXPENSIVE_ITEM => 15, self::COMPANY => 16, self::LOCALE => 17, self::SCORE => 18, self::SPAM_SCORE => 19, self::IS_SPAM => 20, self::IS_PUBLIC => 21, self::SESSION_ID => 22, self::LAST_SEEN_AT => 23, self::DELETED_AT => 24, self::EBLOB => 25, self::CREATED_AT => 26, self::UPDATED_AT => 27, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'GRAPH_ID' => 1, 'FACEBOOK_ID' => 2, 'USERNAME' => 3, 'DISPLAY_NAME' => 4, 'SLUG' => 5, 'SHA1_PASSWORD' => 6, 'SALT' => 7, 'EMAIL' => 8, 'USER_TYPE' => 9, 'ITEMS_ALLOWED' => 10, 'WHAT_YOU_COLLECT' => 11, 'PURCHASES_PER_YEAR' => 12, 'WHAT_YOU_SELL' => 13, 'ANNUALLY_SPEND' => 14, 'MOST_EXPENSIVE_ITEM' => 15, 'COMPANY' => 16, 'LOCALE' => 17, 'SCORE' => 18, 'SPAM_SCORE' => 19, 'IS_SPAM' => 20, 'IS_PUBLIC' => 21, 'SESSION_ID' => 22, 'LAST_SEEN_AT' => 23, 'DELETED_AT' => 24, 'EBLOB' => 25, 'CREATED_AT' => 26, 'UPDATED_AT' => 27, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'graph_id' => 1, 'facebook_id' => 2, 'username' => 3, 'display_name' => 4, 'slug' => 5, 'sha1_password' => 6, 'salt' => 7, 'email' => 8, 'user_type' => 9, 'items_allowed' => 10, 'what_you_collect' => 11, 'purchases_per_year' => 12, 'what_you_sell' => 13, 'annually_spend' => 14, 'most_expensive_item' => 15, 'company' => 16, 'locale' => 17, 'score' => 18, 'spam_score' => 19, 'is_spam' => 20, 'is_public' => 21, 'session_id' => 22, 'last_seen_at' => 23, 'deleted_at' => 24, 'eblob' => 25, 'created_at' => 26, 'updated_at' => 27, ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, )
   );
 
   /**
@@ -228,6 +234,7 @@ abstract class BaseCollectorPeer
     if (null === $alias)
     {
       $criteria->addSelectColumn(CollectorPeer::ID);
+      $criteria->addSelectColumn(CollectorPeer::GRAPH_ID);
       $criteria->addSelectColumn(CollectorPeer::FACEBOOK_ID);
       $criteria->addSelectColumn(CollectorPeer::USERNAME);
       $criteria->addSelectColumn(CollectorPeer::DISPLAY_NAME);
@@ -243,20 +250,22 @@ abstract class BaseCollectorPeer
       $criteria->addSelectColumn(CollectorPeer::ANNUALLY_SPEND);
       $criteria->addSelectColumn(CollectorPeer::MOST_EXPENSIVE_ITEM);
       $criteria->addSelectColumn(CollectorPeer::COMPANY);
+      $criteria->addSelectColumn(CollectorPeer::LOCALE);
       $criteria->addSelectColumn(CollectorPeer::SCORE);
       $criteria->addSelectColumn(CollectorPeer::SPAM_SCORE);
       $criteria->addSelectColumn(CollectorPeer::IS_SPAM);
       $criteria->addSelectColumn(CollectorPeer::IS_PUBLIC);
       $criteria->addSelectColumn(CollectorPeer::SESSION_ID);
       $criteria->addSelectColumn(CollectorPeer::LAST_SEEN_AT);
-      $criteria->addSelectColumn(CollectorPeer::EBLOB);
       $criteria->addSelectColumn(CollectorPeer::DELETED_AT);
+      $criteria->addSelectColumn(CollectorPeer::EBLOB);
       $criteria->addSelectColumn(CollectorPeer::CREATED_AT);
       $criteria->addSelectColumn(CollectorPeer::UPDATED_AT);
     }
     else
     {
       $criteria->addSelectColumn($alias . '.ID');
+      $criteria->addSelectColumn($alias . '.GRAPH_ID');
       $criteria->addSelectColumn($alias . '.FACEBOOK_ID');
       $criteria->addSelectColumn($alias . '.USERNAME');
       $criteria->addSelectColumn($alias . '.DISPLAY_NAME');
@@ -272,14 +281,15 @@ abstract class BaseCollectorPeer
       $criteria->addSelectColumn($alias . '.ANNUALLY_SPEND');
       $criteria->addSelectColumn($alias . '.MOST_EXPENSIVE_ITEM');
       $criteria->addSelectColumn($alias . '.COMPANY');
+      $criteria->addSelectColumn($alias . '.LOCALE');
       $criteria->addSelectColumn($alias . '.SCORE');
       $criteria->addSelectColumn($alias . '.SPAM_SCORE');
       $criteria->addSelectColumn($alias . '.IS_SPAM');
       $criteria->addSelectColumn($alias . '.IS_PUBLIC');
       $criteria->addSelectColumn($alias . '.SESSION_ID');
       $criteria->addSelectColumn($alias . '.LAST_SEEN_AT');
-      $criteria->addSelectColumn($alias . '.EBLOB');
       $criteria->addSelectColumn($alias . '.DELETED_AT');
+      $criteria->addSelectColumn($alias . '.EBLOB');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
       $criteria->addSelectColumn($alias . '.UPDATED_AT');
     }
@@ -319,15 +329,6 @@ abstract class BaseCollectorPeer
     if ($con === null)
     {
       $con = Propel::getConnection(CollectorPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-    }
-    // soft_delete behavior
-    if (CollectorQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectorPeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectorPeer::enableSoftDelete();
     }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
@@ -410,15 +411,6 @@ abstract class BaseCollectorPeer
 
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
-    // soft_delete behavior
-    if (CollectorQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectorPeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectorPeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -527,6 +519,9 @@ abstract class BaseCollectorPeer
     // Invalidate objects in CollectorProfilePeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     CollectorProfilePeer::clearInstancePool();
+    // Invalidate objects in CollectorEmailPeer instance pool,
+    // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+    CollectorEmailPeer::clearInstancePool();
     // Invalidate objects in CollectorIdentifierPeer instance pool,
     // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
     CollectorIdentifierPeer::clearInstancePool();
@@ -792,7 +787,7 @@ abstract class BaseCollectorPeer
    * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doForceDeleteAll(PropelPDO $con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -805,6 +800,7 @@ abstract class BaseCollectorPeer
       // for more than one table or we could emulating ON DELETE CASCADE, etc.
       $con->beginTransaction();
       $affectedRows += CollectorPeer::doOnDeleteCascade(new Criteria(CollectorPeer::DATABASE_NAME), $con);
+      CollectorPeer::doOnDeleteSetNull(new Criteria(CollectorPeer::DATABASE_NAME), $con);
       $affectedRows += BasePeer::doDeleteAll(CollectorPeer::TABLE_NAME, $con, CollectorPeer::DATABASE_NAME);
       // Because this db requires some delete cascade/set null emulation, we have to
       // clear the cached instance *after* the emulation has happened (since
@@ -832,7 +828,7 @@ abstract class BaseCollectorPeer
    * @throws     PropelException Any exceptions caught during processing will be
    *     rethrown wrapped into a PropelException.
    */
-   public static function doForceDelete($values, PropelPDO $con = null)
+   public static function doDelete($values, PropelPDO $con = null)
    {
     if ($con === null)
     {
@@ -865,6 +861,10 @@ abstract class BaseCollectorPeer
       // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
       $c = clone $criteria;
       $affectedRows += CollectorPeer::doOnDeleteCascade($c, $con);
+      
+      // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
+      $c = clone $criteria;
+      CollectorPeer::doOnDeleteSetNull($c, $con);
       
       // Because this db requires some delete cascade/set null emulation, we have to
       // clear the cached instance *after* the emulation has happened (since
@@ -923,17 +923,17 @@ abstract class BaseCollectorPeer
       $criteria->add(CollectorProfilePeer::COLLECTOR_ID, $obj->getId());
       $affectedRows += CollectorProfilePeer::doDelete($criteria, $con);
 
+      // delete related CollectorEmail objects
+      $criteria = new Criteria(CollectorEmailPeer::DATABASE_NAME);
+      
+      $criteria->add(CollectorEmailPeer::COLLECTOR_ID, $obj->getId());
+      $affectedRows += CollectorEmailPeer::doDelete($criteria, $con);
+
       // delete related CollectorIdentifier objects
       $criteria = new Criteria(CollectorIdentifierPeer::DATABASE_NAME);
       
       $criteria->add(CollectorIdentifierPeer::COLLECTOR_ID, $obj->getId());
       $affectedRows += CollectorIdentifierPeer::doDelete($criteria, $con);
-
-      // delete related CollectorInterview objects
-      $criteria = new Criteria(CollectorInterviewPeer::DATABASE_NAME);
-      
-      $criteria->add(CollectorInterviewPeer::COLLECTOR_ID, $obj->getId());
-      $affectedRows += CollectorInterviewPeer::doDelete($criteria, $con);
 
       // delete related CollectorGeocache objects
       $criteria = new Criteria(CollectorGeocachePeer::DATABASE_NAME);
@@ -972,6 +972,38 @@ abstract class BaseCollectorPeer
       $affectedRows += PromotionTransactionPeer::doDelete($criteria, $con);
     }
     return $affectedRows;
+  }
+
+  /**
+   * This is a method for emulating ON DELETE SET NULL DBs that don't support this
+   * feature (like MySQL or SQLite).
+   *
+   * This method is not very speedy because it must perform a query first to get
+   * the implicated records and then perform the deletes by calling those Peer classes.
+   *
+   * This method should be used within a transaction if possible.
+   *
+   * @param      Criteria $criteria
+   * @param      PropelPDO $con
+   * @return     void
+   */
+  protected static function doOnDeleteSetNull(Criteria $criteria, PropelPDO $con)
+  {
+
+    // first find the objects that are implicated by the $criteria
+    $objects = CollectorPeer::doSelect($criteria, $con);
+    foreach ($objects as $obj)
+    {
+
+      // set fkey col in related CollectorInterview rows to NULL
+      $selectCriteria = new Criteria(CollectorPeer::DATABASE_NAME);
+      $updateValues = new Criteria(CollectorPeer::DATABASE_NAME);
+      $selectCriteria->add(CollectorInterviewPeer::COLLECTOR_ID, $obj->getId());
+      $updateValues->add(CollectorInterviewPeer::COLLECTOR_ID, null);
+
+      BasePeer::doUpdate($selectCriteria, $updateValues, $con); // use BasePeer because generated Peer doUpdate() methods only update using pkey
+
+    }
   }
 
   /**
@@ -1074,135 +1106,6 @@ abstract class BaseCollectorPeer
     return $objs;
   }
 
-  // soft_delete behavior
-  
-  /**
-   * Enable the soft_delete behavior for this model
-   */
-  public static function enableSoftDelete()
-  {
-    CollectorQuery::enableSoftDelete();
-    // some soft_deleted objects may be in the instance pool
-    CollectorPeer::clearInstancePool();
-  }
-  
-  /**
-   * Disable the soft_delete behavior for this model
-   */
-  public static function disableSoftDelete()
-  {
-    CollectorQuery::disableSoftDelete();
-  }
-  
-  /**
-   * Check the soft_delete behavior for this model
-   * @return boolean true if the soft_delete behavior is enabled
-   */
-  public static function isSoftDeleteEnabled()
-  {
-    return CollectorQuery::isSoftDeleteEnabled();
-  }
-  
-  /**
-   * Soft delete records, given a Collector or Criteria object OR a primary key value.
-   *
-   * @param       mixed $values Criteria or Collector object or primary key or array of primary keys
-   *              which is used to create the DELETE statement
-   * @param       PropelPDO $con the connection to use
-   * @return     int  The number of affected rows (if supported by underlying database driver).
-   * @throws     PropelException Any exceptions caught during processing will be
-   *              rethrown wrapped into a PropelException.
-   */
-  public static function doSoftDelete($values, PropelPDO $con = null)
-  {
-    if ($con === null)
-    {
-      $con = Propel::getConnection(CollectorPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
-    }
-    if ($values instanceof Criteria)
-    {
-      // rename for clarity
-      $selectCriteria = clone $values;
-     } elseif ($values instanceof Collector) {
-      // create criteria based on pk values
-      $selectCriteria = $values->buildPkeyCriteria();
-    }
-    else
-    {
-      // it must be the primary key
-      $selectCriteria = new Criteria(self::DATABASE_NAME);
-       $selectCriteria->add(CollectorPeer::ID, (array) $values, Criteria::IN);
-    }
-    // Set the correct dbName
-    $selectCriteria->setDbName(CollectorPeer::DATABASE_NAME);
-    $updateCriteria = new Criteria(self::DATABASE_NAME);
-      $updateCriteria->add(CollectorPeer::DELETED_AT, time());
-     return BasePeer::doUpdate($selectCriteria, $updateCriteria, $con);
-  }
-  
-  /**
-   * Delete or soft delete records, depending on CollectorPeer::$softDelete
-   *
-   * @param       mixed $values Criteria or Collector object or primary key or array of primary keys
-   *              which is used to create the DELETE statement
-   * @param       PropelPDO $con the connection to use
-   * @return     int  The number of affected rows (if supported by underlying database driver).
-   * @throws     PropelException Any exceptions caught during processing will be
-   *              rethrown wrapped into a PropelException.
-   */
-  public static function doDelete($values, PropelPDO $con = null)
-  {
-    if (CollectorPeer::isSoftDeleteEnabled())
-    {
-      return CollectorPeer::doSoftDelete($values, $con);
-    }
-    else
-    {
-      return CollectorPeer::doForceDelete($values, $con);
-    }
-  }
-  /**
-   * Method to soft delete all rows from the collector table.
-   *
-   * @param       PropelPDO $con the connection to use
-   * @return     int The number of affected rows (if supported by underlying database driver).
-   * @throws     PropelException Any exceptions caught during processing will be
-   *              rethrown wrapped into a PropelException.
-   */
-  public static function doSoftDeleteAll(PropelPDO $con = null)
-  {
-    if ($con === null)
-    {
-      $con = Propel::getConnection(CollectorPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
-    }
-    $selectCriteria = new Criteria();
-    $selectCriteria->add(CollectorPeer::DELETED_AT, null, Criteria::ISNULL);
-    $selectCriteria->setDbName(CollectorPeer::DATABASE_NAME);
-    $modifyCriteria = new Criteria();
-    $modifyCriteria->add(CollectorPeer::DELETED_AT, time());
-    return BasePeer::doUpdate($selectCriteria, $modifyCriteria, $con);
-  }
-  
-  /**
-   * Delete or soft delete all records, depending on CollectorPeer::$softDelete
-   *
-   * @param       PropelPDO $con the connection to use
-   * @return     int  The number of affected rows (if supported by underlying database driver).
-   * @throws     PropelException Any exceptions caught during processing will be
-   *              rethrown wrapped into a PropelException.
-   */
-  public static function doDeleteAll(PropelPDO $con = null)
-  {
-    if (CollectorPeer::isSoftDeleteEnabled())
-    {
-      return CollectorPeer::doSoftDeleteAll($con);
-    }
-    else
-    {
-      return CollectorPeer::doForceDeleteAll($con);
-    }
-  }
-
   // symfony behavior
   
   /**
@@ -1212,7 +1115,7 @@ abstract class BaseCollectorPeer
    */
   static public function getUniqueColumnNames()
   {
-    return array(array('facebook_id'), array('slug'), array('email'));
+    return array(array('graph_id'), array('facebook_id'), array('slug'), array('email'));
   }
 
   // symfony_behaviors behavior

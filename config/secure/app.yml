@@ -33,13 +33,18 @@ prod:
     impermium: "6eed575e07cc2431293287a570d0afd0c3efde87"
     defensio: "B7107AA9A90675C6072F5D788FF21D94"
 
+    rpxnow:
+      application_domain: "https://collectorsquest.rpxnow.com/"
+      application_id: "ecaoeilckeolccbmopdp"
+      api_key: "e41ef45f2494b81cd32e6f2bbd34156f32be8012"
+
     recaptcha:
       public_key:  "6LdACwsAAAAAAE5tZTcYG47Lth2jzxxZeXAbll-Z"
       private_key: "6LdACwsAAAAAAM19l6G0lFk4F560SWvBM2k5M9L0"
 
     facebook:
-      app_id: "12734695313"
-      app_secret: "6f6c7cc89ddb21461821a84aa48f2b01"
+      application_id: "12734695313"
+      application_secret: "6f6c7cc89ddb21461821a84aa48f2b01"
 
 stg:
   paypal:

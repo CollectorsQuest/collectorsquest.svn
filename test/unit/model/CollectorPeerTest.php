@@ -11,7 +11,7 @@ $t->diag('::createFromArray()');
 
   $data = $data = array(
     'username' => uniqid(),
-    'password' => cqStatic::generatePassword(),
+    'password' => IceStatic::getUniquePassword(),
     'display_name' => 'Kiril Angov',
     'email' => 'kangov@collectorsquest.com',
 

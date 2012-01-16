@@ -89,7 +89,7 @@ class CollectionCategory extends BaseCollectionCategory
 
   public function getSlug()
   {
-    return General::slugify($this->getName());
+    return Utf8::slugify($this->getName());
   }
 }
 

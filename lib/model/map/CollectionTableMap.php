@@ -39,6 +39,7 @@ class CollectionTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
+    $this->addColumn('GRAPH_ID', 'GraphId', 'INTEGER', false, null, null);
     $this->addForeignKey('COLLECTION_CATEGORY_ID', 'CollectionCategoryId', 'INTEGER', 'collection_category', 'ID', false, null, null);
     $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
     $this->addColumn('NAME', 'Name', 'VARCHAR', true, 255, null);
@@ -54,8 +55,8 @@ class CollectionTableMap extends TableMap
     $this->addColumn('IS_FEATURED', 'IsFeatured', 'BOOLEAN', false, 1, false);
     $this->addColumn('COMMENTS_ON', 'CommentsOn', 'BOOLEAN', false, 1, true);
     $this->addColumn('RATING_ON', 'RatingOn', 'BOOLEAN', false, 1, true);
-    $this->addColumn('EBLOB', 'Eblob', 'LONGVARCHAR', false, null, null);
     $this->addColumn('DELETED_AT', 'DeletedAt', 'TIMESTAMP', false, null, null);
+    $this->addColumn('EBLOB', 'Eblob', 'LONGVARCHAR', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     // validators
@@ -84,7 +85,7 @@ class CollectionTableMap extends TableMap
   public function getBehaviors()
   {
     return array(
-      'soft_delete' => array('deleted_column' => 'deleted_at', ),
+      'archivable' => array('archive_table' => '', 'archive_class' => 'CollectionArchive', 'log_archived_at' => 'true', 'archived_at_column' => 'archived_at', 'archive_on_insert' => 'false', 'archive_on_update' => 'false', 'archive_on_delete' => 'true', ),
       'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
       'symfony' => array('form' => 'true', 'filter' => 'true', ),
       'symfony_behaviors' => array(),

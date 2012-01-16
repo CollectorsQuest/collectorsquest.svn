@@ -34,7 +34,7 @@ EOF;
 
     // We need Zend_Mail_Storage_Imap so load Zend Framework autoloader
     cqStatic::loadZendFramework();
-    
+
     // connecting with Imap
     $mail = new Zend_Mail_Storage_Imap(array('host'     => 'imap.gmail.com',
                                              'ssl'      => 'SSL',
@@ -49,7 +49,7 @@ EOF;
       // The number of the message in the IMAP mailbox
       $i = $message->key();
 
-      if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN)) 
+      if ($message->hasFlag(Zend_Mail_Storage::FLAG_SEEN))
       {
         continue;
       }
@@ -79,10 +79,10 @@ EOF;
 
       if ($url && substr($url, 0, 26) != 'http://www.collectorsquest')
       {
-        $url = cqStatic::getHttpHeader($url, 'Location');
+        $url = IceWebBrowser::getHttpHeader($url, 'Location');
       }
 
-      if (cqStatic::isUrl($url))
+      if (IceWebBrowser::isUrl($url))
       {
         $this->log('Found URL: '. $url);
 

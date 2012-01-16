@@ -185,6 +185,9 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
    */
   protected $alreadyInValidation = false;
 
+  // archivable behavior
+  protected $archiveOnDelete = true;
+
   /**
    * Applies default values to this object.
    * This method should be called from the object's constructor (or
@@ -1297,6 +1300,16 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
       $deleteQuery = CollectorProfileQuery::create()
         ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
+      // archivable behavior
+      if ($ret) {
+        if ($this->archiveOnDelete) {
+          // do nothing yet. The object will be archived later when calling CollectorProfileQuery::delete().
+        } else {
+          $deleteQuery->setArchiveOnDelete(false);
+          $this->archiveOnDelete = true;
+        }
+      }
+
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseCollectorProfile:delete:pre') as $callable)
       {
@@ -2168,6 +2181,128 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   public function __toString()
   {
     return (string) $this->exportTo(CollectorProfilePeer::DEFAULT_STRING_FORMAT);
+  }
+
+  // archivable behavior
+  
+  /**
+   * Get an archived version of the current object.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     CollectorProfileArchive An archive object, or null if the current object was never archived
+   */
+  public function getArchive(PropelPDO $con = null)
+  {
+    if ($this->isNew()) {
+      return null;
+    }
+    $archive = CollectorProfileArchiveQuery::create()
+      ->filterByPrimaryKey($this->getPrimaryKey())
+      ->findOne($con);
+  
+    return $archive;
+  }
+  
+  /**
+   * Copy the data of the current object into a $archiveTablePhpName archive object.
+   * The archived object is then saved.
+   * If the current object has already been archived, the archived object
+   * is updated and not duplicated.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object is new
+   *
+   * @return     CollectorProfileArchive The archive object based on this object
+   */
+  public function archive(PropelPDO $con = null)
+  {
+    if ($this->isNew()) {
+      throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
+    }
+    if (!$archive = $this->getArchive($con)) {
+      $archive = new CollectorProfileArchive();
+      $archive->setPrimaryKey($this->getPrimaryKey());
+    }
+    $this->copyInto($archive, $deepCopy = false, $makeNew = false);
+    $archive->save($con);
+  
+    return $archive;
+  }
+  
+  /**
+   * Revert the the current object to the state it had when it was last archived.
+   * The object must be saved afterwards if the changes must persist.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object has no corresponding archive.
+   *
+   * @return CollectorProfile The current object (for fluent API support)
+   */
+  public function restoreFromArchive(PropelPDO $con = null)
+  {
+    if (!$archive = $this->getArchive($con)) {
+      throw new PropelException('The current object has never been archived and cannot be restored');
+    }
+    $this->populateFromArchive($archive);
+  
+    return $this;
+  }
+  
+  /**
+   * Populates the the current object based on a $archiveTablePhpName archive object.
+   *
+   * @param      CollectorProfileArchive $archive An archived object based on the same class
+    * @param      Boolean $populateAutoIncrementPrimaryKeys 
+   *               If true, autoincrement columns are copied from the archive object.
+   *               If false, autoincrement columns are left intact.
+    *
+   * @return     CollectorProfile The current object (for fluent API support)
+   */
+  public function populateFromArchive($archive, $populateAutoIncrementPrimaryKeys = false)
+  {
+    if ($populateAutoIncrementPrimaryKeys) {
+      $this->setId($archive->getId());
+    }
+    $this->setCollectorId($archive->getCollectorId());
+    $this->setCollectorType($archive->getCollectorType());
+    $this->setBirthday($archive->getBirthday());
+    $this->setGender($archive->getGender());
+    $this->setZipPostal($archive->getZipPostal());
+    $this->setCountry($archive->getCountry());
+    $this->setCountryIso3166($archive->getCountryIso3166());
+    $this->setWebsite($archive->getWebsite());
+    $this->setAbout($archive->getAbout());
+    $this->setCollections($archive->getCollections());
+    $this->setCollecting($archive->getCollecting());
+    $this->setMostSpent($archive->getMostSpent());
+    $this->setAnuallySpent($archive->getAnuallySpent());
+    $this->setNewItemEvery($archive->getNewItemEvery());
+    $this->setInterests($archive->getInterests());
+    $this->setIsFeatured($archive->getIsFeatured());
+    $this->setIsSeller($archive->getIsSeller());
+    $this->setIsImageAuto($archive->getIsImageAuto());
+    $this->setPreferences($archive->getPreferences());
+    $this->setNotifications($archive->getNotifications());
+    $this->setUpdatedAt($archive->getUpdatedAt());
+    $this->setCreatedAt($archive->getCreatedAt());
+  
+    return $this;
+  }
+  
+  /**
+   * Removes the object from the database without archiving it.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     CollectorProfile The current object (for fluent API support)
+   */
+  public function deleteWithoutArchive(PropelPDO $con = null)
+  {
+    $this->archiveOnDelete = false;
+    return $this->delete($con);
   }
 
   /**

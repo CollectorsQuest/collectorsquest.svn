@@ -75,7 +75,15 @@ seller_ajax_save:
   url:   /seller/ajax/save
   param: { module: seller, action: ajaxSaveData }
 
+sellers:
+  url:   /sellers
+  param: { module: collectors, action: sellers }
+
 ### COLLECTORS
+
+collector_signup_facebook:
+  url:   /collector/signup/facebook
+  param: { module: collector, action: signupFacebook }
 
 collector_signup:
   url:   /collector/signup/:step
@@ -92,12 +100,11 @@ collector_by_id:
   param: { module: collector, action: index }
   requirements: { id: '\d+', slug: '[\-\w\.]+' }
 
-collector_by_slug:
-  url:  /collector/:slug
+collector_me:
+  url:  /collector/me
   class: sfPropelRoute
   options: { model: Collector, type: object, method: getObjectForRoute }
-  param: { module: collector, action: index }
-  requirements: { slug: '[\-\w\.]+' }
+  param: { module: collector, action: me }
 
 collectors_by_filter:
   url:   /collectors/filter/:filter
@@ -106,10 +113,6 @@ collectors_by_filter:
 collectors:
   url:   /collectors
   param: { module: collectors, action: index }
-
-sellers:
-  url:   /sellers
-  param: { module: collectors, action: sellers }
 
 ### COLLECTIONS
 

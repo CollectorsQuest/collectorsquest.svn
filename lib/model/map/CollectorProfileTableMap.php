@@ -81,6 +81,7 @@ class CollectorProfileTableMap extends TableMap
   public function getBehaviors()
   {
     return array(
+      'archivable' => array('archive_table' => '', 'archive_class' => 'CollectorProfileArchive', 'log_archived_at' => 'true', 'archived_at_column' => 'archived_at', 'archive_on_insert' => 'false', 'archive_on_update' => 'false', 'archive_on_delete' => 'true', ),
       'symfony' => array('form' => 'true', 'filter' => 'true', ),
       'symfony_behaviors' => array(),
       'symfony_timestampable' => array('update_column' => 'updated_at', 'create_column' => 'created_at', ),

@@ -2,44 +2,6 @@
 
 class General
 {
-  public static function weight_tags($tags, $steps = 6)
-  {
-    $min = 1e9;
-    $max = -1e9;
-
-    foreach ($tags as $tag => $value)
-    {
-      if (is_array($value)) {
-        $count = &$tags[$tag]["count"];
-      } else {
-        $count = &$tags[$tag];
-      }
-      $count = log($count);
-
-      $min = min($min, $count);
-      $max = max($max, $count);
-
-      unset($count);
-    }
-
-    // Note: we need to ensure the range is slightly too large to make sure even
-    // the largest element is rounded down.
-    $range = max(.01, $max - $min) * 1.0001;
-
-    foreach ($tags as $tag => $value)
-    {
-      if (is_array($value)) {
-        $count = &$tags[$tag]["count"];
-      } else {
-        $count = &$tags[$tag];
-      }
-      $count = 1 + floor($steps * ($count - $min) / $range) - 3;
-      unset($count);
-    }
-
-    return $tags;
-  }
-
   public static function nameToUniq()
   {
     srand((double) microtime() * 1000000);
@@ -252,7 +214,7 @@ class General
   	  $proxies = file(sfConfig::get('sf_data_dir').'/proxylist.txt');
   	} else {
   		return array();
-  	} 
+  	}
 
   	return explode('  ', $proxies[rand(0, count($proxies) - 1)]);
   }
@@ -283,7 +245,7 @@ class General
     if (strtolower($word) == 'elvis') {
       return $word;
     }
-  	
+
     $plural_end='os'; $replace_singular='o'; if( substr($word, -2) ==
     $plural_end) {
       $word = substr($word, 0,strlen($word)-2). $replace_singular;
@@ -322,16 +284,16 @@ class General
 
     return $word;
   }
-  
+
   static public function slugify($text)
   {
     // replace all non letters or digits by -
     $text = preg_replace('/\W+/', '-', $text);
- 
+
     // trim and lowercase
     $text = strtolower(trim($text, '-'));
- 
+
     return $text;
   }
-  
+
 }

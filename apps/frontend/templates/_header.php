@@ -25,7 +25,7 @@
     <?php else: ?>
       <?php echo  sprintf(__('Hello again, %s'), '<b>'.$sf_user->getCollector().'</b>'); ?>!
       &nbsp;
-      <?php echo  link_to(__('(Sign out)'), '@logout', array('style' => 'color: #000;')); ?>
+      <?php echo  link_to(__('(Sign out)'), $sf_user->getLogoutUrl(), array('style' => 'color: #000;')); ?>
     <?php endif; ?>
   </div>
   <h4 style="color: #fff; margin-top: 9px;"><?php echo  __("Where hunters gather!™"); ?></h4>

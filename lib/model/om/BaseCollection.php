@@ -31,6 +31,12 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   protected $id;
 
   /**
+   * The value for the graph_id field.
+   * @var        int
+   */
+  protected $graph_id;
+
+  /**
    * The value for the collection_category_id field.
    * @var        int
    */
@@ -124,16 +130,16 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   protected $rating_on;
 
   /**
-   * The value for the eblob field.
-   * @var        string
-   */
-  protected $eblob;
-
-  /**
    * The value for the deleted_at field.
    * @var        string
    */
   protected $deleted_at;
+
+  /**
+   * The value for the eblob field.
+   * @var        string
+   */
+  protected $eblob;
 
   /**
    * The value for the created_at field.
@@ -196,6 +202,9 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    */
   protected $alreadyInValidation = false;
 
+  // archivable behavior
+  protected $archiveOnDelete = true;
+
   /**
    * Applies default values to this object.
    * This method should be called from the object's constructor (or
@@ -233,6 +242,16 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   public function getId()
   {
     return $this->id;
+  }
+
+  /**
+   * Get the [graph_id] column value.
+   * 
+   * @return     int
+   */
+  public function getGraphId()
+  {
+    return $this->graph_id;
   }
 
   /**
@@ -376,16 +395,6 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   }
 
   /**
-   * Get the [eblob] column value.
-   * 
-   * @return     string
-   */
-  public function getEblob()
-  {
-    return $this->eblob;
-  }
-
-  /**
    * Get the [optionally formatted] temporal [deleted_at] column value.
    * 
    *
@@ -433,6 +442,16 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     {
       return $dt->format($format);
     }
+  }
+
+  /**
+   * Get the [eblob] column value.
+   * 
+   * @return     string
+   */
+  public function getEblob()
+  {
+    return $this->eblob;
   }
 
   /**
@@ -552,6 +571,28 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     {
       $this->id = $v;
       $this->modifiedColumns[] = CollectionPeer::ID;
+    }
+
+    return $this;
+  }
+
+  /**
+   * Set the value of [graph_id] column.
+   * 
+   * @param      int $v new value
+   * @return     Collection The current object (for fluent API support)
+   */
+  public function setGraphId($v)
+  {
+    if ($v !== null)
+    {
+      $v = (int) $v;
+    }
+
+    if ($this->graph_id !== $v)
+    {
+      $this->graph_id = $v;
+      $this->modifiedColumns[] = CollectionPeer::GRAPH_ID;
     }
 
     return $this;
@@ -920,28 +961,6 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [eblob] column.
-   * 
-   * @param      string $v new value
-   * @return     Collection The current object (for fluent API support)
-   */
-  public function setEblob($v)
-  {
-    if ($v !== null)
-    {
-      $v = (string) $v;
-    }
-
-    if ($this->eblob !== $v)
-    {
-      $this->eblob = $v;
-      $this->modifiedColumns[] = CollectionPeer::EBLOB;
-    }
-
-    return $this;
-  }
-
-  /**
    * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -960,6 +979,28 @@ abstract class BaseCollection extends BaseObject  implements Persistent
         $this->deleted_at = $newDateAsString;
         $this->modifiedColumns[] = CollectionPeer::DELETED_AT;
       }
+    }
+
+    return $this;
+  }
+
+  /**
+   * Set the value of [eblob] column.
+   * 
+   * @param      string $v new value
+   * @return     Collection The current object (for fluent API support)
+   */
+  public function setEblob($v)
+  {
+    if ($v !== null)
+    {
+      $v = (string) $v;
+    }
+
+    if ($this->eblob !== $v)
+    {
+      $this->eblob = $v;
+      $this->modifiedColumns[] = CollectionPeer::EBLOB;
     }
 
     return $this;
@@ -1092,24 +1133,25 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     {
 
       $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-      $this->collection_category_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-      $this->collector_id = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-      $this->name = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-      $this->slug = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-      $this->description = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-      $this->num_items = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
-      $this->num_views = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
-      $this->num_comments = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
-      $this->num_ratings = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
-      $this->score = ($row[$startcol + 10] !== null) ? (int) $row[$startcol + 10] : null;
-      $this->is_public = ($row[$startcol + 11] !== null) ? (boolean) $row[$startcol + 11] : null;
-      $this->is_featured = ($row[$startcol + 12] !== null) ? (boolean) $row[$startcol + 12] : null;
-      $this->comments_on = ($row[$startcol + 13] !== null) ? (boolean) $row[$startcol + 13] : null;
-      $this->rating_on = ($row[$startcol + 14] !== null) ? (boolean) $row[$startcol + 14] : null;
-      $this->eblob = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+      $this->graph_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+      $this->collection_category_id = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+      $this->collector_id = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
+      $this->name = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+      $this->slug = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+      $this->description = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+      $this->num_items = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
+      $this->num_views = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
+      $this->num_comments = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
+      $this->num_ratings = ($row[$startcol + 10] !== null) ? (int) $row[$startcol + 10] : null;
+      $this->score = ($row[$startcol + 11] !== null) ? (int) $row[$startcol + 11] : null;
+      $this->is_public = ($row[$startcol + 12] !== null) ? (boolean) $row[$startcol + 12] : null;
+      $this->is_featured = ($row[$startcol + 13] !== null) ? (boolean) $row[$startcol + 13] : null;
+      $this->comments_on = ($row[$startcol + 14] !== null) ? (boolean) $row[$startcol + 14] : null;
+      $this->rating_on = ($row[$startcol + 15] !== null) ? (boolean) $row[$startcol + 15] : null;
       $this->deleted_at = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
-      $this->created_at = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
-      $this->updated_at = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+      $this->eblob = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
+      $this->created_at = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+      $this->updated_at = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -1119,7 +1161,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 19; // 19 = CollectionPeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 20; // 20 = CollectionPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -1237,16 +1279,14 @@ abstract class BaseCollection extends BaseObject  implements Persistent
       $deleteQuery = CollectionQuery::create()
         ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
-      // soft_delete behavior
-      if (!empty($ret) && CollectionQuery::isSoftDeleteEnabled())
-      {
-        $this->keepUpdateDateUnchanged();
-        $this->setDeletedAt(time());
-        $this->save($con);
-        $this->postDelete($con);
-        $con->commit();
-        CollectionPeer::removeInstanceFromPool($this);
-        return;
+      // archivable behavior
+      if ($ret) {
+        if ($this->archiveOnDelete) {
+          // do nothing yet. The object will be archived later when calling CollectionQuery::delete().
+        } else {
+          $deleteQuery->setArchiveOnDelete(false);
+          $this->archiveOnDelete = true;
+        }
       }
 
       // symfony_behaviors behavior
@@ -1696,57 +1736,60 @@ abstract class BaseCollection extends BaseObject  implements Persistent
         return $this->getId();
         break;
       case 1:
-        return $this->getCollectionCategoryId();
+        return $this->getGraphId();
         break;
       case 2:
-        return $this->getCollectorId();
+        return $this->getCollectionCategoryId();
         break;
       case 3:
-        return $this->getName();
+        return $this->getCollectorId();
         break;
       case 4:
-        return $this->getSlug();
+        return $this->getName();
         break;
       case 5:
-        return $this->getDescription();
+        return $this->getSlug();
         break;
       case 6:
-        return $this->getNumItems();
+        return $this->getDescription();
         break;
       case 7:
-        return $this->getNumViews();
+        return $this->getNumItems();
         break;
       case 8:
-        return $this->getNumComments();
+        return $this->getNumViews();
         break;
       case 9:
-        return $this->getNumRatings();
+        return $this->getNumComments();
         break;
       case 10:
-        return $this->getScore();
+        return $this->getNumRatings();
         break;
       case 11:
-        return $this->getIsPublic();
+        return $this->getScore();
         break;
       case 12:
-        return $this->getIsFeatured();
+        return $this->getIsPublic();
         break;
       case 13:
-        return $this->getCommentsOn();
+        return $this->getIsFeatured();
         break;
       case 14:
-        return $this->getRatingOn();
+        return $this->getCommentsOn();
         break;
       case 15:
-        return $this->getEblob();
+        return $this->getRatingOn();
         break;
       case 16:
         return $this->getDeletedAt();
         break;
       case 17:
-        return $this->getCreatedAt();
+        return $this->getEblob();
         break;
       case 18:
+        return $this->getCreatedAt();
+        break;
+      case 19:
         return $this->getUpdatedAt();
         break;
       default:
@@ -1780,24 +1823,25 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     $keys = CollectionPeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
-      $keys[1] => $this->getCollectionCategoryId(),
-      $keys[2] => $this->getCollectorId(),
-      $keys[3] => $this->getName(),
-      $keys[4] => $this->getSlug(),
-      $keys[5] => $this->getDescription(),
-      $keys[6] => $this->getNumItems(),
-      $keys[7] => $this->getNumViews(),
-      $keys[8] => $this->getNumComments(),
-      $keys[9] => $this->getNumRatings(),
-      $keys[10] => $this->getScore(),
-      $keys[11] => $this->getIsPublic(),
-      $keys[12] => $this->getIsFeatured(),
-      $keys[13] => $this->getCommentsOn(),
-      $keys[14] => $this->getRatingOn(),
-      $keys[15] => $this->getEblob(),
+      $keys[1] => $this->getGraphId(),
+      $keys[2] => $this->getCollectionCategoryId(),
+      $keys[3] => $this->getCollectorId(),
+      $keys[4] => $this->getName(),
+      $keys[5] => $this->getSlug(),
+      $keys[6] => $this->getDescription(),
+      $keys[7] => $this->getNumItems(),
+      $keys[8] => $this->getNumViews(),
+      $keys[9] => $this->getNumComments(),
+      $keys[10] => $this->getNumRatings(),
+      $keys[11] => $this->getScore(),
+      $keys[12] => $this->getIsPublic(),
+      $keys[13] => $this->getIsFeatured(),
+      $keys[14] => $this->getCommentsOn(),
+      $keys[15] => $this->getRatingOn(),
       $keys[16] => $this->getDeletedAt(),
-      $keys[17] => $this->getCreatedAt(),
-      $keys[18] => $this->getUpdatedAt(),
+      $keys[17] => $this->getEblob(),
+      $keys[18] => $this->getCreatedAt(),
+      $keys[19] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -1865,57 +1909,60 @@ abstract class BaseCollection extends BaseObject  implements Persistent
         $this->setId($value);
         break;
       case 1:
-        $this->setCollectionCategoryId($value);
+        $this->setGraphId($value);
         break;
       case 2:
-        $this->setCollectorId($value);
+        $this->setCollectionCategoryId($value);
         break;
       case 3:
-        $this->setName($value);
+        $this->setCollectorId($value);
         break;
       case 4:
-        $this->setSlug($value);
+        $this->setName($value);
         break;
       case 5:
-        $this->setDescription($value);
+        $this->setSlug($value);
         break;
       case 6:
-        $this->setNumItems($value);
+        $this->setDescription($value);
         break;
       case 7:
-        $this->setNumViews($value);
+        $this->setNumItems($value);
         break;
       case 8:
-        $this->setNumComments($value);
+        $this->setNumViews($value);
         break;
       case 9:
-        $this->setNumRatings($value);
+        $this->setNumComments($value);
         break;
       case 10:
-        $this->setScore($value);
+        $this->setNumRatings($value);
         break;
       case 11:
-        $this->setIsPublic($value);
+        $this->setScore($value);
         break;
       case 12:
-        $this->setIsFeatured($value);
+        $this->setIsPublic($value);
         break;
       case 13:
-        $this->setCommentsOn($value);
+        $this->setIsFeatured($value);
         break;
       case 14:
-        $this->setRatingOn($value);
+        $this->setCommentsOn($value);
         break;
       case 15:
-        $this->setEblob($value);
+        $this->setRatingOn($value);
         break;
       case 16:
         $this->setDeletedAt($value);
         break;
       case 17:
-        $this->setCreatedAt($value);
+        $this->setEblob($value);
         break;
       case 18:
+        $this->setCreatedAt($value);
+        break;
+      case 19:
         $this->setUpdatedAt($value);
         break;
     }
@@ -1943,24 +1990,25 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     $keys = CollectionPeer::getFieldNames($keyType);
 
     if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-    if (array_key_exists($keys[1], $arr)) $this->setCollectionCategoryId($arr[$keys[1]]);
-    if (array_key_exists($keys[2], $arr)) $this->setCollectorId($arr[$keys[2]]);
-    if (array_key_exists($keys[3], $arr)) $this->setName($arr[$keys[3]]);
-    if (array_key_exists($keys[4], $arr)) $this->setSlug($arr[$keys[4]]);
-    if (array_key_exists($keys[5], $arr)) $this->setDescription($arr[$keys[5]]);
-    if (array_key_exists($keys[6], $arr)) $this->setNumItems($arr[$keys[6]]);
-    if (array_key_exists($keys[7], $arr)) $this->setNumViews($arr[$keys[7]]);
-    if (array_key_exists($keys[8], $arr)) $this->setNumComments($arr[$keys[8]]);
-    if (array_key_exists($keys[9], $arr)) $this->setNumRatings($arr[$keys[9]]);
-    if (array_key_exists($keys[10], $arr)) $this->setScore($arr[$keys[10]]);
-    if (array_key_exists($keys[11], $arr)) $this->setIsPublic($arr[$keys[11]]);
-    if (array_key_exists($keys[12], $arr)) $this->setIsFeatured($arr[$keys[12]]);
-    if (array_key_exists($keys[13], $arr)) $this->setCommentsOn($arr[$keys[13]]);
-    if (array_key_exists($keys[14], $arr)) $this->setRatingOn($arr[$keys[14]]);
-    if (array_key_exists($keys[15], $arr)) $this->setEblob($arr[$keys[15]]);
+    if (array_key_exists($keys[1], $arr)) $this->setGraphId($arr[$keys[1]]);
+    if (array_key_exists($keys[2], $arr)) $this->setCollectionCategoryId($arr[$keys[2]]);
+    if (array_key_exists($keys[3], $arr)) $this->setCollectorId($arr[$keys[3]]);
+    if (array_key_exists($keys[4], $arr)) $this->setName($arr[$keys[4]]);
+    if (array_key_exists($keys[5], $arr)) $this->setSlug($arr[$keys[5]]);
+    if (array_key_exists($keys[6], $arr)) $this->setDescription($arr[$keys[6]]);
+    if (array_key_exists($keys[7], $arr)) $this->setNumItems($arr[$keys[7]]);
+    if (array_key_exists($keys[8], $arr)) $this->setNumViews($arr[$keys[8]]);
+    if (array_key_exists($keys[9], $arr)) $this->setNumComments($arr[$keys[9]]);
+    if (array_key_exists($keys[10], $arr)) $this->setNumRatings($arr[$keys[10]]);
+    if (array_key_exists($keys[11], $arr)) $this->setScore($arr[$keys[11]]);
+    if (array_key_exists($keys[12], $arr)) $this->setIsPublic($arr[$keys[12]]);
+    if (array_key_exists($keys[13], $arr)) $this->setIsFeatured($arr[$keys[13]]);
+    if (array_key_exists($keys[14], $arr)) $this->setCommentsOn($arr[$keys[14]]);
+    if (array_key_exists($keys[15], $arr)) $this->setRatingOn($arr[$keys[15]]);
     if (array_key_exists($keys[16], $arr)) $this->setDeletedAt($arr[$keys[16]]);
-    if (array_key_exists($keys[17], $arr)) $this->setCreatedAt($arr[$keys[17]]);
-    if (array_key_exists($keys[18], $arr)) $this->setUpdatedAt($arr[$keys[18]]);
+    if (array_key_exists($keys[17], $arr)) $this->setEblob($arr[$keys[17]]);
+    if (array_key_exists($keys[18], $arr)) $this->setCreatedAt($arr[$keys[18]]);
+    if (array_key_exists($keys[19], $arr)) $this->setUpdatedAt($arr[$keys[19]]);
   }
 
   /**
@@ -1973,6 +2021,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     $criteria = new Criteria(CollectionPeer::DATABASE_NAME);
 
     if ($this->isColumnModified(CollectionPeer::ID)) $criteria->add(CollectionPeer::ID, $this->id);
+    if ($this->isColumnModified(CollectionPeer::GRAPH_ID)) $criteria->add(CollectionPeer::GRAPH_ID, $this->graph_id);
     if ($this->isColumnModified(CollectionPeer::COLLECTION_CATEGORY_ID)) $criteria->add(CollectionPeer::COLLECTION_CATEGORY_ID, $this->collection_category_id);
     if ($this->isColumnModified(CollectionPeer::COLLECTOR_ID)) $criteria->add(CollectionPeer::COLLECTOR_ID, $this->collector_id);
     if ($this->isColumnModified(CollectionPeer::NAME)) $criteria->add(CollectionPeer::NAME, $this->name);
@@ -1987,8 +2036,8 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectionPeer::IS_FEATURED)) $criteria->add(CollectionPeer::IS_FEATURED, $this->is_featured);
     if ($this->isColumnModified(CollectionPeer::COMMENTS_ON)) $criteria->add(CollectionPeer::COMMENTS_ON, $this->comments_on);
     if ($this->isColumnModified(CollectionPeer::RATING_ON)) $criteria->add(CollectionPeer::RATING_ON, $this->rating_on);
-    if ($this->isColumnModified(CollectionPeer::EBLOB)) $criteria->add(CollectionPeer::EBLOB, $this->eblob);
     if ($this->isColumnModified(CollectionPeer::DELETED_AT)) $criteria->add(CollectionPeer::DELETED_AT, $this->deleted_at);
+    if ($this->isColumnModified(CollectionPeer::EBLOB)) $criteria->add(CollectionPeer::EBLOB, $this->eblob);
     if ($this->isColumnModified(CollectionPeer::CREATED_AT)) $criteria->add(CollectionPeer::CREATED_AT, $this->created_at);
     if ($this->isColumnModified(CollectionPeer::UPDATED_AT)) $criteria->add(CollectionPeer::UPDATED_AT, $this->updated_at);
 
@@ -2053,6 +2102,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    */
   public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
+    $copyObj->setGraphId($this->getGraphId());
     $copyObj->setCollectionCategoryId($this->getCollectionCategoryId());
     $copyObj->setCollectorId($this->getCollectorId());
     $copyObj->setName($this->getName());
@@ -2067,8 +2117,8 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     $copyObj->setIsFeatured($this->getIsFeatured());
     $copyObj->setCommentsOn($this->getCommentsOn());
     $copyObj->setRatingOn($this->getRatingOn());
-    $copyObj->setEblob($this->getEblob());
     $copyObj->setDeletedAt($this->getDeletedAt());
+    $copyObj->setEblob($this->getEblob());
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
 
@@ -3108,6 +3158,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   public function clear()
   {
     $this->id = null;
+    $this->graph_id = null;
     $this->collection_category_id = null;
     $this->collector_id = null;
     $this->name = null;
@@ -3122,8 +3173,8 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     $this->is_featured = null;
     $this->comments_on = null;
     $this->rating_on = null;
-    $this->eblob = null;
     $this->deleted_at = null;
+    $this->eblob = null;
     $this->created_at = null;
     $this->updated_at = null;
     $this->alreadyInSave = false;
@@ -3224,33 +3275,123 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     return (string) $this->getName();
   }
 
-  // soft_delete behavior
+  // archivable behavior
   
   /**
-   * Bypass the soft_delete behavior and force a hard delete of the current object
+   * Get an archived version of the current object.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     CollectionArchive An archive object, or null if the current object was never archived
    */
-  public function forceDelete(PropelPDO $con = null)
+  public function getArchive(PropelPDO $con = null)
   {
-    if($isSoftDeleteEnabled = CollectionPeer::isSoftDeleteEnabled())
-    {
-      CollectionPeer::disableSoftDelete();
+    if ($this->isNew()) {
+      return null;
     }
-    $this->delete($con);
-    if ($isSoftDeleteEnabled)
-    {
-      CollectionPeer::enableSoftDelete();
-    }
+    $archive = CollectionArchiveQuery::create()
+      ->filterByPrimaryKey($this->getPrimaryKey())
+      ->findOne($con);
+  
+    return $archive;
   }
   
   /**
-   * Undelete a row that was soft_deleted
+   * Copy the data of the current object into a $archiveTablePhpName archive object.
+   * The archived object is then saved.
+   * If the current object has already been archived, the archived object
+   * is updated and not duplicated.
    *
-   * @return     int The number of rows affected by this update and any referring fk objects' save() operations.
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object is new
+   *
+   * @return     CollectionArchive The archive object based on this object
    */
-  public function unDelete(PropelPDO $con = null)
+  public function archive(PropelPDO $con = null)
   {
-    $this->setDeletedAt(null);
-    return $this->save($con);
+    if ($this->isNew()) {
+      throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
+    }
+    if (!$archive = $this->getArchive($con)) {
+      $archive = new CollectionArchive();
+      $archive->setPrimaryKey($this->getPrimaryKey());
+    }
+    $this->copyInto($archive, $deepCopy = false, $makeNew = false);
+    $archive->save($con);
+  
+    return $archive;
+  }
+  
+  /**
+   * Revert the the current object to the state it had when it was last archived.
+   * The object must be saved afterwards if the changes must persist.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object has no corresponding archive.
+   *
+   * @return Collection The current object (for fluent API support)
+   */
+  public function restoreFromArchive(PropelPDO $con = null)
+  {
+    if (!$archive = $this->getArchive($con)) {
+      throw new PropelException('The current object has never been archived and cannot be restored');
+    }
+    $this->populateFromArchive($archive);
+  
+    return $this;
+  }
+  
+  /**
+   * Populates the the current object based on a $archiveTablePhpName archive object.
+   *
+   * @param      CollectionArchive $archive An archived object based on the same class
+    * @param      Boolean $populateAutoIncrementPrimaryKeys 
+   *               If true, autoincrement columns are copied from the archive object.
+   *               If false, autoincrement columns are left intact.
+    *
+   * @return     Collection The current object (for fluent API support)
+   */
+  public function populateFromArchive($archive, $populateAutoIncrementPrimaryKeys = false)
+  {
+    if ($populateAutoIncrementPrimaryKeys) {
+      $this->setId($archive->getId());
+    }
+    $this->setGraphId($archive->getGraphId());
+    $this->setCollectionCategoryId($archive->getCollectionCategoryId());
+    $this->setCollectorId($archive->getCollectorId());
+    $this->setName($archive->getName());
+    $this->setSlug($archive->getSlug());
+    $this->setDescription($archive->getDescription());
+    $this->setNumItems($archive->getNumItems());
+    $this->setNumViews($archive->getNumViews());
+    $this->setNumComments($archive->getNumComments());
+    $this->setNumRatings($archive->getNumRatings());
+    $this->setScore($archive->getScore());
+    $this->setIsPublic($archive->getIsPublic());
+    $this->setIsFeatured($archive->getIsFeatured());
+    $this->setCommentsOn($archive->getCommentsOn());
+    $this->setRatingOn($archive->getRatingOn());
+    $this->setDeletedAt($archive->getDeletedAt());
+    $this->setEblob($archive->getEblob());
+    $this->setCreatedAt($archive->getCreatedAt());
+    $this->setUpdatedAt($archive->getUpdatedAt());
+  
+    return $this;
+  }
+  
+  /**
+   * Removes the object from the database without archiving it.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     Collection The current object (for fluent API support)
+   */
+  public function deleteWithoutArchive(PropelPDO $con = null)
+  {
+    $this->archiveOnDelete = false;
+    return $this->delete($con);
   }
 
   // timestampable behavior

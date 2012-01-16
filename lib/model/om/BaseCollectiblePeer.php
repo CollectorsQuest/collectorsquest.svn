@@ -27,16 +27,19 @@ abstract class BaseCollectiblePeer
   const TM_CLASS = 'CollectibleTableMap';
 
   /** The total number of columns. */
-  const NUM_COLUMNS = 14;
+  const NUM_COLUMNS = 15;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
   /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-  const NUM_HYDRATE_COLUMNS = 14;
+  const NUM_HYDRATE_COLUMNS = 15;
 
   /** the column name for the ID field */
   const ID = 'collectible.ID';
+
+  /** the column name for the GRAPH_ID field */
+  const GRAPH_ID = 'collectible.GRAPH_ID';
 
   /** the column name for the COLLECTOR_ID field */
   const COLLECTOR_ID = 'collectible.COLLECTOR_ID';
@@ -65,11 +68,11 @@ abstract class BaseCollectiblePeer
   /** the column name for the IS_NAME_AUTOMATIC field */
   const IS_NAME_AUTOMATIC = 'collectible.IS_NAME_AUTOMATIC';
 
-  /** the column name for the EBLOB field */
-  const EBLOB = 'collectible.EBLOB';
-
   /** the column name for the DELETED_AT field */
   const DELETED_AT = 'collectible.DELETED_AT';
+
+  /** the column name for the EBLOB field */
+  const EBLOB = 'collectible.EBLOB';
 
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'collectible.CREATED_AT';
@@ -96,12 +99,12 @@ abstract class BaseCollectiblePeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectorId', 'CollectionId', 'Name', 'Slug', 'Description', 'NumComments', 'Score', 'Position', 'IsNameAutomatic', 'Eblob', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectorId', 'collectionId', 'name', 'slug', 'description', 'numComments', 'score', 'position', 'isNameAutomatic', 'eblob', 'deletedAt', 'createdAt', 'updatedAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTOR_ID, self::COLLECTION_ID, self::NAME, self::SLUG, self::DESCRIPTION, self::NUM_COMMENTS, self::SCORE, self::POSITION, self::IS_NAME_AUTOMATIC, self::EBLOB, self::DELETED_AT, self::CREATED_AT, self::UPDATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTOR_ID', 'COLLECTION_ID', 'NAME', 'SLUG', 'DESCRIPTION', 'NUM_COMMENTS', 'SCORE', 'POSITION', 'IS_NAME_AUTOMATIC', 'EBLOB', 'DELETED_AT', 'CREATED_AT', 'UPDATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'collector_id', 'collection_id', 'name', 'slug', 'description', 'num_comments', 'score', 'position', 'is_name_automatic', 'eblob', 'deleted_at', 'created_at', 'updated_at', ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+    BasePeer::TYPE_PHPNAME => array ('Id', 'GraphId', 'CollectorId', 'CollectionId', 'Name', 'Slug', 'Description', 'NumComments', 'Score', 'Position', 'IsNameAutomatic', 'DeletedAt', 'Eblob', 'CreatedAt', 'UpdatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'graphId', 'collectorId', 'collectionId', 'name', 'slug', 'description', 'numComments', 'score', 'position', 'isNameAutomatic', 'deletedAt', 'eblob', 'createdAt', 'updatedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::GRAPH_ID, self::COLLECTOR_ID, self::COLLECTION_ID, self::NAME, self::SLUG, self::DESCRIPTION, self::NUM_COMMENTS, self::SCORE, self::POSITION, self::IS_NAME_AUTOMATIC, self::DELETED_AT, self::EBLOB, self::CREATED_AT, self::UPDATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'GRAPH_ID', 'COLLECTOR_ID', 'COLLECTION_ID', 'NAME', 'SLUG', 'DESCRIPTION', 'NUM_COMMENTS', 'SCORE', 'POSITION', 'IS_NAME_AUTOMATIC', 'DELETED_AT', 'EBLOB', 'CREATED_AT', 'UPDATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'graph_id', 'collector_id', 'collection_id', 'name', 'slug', 'description', 'num_comments', 'score', 'position', 'is_name_automatic', 'deleted_at', 'eblob', 'created_at', 'updated_at', ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
   );
 
   /**
@@ -111,12 +114,12 @@ abstract class BaseCollectiblePeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectorId' => 1, 'CollectionId' => 2, 'Name' => 3, 'Slug' => 4, 'Description' => 5, 'NumComments' => 6, 'Score' => 7, 'Position' => 8, 'IsNameAutomatic' => 9, 'Eblob' => 10, 'DeletedAt' => 11, 'CreatedAt' => 12, 'UpdatedAt' => 13, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectorId' => 1, 'collectionId' => 2, 'name' => 3, 'slug' => 4, 'description' => 5, 'numComments' => 6, 'score' => 7, 'position' => 8, 'isNameAutomatic' => 9, 'eblob' => 10, 'deletedAt' => 11, 'createdAt' => 12, 'updatedAt' => 13, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTOR_ID => 1, self::COLLECTION_ID => 2, self::NAME => 3, self::SLUG => 4, self::DESCRIPTION => 5, self::NUM_COMMENTS => 6, self::SCORE => 7, self::POSITION => 8, self::IS_NAME_AUTOMATIC => 9, self::EBLOB => 10, self::DELETED_AT => 11, self::CREATED_AT => 12, self::UPDATED_AT => 13, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTOR_ID' => 1, 'COLLECTION_ID' => 2, 'NAME' => 3, 'SLUG' => 4, 'DESCRIPTION' => 5, 'NUM_COMMENTS' => 6, 'SCORE' => 7, 'POSITION' => 8, 'IS_NAME_AUTOMATIC' => 9, 'EBLOB' => 10, 'DELETED_AT' => 11, 'CREATED_AT' => 12, 'UPDATED_AT' => 13, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collector_id' => 1, 'collection_id' => 2, 'name' => 3, 'slug' => 4, 'description' => 5, 'num_comments' => 6, 'score' => 7, 'position' => 8, 'is_name_automatic' => 9, 'eblob' => 10, 'deleted_at' => 11, 'created_at' => 12, 'updated_at' => 13, ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, )
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'GraphId' => 1, 'CollectorId' => 2, 'CollectionId' => 3, 'Name' => 4, 'Slug' => 5, 'Description' => 6, 'NumComments' => 7, 'Score' => 8, 'Position' => 9, 'IsNameAutomatic' => 10, 'DeletedAt' => 11, 'Eblob' => 12, 'CreatedAt' => 13, 'UpdatedAt' => 14, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'graphId' => 1, 'collectorId' => 2, 'collectionId' => 3, 'name' => 4, 'slug' => 5, 'description' => 6, 'numComments' => 7, 'score' => 8, 'position' => 9, 'isNameAutomatic' => 10, 'deletedAt' => 11, 'eblob' => 12, 'createdAt' => 13, 'updatedAt' => 14, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::GRAPH_ID => 1, self::COLLECTOR_ID => 2, self::COLLECTION_ID => 3, self::NAME => 4, self::SLUG => 5, self::DESCRIPTION => 6, self::NUM_COMMENTS => 7, self::SCORE => 8, self::POSITION => 9, self::IS_NAME_AUTOMATIC => 10, self::DELETED_AT => 11, self::EBLOB => 12, self::CREATED_AT => 13, self::UPDATED_AT => 14, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'GRAPH_ID' => 1, 'COLLECTOR_ID' => 2, 'COLLECTION_ID' => 3, 'NAME' => 4, 'SLUG' => 5, 'DESCRIPTION' => 6, 'NUM_COMMENTS' => 7, 'SCORE' => 8, 'POSITION' => 9, 'IS_NAME_AUTOMATIC' => 10, 'DELETED_AT' => 11, 'EBLOB' => 12, 'CREATED_AT' => 13, 'UPDATED_AT' => 14, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'graph_id' => 1, 'collector_id' => 2, 'collection_id' => 3, 'name' => 4, 'slug' => 5, 'description' => 6, 'num_comments' => 7, 'score' => 8, 'position' => 9, 'is_name_automatic' => 10, 'deleted_at' => 11, 'eblob' => 12, 'created_at' => 13, 'updated_at' => 14, ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
   );
 
   /**
@@ -192,6 +195,7 @@ abstract class BaseCollectiblePeer
     if (null === $alias)
     {
       $criteria->addSelectColumn(CollectiblePeer::ID);
+      $criteria->addSelectColumn(CollectiblePeer::GRAPH_ID);
       $criteria->addSelectColumn(CollectiblePeer::COLLECTOR_ID);
       $criteria->addSelectColumn(CollectiblePeer::COLLECTION_ID);
       $criteria->addSelectColumn(CollectiblePeer::NAME);
@@ -201,14 +205,15 @@ abstract class BaseCollectiblePeer
       $criteria->addSelectColumn(CollectiblePeer::SCORE);
       $criteria->addSelectColumn(CollectiblePeer::POSITION);
       $criteria->addSelectColumn(CollectiblePeer::IS_NAME_AUTOMATIC);
-      $criteria->addSelectColumn(CollectiblePeer::EBLOB);
       $criteria->addSelectColumn(CollectiblePeer::DELETED_AT);
+      $criteria->addSelectColumn(CollectiblePeer::EBLOB);
       $criteria->addSelectColumn(CollectiblePeer::CREATED_AT);
       $criteria->addSelectColumn(CollectiblePeer::UPDATED_AT);
     }
     else
     {
       $criteria->addSelectColumn($alias . '.ID');
+      $criteria->addSelectColumn($alias . '.GRAPH_ID');
       $criteria->addSelectColumn($alias . '.COLLECTOR_ID');
       $criteria->addSelectColumn($alias . '.COLLECTION_ID');
       $criteria->addSelectColumn($alias . '.NAME');
@@ -218,8 +223,8 @@ abstract class BaseCollectiblePeer
       $criteria->addSelectColumn($alias . '.SCORE');
       $criteria->addSelectColumn($alias . '.POSITION');
       $criteria->addSelectColumn($alias . '.IS_NAME_AUTOMATIC');
-      $criteria->addSelectColumn($alias . '.EBLOB');
       $criteria->addSelectColumn($alias . '.DELETED_AT');
+      $criteria->addSelectColumn($alias . '.EBLOB');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
       $criteria->addSelectColumn($alias . '.UPDATED_AT');
     }
@@ -259,15 +264,6 @@ abstract class BaseCollectiblePeer
     if ($con === null)
     {
       $con = Propel::getConnection(CollectiblePeer::DATABASE_NAME, Propel::CONNECTION_READ);
-    }
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
     }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
@@ -350,15 +346,6 @@ abstract class BaseCollectiblePeer
 
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -618,15 +605,6 @@ abstract class BaseCollectiblePeer
 
     $criteria->addJoin(CollectiblePeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -689,15 +667,6 @@ abstract class BaseCollectiblePeer
 
     $criteria->addJoin(CollectiblePeer::COLLECTION_ID, CollectionPeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -744,15 +713,6 @@ abstract class BaseCollectiblePeer
 
     $criteria->addJoin(CollectiblePeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -832,15 +792,6 @@ abstract class BaseCollectiblePeer
 
     $criteria->addJoin(CollectiblePeer::COLLECTION_ID, CollectionPeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -938,15 +889,6 @@ abstract class BaseCollectiblePeer
 
     $criteria->addJoin(CollectiblePeer::COLLECTION_ID, CollectionPeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -1000,15 +942,6 @@ abstract class BaseCollectiblePeer
 
     $criteria->addJoin(CollectiblePeer::COLLECTION_ID, CollectionPeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -1124,15 +1057,6 @@ abstract class BaseCollectiblePeer
   
     $criteria->addJoin(CollectiblePeer::COLLECTION_ID, CollectionPeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -1195,15 +1119,6 @@ abstract class BaseCollectiblePeer
   
     $criteria->addJoin(CollectiblePeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -1255,15 +1170,6 @@ abstract class BaseCollectiblePeer
 
     $criteria->addJoin(CollectiblePeer::COLLECTION_ID, CollectionPeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -1350,15 +1256,6 @@ abstract class BaseCollectiblePeer
 
     $criteria->addJoin(CollectiblePeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -1555,7 +1452,7 @@ abstract class BaseCollectiblePeer
    * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doForceDeleteAll(PropelPDO $con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -1596,7 +1493,7 @@ abstract class BaseCollectiblePeer
    * @throws     PropelException Any exceptions caught during processing will be
    *     rethrown wrapped into a PropelException.
    */
-   public static function doForceDelete($values, PropelPDO $con = null)
+   public static function doDelete($values, PropelPDO $con = null)
    {
     if ($con === null)
     {
@@ -1838,135 +1735,6 @@ abstract class BaseCollectiblePeer
     return $objs;
   }
 
-  // soft_delete behavior
-  
-  /**
-   * Enable the soft_delete behavior for this model
-   */
-  public static function enableSoftDelete()
-  {
-    CollectibleQuery::enableSoftDelete();
-    // some soft_deleted objects may be in the instance pool
-    CollectiblePeer::clearInstancePool();
-  }
-  
-  /**
-   * Disable the soft_delete behavior for this model
-   */
-  public static function disableSoftDelete()
-  {
-    CollectibleQuery::disableSoftDelete();
-  }
-  
-  /**
-   * Check the soft_delete behavior for this model
-   * @return boolean true if the soft_delete behavior is enabled
-   */
-  public static function isSoftDeleteEnabled()
-  {
-    return CollectibleQuery::isSoftDeleteEnabled();
-  }
-  
-  /**
-   * Soft delete records, given a Collectible or Criteria object OR a primary key value.
-   *
-   * @param       mixed $values Criteria or Collectible object or primary key or array of primary keys
-   *              which is used to create the DELETE statement
-   * @param       PropelPDO $con the connection to use
-   * @return     int  The number of affected rows (if supported by underlying database driver).
-   * @throws     PropelException Any exceptions caught during processing will be
-   *              rethrown wrapped into a PropelException.
-   */
-  public static function doSoftDelete($values, PropelPDO $con = null)
-  {
-    if ($con === null)
-    {
-      $con = Propel::getConnection(CollectiblePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
-    }
-    if ($values instanceof Criteria)
-    {
-      // rename for clarity
-      $selectCriteria = clone $values;
-     } elseif ($values instanceof Collectible) {
-      // create criteria based on pk values
-      $selectCriteria = $values->buildPkeyCriteria();
-    }
-    else
-    {
-      // it must be the primary key
-      $selectCriteria = new Criteria(self::DATABASE_NAME);
-       $selectCriteria->add(CollectiblePeer::ID, (array) $values, Criteria::IN);
-    }
-    // Set the correct dbName
-    $selectCriteria->setDbName(CollectiblePeer::DATABASE_NAME);
-    $updateCriteria = new Criteria(self::DATABASE_NAME);
-      $updateCriteria->add(CollectiblePeer::DELETED_AT, time());
-     return BasePeer::doUpdate($selectCriteria, $updateCriteria, $con);
-  }
-  
-  /**
-   * Delete or soft delete records, depending on CollectiblePeer::$softDelete
-   *
-   * @param       mixed $values Criteria or Collectible object or primary key or array of primary keys
-   *              which is used to create the DELETE statement
-   * @param       PropelPDO $con the connection to use
-   * @return     int  The number of affected rows (if supported by underlying database driver).
-   * @throws     PropelException Any exceptions caught during processing will be
-   *              rethrown wrapped into a PropelException.
-   */
-  public static function doDelete($values, PropelPDO $con = null)
-  {
-    if (CollectiblePeer::isSoftDeleteEnabled())
-    {
-      return CollectiblePeer::doSoftDelete($values, $con);
-    }
-    else
-    {
-      return CollectiblePeer::doForceDelete($values, $con);
-    }
-  }
-  /**
-   * Method to soft delete all rows from the collectible table.
-   *
-   * @param       PropelPDO $con the connection to use
-   * @return     int The number of affected rows (if supported by underlying database driver).
-   * @throws     PropelException Any exceptions caught during processing will be
-   *              rethrown wrapped into a PropelException.
-   */
-  public static function doSoftDeleteAll(PropelPDO $con = null)
-  {
-    if ($con === null)
-    {
-      $con = Propel::getConnection(CollectiblePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
-    }
-    $selectCriteria = new Criteria();
-    $selectCriteria->add(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    $selectCriteria->setDbName(CollectiblePeer::DATABASE_NAME);
-    $modifyCriteria = new Criteria();
-    $modifyCriteria->add(CollectiblePeer::DELETED_AT, time());
-    return BasePeer::doUpdate($selectCriteria, $modifyCriteria, $con);
-  }
-  
-  /**
-   * Delete or soft delete all records, depending on CollectiblePeer::$softDelete
-   *
-   * @param       PropelPDO $con the connection to use
-   * @return     int  The number of affected rows (if supported by underlying database driver).
-   * @throws     PropelException Any exceptions caught during processing will be
-   *              rethrown wrapped into a PropelException.
-   */
-  public static function doDeleteAll(PropelPDO $con = null)
-  {
-    if (CollectiblePeer::isSoftDeleteEnabled())
-    {
-      return CollectiblePeer::doSoftDeleteAll($con);
-    }
-    else
-    {
-      return CollectiblePeer::doForceDeleteAll($con);
-    }
-  }
-
   // symfony behavior
   
   /**
@@ -1976,7 +1744,7 @@ abstract class BaseCollectiblePeer
    */
   static public function getUniqueColumnNames()
   {
-    return array(array('slug'));
+    return array(array('graph_id'), array('slug'));
   }
 
   // symfony_behaviors behavior

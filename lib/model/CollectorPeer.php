@@ -86,25 +86,36 @@ class CollectorPeer extends BaseCollectorPeer
     return $collector;
   }
 
-  public static function createFromRPX(RPX $rpx)
+  public static function createFromRPXProfile($profile)
   {
-    // Build the data array
-    $data = array(
-      'username' => uniqid(),
-      'password' => cqStatic::generatePassword(),
-      'display_name' => !empty($rpx->displayName) ? (string) $rpx->displayName : (string) $rpx->preferredUsername,
-      'email' => (string) $rpx->email,
-      'birthday' => (string) $rpx->birthday,
-      'gender' => (string) $rpx->gender,
-      'website' => (string) $rpx->url
-    );
-    $collector = self::createFromArray($data);
+    $email = !empty($profile['verifiedEmail']) ? $profile['verifiedEmail'] : $profile['email'];
 
-    if ($collector)
+    if (empty($email) || !$collector = CollectorQuery::create()->findOneByEmail($email))
+    {
+      // Build the data array
+      $data = array(
+        'username' => uniqid('rpx'),
+        'password' => IceStatic::getUniquePassword(),
+        'display_name' => !empty($profile['displayName']) ? $profile['displayName'] : $profile['preferredUsername'],
+        'email' => $email,
+        'birthday' => isset($profile['birthdate']) ? $profile['birthdate'] : null,
+        'gender' => isset($profile['gender']) ? $profile['gender'] : null,
+        'website' => isset($profile['url']) ? $profile['url'] : null
+      );
+
+      $collector = self::createFromArray($data);
+    }
+
+    if (!$collector_identifier = CollectorIdentifierQuery::create()->findOneByIdentifier($profile['identifier']))
     {
       $collector_identifier = new CollectorIdentifier();
       $collector_identifier->setCollector($collector);
-      $collector_identifier->setIdentifier((string) $rpx->identifier);
+      $collector_identifier->setIdentifier($profile['identifier']);
+      $collector_identifier->save();
+    }
+    else
+    {
+      $collector_identifier->setCollector($collector);
       $collector_identifier->save();
     }
 
@@ -119,15 +130,20 @@ class CollectorPeer extends BaseCollectorPeer
     $collector->setDisplayName($data['display_name']);
     $collector->setEmail($data['email']);
 
+    if (!empty($data['facebook_id']))
+    {
+      $collector->setFacebookId($data['facebook_id']);
+    }
+
     // All of the profile data is optional, thus make sure to check it is provided
     $collector_profile = new CollectorProfile();
     $collector_profile->setCollector($collector);
 
-    if (!empty($data['birthday']))
+    if (!empty($data['birthday']) && is_string($data['birthday']))
     {
       $collector_profile->setBirthday($data['birthday']);
     }
-    if (!empty($data['gender']))
+    if (!empty($data['gender']) && is_string($data['gender']))
     {
       $collector_profile->setGender($data['gender']);
     }
@@ -139,7 +155,7 @@ class CollectorPeer extends BaseCollectorPeer
     {
       $collector_profile->setCountry($data['country']);
     }
-    if (!empty($data['website']))
+    if (!empty($data['website']) && is_string($data['website']))
     {
       $collector_profile->setWebsite($data['website']);
     }
@@ -200,7 +216,7 @@ class CollectorPeer extends BaseCollectorPeer
 
     ksort($tags, SORT_STRING);
 
-    $tags = cqStatic::weight_tags($tags, 6);
+    $tags = IceTaggableToolkit::weight_tags($tags, 6);
 
     return $tags;
   }
@@ -231,7 +247,7 @@ class CollectorPeer extends BaseCollectorPeer
       $tags[$row['tag']] = $row['count'];
     }
 
-    $tags = cqStatic::weight_tags($tags, 6);
+    $tags = IceTaggableToolkit::weight_tags($tags, 6);
 
     return $tags;
   }
@@ -306,6 +322,11 @@ class CollectorPeer extends BaseCollectorPeer
     $collector->setPassword($data['password']);
     $collector->setDisplayName($data['display_name']);
     $collector->setEmail($data['email']);
+
+    if (!empty($data['facebook_id']))
+    {
+      $collector->setFacebookId($data['facebook_id']);
+    }
 
     $collector_profile = new CollectorProfile();
     $collector_profile->setCollector($collector);

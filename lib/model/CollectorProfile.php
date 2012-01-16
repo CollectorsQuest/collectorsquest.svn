@@ -65,11 +65,11 @@ class CollectorProfile extends BaseCollectorProfile
 
   public function setGender($v)
   {
-    if (in_array($v, array('female', 'girl', 'f')))
+    if (in_array(strtolower($v), array('female', 'girl', 'f')))
     {
       $v = 'f';
     }
-    else if (in_array($v, array('male', 'boy', 'm')))
+    else if (in_array(strtolower($v), array('male', 'boy', 'm')))
     {
       $v = 'm';
     }
@@ -138,7 +138,7 @@ class CollectorProfile extends BaseCollectorProfile
 
   public function setWebsite($v)
   {
-    $v = cqStatic::formatUrl($v);
+    $v = IceWebBrowser::formatUrl($v);
     $v = preg_replace(array('/^http:\/\//i', '/^https:\/\//i'), '', $v);
     $v = preg_replace('/^www\./', '', $v);
 
@@ -149,7 +149,7 @@ class CollectorProfile extends BaseCollectorProfile
   {
     if ($website = $this->getWebsite())
     {
-      return cqStatic::formatUrl($website);
+      return IceWebBrowser::formatUrl($website);
     }
 
     return null;

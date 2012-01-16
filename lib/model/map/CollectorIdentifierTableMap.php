@@ -39,7 +39,7 @@ class CollectorIdentifierTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-    $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', false, null, null);
+    $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
     $this->addColumn('IDENTIFIER', 'Identifier', 'VARCHAR', false, 255, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     // validators
@@ -62,6 +62,7 @@ class CollectorIdentifierTableMap extends TableMap
   public function getBehaviors()
   {
     return array(
+      'archivable' => array('archive_table' => '', 'archive_class' => 'CollectorIdentifierArchive', 'log_archived_at' => 'true', 'archived_at_column' => 'archived_at', 'archive_on_insert' => 'false', 'archive_on_update' => 'false', 'archive_on_delete' => 'true', ),
       'symfony' => array('form' => 'true', 'filter' => 'true', ),
       'symfony_behaviors' => array(),
       'symfony_timestampable' => array('create_column' => 'created_at', ),

@@ -115,6 +115,9 @@ abstract class BaseCollectorGeocache extends BaseObject  implements Persistent
    */
   protected $alreadyInValidation = false;
 
+  // archivable behavior
+  protected $archiveOnDelete = true;
+
   /**
    * Get the [id] column value.
    * 
@@ -661,6 +664,16 @@ abstract class BaseCollectorGeocache extends BaseObject  implements Persistent
       $deleteQuery = CollectorGeocacheQuery::create()
         ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
+      // archivable behavior
+      if ($ret) {
+        if ($this->archiveOnDelete) {
+          // do nothing yet. The object will be archived later when calling CollectorGeocacheQuery::delete().
+        } else {
+          $deleteQuery->setArchiveOnDelete(false);
+          $this->archiveOnDelete = true;
+        }
+      }
+
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseCollectorGeocache:delete:pre') as $callable)
       {
@@ -1399,6 +1412,117 @@ abstract class BaseCollectorGeocache extends BaseObject  implements Persistent
   public function __toString()
   {
     return (string) $this->exportTo(CollectorGeocachePeer::DEFAULT_STRING_FORMAT);
+  }
+
+  // archivable behavior
+  
+  /**
+   * Get an archived version of the current object.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     CollectorGeocacheArchive An archive object, or null if the current object was never archived
+   */
+  public function getArchive(PropelPDO $con = null)
+  {
+    if ($this->isNew()) {
+      return null;
+    }
+    $archive = CollectorGeocacheArchiveQuery::create()
+      ->filterByPrimaryKey($this->getPrimaryKey())
+      ->findOne($con);
+  
+    return $archive;
+  }
+  
+  /**
+   * Copy the data of the current object into a $archiveTablePhpName archive object.
+   * The archived object is then saved.
+   * If the current object has already been archived, the archived object
+   * is updated and not duplicated.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object is new
+   *
+   * @return     CollectorGeocacheArchive The archive object based on this object
+   */
+  public function archive(PropelPDO $con = null)
+  {
+    if ($this->isNew()) {
+      throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
+    }
+    if (!$archive = $this->getArchive($con)) {
+      $archive = new CollectorGeocacheArchive();
+      $archive->setPrimaryKey($this->getPrimaryKey());
+    }
+    $this->copyInto($archive, $deepCopy = false, $makeNew = false);
+    $archive->save($con);
+  
+    return $archive;
+  }
+  
+  /**
+   * Revert the the current object to the state it had when it was last archived.
+   * The object must be saved afterwards if the changes must persist.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object has no corresponding archive.
+   *
+   * @return CollectorGeocache The current object (for fluent API support)
+   */
+  public function restoreFromArchive(PropelPDO $con = null)
+  {
+    if (!$archive = $this->getArchive($con)) {
+      throw new PropelException('The current object has never been archived and cannot be restored');
+    }
+    $this->populateFromArchive($archive);
+  
+    return $this;
+  }
+  
+  /**
+   * Populates the the current object based on a $archiveTablePhpName archive object.
+   *
+   * @param      CollectorGeocacheArchive $archive An archived object based on the same class
+    * @param      Boolean $populateAutoIncrementPrimaryKeys 
+   *               If true, autoincrement columns are copied from the archive object.
+   *               If false, autoincrement columns are left intact.
+    *
+   * @return     CollectorGeocache The current object (for fluent API support)
+   */
+  public function populateFromArchive($archive, $populateAutoIncrementPrimaryKeys = false)
+  {
+    if ($populateAutoIncrementPrimaryKeys) {
+      $this->setId($archive->getId());
+    }
+    $this->setCollectorId($archive->getCollectorId());
+    $this->setCountry($archive->getCountry());
+    $this->setCountryIso3166($archive->getCountryIso3166());
+    $this->setState($archive->getState());
+    $this->setCounty($archive->getCounty());
+    $this->setCity($archive->getCity());
+    $this->setZipPostal($archive->getZipPostal());
+    $this->setAddress($archive->getAddress());
+    $this->setLatitude($archive->getLatitude());
+    $this->setLongitude($archive->getLongitude());
+    $this->setTimezone($archive->getTimezone());
+  
+    return $this;
+  }
+  
+  /**
+   * Removes the object from the database without archiving it.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     CollectorGeocache The current object (for fluent API support)
+   */
+  public function deleteWithoutArchive(PropelPDO $con = null)
+  {
+    $this->archiveOnDelete = false;
+    return $this->delete($con);
   }
 
   /**

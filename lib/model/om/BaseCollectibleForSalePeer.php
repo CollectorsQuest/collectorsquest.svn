@@ -250,15 +250,6 @@ abstract class BaseCollectibleForSalePeer
     {
       $con = Propel::getConnection(CollectibleForSalePeer::DATABASE_NAME, Propel::CONNECTION_READ);
     }
-    // soft_delete behavior
-    if (CollectibleForSaleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectibleForSalePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectibleForSalePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -340,15 +331,6 @@ abstract class BaseCollectibleForSalePeer
 
     // Set the correct dbName
     $criteria->setDbName(self::DATABASE_NAME);
-    // soft_delete behavior
-    if (CollectibleForSaleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectibleForSalePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectibleForSalePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -599,15 +581,6 @@ abstract class BaseCollectibleForSalePeer
 
     $criteria->addJoin(CollectibleForSalePeer::COLLECTIBLE_ID, CollectiblePeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleForSaleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectibleForSalePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectibleForSalePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -654,15 +627,6 @@ abstract class BaseCollectibleForSalePeer
 
     $criteria->addJoin(CollectibleForSalePeer::COLLECTIBLE_ID, CollectiblePeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleForSaleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectibleForSalePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectibleForSalePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -758,15 +722,6 @@ abstract class BaseCollectibleForSalePeer
 
     $criteria->addJoin(CollectibleForSalePeer::COLLECTIBLE_ID, CollectiblePeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleForSaleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectibleForSalePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectibleForSalePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -815,15 +770,6 @@ abstract class BaseCollectibleForSalePeer
 
     $criteria->addJoin(CollectibleForSalePeer::COLLECTIBLE_ID, CollectiblePeer::ID, $join_behavior);
 
-    // soft_delete behavior
-    if (CollectibleForSaleQuery::isSoftDeleteEnabled())
-    {
-      $criteria->add(CollectibleForSalePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectibleForSalePeer::enableSoftDelete();
-    }
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
     {
@@ -1018,7 +964,7 @@ abstract class BaseCollectibleForSalePeer
    * @param      PropelPDO $con the connection to use
    * @return     int The number of affected rows (if supported by underlying database driver).
    */
-  public static function doForceDeleteAll(PropelPDO $con = null)
+  public static function doDeleteAll(PropelPDO $con = null)
   {
     if ($con === null)
     {
@@ -1058,7 +1004,7 @@ abstract class BaseCollectibleForSalePeer
    * @throws     PropelException Any exceptions caught during processing will be
    *     rethrown wrapped into a PropelException.
    */
-   public static function doForceDelete($values, PropelPDO $con = null)
+   public static function doDelete($values, PropelPDO $con = null)
    {
     if ($con === null)
     {
@@ -1250,135 +1196,6 @@ abstract class BaseCollectibleForSalePeer
       $objs = CollectibleForSalePeer::doSelect($criteria, $con);
     }
     return $objs;
-  }
-
-  // soft_delete behavior
-  
-  /**
-   * Enable the soft_delete behavior for this model
-   */
-  public static function enableSoftDelete()
-  {
-    CollectibleForSaleQuery::enableSoftDelete();
-    // some soft_deleted objects may be in the instance pool
-    CollectibleForSalePeer::clearInstancePool();
-  }
-  
-  /**
-   * Disable the soft_delete behavior for this model
-   */
-  public static function disableSoftDelete()
-  {
-    CollectibleForSaleQuery::disableSoftDelete();
-  }
-  
-  /**
-   * Check the soft_delete behavior for this model
-   * @return boolean true if the soft_delete behavior is enabled
-   */
-  public static function isSoftDeleteEnabled()
-  {
-    return CollectibleForSaleQuery::isSoftDeleteEnabled();
-  }
-  
-  /**
-   * Soft delete records, given a CollectibleForSale or Criteria object OR a primary key value.
-   *
-   * @param       mixed $values Criteria or CollectibleForSale object or primary key or array of primary keys
-   *              which is used to create the DELETE statement
-   * @param       PropelPDO $con the connection to use
-   * @return     int  The number of affected rows (if supported by underlying database driver).
-   * @throws     PropelException Any exceptions caught during processing will be
-   *              rethrown wrapped into a PropelException.
-   */
-  public static function doSoftDelete($values, PropelPDO $con = null)
-  {
-    if ($con === null)
-    {
-      $con = Propel::getConnection(CollectibleForSalePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
-    }
-    if ($values instanceof Criteria)
-    {
-      // rename for clarity
-      $selectCriteria = clone $values;
-     } elseif ($values instanceof CollectibleForSale) {
-      // create criteria based on pk values
-      $selectCriteria = $values->buildPkeyCriteria();
-    }
-    else
-    {
-      // it must be the primary key
-      $selectCriteria = new Criteria(self::DATABASE_NAME);
-       $selectCriteria->add(CollectibleForSalePeer::ID, (array) $values, Criteria::IN);
-    }
-    // Set the correct dbName
-    $selectCriteria->setDbName(CollectibleForSalePeer::DATABASE_NAME);
-    $updateCriteria = new Criteria(self::DATABASE_NAME);
-      $updateCriteria->add(CollectibleForSalePeer::DELETED_AT, time());
-     return BasePeer::doUpdate($selectCriteria, $updateCriteria, $con);
-  }
-  
-  /**
-   * Delete or soft delete records, depending on CollectibleForSalePeer::$softDelete
-   *
-   * @param       mixed $values Criteria or CollectibleForSale object or primary key or array of primary keys
-   *              which is used to create the DELETE statement
-   * @param       PropelPDO $con the connection to use
-   * @return     int  The number of affected rows (if supported by underlying database driver).
-   * @throws     PropelException Any exceptions caught during processing will be
-   *              rethrown wrapped into a PropelException.
-   */
-  public static function doDelete($values, PropelPDO $con = null)
-  {
-    if (CollectibleForSalePeer::isSoftDeleteEnabled())
-    {
-      return CollectibleForSalePeer::doSoftDelete($values, $con);
-    }
-    else
-    {
-      return CollectibleForSalePeer::doForceDelete($values, $con);
-    }
-  }
-  /**
-   * Method to soft delete all rows from the collectible_for_sale table.
-   *
-   * @param       PropelPDO $con the connection to use
-   * @return     int The number of affected rows (if supported by underlying database driver).
-   * @throws     PropelException Any exceptions caught during processing will be
-   *              rethrown wrapped into a PropelException.
-   */
-  public static function doSoftDeleteAll(PropelPDO $con = null)
-  {
-    if ($con === null)
-    {
-      $con = Propel::getConnection(CollectibleForSalePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
-    }
-    $selectCriteria = new Criteria();
-    $selectCriteria->add(CollectibleForSalePeer::DELETED_AT, null, Criteria::ISNULL);
-    $selectCriteria->setDbName(CollectibleForSalePeer::DATABASE_NAME);
-    $modifyCriteria = new Criteria();
-    $modifyCriteria->add(CollectibleForSalePeer::DELETED_AT, time());
-    return BasePeer::doUpdate($selectCriteria, $modifyCriteria, $con);
-  }
-  
-  /**
-   * Delete or soft delete all records, depending on CollectibleForSalePeer::$softDelete
-   *
-   * @param       PropelPDO $con the connection to use
-   * @return     int  The number of affected rows (if supported by underlying database driver).
-   * @throws     PropelException Any exceptions caught during processing will be
-   *              rethrown wrapped into a PropelException.
-   */
-  public static function doDeleteAll(PropelPDO $con = null)
-  {
-    if (CollectibleForSalePeer::isSoftDeleteEnabled())
-    {
-      return CollectibleForSalePeer::doSoftDeleteAll($con);
-    }
-    else
-    {
-      return CollectibleForSalePeer::doForceDeleteAll($con);
-    }
   }
 
   // symfony behavior

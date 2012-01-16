@@ -1122,7 +1122,7 @@ abstract class BaseCollectorIdentifierPeer
    */
   static public function getUniqueColumnNames()
   {
-    return array(array('collector_id', 'identifier'));
+    return array(array('identifier'));
   }
 
   // symfony_behaviors behavior

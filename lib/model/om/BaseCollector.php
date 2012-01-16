@@ -31,6 +31,12 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   protected $id;
 
   /**
+   * The value for the graph_id field.
+   * @var        int
+   */
+  protected $graph_id;
+
+  /**
    * The value for the facebook_id field.
    * @var        string
    */
@@ -125,6 +131,13 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   protected $company;
 
   /**
+   * The value for the locale field.
+   * Note: this column has a database default value of: 'en_US'
+   * @var        string
+   */
+  protected $locale;
+
+  /**
    * The value for the score field.
    * Note: this column has a database default value of: 0
    * @var        int
@@ -165,16 +178,16 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   protected $last_seen_at;
 
   /**
-   * The value for the eblob field.
-   * @var        string
-   */
-  protected $eblob;
-
-  /**
    * The value for the deleted_at field.
    * @var        string
    */
   protected $deleted_at;
+
+  /**
+   * The value for the eblob field.
+   * @var        string
+   */
+  protected $eblob;
 
   /**
    * The value for the created_at field.
@@ -197,6 +210,11 @@ abstract class BaseCollector extends BaseObject  implements Persistent
    * @var        array CollectorProfile[] Collection to store aggregation of CollectorProfile objects.
    */
   protected $collCollectorProfiles;
+
+  /**
+   * @var        array CollectorEmail[] Collection to store aggregation of CollectorEmail objects.
+   */
+  protected $collCollectorEmails;
 
   /**
    * @var        array CollectorIdentifier[] Collection to store aggregation of CollectorIdentifier objects.
@@ -267,6 +285,9 @@ abstract class BaseCollector extends BaseObject  implements Persistent
    */
   protected $alreadyInValidation = false;
 
+  // archivable behavior
+  protected $archiveOnDelete = true;
+
   /**
    * Applies default values to this object.
    * This method should be called from the object's constructor (or
@@ -279,6 +300,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $this->purchases_per_year = 0;
     $this->annually_spend = 0;
     $this->most_expensive_item = 0;
+    $this->locale = 'en_US';
     $this->score = 0;
     $this->spam_score = 0;
     $this->is_spam = false;
@@ -303,6 +325,16 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   public function getId()
   {
     return $this->id;
+  }
+
+  /**
+   * Get the [graph_id] column value.
+   * 
+   * @return     int
+   */
+  public function getGraphId()
+  {
+    return $this->graph_id;
   }
 
   /**
@@ -456,6 +488,16 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Get the [locale] column value.
+   * 
+   * @return     string
+   */
+  public function getLocale()
+  {
+    return $this->locale;
+  }
+
+  /**
    * Get the [score] column value.
    * 
    * @return     int
@@ -556,16 +598,6 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
-   * Get the [eblob] column value.
-   * 
-   * @return     string
-   */
-  public function getEblob()
-  {
-    return $this->eblob;
-  }
-
-  /**
    * Get the [optionally formatted] temporal [deleted_at] column value.
    * 
    *
@@ -613,6 +645,16 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     {
       return $dt->format($format);
     }
+  }
+
+  /**
+   * Get the [eblob] column value.
+   * 
+   * @return     string
+   */
+  public function getEblob()
+  {
+    return $this->eblob;
   }
 
   /**
@@ -732,6 +774,28 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     {
       $this->id = $v;
       $this->modifiedColumns[] = CollectorPeer::ID;
+    }
+
+    return $this;
+  }
+
+  /**
+   * Set the value of [graph_id] column.
+   * 
+   * @param      int $v new value
+   * @return     Collector The current object (for fluent API support)
+   */
+  public function setGraphId($v)
+  {
+    if ($v !== null)
+    {
+      $v = (int) $v;
+    }
+
+    if ($this->graph_id !== $v)
+    {
+      $this->graph_id = $v;
+      $this->modifiedColumns[] = CollectorPeer::GRAPH_ID;
     }
 
     return $this;
@@ -1068,6 +1132,28 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Set the value of [locale] column.
+   * 
+   * @param      string $v new value
+   * @return     Collector The current object (for fluent API support)
+   */
+  public function setLocale($v)
+  {
+    if ($v !== null)
+    {
+      $v = (string) $v;
+    }
+
+    if ($this->locale !== $v)
+    {
+      $this->locale = $v;
+      $this->modifiedColumns[] = CollectorPeer::LOCALE;
+    }
+
+    return $this;
+  }
+
+  /**
    * Set the value of [score] column.
    * 
    * @param      int $v new value
@@ -1224,28 +1310,6 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [eblob] column.
-   * 
-   * @param      string $v new value
-   * @return     Collector The current object (for fluent API support)
-   */
-  public function setEblob($v)
-  {
-    if ($v !== null)
-    {
-      $v = (string) $v;
-    }
-
-    if ($this->eblob !== $v)
-    {
-      $this->eblob = $v;
-      $this->modifiedColumns[] = CollectorPeer::EBLOB;
-    }
-
-    return $this;
-  }
-
-  /**
    * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -1264,6 +1328,28 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         $this->deleted_at = $newDateAsString;
         $this->modifiedColumns[] = CollectorPeer::DELETED_AT;
       }
+    }
+
+    return $this;
+  }
+
+  /**
+   * Set the value of [eblob] column.
+   * 
+   * @param      string $v new value
+   * @return     Collector The current object (for fluent API support)
+   */
+  public function setEblob($v)
+  {
+    if ($v !== null)
+    {
+      $v = (string) $v;
+    }
+
+    if ($this->eblob !== $v)
+    {
+      $this->eblob = $v;
+      $this->modifiedColumns[] = CollectorPeer::EBLOB;
     }
 
     return $this;
@@ -1347,6 +1433,11 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         return false;
       }
 
+      if ($this->locale !== 'en_US')
+      {
+        return false;
+      }
+
       if ($this->score !== 0)
       {
         return false;
@@ -1391,31 +1482,33 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     {
 
       $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-      $this->facebook_id = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-      $this->username = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-      $this->display_name = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-      $this->slug = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-      $this->sha1_password = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-      $this->salt = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-      $this->email = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-      $this->user_type = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-      $this->items_allowed = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
-      $this->what_you_collect = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-      $this->purchases_per_year = ($row[$startcol + 11] !== null) ? (int) $row[$startcol + 11] : null;
-      $this->what_you_sell = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
-      $this->annually_spend = ($row[$startcol + 13] !== null) ? (double) $row[$startcol + 13] : null;
-      $this->most_expensive_item = ($row[$startcol + 14] !== null) ? (double) $row[$startcol + 14] : null;
-      $this->company = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
-      $this->score = ($row[$startcol + 16] !== null) ? (int) $row[$startcol + 16] : null;
-      $this->spam_score = ($row[$startcol + 17] !== null) ? (int) $row[$startcol + 17] : null;
-      $this->is_spam = ($row[$startcol + 18] !== null) ? (boolean) $row[$startcol + 18] : null;
-      $this->is_public = ($row[$startcol + 19] !== null) ? (boolean) $row[$startcol + 19] : null;
-      $this->session_id = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
-      $this->last_seen_at = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
-      $this->eblob = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
-      $this->deleted_at = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
-      $this->created_at = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
-      $this->updated_at = ($row[$startcol + 25] !== null) ? (string) $row[$startcol + 25] : null;
+      $this->graph_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+      $this->facebook_id = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+      $this->username = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+      $this->display_name = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+      $this->slug = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+      $this->sha1_password = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+      $this->salt = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+      $this->email = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+      $this->user_type = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+      $this->items_allowed = ($row[$startcol + 10] !== null) ? (int) $row[$startcol + 10] : null;
+      $this->what_you_collect = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+      $this->purchases_per_year = ($row[$startcol + 12] !== null) ? (int) $row[$startcol + 12] : null;
+      $this->what_you_sell = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+      $this->annually_spend = ($row[$startcol + 14] !== null) ? (double) $row[$startcol + 14] : null;
+      $this->most_expensive_item = ($row[$startcol + 15] !== null) ? (double) $row[$startcol + 15] : null;
+      $this->company = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+      $this->locale = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
+      $this->score = ($row[$startcol + 18] !== null) ? (int) $row[$startcol + 18] : null;
+      $this->spam_score = ($row[$startcol + 19] !== null) ? (int) $row[$startcol + 19] : null;
+      $this->is_spam = ($row[$startcol + 20] !== null) ? (boolean) $row[$startcol + 20] : null;
+      $this->is_public = ($row[$startcol + 21] !== null) ? (boolean) $row[$startcol + 21] : null;
+      $this->session_id = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+      $this->last_seen_at = ($row[$startcol + 23] !== null) ? (string) $row[$startcol + 23] : null;
+      $this->deleted_at = ($row[$startcol + 24] !== null) ? (string) $row[$startcol + 24] : null;
+      $this->eblob = ($row[$startcol + 25] !== null) ? (string) $row[$startcol + 25] : null;
+      $this->created_at = ($row[$startcol + 26] !== null) ? (string) $row[$startcol + 26] : null;
+      $this->updated_at = ($row[$startcol + 27] !== null) ? (string) $row[$startcol + 27] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -1425,7 +1518,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 26; // 26 = CollectorPeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 28; // 28 = CollectorPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -1497,6 +1590,8 @@ abstract class BaseCollector extends BaseObject  implements Persistent
 
       $this->collCollectorProfiles = null;
 
+      $this->collCollectorEmails = null;
+
       $this->collCollectorIdentifiers = null;
 
       $this->collCollectorInterviews = null;
@@ -1549,16 +1644,14 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $deleteQuery = CollectorQuery::create()
         ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
-      // soft_delete behavior
-      if (!empty($ret) && CollectorQuery::isSoftDeleteEnabled())
-      {
-        $this->keepUpdateDateUnchanged();
-        $this->setDeletedAt(time());
-        $this->save($con);
-        $this->postDelete($con);
-        $con->commit();
-        CollectorPeer::removeInstanceFromPool($this);
-        return;
+      // archivable behavior
+      if ($ret) {
+        if ($this->archiveOnDelete) {
+          // do nothing yet. The object will be archived later when calling CollectorQuery::delete().
+        } else {
+          $deleteQuery->setArchiveOnDelete(false);
+          $this->archiveOnDelete = true;
+        }
       }
 
       // symfony_behaviors behavior
@@ -1753,6 +1846,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       if ($this->collCollectorProfiles !== null)
       {
         foreach ($this->collCollectorProfiles as $referrerFK)
+        {
+          if (!$referrerFK->isDeleted())
+          {
+            $affectedRows += $referrerFK->save($con);
+          }
+        }
+      }
+
+      if ($this->collCollectorEmails !== null)
+      {
+        foreach ($this->collCollectorEmails as $referrerFK)
         {
           if (!$referrerFK->isDeleted())
           {
@@ -1980,6 +2084,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
           }
         }
 
+        if ($this->collCollectorEmails !== null)
+        {
+          foreach ($this->collCollectorEmails as $referrerFK)
+          {
+            if (!$referrerFK->validate($columns))
+            {
+              $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+            }
+          }
+        }
+
         if ($this->collCollectorIdentifiers !== null)
         {
           foreach ($this->collCollectorIdentifiers as $referrerFK)
@@ -2139,78 +2254,84 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         return $this->getId();
         break;
       case 1:
-        return $this->getFacebookId();
+        return $this->getGraphId();
         break;
       case 2:
-        return $this->getUsername();
+        return $this->getFacebookId();
         break;
       case 3:
-        return $this->getDisplayName();
+        return $this->getUsername();
         break;
       case 4:
-        return $this->getSlug();
+        return $this->getDisplayName();
         break;
       case 5:
-        return $this->getSha1Password();
+        return $this->getSlug();
         break;
       case 6:
-        return $this->getSalt();
+        return $this->getSha1Password();
         break;
       case 7:
-        return $this->getEmail();
+        return $this->getSalt();
         break;
       case 8:
-        return $this->getUserType();
+        return $this->getEmail();
         break;
       case 9:
-        return $this->getItemsAllowed();
+        return $this->getUserType();
         break;
       case 10:
-        return $this->getWhatYouCollect();
+        return $this->getItemsAllowed();
         break;
       case 11:
-        return $this->getPurchasesPerYear();
+        return $this->getWhatYouCollect();
         break;
       case 12:
-        return $this->getWhatYouSell();
+        return $this->getPurchasesPerYear();
         break;
       case 13:
-        return $this->getAnnuallySpend();
+        return $this->getWhatYouSell();
         break;
       case 14:
-        return $this->getMostExpensiveItem();
+        return $this->getAnnuallySpend();
         break;
       case 15:
-        return $this->getCompany();
+        return $this->getMostExpensiveItem();
         break;
       case 16:
-        return $this->getScore();
+        return $this->getCompany();
         break;
       case 17:
-        return $this->getSpamScore();
+        return $this->getLocale();
         break;
       case 18:
-        return $this->getIsSpam();
+        return $this->getScore();
         break;
       case 19:
-        return $this->getIsPublic();
+        return $this->getSpamScore();
         break;
       case 20:
-        return $this->getSessionId();
+        return $this->getIsSpam();
         break;
       case 21:
-        return $this->getLastSeenAt();
+        return $this->getIsPublic();
         break;
       case 22:
-        return $this->getEblob();
+        return $this->getSessionId();
         break;
       case 23:
-        return $this->getDeletedAt();
+        return $this->getLastSeenAt();
         break;
       case 24:
-        return $this->getCreatedAt();
+        return $this->getDeletedAt();
         break;
       case 25:
+        return $this->getEblob();
+        break;
+      case 26:
+        return $this->getCreatedAt();
+        break;
+      case 27:
         return $this->getUpdatedAt();
         break;
       default:
@@ -2244,31 +2365,33 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $keys = CollectorPeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
-      $keys[1] => $this->getFacebookId(),
-      $keys[2] => $this->getUsername(),
-      $keys[3] => $this->getDisplayName(),
-      $keys[4] => $this->getSlug(),
-      $keys[5] => $this->getSha1Password(),
-      $keys[6] => $this->getSalt(),
-      $keys[7] => $this->getEmail(),
-      $keys[8] => $this->getUserType(),
-      $keys[9] => $this->getItemsAllowed(),
-      $keys[10] => $this->getWhatYouCollect(),
-      $keys[11] => $this->getPurchasesPerYear(),
-      $keys[12] => $this->getWhatYouSell(),
-      $keys[13] => $this->getAnnuallySpend(),
-      $keys[14] => $this->getMostExpensiveItem(),
-      $keys[15] => $this->getCompany(),
-      $keys[16] => $this->getScore(),
-      $keys[17] => $this->getSpamScore(),
-      $keys[18] => $this->getIsSpam(),
-      $keys[19] => $this->getIsPublic(),
-      $keys[20] => $this->getSessionId(),
-      $keys[21] => $this->getLastSeenAt(),
-      $keys[22] => $this->getEblob(),
-      $keys[23] => $this->getDeletedAt(),
-      $keys[24] => $this->getCreatedAt(),
-      $keys[25] => $this->getUpdatedAt(),
+      $keys[1] => $this->getGraphId(),
+      $keys[2] => $this->getFacebookId(),
+      $keys[3] => $this->getUsername(),
+      $keys[4] => $this->getDisplayName(),
+      $keys[5] => $this->getSlug(),
+      $keys[6] => $this->getSha1Password(),
+      $keys[7] => $this->getSalt(),
+      $keys[8] => $this->getEmail(),
+      $keys[9] => $this->getUserType(),
+      $keys[10] => $this->getItemsAllowed(),
+      $keys[11] => $this->getWhatYouCollect(),
+      $keys[12] => $this->getPurchasesPerYear(),
+      $keys[13] => $this->getWhatYouSell(),
+      $keys[14] => $this->getAnnuallySpend(),
+      $keys[15] => $this->getMostExpensiveItem(),
+      $keys[16] => $this->getCompany(),
+      $keys[17] => $this->getLocale(),
+      $keys[18] => $this->getScore(),
+      $keys[19] => $this->getSpamScore(),
+      $keys[20] => $this->getIsSpam(),
+      $keys[21] => $this->getIsPublic(),
+      $keys[22] => $this->getSessionId(),
+      $keys[23] => $this->getLastSeenAt(),
+      $keys[24] => $this->getDeletedAt(),
+      $keys[25] => $this->getEblob(),
+      $keys[26] => $this->getCreatedAt(),
+      $keys[27] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -2279,6 +2402,10 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       if (null !== $this->collCollectorProfiles)
       {
         $result['CollectorProfiles'] = $this->collCollectorProfiles->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+      if (null !== $this->collCollectorEmails)
+      {
+        $result['CollectorEmails'] = $this->collCollectorEmails->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
       }
       if (null !== $this->collCollectorIdentifiers)
       {
@@ -2360,78 +2487,84 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         $this->setId($value);
         break;
       case 1:
-        $this->setFacebookId($value);
+        $this->setGraphId($value);
         break;
       case 2:
-        $this->setUsername($value);
+        $this->setFacebookId($value);
         break;
       case 3:
-        $this->setDisplayName($value);
+        $this->setUsername($value);
         break;
       case 4:
-        $this->setSlug($value);
+        $this->setDisplayName($value);
         break;
       case 5:
-        $this->setSha1Password($value);
+        $this->setSlug($value);
         break;
       case 6:
-        $this->setSalt($value);
+        $this->setSha1Password($value);
         break;
       case 7:
-        $this->setEmail($value);
+        $this->setSalt($value);
         break;
       case 8:
-        $this->setUserType($value);
+        $this->setEmail($value);
         break;
       case 9:
-        $this->setItemsAllowed($value);
+        $this->setUserType($value);
         break;
       case 10:
-        $this->setWhatYouCollect($value);
+        $this->setItemsAllowed($value);
         break;
       case 11:
-        $this->setPurchasesPerYear($value);
+        $this->setWhatYouCollect($value);
         break;
       case 12:
-        $this->setWhatYouSell($value);
+        $this->setPurchasesPerYear($value);
         break;
       case 13:
-        $this->setAnnuallySpend($value);
+        $this->setWhatYouSell($value);
         break;
       case 14:
-        $this->setMostExpensiveItem($value);
+        $this->setAnnuallySpend($value);
         break;
       case 15:
-        $this->setCompany($value);
+        $this->setMostExpensiveItem($value);
         break;
       case 16:
-        $this->setScore($value);
+        $this->setCompany($value);
         break;
       case 17:
-        $this->setSpamScore($value);
+        $this->setLocale($value);
         break;
       case 18:
-        $this->setIsSpam($value);
+        $this->setScore($value);
         break;
       case 19:
-        $this->setIsPublic($value);
+        $this->setSpamScore($value);
         break;
       case 20:
-        $this->setSessionId($value);
+        $this->setIsSpam($value);
         break;
       case 21:
-        $this->setLastSeenAt($value);
+        $this->setIsPublic($value);
         break;
       case 22:
-        $this->setEblob($value);
+        $this->setSessionId($value);
         break;
       case 23:
-        $this->setDeletedAt($value);
+        $this->setLastSeenAt($value);
         break;
       case 24:
-        $this->setCreatedAt($value);
+        $this->setDeletedAt($value);
         break;
       case 25:
+        $this->setEblob($value);
+        break;
+      case 26:
+        $this->setCreatedAt($value);
+        break;
+      case 27:
         $this->setUpdatedAt($value);
         break;
     }
@@ -2459,31 +2592,33 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $keys = CollectorPeer::getFieldNames($keyType);
 
     if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-    if (array_key_exists($keys[1], $arr)) $this->setFacebookId($arr[$keys[1]]);
-    if (array_key_exists($keys[2], $arr)) $this->setUsername($arr[$keys[2]]);
-    if (array_key_exists($keys[3], $arr)) $this->setDisplayName($arr[$keys[3]]);
-    if (array_key_exists($keys[4], $arr)) $this->setSlug($arr[$keys[4]]);
-    if (array_key_exists($keys[5], $arr)) $this->setSha1Password($arr[$keys[5]]);
-    if (array_key_exists($keys[6], $arr)) $this->setSalt($arr[$keys[6]]);
-    if (array_key_exists($keys[7], $arr)) $this->setEmail($arr[$keys[7]]);
-    if (array_key_exists($keys[8], $arr)) $this->setUserType($arr[$keys[8]]);
-    if (array_key_exists($keys[9], $arr)) $this->setItemsAllowed($arr[$keys[9]]);
-    if (array_key_exists($keys[10], $arr)) $this->setWhatYouCollect($arr[$keys[10]]);
-    if (array_key_exists($keys[11], $arr)) $this->setPurchasesPerYear($arr[$keys[11]]);
-    if (array_key_exists($keys[12], $arr)) $this->setWhatYouSell($arr[$keys[12]]);
-    if (array_key_exists($keys[13], $arr)) $this->setAnnuallySpend($arr[$keys[13]]);
-    if (array_key_exists($keys[14], $arr)) $this->setMostExpensiveItem($arr[$keys[14]]);
-    if (array_key_exists($keys[15], $arr)) $this->setCompany($arr[$keys[15]]);
-    if (array_key_exists($keys[16], $arr)) $this->setScore($arr[$keys[16]]);
-    if (array_key_exists($keys[17], $arr)) $this->setSpamScore($arr[$keys[17]]);
-    if (array_key_exists($keys[18], $arr)) $this->setIsSpam($arr[$keys[18]]);
-    if (array_key_exists($keys[19], $arr)) $this->setIsPublic($arr[$keys[19]]);
-    if (array_key_exists($keys[20], $arr)) $this->setSessionId($arr[$keys[20]]);
-    if (array_key_exists($keys[21], $arr)) $this->setLastSeenAt($arr[$keys[21]]);
-    if (array_key_exists($keys[22], $arr)) $this->setEblob($arr[$keys[22]]);
-    if (array_key_exists($keys[23], $arr)) $this->setDeletedAt($arr[$keys[23]]);
-    if (array_key_exists($keys[24], $arr)) $this->setCreatedAt($arr[$keys[24]]);
-    if (array_key_exists($keys[25], $arr)) $this->setUpdatedAt($arr[$keys[25]]);
+    if (array_key_exists($keys[1], $arr)) $this->setGraphId($arr[$keys[1]]);
+    if (array_key_exists($keys[2], $arr)) $this->setFacebookId($arr[$keys[2]]);
+    if (array_key_exists($keys[3], $arr)) $this->setUsername($arr[$keys[3]]);
+    if (array_key_exists($keys[4], $arr)) $this->setDisplayName($arr[$keys[4]]);
+    if (array_key_exists($keys[5], $arr)) $this->setSlug($arr[$keys[5]]);
+    if (array_key_exists($keys[6], $arr)) $this->setSha1Password($arr[$keys[6]]);
+    if (array_key_exists($keys[7], $arr)) $this->setSalt($arr[$keys[7]]);
+    if (array_key_exists($keys[8], $arr)) $this->setEmail($arr[$keys[8]]);
+    if (array_key_exists($keys[9], $arr)) $this->setUserType($arr[$keys[9]]);
+    if (array_key_exists($keys[10], $arr)) $this->setItemsAllowed($arr[$keys[10]]);
+    if (array_key_exists($keys[11], $arr)) $this->setWhatYouCollect($arr[$keys[11]]);
+    if (array_key_exists($keys[12], $arr)) $this->setPurchasesPerYear($arr[$keys[12]]);
+    if (array_key_exists($keys[13], $arr)) $this->setWhatYouSell($arr[$keys[13]]);
+    if (array_key_exists($keys[14], $arr)) $this->setAnnuallySpend($arr[$keys[14]]);
+    if (array_key_exists($keys[15], $arr)) $this->setMostExpensiveItem($arr[$keys[15]]);
+    if (array_key_exists($keys[16], $arr)) $this->setCompany($arr[$keys[16]]);
+    if (array_key_exists($keys[17], $arr)) $this->setLocale($arr[$keys[17]]);
+    if (array_key_exists($keys[18], $arr)) $this->setScore($arr[$keys[18]]);
+    if (array_key_exists($keys[19], $arr)) $this->setSpamScore($arr[$keys[19]]);
+    if (array_key_exists($keys[20], $arr)) $this->setIsSpam($arr[$keys[20]]);
+    if (array_key_exists($keys[21], $arr)) $this->setIsPublic($arr[$keys[21]]);
+    if (array_key_exists($keys[22], $arr)) $this->setSessionId($arr[$keys[22]]);
+    if (array_key_exists($keys[23], $arr)) $this->setLastSeenAt($arr[$keys[23]]);
+    if (array_key_exists($keys[24], $arr)) $this->setDeletedAt($arr[$keys[24]]);
+    if (array_key_exists($keys[25], $arr)) $this->setEblob($arr[$keys[25]]);
+    if (array_key_exists($keys[26], $arr)) $this->setCreatedAt($arr[$keys[26]]);
+    if (array_key_exists($keys[27], $arr)) $this->setUpdatedAt($arr[$keys[27]]);
   }
 
   /**
@@ -2496,6 +2631,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $criteria = new Criteria(CollectorPeer::DATABASE_NAME);
 
     if ($this->isColumnModified(CollectorPeer::ID)) $criteria->add(CollectorPeer::ID, $this->id);
+    if ($this->isColumnModified(CollectorPeer::GRAPH_ID)) $criteria->add(CollectorPeer::GRAPH_ID, $this->graph_id);
     if ($this->isColumnModified(CollectorPeer::FACEBOOK_ID)) $criteria->add(CollectorPeer::FACEBOOK_ID, $this->facebook_id);
     if ($this->isColumnModified(CollectorPeer::USERNAME)) $criteria->add(CollectorPeer::USERNAME, $this->username);
     if ($this->isColumnModified(CollectorPeer::DISPLAY_NAME)) $criteria->add(CollectorPeer::DISPLAY_NAME, $this->display_name);
@@ -2511,14 +2647,15 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectorPeer::ANNUALLY_SPEND)) $criteria->add(CollectorPeer::ANNUALLY_SPEND, $this->annually_spend);
     if ($this->isColumnModified(CollectorPeer::MOST_EXPENSIVE_ITEM)) $criteria->add(CollectorPeer::MOST_EXPENSIVE_ITEM, $this->most_expensive_item);
     if ($this->isColumnModified(CollectorPeer::COMPANY)) $criteria->add(CollectorPeer::COMPANY, $this->company);
+    if ($this->isColumnModified(CollectorPeer::LOCALE)) $criteria->add(CollectorPeer::LOCALE, $this->locale);
     if ($this->isColumnModified(CollectorPeer::SCORE)) $criteria->add(CollectorPeer::SCORE, $this->score);
     if ($this->isColumnModified(CollectorPeer::SPAM_SCORE)) $criteria->add(CollectorPeer::SPAM_SCORE, $this->spam_score);
     if ($this->isColumnModified(CollectorPeer::IS_SPAM)) $criteria->add(CollectorPeer::IS_SPAM, $this->is_spam);
     if ($this->isColumnModified(CollectorPeer::IS_PUBLIC)) $criteria->add(CollectorPeer::IS_PUBLIC, $this->is_public);
     if ($this->isColumnModified(CollectorPeer::SESSION_ID)) $criteria->add(CollectorPeer::SESSION_ID, $this->session_id);
     if ($this->isColumnModified(CollectorPeer::LAST_SEEN_AT)) $criteria->add(CollectorPeer::LAST_SEEN_AT, $this->last_seen_at);
-    if ($this->isColumnModified(CollectorPeer::EBLOB)) $criteria->add(CollectorPeer::EBLOB, $this->eblob);
     if ($this->isColumnModified(CollectorPeer::DELETED_AT)) $criteria->add(CollectorPeer::DELETED_AT, $this->deleted_at);
+    if ($this->isColumnModified(CollectorPeer::EBLOB)) $criteria->add(CollectorPeer::EBLOB, $this->eblob);
     if ($this->isColumnModified(CollectorPeer::CREATED_AT)) $criteria->add(CollectorPeer::CREATED_AT, $this->created_at);
     if ($this->isColumnModified(CollectorPeer::UPDATED_AT)) $criteria->add(CollectorPeer::UPDATED_AT, $this->updated_at);
 
@@ -2583,6 +2720,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
    */
   public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
+    $copyObj->setGraphId($this->getGraphId());
     $copyObj->setFacebookId($this->getFacebookId());
     $copyObj->setUsername($this->getUsername());
     $copyObj->setDisplayName($this->getDisplayName());
@@ -2598,14 +2736,15 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $copyObj->setAnnuallySpend($this->getAnnuallySpend());
     $copyObj->setMostExpensiveItem($this->getMostExpensiveItem());
     $copyObj->setCompany($this->getCompany());
+    $copyObj->setLocale($this->getLocale());
     $copyObj->setScore($this->getScore());
     $copyObj->setSpamScore($this->getSpamScore());
     $copyObj->setIsSpam($this->getIsSpam());
     $copyObj->setIsPublic($this->getIsPublic());
     $copyObj->setSessionId($this->getSessionId());
     $copyObj->setLastSeenAt($this->getLastSeenAt());
-    $copyObj->setEblob($this->getEblob());
     $copyObj->setDeletedAt($this->getDeletedAt());
+    $copyObj->setEblob($this->getEblob());
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
 
@@ -2626,6 +2765,13 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       {
         if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
           $copyObj->addCollectorProfile($relObj->copy($deepCopy));
+        }
+      }
+
+      foreach ($this->getCollectorEmails() as $relObj)
+      {
+        if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+          $copyObj->addCollectorEmail($relObj->copy($deepCopy));
         }
       }
 
@@ -2772,6 +2918,10 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     if ('CollectorProfile' == $relationName)
     {
       return $this->initCollectorProfiles();
+    }
+    if ('CollectorEmail' == $relationName)
+    {
+      return $this->initCollectorEmails();
     }
     if ('CollectorIdentifier' == $relationName)
     {
@@ -3123,6 +3273,136 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     }
     if (!$this->collCollectorProfiles->contains($l)) { // only add it if the **same** object is not already associated
       $this->collCollectorProfiles[]= $l;
+      $l->setCollector($this);
+    }
+
+    return $this;
+  }
+
+  /**
+   * Clears out the collCollectorEmails collection
+   *
+   * This does not modify the database; however, it will remove any associated objects, causing
+   * them to be refetched by subsequent calls to accessor method.
+   *
+   * @return     void
+   * @see        addCollectorEmails()
+   */
+  public function clearCollectorEmails()
+  {
+    $this->collCollectorEmails = null; // important to set this to NULL since that means it is uninitialized
+  }
+
+  /**
+   * Initializes the collCollectorEmails collection.
+   *
+   * By default this just sets the collCollectorEmails collection to an empty array (like clearcollCollectorEmails());
+   * however, you may wish to override this method in your stub class to provide setting appropriate
+   * to your application -- for example, setting the initial array to the values stored in database.
+   *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
+   * @return     void
+   */
+  public function initCollectorEmails($overrideExisting = true)
+  {
+    if (null !== $this->collCollectorEmails && !$overrideExisting)
+    {
+      return;
+    }
+    $this->collCollectorEmails = new PropelObjectCollection();
+    $this->collCollectorEmails->setModel('CollectorEmail');
+  }
+
+  /**
+   * Gets an array of CollectorEmail objects which contain a foreign key that references this object.
+   *
+   * If the $criteria is not null, it is used to always fetch the results from the database.
+   * Otherwise the results are fetched from the database the first time, then cached.
+   * Next time the same method is called without $criteria, the cached collection is returned.
+   * If this Collector is new, it will return
+   * an empty collection or the current collection; the criteria is ignored on a new object.
+   *
+   * @param      Criteria $criteria optional Criteria object to narrow the query
+   * @param      PropelPDO $con optional connection object
+   * @return     PropelCollection|array CollectorEmail[] List of CollectorEmail objects
+   * @throws     PropelException
+   */
+  public function getCollectorEmails($criteria = null, PropelPDO $con = null)
+  {
+    if(null === $this->collCollectorEmails || null !== $criteria)
+    {
+      if ($this->isNew() && null === $this->collCollectorEmails)
+      {
+        // return empty collection
+        $this->initCollectorEmails();
+      }
+      else
+      {
+        $collCollectorEmails = CollectorEmailQuery::create(null, $criteria)
+          ->filterByCollector($this)
+          ->find($con);
+        if (null !== $criteria)
+        {
+          return $collCollectorEmails;
+        }
+        $this->collCollectorEmails = $collCollectorEmails;
+      }
+    }
+    return $this->collCollectorEmails;
+  }
+
+  /**
+   * Returns the number of related CollectorEmail objects.
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct
+   * @param      PropelPDO $con
+   * @return     int Count of related CollectorEmail objects.
+   * @throws     PropelException
+   */
+  public function countCollectorEmails(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+  {
+    if(null === $this->collCollectorEmails || null !== $criteria)
+    {
+      if ($this->isNew() && null === $this->collCollectorEmails)
+      {
+        return 0;
+      }
+      else
+      {
+        $query = CollectorEmailQuery::create(null, $criteria);
+        if($distinct)
+        {
+          $query->distinct();
+        }
+        return $query
+          ->filterByCollector($this)
+          ->count($con);
+      }
+    }
+    else
+    {
+      return count($this->collCollectorEmails);
+    }
+  }
+
+  /**
+   * Method called to associate a CollectorEmail object to this object
+   * through the CollectorEmail foreign key attribute.
+   *
+   * @param      CollectorEmail $l CollectorEmail
+   * @return     Collector The current object (for fluent API support)
+   */
+  public function addCollectorEmail(CollectorEmail $l)
+  {
+    if ($this->collCollectorEmails === null)
+    {
+      $this->initCollectorEmails();
+    }
+    if (!$this->collCollectorEmails->contains($l)) { // only add it if the **same** object is not already associated
+      $this->collCollectorEmails[]= $l;
       $l->setCollector($this);
     }
 
@@ -4815,6 +5095,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   public function clear()
   {
     $this->id = null;
+    $this->graph_id = null;
     $this->facebook_id = null;
     $this->username = null;
     $this->display_name = null;
@@ -4830,14 +5111,15 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $this->annually_spend = null;
     $this->most_expensive_item = null;
     $this->company = null;
+    $this->locale = null;
     $this->score = null;
     $this->spam_score = null;
     $this->is_spam = null;
     $this->is_public = null;
     $this->session_id = null;
     $this->last_seen_at = null;
-    $this->eblob = null;
     $this->deleted_at = null;
+    $this->eblob = null;
     $this->created_at = null;
     $this->updated_at = null;
     $this->alreadyInSave = false;
@@ -4872,6 +5154,13 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       if ($this->collCollectorProfiles)
       {
         foreach ($this->collCollectorProfiles as $o)
+        {
+          $o->clearAllReferences($deep);
+        }
+      }
+      if ($this->collCollectorEmails)
+      {
+        foreach ($this->collCollectorEmails as $o)
         {
           $o->clearAllReferences($deep);
         }
@@ -4965,6 +5254,11 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->collCollectorProfiles->clearIterator();
     }
     $this->collCollectorProfiles = null;
+    if ($this->collCollectorEmails instanceof PropelCollection)
+    {
+      $this->collCollectorEmails->clearIterator();
+    }
+    $this->collCollectorEmails = null;
     if ($this->collCollectorIdentifiers instanceof PropelCollection)
     {
       $this->collCollectorIdentifiers->clearIterator();
@@ -5032,33 +5326,131 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     return (string) $this->getDisplayName();
   }
 
-  // soft_delete behavior
+  // archivable behavior
   
   /**
-   * Bypass the soft_delete behavior and force a hard delete of the current object
+   * Get an archived version of the current object.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     CollectorArchive An archive object, or null if the current object was never archived
    */
-  public function forceDelete(PropelPDO $con = null)
+  public function getArchive(PropelPDO $con = null)
   {
-    if($isSoftDeleteEnabled = CollectorPeer::isSoftDeleteEnabled())
-    {
-      CollectorPeer::disableSoftDelete();
+    if ($this->isNew()) {
+      return null;
     }
-    $this->delete($con);
-    if ($isSoftDeleteEnabled)
-    {
-      CollectorPeer::enableSoftDelete();
-    }
+    $archive = CollectorArchiveQuery::create()
+      ->filterByPrimaryKey($this->getPrimaryKey())
+      ->findOne($con);
+  
+    return $archive;
   }
   
   /**
-   * Undelete a row that was soft_deleted
+   * Copy the data of the current object into a $archiveTablePhpName archive object.
+   * The archived object is then saved.
+   * If the current object has already been archived, the archived object
+   * is updated and not duplicated.
    *
-   * @return     int The number of rows affected by this update and any referring fk objects' save() operations.
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object is new
+   *
+   * @return     CollectorArchive The archive object based on this object
    */
-  public function unDelete(PropelPDO $con = null)
+  public function archive(PropelPDO $con = null)
   {
-    $this->setDeletedAt(null);
-    return $this->save($con);
+    if ($this->isNew()) {
+      throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
+    }
+    if (!$archive = $this->getArchive($con)) {
+      $archive = new CollectorArchive();
+      $archive->setPrimaryKey($this->getPrimaryKey());
+    }
+    $this->copyInto($archive, $deepCopy = false, $makeNew = false);
+    $archive->save($con);
+  
+    return $archive;
+  }
+  
+  /**
+   * Revert the the current object to the state it had when it was last archived.
+   * The object must be saved afterwards if the changes must persist.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object has no corresponding archive.
+   *
+   * @return Collector The current object (for fluent API support)
+   */
+  public function restoreFromArchive(PropelPDO $con = null)
+  {
+    if (!$archive = $this->getArchive($con)) {
+      throw new PropelException('The current object has never been archived and cannot be restored');
+    }
+    $this->populateFromArchive($archive);
+  
+    return $this;
+  }
+  
+  /**
+   * Populates the the current object based on a $archiveTablePhpName archive object.
+   *
+   * @param      CollectorArchive $archive An archived object based on the same class
+    * @param      Boolean $populateAutoIncrementPrimaryKeys 
+   *               If true, autoincrement columns are copied from the archive object.
+   *               If false, autoincrement columns are left intact.
+    *
+   * @return     Collector The current object (for fluent API support)
+   */
+  public function populateFromArchive($archive, $populateAutoIncrementPrimaryKeys = false)
+  {
+    if ($populateAutoIncrementPrimaryKeys) {
+      $this->setId($archive->getId());
+    }
+    $this->setGraphId($archive->getGraphId());
+    $this->setFacebookId($archive->getFacebookId());
+    $this->setUsername($archive->getUsername());
+    $this->setDisplayName($archive->getDisplayName());
+    $this->setSlug($archive->getSlug());
+    $this->setSha1Password($archive->getSha1Password());
+    $this->setSalt($archive->getSalt());
+    $this->setEmail($archive->getEmail());
+    $this->setUserType($archive->getUserType());
+    $this->setItemsAllowed($archive->getItemsAllowed());
+    $this->setWhatYouCollect($archive->getWhatYouCollect());
+    $this->setPurchasesPerYear($archive->getPurchasesPerYear());
+    $this->setWhatYouSell($archive->getWhatYouSell());
+    $this->setAnnuallySpend($archive->getAnnuallySpend());
+    $this->setMostExpensiveItem($archive->getMostExpensiveItem());
+    $this->setCompany($archive->getCompany());
+    $this->setLocale($archive->getLocale());
+    $this->setScore($archive->getScore());
+    $this->setSpamScore($archive->getSpamScore());
+    $this->setIsSpam($archive->getIsSpam());
+    $this->setIsPublic($archive->getIsPublic());
+    $this->setSessionId($archive->getSessionId());
+    $this->setLastSeenAt($archive->getLastSeenAt());
+    $this->setDeletedAt($archive->getDeletedAt());
+    $this->setEblob($archive->getEblob());
+    $this->setCreatedAt($archive->getCreatedAt());
+    $this->setUpdatedAt($archive->getUpdatedAt());
+  
+    return $this;
+  }
+  
+  /**
+   * Removes the object from the database without archiving it.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     Collector The current object (for fluent API support)
+   */
+  public function deleteWithoutArchive(PropelPDO $con = null)
+  {
+    $this->archiveOnDelete = false;
+    return $this->delete($con);
   }
 
   // timestampable behavior

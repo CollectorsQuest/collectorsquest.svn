@@ -13,8 +13,11 @@ class CommentForm extends BaseCommentForm
   {
     parent::setup();
 
-    $is_authenticated = sfContext::getInstance()->getUser()->isAuthenticated();
-    $is_facebook_authenticated = sfContext::getInstance()->getUser()->isFacebookAuthenticated();
+    /** @var $sf_user cqUser */
+    $sf_user = sfContext::getInstance()->getUser();
+
+    $is_authenticated = $sf_user->isAuthenticated();
+    $is_facebook_authenticated = $sf_user->isFacebookAuthenticated();
 
     $widgets = array(
       'body' => new sfWidgetFormTextarea(array(), array('rows' => 5, 'cols' => 40)),
@@ -81,7 +84,7 @@ class CommentForm extends BaseCommentForm
     $token = $this->getValue('token');
     $object = self::retrieveFromToken($token);
 
-    $array = array('body' => cqStatic::clean($this->getValue('body')), 'ip_address' => $ip_adress);
+    $array = array('body' => IceStatic::cleanText($this->getValue('body')), 'ip_address' => $ip_adress);
 
     if ($object instanceof Collectible)
     {

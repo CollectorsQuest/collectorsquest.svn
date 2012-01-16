@@ -39,6 +39,7 @@ class CollectibleTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
+    $this->addColumn('GRAPH_ID', 'GraphId', 'INTEGER', false, null, null);
     $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
     $this->addForeignKey('COLLECTION_ID', 'CollectionId', 'INTEGER', 'collection', 'ID', true, null, null);
     $this->addColumn('NAME', 'Name', 'VARCHAR', true, 255, null);
@@ -49,8 +50,8 @@ class CollectibleTableMap extends TableMap
     $this->addColumn('SCORE', 'Score', 'INTEGER', false, null, 0);
     $this->addColumn('POSITION', 'Position', 'INTEGER', false, null, 0);
     $this->addColumn('IS_NAME_AUTOMATIC', 'IsNameAutomatic', 'BOOLEAN', false, 1, false);
-    $this->addColumn('EBLOB', 'Eblob', 'LONGVARCHAR', false, null, null);
     $this->addColumn('DELETED_AT', 'DeletedAt', 'TIMESTAMP', false, null, null);
+    $this->addColumn('EBLOB', 'Eblob', 'LONGVARCHAR', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     // validators
@@ -78,7 +79,7 @@ class CollectibleTableMap extends TableMap
   public function getBehaviors()
   {
     return array(
-      'soft_delete' => array('deleted_column' => 'deleted_at', ),
+      'archivable' => array('archive_table' => '', 'archive_class' => 'CollectibleArchive', 'log_archived_at' => 'true', 'archived_at_column' => 'archived_at', 'archive_on_insert' => 'false', 'archive_on_update' => 'false', 'archive_on_delete' => 'true', ),
       'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
       'symfony' => array('form' => 'true', 'filter' => 'true', ),
       'symfony_behaviors' => array(),

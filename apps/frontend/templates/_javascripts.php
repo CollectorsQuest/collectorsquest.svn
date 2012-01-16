@@ -122,20 +122,3 @@ function ajax_load(target, url)
     include_partial('global/analytics_js');
   }
 ?>
-
-<script type="text/javascript">
-//<![CDATA[
-  window.fbAsyncInit = function()
-  {
-    FB.init({appId: '12734695313', status: true, cookie: true, xfbml: true});
-  };
-
-  (function()
-  {
-    var e = document.createElement('script');
-    e.async = true;
-    e.src = document.location.protocol + '//connect.facebook.net/en_US/all.js#xfbml=1';
-    document.getElementById('fb-root').appendChild(e);
-  }());
-//]]>
-</script>

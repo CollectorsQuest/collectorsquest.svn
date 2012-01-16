@@ -1,3 +1,10 @@
+<?php
+/**
+ * @var CollectorLoginForm $form
+ * @var array $rpxnow
+ */
+?>
+
 <div id="ajax-login-tabs" style="border: 0; background: none;">
   <ul>
 		<li><a href="#tabs-cq-account"><?= __('Collectors\' Quest'); ?></a></li>
@@ -37,7 +44,7 @@
     </form>
 	</div>
 	<div id="tabs-third-party">
-   <iframe src="https://collectors-quest.rpxnow.com/openid/embed?token_url=<?= url_for('@rpx_token', true); ?>" scrolling="no" frameBorder="no" style="width:350px;height:220px;" width="350" height="220"></iframe>
+    <iframe src="<?= $rpxnow['application_domain']; ?>/openid/embed?token_url=<?= url_for('@rpx_token', true); ?>" scrolling="no" frameBorder="no" style="width:350px;height:220px;" width="350" height="220"></iframe>
 	</div>
 	<div id="tabs-signup">
     <a href="<?php echo url_for('@collector_signup'); ?>" style="color: #666666;">

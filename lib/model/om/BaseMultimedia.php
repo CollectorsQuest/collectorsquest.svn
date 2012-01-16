@@ -113,6 +113,9 @@ abstract class BaseMultimedia extends BaseObject  implements Persistent
    */
   protected $alreadyInValidation = false;
 
+  // archivable behavior
+  protected $archiveOnDelete = true;
+
   /**
    * Applies default values to this object.
    * This method should be called from the object's constructor (or
@@ -782,6 +785,16 @@ abstract class BaseMultimedia extends BaseObject  implements Persistent
       $deleteQuery = MultimediaQuery::create()
         ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
+      // archivable behavior
+      if ($ret) {
+        if ($this->archiveOnDelete) {
+          // do nothing yet. The object will be archived later when calling MultimediaQuery::delete().
+        } else {
+          $deleteQuery->setArchiveOnDelete(false);
+          $this->archiveOnDelete = true;
+        }
+      }
+
       // symfony_behaviors behavior
       foreach (sfMixer::getCallables('BaseMultimedia:delete:pre') as $callable)
       {
@@ -1441,6 +1454,117 @@ abstract class BaseMultimedia extends BaseObject  implements Persistent
   public function __toString()
   {
     return (string) $this->exportTo(MultimediaPeer::DEFAULT_STRING_FORMAT);
+  }
+
+  // archivable behavior
+  
+  /**
+   * Get an archived version of the current object.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     MultimediaArchive An archive object, or null if the current object was never archived
+   */
+  public function getArchive(PropelPDO $con = null)
+  {
+    if ($this->isNew()) {
+      return null;
+    }
+    $archive = MultimediaArchiveQuery::create()
+      ->filterByPrimaryKey($this->getPrimaryKey())
+      ->findOne($con);
+  
+    return $archive;
+  }
+  
+  /**
+   * Copy the data of the current object into a $archiveTablePhpName archive object.
+   * The archived object is then saved.
+   * If the current object has already been archived, the archived object
+   * is updated and not duplicated.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object is new
+   *
+   * @return     MultimediaArchive The archive object based on this object
+   */
+  public function archive(PropelPDO $con = null)
+  {
+    if ($this->isNew()) {
+      throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
+    }
+    if (!$archive = $this->getArchive($con)) {
+      $archive = new MultimediaArchive();
+      $archive->setPrimaryKey($this->getPrimaryKey());
+    }
+    $this->copyInto($archive, $deepCopy = false, $makeNew = false);
+    $archive->save($con);
+  
+    return $archive;
+  }
+  
+  /**
+   * Revert the the current object to the state it had when it was last archived.
+   * The object must be saved afterwards if the changes must persist.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object has no corresponding archive.
+   *
+   * @return Multimedia The current object (for fluent API support)
+   */
+  public function restoreFromArchive(PropelPDO $con = null)
+  {
+    if (!$archive = $this->getArchive($con)) {
+      throw new PropelException('The current object has never been archived and cannot be restored');
+    }
+    $this->populateFromArchive($archive);
+  
+    return $this;
+  }
+  
+  /**
+   * Populates the the current object based on a $archiveTablePhpName archive object.
+   *
+   * @param      MultimediaArchive $archive An archived object based on the same class
+    * @param      Boolean $populateAutoIncrementPrimaryKeys 
+   *               If true, autoincrement columns are copied from the archive object.
+   *               If false, autoincrement columns are left intact.
+    *
+   * @return     Multimedia The current object (for fluent API support)
+   */
+  public function populateFromArchive($archive, $populateAutoIncrementPrimaryKeys = false)
+  {
+    if ($populateAutoIncrementPrimaryKeys) {
+      $this->setId($archive->getId());
+    }
+    $this->setModel($archive->getModel());
+    $this->setModelId($archive->getModelId());
+    $this->setType($archive->getType());
+    $this->setName($archive->getName());
+    $this->setMd5($archive->getMd5());
+    $this->setColors($archive->getColors());
+    $this->setOrientation($archive->getOrientation());
+    $this->setSource($archive->getSource());
+    $this->setIsPrimary($archive->getIsPrimary());
+    $this->setUpdatedAt($archive->getUpdatedAt());
+    $this->setCreatedAt($archive->getCreatedAt());
+  
+    return $this;
+  }
+  
+  /**
+   * Removes the object from the database without archiving it.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     Multimedia The current object (for fluent API support)
+   */
+  public function deleteWithoutArchive(PropelPDO $con = null)
+  {
+    $this->archiveOnDelete = false;
+    return $this->delete($con);
   }
 
   /**

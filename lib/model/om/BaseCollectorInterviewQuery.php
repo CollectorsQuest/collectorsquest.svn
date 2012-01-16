@@ -481,7 +481,7 @@ abstract class BaseCollectorInterviewQuery extends ModelCriteria
      *
      * @return    CollectorInterviewQuery The current query, for fluid interface
      */
-    public function joinCollector($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinCollector($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('Collector');
@@ -516,7 +516,7 @@ abstract class BaseCollectorInterviewQuery extends ModelCriteria
      *
      * @return    CollectorQuery A secondary query class using the current class as primary query
      */
-    public function useCollectorQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useCollectorQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
             ->joinCollector($relationAlias, $joinType)

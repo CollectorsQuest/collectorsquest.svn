@@ -3,7 +3,6 @@ require 'lib/model/om/BaseCollectible.php';
 
 class Collectible extends BaseCollectible
 {
-
   public function save(PropelPDO $con = null)
   {
     /**
@@ -16,6 +15,8 @@ class Collectible extends BaseCollectible
       $q->addAsColumn('position', sprintf('MAX(%s)', CollectiblePeer::POSITION));
       $q->filterByCollectionId($this->getCollectionId());
       $q->setFormatter(ModelCriteria::FORMAT_STATEMENT);
+
+      /** @var $stmt PDOStatement */
       $stmt = $q->find();
 
       $position = (int) $stmt->fetch(PDO::FETCH_COLUMN);
@@ -35,6 +36,28 @@ class Collectible extends BaseCollectible
     parent::save($con);
   }
 
+  public function getGraphId()
+  {
+    $graph_id = null;
+
+    if (!$this->isNew() && (!$graph_id = parent::getGraphId()))
+    {
+      $client = cqStatic::getNeo4jClient();
+
+      $node = $client->makeNode();
+      $node->setProperty('model', 'Collectible');
+      $node->setProperty('model_id', $this->getId());
+      $node->save();
+
+      $graph_id = $node->getId();
+
+      $this->setGraphId($node->getId());
+      $this->save();
+    }
+
+    return $graph_id;
+  }
+
   public function getSlug()
   {
     $slug = parent::getSlug();
@@ -46,20 +69,20 @@ class Collectible extends BaseCollectible
   {
     $this->setIsNameAutomatic($is_automatic);
 
-    parent::setName(cqStatic::clean($v, 'none'));
+    parent::setName(IceStatic::cleanText($v, 'none'));
   }
 
   /**
    * Set the description of the collectible
    *
-   * @param  text  $v     The description text itself
-   * @param  enum  $type  Can be 'html' or 'markdown'
+   * @param  string  $v     The description text itself
+   * @param  string  $type  Can be 'html' or 'markdown'
    */
   public function setDescription($v, $type = 'markdown')
   {
     if ($type == 'html')
     {
-      $v = cqStatic::clean($v, 'p, b, u, i, em, strong, h1, h2, h3, h4, h5, h6, div, span, ul, ol, li, blockquote');
+      $v = IceStatic::cleanText($v, 'p, b, u, i, em, strong, h1, h2, h3, h4, h5, h6, div, span, ul, ol, li, blockquote');
       $v = cqMarkdownify::doConvert($v);
     }
 
@@ -86,6 +109,7 @@ class Collectible extends BaseCollectible
 
   public function getRelatedCollectiblesForSale($limit = 5, &$rnd_flag = false)
   {
+    /** @var $q CollectibleForSaleQuery */
     $q = CollectibleForSaleQuery::create()
       ->joinWith('Collectible')
       ->limit($limit)
@@ -101,11 +125,14 @@ class Collectible extends BaseCollectible
     if ($limit != $found = count($collections))
     {
       $limit = $limit - $found;
-      $context = sfContext::getInstance();
+      $sf_context = sfContext::getInstance();
 
-      if ($context && $context->getUser()->isAuthenticated())
+      /** @var $sf_user cqUser */
+      $sf_user = $sf_context->getUser();
+
+      if ($sf_context && $sf_user->isAuthenticated())
       {
-        $collector = $context->getUser()->getCollector();
+        $collector = $sf_user->getCollector();
         $c = new Criteria();
         $c->add(CollectionPeer::ID, $this->getId(), Criteria::NOT_EQUAL);
         $c->add(CollectionPeer::COLLECTOR_ID, $collector->getId(), Criteria::NOT_EQUAL);
@@ -282,7 +309,7 @@ class Collectible extends BaseCollectible
 
         $custom = new CustomValue();
         $custom->setCollection($this->getCollection());
-        $custom->setItemId($this->getId());
+        $custom->setCollectibleId($this->getId());
         $custom->setFieldId($id);
 
         if ($custom->setValue($value))
@@ -366,6 +393,10 @@ class Collectible extends BaseCollectible
     return $omCollectible;
   }
 
+  /**
+   * @param  null|PropelPDO  $con
+   * @return boolean
+   */
   public function preDelete(PropelPDO $con = null)
   {
     // Deleting collectibles for sale
@@ -396,19 +427,12 @@ class Collectible extends BaseCollectible
   public function postDelete(PropelPDO $con = null)
   {
     $q = CollectibleQuery::create()
-      ->filterByDeletedAt(null, Criteria::ISNULL)
-      ->filterByCollectionId($this->getCollectionId());
+       ->filterByCollectionId($this->getCollectionId());
 
     $num_items = $q->count($con);
     $collection = $this->getCollection($con);
     $collection->setNumItems($num_items);
     $collection->save();
-
-    /* @var $collectible_for_sale CollectibleForSale */
-    foreach ($this->getCollectibleForSales() as $collectible_for_sale)
-    {
-      $collectible_for_sale->delete();
-    }
 
     return parent::postDelete($con);
   }

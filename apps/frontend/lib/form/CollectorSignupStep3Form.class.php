@@ -4,7 +4,7 @@ class CollectorSignupStep3Form extends BaseFormPropel
 {
   public function setup()
   {
-    $recaptcha = sfConfig::get('app_api_recaptcha');
+    $recaptcha = sfConfig::get('app_credentials_recaptcha');
 
     $years = array_combine(range(date('Y') - 100, date('Y')), range(date('Y') - 100, date('Y')));
 

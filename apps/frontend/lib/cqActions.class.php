@@ -1,10 +1,11 @@
 <?php
 
 /**
- * @method sfPropelRoute getRoute()
- * @method cqWebResponse getResponse()
- * @method cqWebRequest getRequest()
- * @method cqUser getUser()
+ * @method  sfPropelRoute    getRoute()
+ * @method  sfWebController  getController()
+ * @method  cqWebResponse    getResponse()
+ * @method  cqWebRequest     getRequest()
+ * @method  cqUser           getUser()
  */
 class cqActions extends sfActions
 {

@@ -4,9 +4,14 @@ defaultIdMethod: native
 package: lib.model
 
 classes:
+
+  ###
+  # NOTE: Make SURE to update also CollectorArchive in archive.schema.yml
+  ##
   Collector:
     columns:
-      id:             ~
+      id: ~
+      graph_id:       { type: integer, required: false, index: unique }
       facebook_id:    { type: varchar, size: 20, index: unique }
       username:       { type: varchar, size: 64, required: true }
       display_name:   { type: varchar, size: 64, required: true, primaryString: true }
@@ -22,23 +27,27 @@ classes:
       annually_spend:        { type: float, default: 0 }
       most_expensive_item:   { type: float, default: 0 }
       company:               { type: varchar, size: 255 }
+      locale:         { type: varchar, size: 5, default: "en_US" }
       score:          { type: integer, default: 0 }
       spam_score:     { type: integer, default: 0 }
       is_spam:        { type: boolean, default: false }
       is_public:      { type: boolean, default: true }
       session_id:     { type: varchar, size: 32 }
       last_seen_at:   { type: timestamp }
+      deleted_at:     { type: timestamp }
 
       eblob: { type: longvarchar, default: null }
 
     propel_behaviors:
-      # archivable: ~
-      soft_delete: ~
+      archivable: { archive_class: CollectorArchive }
       timestampable: ~
 
+  ###
+  # NOTE: Make SURE to update also CollectorProfileArchive in archive.schema.yml
+  ##
   CollectorProfile:
     columns:
-      id:              ~
+      id: ~
       collector_id:    { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
       collector_type:  { type: char, sqlType: "ENUM('Collector','Seller')", default: "Collector", required: true }
       birthday:        date
@@ -59,24 +68,45 @@ classes:
       is_image_auto:   { type: boolean, default: true }
       preferences:     longvarchar
       notifications:   longvarchar
-      updated_at:      ~
-      created_at:      ~
+
+      updated_at: ~
+      created_at: ~
+
     uniques:
       collector_profile_U_1: [collector_id]
 
+    propel_behaviors:
+      archivable: { archive_class: CollectorProfileArchive }
+
+  CollectorEmail:
+    columns:
+      id:  ~
+      collector_id:  { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
+      email:         { type: varchar, size: 128, index: true }
+      hash:          { type: varchar, size: 40, required: true }
+      salt:          { type: varchar, size: 32, required: true }
+      is_verified:   { type: boolean, default: false }
+
+      updated_at: ~
+      created_at: ~
+
+  ###
+  # NOTE: Make SURE to update also CollectorIdentifierArchive in archive.schema.yml
+  ##
   CollectorIdentifier:
     columns:
       id:  ~
-      collector_id:  { type: integer, foreignClass: Collector, foreignReference: id, onDelete: cascade }
-      identifier:    varchar(255)
+      collector_id:  { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
+      identifier:    { type: varchar, size: 255, index: unique }
       created_at:  ~
-    uniques:
-      collector_identifier_U_1: [collector_id, identifier]
+
+    propel_behaviors:
+      archivable: { archive_class: CollectorIdentifierArchive }
 
   CollectorInterview:
     columns:
       id:  ~
-      collector_id:            { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
+      collector_id:            { type: integer, foreignClass: Collector, foreignReference: id, required: false, onDelete: setnull }
       collection_category_id:  { type: integer, foreignClass: CollectionCategory, foreignReference: id, onDelete: setnull }
       collection_id:           { type: integer, foreignClass: Collection, foreignReference: id, onDelete: setnull }
       title:                   { type: varchar, size: 128, required: true, primaryString: true }
@@ -84,6 +114,9 @@ classes:
       is_active:               { type: boolean, default: false }
       created_at:  ~
 
+  ###
+  # NOTE: Make SURE to update also CollectorGeocacheArchive in archive.schema.yml
+  ##
   CollectorGeocache:
     columns:
       id:  ~
@@ -98,6 +131,9 @@ classes:
       latitude:         { type: float, sqlType: "DECIMAL(8,5)" }
       longitude:        { type: float, sqlType: "DECIMAL(8,5)" }
       timezone:         { type: varchar, size: 128 }
+
+    propel_behaviors:
+      archivable: { archive_class: CollectorGeocacheArchive }
 
   CollectorFriend:
     columns:
@@ -114,9 +150,13 @@ classes:
       answer:                  { type: longvarchar, required: true }
       photo:                   varchar(128)
 
+  ###
+  # NOTE: Make SURE to update also CollectionArchive in archive.schema.yml
+  ##
   Collection:
     columns:
-      id:                      ~
+      id: ~
+      graph_id:                { type: integer, required: false, index: unique }
       collection_category_id:  { type: integer, foreignClass: CollectionCategory, foreignReference: id, onDelete: setnull }
       collector_id:            { type: integer, required: true, foreignClass: Collector, foreignReference: id, onDelete: cascade }
       name:                    { type: varchar, size: 255, required: true, primaryString: true }
@@ -131,12 +171,12 @@ classes:
       is_featured:             { type: boolean, default: false }
       comments_on:             { type: boolean, default: true }
       rating_on:               { type: boolean, default: true }
+      deleted_at:              { type: timestamp }
 
       eblob: { type: longvarchar, default: null }
 
     propel_behaviors:
-      # archivable: ~
-      soft_delete: ~
+      archivable: { archive_class: CollectionArchive }
       timestampable: ~
 
   CollectionCategory:
@@ -149,15 +189,19 @@ classes:
 
   CollectionCategoryField:
     columns:
-      id:                  ~
+      id: ~
       collection_category_id:  { type: integer, required: true, foreignClass: CollectionCategory, foreignReference: id, onDelete: cascade }
-      custom_field_id:     ~
+      custom_field_id: ~
     uniques:
       collection_category_field: [collection_category_id, custom_field_id]
 
+  ###
+  # NOTE: Make SURE to update also CollectibleArchive in archive.schema.yml
+  ##
   Collectible:
     columns:
       id: ~
+      graph_id:          { type: integer, required: false, index: unique }
       collector_id:      { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
       collection_id:     { type: integer, foreignClass: Collection, foreignReference: id, required: true, onDelete: cascade }
       name:              { type: varchar, size: 255, required: true, primaryString: true }
@@ -167,47 +211,57 @@ classes:
       score:             { type: integer, default: 0 }
       position:          { type: integer, default: 0 }
       is_name_automatic: { type: boolean, default: false }
+      deleted_at:        { type: timestamp }
 
       eblob: { type: longvarchar, default: null }
 
     propel_behaviors:
-      # archivable: ~
-      soft_delete: ~
+      archivable: { archive_class: CollectibleArchive }
       timestampable: ~
 
+  ###
+  # NOTE: Make SURE to update also CollectibleForSaleArchive in archive.schema.yml
+  ##
   CollectibleForSale:
     columns:
       id:  ~
-      collectible_id:  { type: integer, required: true, foreignClass: Collectible, foreignReference: id, onDelete: cascade }
-      price:  { type: float }
-      condition:  { type: char, sqlType: "ENUM('excellent','very good','good','fair','poor')", required: true }
+      collectible_id:       { type: integer, required: true, foreignClass: Collectible, foreignReference: id, onDelete: cascade }
+      price:                { type: float }
+      condition:            { type: char, sqlType: "ENUM('excellent','very good','good','fair','poor')", required: true }
       is_price_negotiable:  { type: boolean, default: false }
-      is_shipping_free:  { type: boolean, default: false }
-      is_sold:  { type: boolean, default: false }
-      is_ready: { type: boolean, default: false, description: 'Show in the market or no' }
-      quantity: { type: integer, required: true, default: 1 }
+      is_shipping_free:     { type: boolean, default: false }
+      is_sold:              { type: boolean, default: false }
+      is_ready:             { type: boolean, default: false, description: 'Show in the market or no' }
+      quantity:             { type: integer, required: true, default: 1 }
+      deleted_at:           { type: timestamp }
+
     uniques:
       collectible_for_sale_item: [collectible_id]
 
     propel_behaviors:
-      # archivable: ~
-      soft_delete: ~
+      archivable: { archive_class: CollectibleForSaleArchive }
       timestampable: ~
 
+  ###
+  # NOTE: Make SURE to update also CollectibleOfferArchive in archive.schema.yml
+  ##
   CollectibleOffer:
     columns:
       id:  ~
-      collectible_id: { type: integer, required: true, foreignClass: Collectible, foreignReference: id, onDelete: cascade }
-      collectible_for_sale_id: { type: integer, required: true, foreignClass: CollectibleForSale, foreignReference: id, onDelete: cascade }
-      collector_id:  { type: integer, foreignClass: Collector, foreignReference: id }
-      price:   { type: float }
-      status:  { type: char, sqlType: "ENUM('pending','counter','rejected','accepted')", required: true }
+      collectible_id:           { type: integer, required: true, foreignClass: Collectible, foreignReference: id, onDelete: cascade }
+      collectible_for_sale_id:  { type: integer, required: true, foreignClass: CollectibleForSale, foreignReference: id, onDelete: cascade }
+      collector_id:             { type: integer, required: true, foreignClass: Collector, foreignReference: id }
+      price:                    { type: float }
+      status:                   { type: char, sqlType: "ENUM('pending','counter','rejected','accepted')", required: true }
+      deleted_at:               { type: timestamp }
 
     propel_behaviors:
-      # archivable: ~
-      soft_delete: ~
+      archivable: { archive_class: CollectibleOfferArchive }
       timestampable: ~
 
+  ###
+  # NOTE: Make SURE to update also MultimediaArchive in archive.schema.yml
+  ##
   Multimedia:
     columns:
       id:  ~
@@ -222,10 +276,15 @@ classes:
       is_primary:  { type: boolean, default: false }
       updated_at:  ~
       created_at:  ~
+
     indexes:
       multimedia_I_1: [model, model_id]
+
     uniques:
       multimedia_U_1: [model, model_id, md5]
+
+    propel_behaviors:
+      archivable: { archive_class: MultimediaArchive }
 
   PrivateMessage:
     columns:
@@ -269,6 +328,9 @@ classes:
       created_at:  ~
     uniques:
       comment_U_1:  [disqus_id]
+
+    propel_behaviors:
+      archivable: { archive_class: CommentArchive }
 
   CustomField:
     columns:

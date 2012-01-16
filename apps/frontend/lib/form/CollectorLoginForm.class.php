@@ -13,7 +13,7 @@ class CollectorLoginForm extends BaseForm
 
     $this->setValidators(array(
       'username'  => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'username', 'required' => true)),
-      'password'  => new sfValidatorString(array('max_length' => 128, 'required' => true)),
+      'password'  => new sfValidatorString(array('max_length' => 64, 'required' => true)),
       'email'     => new sfValidatorEmail(array('required' => false)),
       'remember'  => new sfValidatorPass()
     ));

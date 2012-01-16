@@ -39,7 +39,7 @@ class CollectorInterviewTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-    $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
+    $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', false, null, null);
     $this->addForeignKey('COLLECTION_CATEGORY_ID', 'CollectionCategoryId', 'INTEGER', 'collection_category', 'ID', false, null, null);
     $this->addForeignKey('COLLECTION_ID', 'CollectionId', 'INTEGER', 'collection', 'ID', false, null, null);
     $this->addColumn('TITLE', 'Title', 'VARCHAR', true, 128, null);
@@ -55,7 +55,7 @@ class CollectorInterviewTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('Collector', 'Collector', RelationMap::MANY_TO_ONE, array('collector_id' => 'id', ), 'CASCADE', null);
+    $this->addRelation('Collector', 'Collector', RelationMap::MANY_TO_ONE, array('collector_id' => 'id', ), 'SET NULL', null);
     $this->addRelation('CollectionCategory', 'CollectionCategory', RelationMap::MANY_TO_ONE, array('collection_category_id' => 'id', ), 'SET NULL', null);
     $this->addRelation('Collection', 'Collection', RelationMap::MANY_TO_ONE, array('collection_id' => 'id', ), 'SET NULL', null);
     $this->addRelation('InterviewQuestion', 'InterviewQuestion', RelationMap::ONE_TO_MANY, array('id' => 'collector_interview_id', ), 'CASCADE', null, 'InterviewQuestions');

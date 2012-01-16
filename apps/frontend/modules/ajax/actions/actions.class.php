@@ -127,6 +127,7 @@ class ajaxActions extends cqActions
   public function executeLogin()
   {
     $this->form = new CollectorLoginForm();
+    $this->rpxnow = sfConfig::get('app_credentials_rpxnow');
 
     return sfView::SUCCESS;
   }

@@ -12,6 +12,7 @@ abstract class BaseCollectionFormFilter extends BaseFormFilterPropel
   public function setup()
   {
     $this->setWidgets(array(
+      'graph_id'               => new sfWidgetFormFilterInput(),
       'collection_category_id' => new sfWidgetFormPropelChoice(array('model' => 'CollectionCategory', 'add_empty' => true)),
       'collector_id'           => new sfWidgetFormPropelChoice(array('model' => 'Collector', 'add_empty' => true)),
       'name'                   => new sfWidgetFormFilterInput(array('with_empty' => false)),
@@ -26,13 +27,14 @@ abstract class BaseCollectionFormFilter extends BaseFormFilterPropel
       'is_featured'            => new sfWidgetFormChoice(array('choices' => array('' => 'yes or no', 1 => 'yes', 0 => 'no'))),
       'comments_on'            => new sfWidgetFormChoice(array('choices' => array('' => 'yes or no', 1 => 'yes', 0 => 'no'))),
       'rating_on'              => new sfWidgetFormChoice(array('choices' => array('' => 'yes or no', 1 => 'yes', 0 => 'no'))),
-      'eblob'                  => new sfWidgetFormFilterInput(),
       'deleted_at'             => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),
+      'eblob'                  => new sfWidgetFormFilterInput(),
       'created_at'             => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),
       'updated_at'             => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),
     ));
 
     $this->setValidators(array(
+      'graph_id'               => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
       'collection_category_id' => new sfValidatorPropelChoice(array('required' => false, 'model' => 'CollectionCategory', 'column' => 'id')),
       'collector_id'           => new sfValidatorPropelChoice(array('required' => false, 'model' => 'Collector', 'column' => 'id')),
       'name'                   => new sfValidatorPass(array('required' => false)),
@@ -47,8 +49,8 @@ abstract class BaseCollectionFormFilter extends BaseFormFilterPropel
       'is_featured'            => new sfValidatorChoice(array('required' => false, 'choices' => array('', 1, 0))),
       'comments_on'            => new sfValidatorChoice(array('required' => false, 'choices' => array('', 1, 0))),
       'rating_on'              => new sfValidatorChoice(array('required' => false, 'choices' => array('', 1, 0))),
-      'eblob'                  => new sfValidatorPass(array('required' => false)),
       'deleted_at'             => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDate(array('required' => false)), 'to_date' => new sfValidatorDate(array('required' => false)))),
+      'eblob'                  => new sfValidatorPass(array('required' => false)),
       'created_at'             => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDate(array('required' => false)), 'to_date' => new sfValidatorDate(array('required' => false)))),
       'updated_at'             => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDate(array('required' => false)), 'to_date' => new sfValidatorDate(array('required' => false)))),
     ));
@@ -69,6 +71,7 @@ abstract class BaseCollectionFormFilter extends BaseFormFilterPropel
   {
     return array(
       'id'                     => 'Number',
+      'graph_id'               => 'Number',
       'collection_category_id' => 'ForeignKey',
       'collector_id'           => 'ForeignKey',
       'name'                   => 'Text',
@@ -83,8 +86,8 @@ abstract class BaseCollectionFormFilter extends BaseFormFilterPropel
       'is_featured'            => 'Boolean',
       'comments_on'            => 'Boolean',
       'rating_on'              => 'Boolean',
-      'eblob'                  => 'Text',
       'deleted_at'             => 'Date',
+      'eblob'                  => 'Text',
       'created_at'             => 'Date',
       'updated_at'             => 'Date',
     );

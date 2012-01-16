@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS `collector_interview`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `collector_interview` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `collector_id` int(11) NOT NULL,
+  `collector_id` int(11) DEFAULT NULL,
   `collection_category_id` int(11) DEFAULT NULL,
   `collection_id` int(11) DEFAULT NULL,
   `title` varchar(128) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE `collector_interview` (
   KEY `collector_interview_FI_1` (`collector_id`),
   KEY `collector_interview_FI_2` (`collection_category_id`),
   KEY `collector_interview_FI_3` (`collection_id`),
-  CONSTRAINT `collector_interview_FK_1` FOREIGN KEY (`collector_id`) REFERENCES `collector` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `collector_interview_FK_1` FOREIGN KEY (`collector_id`) REFERENCES `collector` (`id`) ON DELETE SET NULL,
   CONSTRAINT `collector_interview_FK_2` FOREIGN KEY (`collection_category_id`) REFERENCES `collection_category` (`id`) ON DELETE SET NULL,
   CONSTRAINT `collector_interview_FK_3` FOREIGN KEY (`collection_id`) REFERENCES `collection` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -7,6 +7,7 @@
  * 
  *
  * @method     CollectibleQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     CollectibleQuery orderByGraphId($order = Criteria::ASC) Order by the graph_id column
  * @method     CollectibleQuery orderByCollectorId($order = Criteria::ASC) Order by the collector_id column
  * @method     CollectibleQuery orderByCollectionId($order = Criteria::ASC) Order by the collection_id column
  * @method     CollectibleQuery orderByName($order = Criteria::ASC) Order by the name column
@@ -16,12 +17,13 @@
  * @method     CollectibleQuery orderByScore($order = Criteria::ASC) Order by the score column
  * @method     CollectibleQuery orderByPosition($order = Criteria::ASC) Order by the position column
  * @method     CollectibleQuery orderByIsNameAutomatic($order = Criteria::ASC) Order by the is_name_automatic column
- * @method     CollectibleQuery orderByEblob($order = Criteria::ASC) Order by the eblob column
  * @method     CollectibleQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
+ * @method     CollectibleQuery orderByEblob($order = Criteria::ASC) Order by the eblob column
  * @method     CollectibleQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     CollectibleQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     CollectibleQuery groupById() Group by the id column
+ * @method     CollectibleQuery groupByGraphId() Group by the graph_id column
  * @method     CollectibleQuery groupByCollectorId() Group by the collector_id column
  * @method     CollectibleQuery groupByCollectionId() Group by the collection_id column
  * @method     CollectibleQuery groupByName() Group by the name column
@@ -31,8 +33,8 @@
  * @method     CollectibleQuery groupByScore() Group by the score column
  * @method     CollectibleQuery groupByPosition() Group by the position column
  * @method     CollectibleQuery groupByIsNameAutomatic() Group by the is_name_automatic column
- * @method     CollectibleQuery groupByEblob() Group by the eblob column
  * @method     CollectibleQuery groupByDeletedAt() Group by the deleted_at column
+ * @method     CollectibleQuery groupByEblob() Group by the eblob column
  * @method     CollectibleQuery groupByCreatedAt() Group by the created_at column
  * @method     CollectibleQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -68,6 +70,7 @@
  * @method     Collectible findOneOrCreate(PropelPDO $con = null) Return the first Collectible matching the query, or a new Collectible object populated from the query conditions when no match is found
  *
  * @method     Collectible findOneById(int $id) Return the first Collectible filtered by the id column
+ * @method     Collectible findOneByGraphId(int $graph_id) Return the first Collectible filtered by the graph_id column
  * @method     Collectible findOneByCollectorId(int $collector_id) Return the first Collectible filtered by the collector_id column
  * @method     Collectible findOneByCollectionId(int $collection_id) Return the first Collectible filtered by the collection_id column
  * @method     Collectible findOneByName(string $name) Return the first Collectible filtered by the name column
@@ -77,12 +80,13 @@
  * @method     Collectible findOneByScore(int $score) Return the first Collectible filtered by the score column
  * @method     Collectible findOneByPosition(int $position) Return the first Collectible filtered by the position column
  * @method     Collectible findOneByIsNameAutomatic(boolean $is_name_automatic) Return the first Collectible filtered by the is_name_automatic column
- * @method     Collectible findOneByEblob(string $eblob) Return the first Collectible filtered by the eblob column
  * @method     Collectible findOneByDeletedAt(string $deleted_at) Return the first Collectible filtered by the deleted_at column
+ * @method     Collectible findOneByEblob(string $eblob) Return the first Collectible filtered by the eblob column
  * @method     Collectible findOneByCreatedAt(string $created_at) Return the first Collectible filtered by the created_at column
  * @method     Collectible findOneByUpdatedAt(string $updated_at) Return the first Collectible filtered by the updated_at column
  *
  * @method     array findById(int $id) Return Collectible objects filtered by the id column
+ * @method     array findByGraphId(int $graph_id) Return Collectible objects filtered by the graph_id column
  * @method     array findByCollectorId(int $collector_id) Return Collectible objects filtered by the collector_id column
  * @method     array findByCollectionId(int $collection_id) Return Collectible objects filtered by the collection_id column
  * @method     array findByName(string $name) Return Collectible objects filtered by the name column
@@ -92,8 +96,8 @@
  * @method     array findByScore(int $score) Return Collectible objects filtered by the score column
  * @method     array findByPosition(int $position) Return Collectible objects filtered by the position column
  * @method     array findByIsNameAutomatic(boolean $is_name_automatic) Return Collectible objects filtered by the is_name_automatic column
- * @method     array findByEblob(string $eblob) Return Collectible objects filtered by the eblob column
  * @method     array findByDeletedAt(string $deleted_at) Return Collectible objects filtered by the deleted_at column
+ * @method     array findByEblob(string $eblob) Return Collectible objects filtered by the eblob column
  * @method     array findByCreatedAt(string $created_at) Return Collectible objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return Collectible objects filtered by the updated_at column
  *
@@ -102,9 +106,8 @@
 abstract class BaseCollectibleQuery extends ModelCriteria
 {
     
-  // soft_delete behavior
-  protected static $softDelete = true;
-  protected $localSoftDelete = true;
+  // archivable behavior
+  protected $archiveOnDelete = true;
 
     /**
      * Initializes internal state of BaseCollectibleQuery object.
@@ -233,6 +236,46 @@ abstract class BaseCollectibleQuery extends ModelCriteria
             $comparison = Criteria::IN;
         }
         return $this->addUsingAlias(CollectiblePeer::ID, $id, $comparison);
+    }
+
+    /**
+     * Filter the query on the graph_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByGraphId(1234); // WHERE graph_id = 1234
+     * $query->filterByGraphId(array(12, 34)); // WHERE graph_id IN (12, 34)
+     * $query->filterByGraphId(array('min' => 12)); // WHERE graph_id > 12
+     * </code>
+     *
+     * @param     mixed $graphId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectibleQuery The current query, for fluid interface
+     */
+    public function filterByGraphId($graphId = null, $comparison = null)
+    {
+        if (is_array($graphId)) {
+            $useMinMax = false;
+            if (isset($graphId['min'])) {
+                $this->addUsingAlias(CollectiblePeer::GRAPH_ID, $graphId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($graphId['max'])) {
+                $this->addUsingAlias(CollectiblePeer::GRAPH_ID, $graphId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CollectiblePeer::GRAPH_ID, $graphId, $comparison);
     }
 
     /**
@@ -550,34 +593,6 @@ abstract class BaseCollectibleQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the eblob column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByEblob('fooValue');   // WHERE eblob = 'fooValue'
-     * $query->filterByEblob('%fooValue%'); // WHERE eblob LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $eblob The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectibleQuery The current query, for fluid interface
-     */
-    public function filterByEblob($eblob = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($eblob)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $eblob)) {
-                $eblob = str_replace('*', '%', $eblob);
-                $comparison = Criteria::LIKE;
-            }
-        }
-        return $this->addUsingAlias(CollectiblePeer::EBLOB, $eblob, $comparison);
-    }
-
-    /**
      * Filter the query on the deleted_at column
      *
      * Example usage:
@@ -617,6 +632,34 @@ abstract class BaseCollectibleQuery extends ModelCriteria
             }
         }
         return $this->addUsingAlias(CollectiblePeer::DELETED_AT, $deletedAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the eblob column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByEblob('fooValue');   // WHERE eblob = 'fooValue'
+     * $query->filterByEblob('%fooValue%'); // WHERE eblob LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $eblob The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectibleQuery The current query, for fluid interface
+     */
+    public function filterByEblob($eblob = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($eblob)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $eblob)) {
+                $eblob = str_replace('*', '%', $eblob);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectiblePeer::EBLOB, $eblob, $comparison);
     }
 
     /**
@@ -1160,132 +1203,107 @@ abstract class BaseCollectibleQuery extends ModelCriteria
     }
 
     /**
-     * Code to execute before every SELECT statement
-     *
-     * @param     PropelPDO $con The connection object used by the query
-     */
-    protected function basePreSelect(PropelPDO $con)
-    {
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled() && $this->localSoftDelete)
-    {
-      $this->addUsingAlias(CollectiblePeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
-
-        return $this->preSelect($con);
-    }
-
-    /**
      * Code to execute before every DELETE statement
      *
      * @param     PropelPDO $con The connection object used by the query
      */
     protected function basePreDelete(PropelPDO $con)
     {
-    // soft_delete behavior
-    if (CollectibleQuery::isSoftDeleteEnabled() && $this->localSoftDelete)
+    // archivable behavior
+    
+    if ($this->archiveOnDelete)
     {
-      return $this->softDelete($con);
+      $this->archive($con);
     }
     else
     {
-      return $this->hasWhereClause() ? $this->forceDelete($con) : $this->forceDeleteAll($con);
+      $this->archiveOnDelete = true;
     }
+
 
         return $this->preDelete($con);
     }
 
-  // soft_delete behavior
+  // archivable behavior
   
   /**
-   * Temporarily disable the filter on deleted rows
-   * Valid only for the current query
+   * Copy the data of the objects satisfying the query into CollectibleArchive archive objects.
+   * The archived objects are then saved.
+   * If any of the objects has already been archived, the archived object
+   * is updated and not duplicated.
+   * Warning: This termination methods issues 2n+1 queries.
    *
-   * @see CollectibleQuery::disableSoftDelete() to disable the filter for more than one query
+   * @param      PropelPDO $con  Connection to use.
+   * @param      Boolean $useLittleMemory  Whether or not to use PropelOnDemandFormatter to retrieve objects.
+   *               Set to false if the identity map matters.
+   *               Set to true (default) to use less memory.
    *
-   * @return CollectibleQuery The current query, for fluid interface
+   * @return     int the number of archived objects
    */
-  public function includeDeleted()
+  public function archive($con = null, $useLittleMemory = true)
   {
-    $this->localSoftDelete = false;
-    return $this;
+    $totalArchivedObjects = 0;
+    $criteria = clone $this;
+    // prepare the query
+    $criteria->setWith(array());
+    if ($useLittleMemory) {
+      $criteria->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
+    }
+    if ($con === null) {
+      $con = Propel::getConnection(CollectiblePeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+    }
+    $con->beginTransaction();
+    try {
+      // archive all results one by one
+      foreach ($criteria->find($con) as $object) {
+        $object->archive($con);
+        $totalArchivedObjects++;
+      }
+      $con->commit();
+    } catch (PropelException $e) {
+      $con->rollBack();
+      throw $e;
+    }
+    
+    return $totalArchivedObjects;
   }
   
   /**
-   * Soft delete the selected rows
+   * Enable/disable auto-archiving on delete for the next query.
    *
-   * @param      PropelPDO $con an optional connection object
-   *
-   * @return    int Number of updated rows
+   * @param Boolean True if the query must archive deleted objects, false otherwise.
    */
-  public function softDelete(PropelPDO $con = null)
+  public function setArchiveOnDelete($archiveOnDelete)
   {
-    return $this->update(array('DeletedAt' => time()), $con);
+    $this->archiveOnDelete = $archiveOnDelete;
   }
   
   /**
-   * Bypass the soft_delete behavior and force a hard delete of the selected rows
+   * Delete records matching the current query without archiving them.
    *
-   * @param      PropelPDO $con an optional connection object
+   * @param      PropelPDO $con  Connection to use.
    *
-   * @return    int Number of deleted rows
+   * @return integer the number of deleted rows
    */
-  public function forceDelete(PropelPDO $con = null)
+  public function deleteWithoutArchive($con = null)
   {
-    return CollectiblePeer::doForceDelete($this, $con);
+    $this->archiveOnDelete = false;
+  
+    return $this->delete($con);
   }
   
   /**
-   * Bypass the soft_delete behavior and force a hard delete of all the rows
+   * Delete all records without archiving them.
    *
-   * @param      PropelPDO $con an optional connection object
+   * @param      PropelPDO $con  Connection to use.
    *
-   * @return    int Number of deleted rows
+   * @return integer the number of deleted rows
    */
-  public function forceDeleteAll(PropelPDO $con = null)
+  public function deleteAllWithoutArchive($con = null)
   {
-    return CollectiblePeer::doForceDeleteAll($con);}
+    $this->archiveOnDelete = false;
   
-  /**
-   * Undelete selected rows
-   *
-   * @param      PropelPDO $con an optional connection object
-   *
-   * @return    int The number of rows affected by this update and any referring fk objects' save() operations.
-   */
-  public function unDelete(PropelPDO $con = null)
-  {
-    return $this->update(array('DeletedAt' => null), $con);
-  }
-  
-  /**
-   * Enable the soft_delete behavior for this model
-   */
-  public static function enableSoftDelete()
-  {
-    self::$softDelete = true;
-  }
-  
-  /**
-   * Disable the soft_delete behavior for this model
-   */
-  public static function disableSoftDelete()
-  {
-    self::$softDelete = false;
-  }
-  
-  /**
-   * Check the soft_delete behavior for this model
-   *
-   * @return boolean true if the soft_delete behavior is enabled
-   */
-  public static function isSoftDeleteEnabled()
-  {
-    return self::$softDelete;
+    return $this->deleteAll($con);
   }
 
   // timestampable behavior

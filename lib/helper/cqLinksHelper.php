@@ -36,7 +36,7 @@ function link_to_collector($object, $type = 'text', $options = array())
     unset($options['truncate']);
   }
 
-  $url = '@collector_by_slug?slug='.$collector->getSlug();
+  $url = '@collector_by_id?id='. $collector->getId() .'&slug='. $collector->getSlug();
   switch ($type)
   {
     case "collection_image":
@@ -82,7 +82,7 @@ function link_to_collector($object, $type = 'text', $options = array())
 
 function url_for_collector(Collector $collector = null, $absolute = false)
 {
-  return ($collector) ? url_for('@collector_by_slug?slug='.$collector->getSlug(), $absolute) : null;
+  return ($collector) ? url_for('@collector_by_id?id='. $collector->getId() .'&slug='.$collector->getSlug(), $absolute) : null;
 }
 
 function link_to_collection($object, $type = 'text', $options = array())
@@ -223,7 +223,7 @@ function link_to_featured_week(Featured $featured_week, $type = 'text', $options
 
 function url_for_featured_week(Featured $featured_week)
 {
-  return url_for('@featured_week?id='.$featured_week->getId().'&slug='.cqStatic::slugify($featured_week->title));
+  return url_for('@featured_week?id='. $featured_week->getId() .'&slug='. Utf8::slugify($featured_week->title));
 }
 
 function link_to_blog_post(wpPost $post)

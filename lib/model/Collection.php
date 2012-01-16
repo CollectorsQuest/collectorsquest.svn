@@ -10,13 +10,35 @@ class Collection extends BaseCollection
 	return $this->getName();
   }
 
+  public function getGraphId()
+  {
+    $graph_id = null;
+
+    if (!$this->isNew() && (!$graph_id = parent::getGraphId()))
+    {
+      $client = cqStatic::getNeo4jClient();
+
+      $node = $client->makeNode();
+      $node->setProperty('model', 'Collection');
+      $node->setProperty('model_id', $this->getId());
+      $node->save();
+
+      $graph_id = $node->getId();
+
+      $this->setGraphId($node->getId());
+      $this->save();
+    }
+
+    return $graph_id;
+  }
+
   /**
    * @param  string $v
    * @return void
    */
   public function setName($v)
   {
-    parent::setName(cqStatic::clean($v, 'none'));
+    parent::setName(IceStatic::cleanText($v, 'none'));
   }
 
   /**
@@ -29,7 +51,7 @@ class Collection extends BaseCollection
   {
     if ($type == 'html')
     {
-      $v = cqStatic::clean($v, 'p, b, u, i, em, strong, h1, h2, h3, h4, h5, h6, div, span, ul, ol, li, blockquote');
+      $v = IceStatic::cleanText($v, 'p, b, u, i, em, strong, h1, h2, h3, h4, h5, h6, div, span, ul, ol, li, blockquote');
       $v = cqMarkdownify::doConvert($v);
     }
 
@@ -213,17 +235,25 @@ class Collection extends BaseCollection
 		return CollectionPeer::doSelectStmt($oCriteria);
 	}
 
+  /**
+   * @param null|PropelPDO $con
+   *
+   * @return boolean
+   */
   public function preDelete(PropelPDO $con = null)
   {
-    // Deleting collectibles
-    $collectibles = $this->getCollectibles();
-    if (!empty($collectibles))
+    /** @var $collectibles Collectible[] */
+    if ($collectibles = $this->getCollectibles())
+    foreach ($collectibles as $collectible)
     {
-      /** @var $collectible Collectible */
-      foreach ($collectibles as $collectible)
-      {
-        $collectible->delete($con);
-      }
+      $collectible->delete($con);
+    }
+
+    /** @var $comments Comment[] */
+    if ($comments = $this->getComments())
+    foreach ($comments as $comment)
+    {
+      $comment->delete($con);
     }
 
     return parent::preDelete($con);

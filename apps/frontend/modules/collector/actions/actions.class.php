@@ -10,6 +10,16 @@
  */
 class collectorActions extends cqActions
 {
+  private $_facebook_fields = array(
+    array('name' => 'name'),
+    array('name' => 'email'),
+    array('name' => 'gender'),
+    array('name' => 'birthday'),
+    array('name' => 'location'),
+    array('name' => 'password'),
+    array('name' => 'captcha'),
+  );
+
   /**
    * Executes index action
    *
@@ -20,8 +30,6 @@ class collectorActions extends cqActions
   {
     /** @var $collector Collector */
     $collector = $this->getRoute()->getObject();
-
-    $this->forward404Unless($collector);
 
     /**
      * Special checks for the Collectibles of A&E
@@ -71,6 +79,19 @@ class collectorActions extends cqActions
     return sfView::SUCCESS;
   }
 
+  public function executeMe(sfWebRequest $request)
+  {
+    if ($collector = $this->getCollector())
+    {
+      $id   = $collector->getId();
+      $slug = $collector->getSlug();
+
+      $this->redirect('@collector_by_id?id='. $id .'&slug='. $slug);
+    }
+
+    $this->redirect('@login');
+  }
+
   /**
    * @param  sfWebRequest  $request
    * @return string
@@ -96,15 +117,87 @@ class collectorActions extends cqActions
     }
 
     $amStep1Data = $request->getParameter('first_step_data', base64_encode(serialize($request->getParameter('collectorstep1', array()))));
-    $amStep1Data = unserialize(base64_decode($amStep1Data));
+    $amStep1Data = @unserialize(base64_decode($amStep1Data));
 
     $amStep2Data = $request->getParameter('second_step_data', base64_encode(serialize($request->getParameter('collectorstep2', array()))));
-    $amStep2Data = unserialize(base64_decode($amStep2Data));
+    $amStep2Data = @unserialize(base64_decode($amStep2Data));
 
-    if ($request->isMethod('post'))
+    $amStep3Data = $request->getParameter('third_step_data', base64_encode(serialize($request->getParameter('collectorstep2', array()))));
+    $amStep3Data = @unserialize(base64_decode($amStep3Data));
+
+    $facebook = $this->getUser()->getFacebook();
+
+    if (($signed_request = $facebook->getSignedRequest()) && !empty($signed_request['oauth_token']))
     {
+      // We need to make an extra check for the valid registration fields
+      if (json_encode($this->_facebook_fields) === @$signed_request['registration_metadata']['fields'])
+      {
+        $params = $signed_request['registration'];
+
+        $amStep1Data['username'] = uniqid('fb');
+        $amStep1Data['facebook_id'] = $signed_request['user_id'];
+        $amStep1Data['password'] = $params['password'];
+        $amStep1Data['email'] = $params['email'];
+        $amStep1Data['display_name'] = $params['name'];
+
+        $amStep3Data['gender'] = ucfirst($params['gender']);
+        $amStep3Data['birthday'] = $params['birthday'];
+        $amStep3Data['country'] = $signed_request['user']['country'];
+      }
+
+      /*
+        array(8) {
+          ["algorithm"]=>
+          string(11) "HMAC-SHA256"
+          ["expires"]=>
+          int(1326135600)
+          ["issued_at"]=>
+          int(1326130050)
+          ["oauth_token"]=>
+          string(111) "<!-- Edited -->"
+          ["registration"]=>
+          array(6) {
+            ["name"]=>
+            string(11) "Kiril Angov"
+            ["email"]=>
+            string(20) "kupokomapa@gmail.com"
+            ["gender"]=>
+            string(4) "male"
+            ["birthday"]=>
+            string(10) "03/25/1983"
+            ["location"]=>
+            array(2) {
+              ["name"]=>
+              string(15) "Sofia, Bulgaria"
+              ["id"]=>
+              float(1.0601348277267E+14)
+            }
+            ["password"]=>
+            string(8) "123456789"
+          }
+          ["registration_metadata"]=>
+          array(1) {
+            ["fields"]=>
+            string(131) "[{"name":"name"},{"name":"email"},{"name":"gender"},{"name":"birthday"},{"name":"location"},{"name":"password"},{"name":"captcha"}]"
+          }
+          ["user"]=>
+          array(2) {
+            ["country"]=>
+            string(2) "bg"
+            ["locale"]=>
+            string(5) "bg_BG"
+          }
+          ["user_id"]=>
+          string(8) "74502459"
+        }
+      */
+    }
+    else if ($request->isMethod('post'))
+    {
+      $params = $request->getParameter($form->getName());
+
       // Bind the POST variables to the form object for validation and sanitation
-      $form->bind($request->getParameter($form->getName()));
+      $form->bind($params);
 
       if ($form->isValid())
       {
@@ -119,6 +212,7 @@ class collectorActions extends cqActions
         $amStep3Data = $request->getParameter($form->getName());
         $amUserData = array(
           'username' => $amStep1Data['username'],
+          'facebook_id' => $amStep1Data['facebook_id'],
           'display_name' => $amStep1Data['display_name'],
           'password' => $amStep1Data['password'],
           'email' => $amStep1Data['email'],
@@ -153,8 +247,11 @@ class collectorActions extends cqActions
       }
     }
 
+    $form->setDefaults(array_merge($amStep1Data, $amStep2Data, $amStep3Data));
+
     $this->amStep1Data = $amStep1Data;
     $this->amStep2Data = $amStep2Data;
+    $this->amStep3Data = $amStep3Data;
     $this->form = $form;
 
     $this->buttons = array(
@@ -169,6 +266,16 @@ class collectorActions extends cqActions
         'route' => '@seller_signup'
       )
     );
+
+    $this->addBreadcrumb($this->__('Sign Up for a Collector Account'));
+    $this->prependTitle($this->__('Sign Up for a Collector Account'));
+
+    return sfView::SUCCESS;
+  }
+
+  public function executeSignupFacebook()
+  {
+    $this->fields = $this->_facebook_fields;
 
     $this->addBreadcrumb($this->__('Sign Up for a Collector Account'));
     $this->prependTitle($this->__('Sign Up for a Collector Account'));

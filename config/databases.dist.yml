@@ -2,62 +2,6 @@ all:
   propel:
     class:        sfPropelDatabase
     param:
-      classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_com;host=master.cwvkronpbfrx.us-east-1.rds.amazonaws.com
-      username:   collectorsquest
-      password:
-      encoding:   utf8
-      persistent: true
-      pooling:    true
-
-  blog:
-    class:        sfPropelDatabase
-    param:
-      classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_blog;host=master.cwvkronpbfrx.us-east-1.rds.amazonaws.com
-      username:   collectorsquest
-      password:
-      encoding:   utf8
-      persistent: true
-      pooling:    true
-
-  calendar:
-    class:        sfPropelDatabase
-    param:
-      classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_calendar;host=master.cwvkronpbfrx.us-east-1.rds.amazonaws.com
-      username:   collectorsquest
-      password:
-      encoding:   utf8
-      persistent: true
-      pooling:    true
-
-  queue:
-    class:        sfPropelDatabase
-    param:
-      classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_queue;host=master.cwvkronpbfrx.us-east-1.rds.amazonaws.com
-      username:   collectorsquest
-      password:
-      encoding:   utf8
-      persistent: true
-      pooling:    true
-
-  icepique:
-    class:        sfPropelDatabase
-    param:
-      classname:  PropelPDO
-      dsn:        mysql:dbname=collectorsquest_com;host=master.cwvkronpbfrx.us-east-1.rds.amazonaws.com
-      username:   collectorsquest
-      password:
-      encoding:   utf8
-      persistent: true
-      pooling:    true
-
-
-dev:
-  propel:
-    param:
       classname:  DebugPDO
       dsn:        mysql:dbname=collectorsquest_dev;host=127.0.0.1
       username:   root
@@ -86,33 +30,54 @@ dev:
             enabled: true
 
   blog:
+    class:        sfPropelDatabase
     param:
       classname:  DebugPDO
       dsn:        mysql:dbname=collectorsquest_dev;host=127.0.0.1
       username:   root
       password:
+      encoding:   utf8
+      persistent: true
 
   calendar:
+    class:        sfPropelDatabase
     param:
       classname:  DebugPDO
       dsn:        mysql:dbname=collectorsquest_dev;host=127.0.0.1
       username:   root
       password:
+      encoding:   utf8
+      persistent: true
 
   queue:
+    class:        sfPropelDatabase
     param:
       classname:  DebugPDO
       dsn:        mysql:dbname=collectorsquest_dev;host=127.0.0.1
       username:   root
       password:
+      encoding:   utf8
+      persistent: true
 
   icepique:
+    class:        sfPropelDatabase
     param:
       classname:  DebugPDO
       dsn:        mysql:dbname=collectorsquest_dev;host=127.0.0.1
       username:   root
       password:
+      encoding:   utf8
+      persistent: true
 
+  archive:
+    class:        sfPropelDatabase
+    param:
+      classname:  DebugPDO
+      dsn:        mysql:dbname=collectorsquest_dev;host=127.0.0.1
+      username:   root
+      password:
+      encoding:   utf8
+      persistent: true
 
 test:
   propel:
@@ -130,8 +95,15 @@ test:
       password:
 
   icepique:
-      param:
-        classname:  DebugPDO
-        dsn:        mysql:dbname=collectorsquest_test;host=127.0.0.1
-        username:   root
-        password:
+    param:
+      classname:  DebugPDO
+      dsn:        mysql:dbname=collectorsquest_test;host=127.0.0.1
+      username:   root
+      password:
+
+  archive:
+    param:
+      classname:  DebugPDO
+      dsn:        mysql:dbname=collectorsquest_test;host=127.0.0.1
+      username:   root
+      password:

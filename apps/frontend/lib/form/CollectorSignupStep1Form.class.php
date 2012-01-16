@@ -4,7 +4,7 @@ class CollectorSignupStep1Form extends BaseFormPropel
 {
   public function setup()
   {
-    $recaptcha = sfConfig::get('app_api_recaptcha');
+    $recaptcha = sfConfig::get('app_credentials_recaptcha');
 
     $this->setWidgets(array(
       'username'       => new sfWidgetFormInputText(),

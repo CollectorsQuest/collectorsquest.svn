@@ -41,7 +41,7 @@ class CollectibleOfferTableMap extends TableMap
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
     $this->addForeignKey('COLLECTIBLE_ID', 'CollectibleId', 'INTEGER', 'collectible', 'ID', true, null, null);
     $this->addForeignKey('COLLECTIBLE_FOR_SALE_ID', 'CollectibleForSaleId', 'INTEGER', 'collectible_for_sale', 'ID', true, null, null);
-    $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', false, null, null);
+    $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
     $this->addColumn('PRICE', 'Price', 'FLOAT', false, null, null);
     $this->addColumn('STATUS', 'Status', 'CHAR', true, null, null);
     $this->addColumn('DELETED_AT', 'DeletedAt', 'TIMESTAMP', false, null, null);
@@ -69,7 +69,7 @@ class CollectibleOfferTableMap extends TableMap
   public function getBehaviors()
   {
     return array(
-      'soft_delete' => array('deleted_column' => 'deleted_at', ),
+      'archivable' => array('archive_table' => '', 'archive_class' => 'CollectibleOfferArchive', 'log_archived_at' => 'true', 'archived_at_column' => 'archived_at', 'archive_on_insert' => 'false', 'archive_on_update' => 'false', 'archive_on_delete' => 'true', ),
       'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
       'symfony' => array('form' => 'true', 'filter' => 'true', ),
       'symfony_behaviors' => array(),

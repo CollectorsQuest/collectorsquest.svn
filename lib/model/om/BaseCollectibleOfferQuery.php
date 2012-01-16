@@ -70,9 +70,8 @@
 abstract class BaseCollectibleOfferQuery extends ModelCriteria
 {
     
-  // soft_delete behavior
-  protected static $softDelete = true;
-  protected $localSoftDelete = true;
+  // archivable behavior
+  protected $archiveOnDelete = true;
 
     /**
      * Initializes internal state of BaseCollectibleOfferQuery object.
@@ -703,7 +702,7 @@ abstract class BaseCollectibleOfferQuery extends ModelCriteria
      *
      * @return    CollectibleOfferQuery The current query, for fluid interface
      */
-    public function joinCollector($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinCollector($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('Collector');
@@ -738,7 +737,7 @@ abstract class BaseCollectibleOfferQuery extends ModelCriteria
      *
      * @return    CollectorQuery A secondary query class using the current class as primary query
      */
-    public function useCollectorQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useCollectorQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinCollector($relationAlias, $joinType)
@@ -762,132 +761,107 @@ abstract class BaseCollectibleOfferQuery extends ModelCriteria
     }
 
     /**
-     * Code to execute before every SELECT statement
-     *
-     * @param     PropelPDO $con The connection object used by the query
-     */
-    protected function basePreSelect(PropelPDO $con)
-    {
-    // soft_delete behavior
-    if (CollectibleOfferQuery::isSoftDeleteEnabled() && $this->localSoftDelete)
-    {
-      $this->addUsingAlias(CollectibleOfferPeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectibleOfferPeer::enableSoftDelete();
-    }
-
-        return $this->preSelect($con);
-    }
-
-    /**
      * Code to execute before every DELETE statement
      *
      * @param     PropelPDO $con The connection object used by the query
      */
     protected function basePreDelete(PropelPDO $con)
     {
-    // soft_delete behavior
-    if (CollectibleOfferQuery::isSoftDeleteEnabled() && $this->localSoftDelete)
+    // archivable behavior
+    
+    if ($this->archiveOnDelete)
     {
-      return $this->softDelete($con);
+      $this->archive($con);
     }
     else
     {
-      return $this->hasWhereClause() ? $this->forceDelete($con) : $this->forceDeleteAll($con);
+      $this->archiveOnDelete = true;
     }
+
 
         return $this->preDelete($con);
     }
 
-  // soft_delete behavior
+  // archivable behavior
   
   /**
-   * Temporarily disable the filter on deleted rows
-   * Valid only for the current query
+   * Copy the data of the objects satisfying the query into CollectibleOfferArchive archive objects.
+   * The archived objects are then saved.
+   * If any of the objects has already been archived, the archived object
+   * is updated and not duplicated.
+   * Warning: This termination methods issues 2n+1 queries.
    *
-   * @see CollectibleOfferQuery::disableSoftDelete() to disable the filter for more than one query
+   * @param      PropelPDO $con  Connection to use.
+   * @param      Boolean $useLittleMemory  Whether or not to use PropelOnDemandFormatter to retrieve objects.
+   *               Set to false if the identity map matters.
+   *               Set to true (default) to use less memory.
    *
-   * @return CollectibleOfferQuery The current query, for fluid interface
+   * @return     int the number of archived objects
    */
-  public function includeDeleted()
+  public function archive($con = null, $useLittleMemory = true)
   {
-    $this->localSoftDelete = false;
-    return $this;
+    $totalArchivedObjects = 0;
+    $criteria = clone $this;
+    // prepare the query
+    $criteria->setWith(array());
+    if ($useLittleMemory) {
+      $criteria->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
+    }
+    if ($con === null) {
+      $con = Propel::getConnection(CollectibleOfferPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+    }
+    $con->beginTransaction();
+    try {
+      // archive all results one by one
+      foreach ($criteria->find($con) as $object) {
+        $object->archive($con);
+        $totalArchivedObjects++;
+      }
+      $con->commit();
+    } catch (PropelException $e) {
+      $con->rollBack();
+      throw $e;
+    }
+    
+    return $totalArchivedObjects;
   }
   
   /**
-   * Soft delete the selected rows
+   * Enable/disable auto-archiving on delete for the next query.
    *
-   * @param      PropelPDO $con an optional connection object
-   *
-   * @return    int Number of updated rows
+   * @param Boolean True if the query must archive deleted objects, false otherwise.
    */
-  public function softDelete(PropelPDO $con = null)
+  public function setArchiveOnDelete($archiveOnDelete)
   {
-    return $this->update(array('DeletedAt' => time()), $con);
+    $this->archiveOnDelete = $archiveOnDelete;
   }
   
   /**
-   * Bypass the soft_delete behavior and force a hard delete of the selected rows
+   * Delete records matching the current query without archiving them.
    *
-   * @param      PropelPDO $con an optional connection object
+   * @param      PropelPDO $con  Connection to use.
    *
-   * @return    int Number of deleted rows
+   * @return integer the number of deleted rows
    */
-  public function forceDelete(PropelPDO $con = null)
+  public function deleteWithoutArchive($con = null)
   {
-    return CollectibleOfferPeer::doForceDelete($this, $con);
+    $this->archiveOnDelete = false;
+  
+    return $this->delete($con);
   }
   
   /**
-   * Bypass the soft_delete behavior and force a hard delete of all the rows
+   * Delete all records without archiving them.
    *
-   * @param      PropelPDO $con an optional connection object
+   * @param      PropelPDO $con  Connection to use.
    *
-   * @return    int Number of deleted rows
+   * @return integer the number of deleted rows
    */
-  public function forceDeleteAll(PropelPDO $con = null)
+  public function deleteAllWithoutArchive($con = null)
   {
-    return CollectibleOfferPeer::doForceDeleteAll($con);}
+    $this->archiveOnDelete = false;
   
-  /**
-   * Undelete selected rows
-   *
-   * @param      PropelPDO $con an optional connection object
-   *
-   * @return    int The number of rows affected by this update and any referring fk objects' save() operations.
-   */
-  public function unDelete(PropelPDO $con = null)
-  {
-    return $this->update(array('DeletedAt' => null), $con);
-  }
-  
-  /**
-   * Enable the soft_delete behavior for this model
-   */
-  public static function enableSoftDelete()
-  {
-    self::$softDelete = true;
-  }
-  
-  /**
-   * Disable the soft_delete behavior for this model
-   */
-  public static function disableSoftDelete()
-  {
-    self::$softDelete = false;
-  }
-  
-  /**
-   * Check the soft_delete behavior for this model
-   *
-   * @return boolean true if the soft_delete behavior is enabled
-   */
-  public static function isSoftDeleteEnabled()
-  {
-    return self::$softDelete;
+    return $this->deleteAll($con);
   }
 
   // timestampable behavior

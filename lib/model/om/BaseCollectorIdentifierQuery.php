@@ -42,6 +42,9 @@
 abstract class BaseCollectorIdentifierQuery extends ModelCriteria
 {
     
+  // archivable behavior
+  protected $archiveOnDelete = true;
+
     /**
      * Initializes internal state of BaseCollectorIdentifierQuery object.
      *
@@ -315,7 +318,7 @@ abstract class BaseCollectorIdentifierQuery extends ModelCriteria
      *
      * @return    CollectorIdentifierQuery The current query, for fluid interface
      */
-    public function joinCollector($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinCollector($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('Collector');
@@ -350,7 +353,7 @@ abstract class BaseCollectorIdentifierQuery extends ModelCriteria
      *
      * @return    CollectorQuery A secondary query class using the current class as primary query
      */
-    public function useCollectorQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useCollectorQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinCollector($relationAlias, $joinType)
@@ -372,5 +375,109 @@ abstract class BaseCollectorIdentifierQuery extends ModelCriteria
 
         return $this;
     }
+
+    /**
+     * Code to execute before every DELETE statement
+     *
+     * @param     PropelPDO $con The connection object used by the query
+     */
+    protected function basePreDelete(PropelPDO $con)
+    {
+    // archivable behavior
+    
+    if ($this->archiveOnDelete)
+    {
+      $this->archive($con);
+    }
+    else
+    {
+      $this->archiveOnDelete = true;
+    }
+
+
+        return $this->preDelete($con);
+    }
+
+  // archivable behavior
+  
+  /**
+   * Copy the data of the objects satisfying the query into CollectorIdentifierArchive archive objects.
+   * The archived objects are then saved.
+   * If any of the objects has already been archived, the archived object
+   * is updated and not duplicated.
+   * Warning: This termination methods issues 2n+1 queries.
+   *
+   * @param      PropelPDO $con  Connection to use.
+   * @param      Boolean $useLittleMemory  Whether or not to use PropelOnDemandFormatter to retrieve objects.
+   *               Set to false if the identity map matters.
+   *               Set to true (default) to use less memory.
+   *
+   * @return     int the number of archived objects
+   */
+  public function archive($con = null, $useLittleMemory = true)
+  {
+    $totalArchivedObjects = 0;
+    $criteria = clone $this;
+    // prepare the query
+    $criteria->setWith(array());
+    if ($useLittleMemory) {
+      $criteria->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
+    }
+    if ($con === null) {
+      $con = Propel::getConnection(CollectorIdentifierPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+    }
+    $con->beginTransaction();
+    try {
+      // archive all results one by one
+      foreach ($criteria->find($con) as $object) {
+        $object->archive($con);
+        $totalArchivedObjects++;
+      }
+      $con->commit();
+    } catch (PropelException $e) {
+      $con->rollBack();
+      throw $e;
+    }
+    
+    return $totalArchivedObjects;
+  }
+  
+  /**
+   * Enable/disable auto-archiving on delete for the next query.
+   *
+   * @param Boolean True if the query must archive deleted objects, false otherwise.
+   */
+  public function setArchiveOnDelete($archiveOnDelete)
+  {
+    $this->archiveOnDelete = $archiveOnDelete;
+  }
+  
+  /**
+   * Delete records matching the current query without archiving them.
+   *
+   * @param      PropelPDO $con  Connection to use.
+   *
+   * @return integer the number of deleted rows
+   */
+  public function deleteWithoutArchive($con = null)
+  {
+    $this->archiveOnDelete = false;
+  
+    return $this->delete($con);
+  }
+  
+  /**
+   * Delete all records without archiving them.
+   *
+   * @param      PropelPDO $con  Connection to use.
+   *
+   * @return integer the number of deleted rows
+   */
+  public function deleteAllWithoutArchive($con = null)
+  {
+    $this->archiveOnDelete = false;
+  
+    return $this->deleteAll($con);
+  }
 
 }

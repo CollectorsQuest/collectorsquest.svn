@@ -31,6 +31,12 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   protected $id;
 
   /**
+   * The value for the graph_id field.
+   * @var        int
+   */
+  protected $graph_id;
+
+  /**
    * The value for the collector_id field.
    * @var        int
    */
@@ -89,16 +95,16 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   protected $is_name_automatic;
 
   /**
-   * The value for the eblob field.
-   * @var        string
-   */
-  protected $eblob;
-
-  /**
    * The value for the deleted_at field.
    * @var        string
    */
   protected $deleted_at;
+
+  /**
+   * The value for the eblob field.
+   * @var        string
+   */
+  protected $eblob;
 
   /**
    * The value for the created_at field.
@@ -156,6 +162,9 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
    */
   protected $alreadyInValidation = false;
 
+  // archivable behavior
+  protected $archiveOnDelete = true;
+
   /**
    * Applies default values to this object.
    * This method should be called from the object's constructor (or
@@ -188,6 +197,16 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   public function getId()
   {
     return $this->id;
+  }
+
+  /**
+   * Get the [graph_id] column value.
+   * 
+   * @return     int
+   */
+  public function getGraphId()
+  {
+    return $this->graph_id;
   }
 
   /**
@@ -281,16 +300,6 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   }
 
   /**
-   * Get the [eblob] column value.
-   * 
-   * @return     string
-   */
-  public function getEblob()
-  {
-    return $this->eblob;
-  }
-
-  /**
    * Get the [optionally formatted] temporal [deleted_at] column value.
    * 
    *
@@ -338,6 +347,16 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     {
       return $dt->format($format);
     }
+  }
+
+  /**
+   * Get the [eblob] column value.
+   * 
+   * @return     string
+   */
+  public function getEblob()
+  {
+    return $this->eblob;
   }
 
   /**
@@ -457,6 +476,28 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     {
       $this->id = $v;
       $this->modifiedColumns[] = CollectiblePeer::ID;
+    }
+
+    return $this;
+  }
+
+  /**
+   * Set the value of [graph_id] column.
+   * 
+   * @param      int $v new value
+   * @return     Collectible The current object (for fluent API support)
+   */
+  public function setGraphId($v)
+  {
+    if ($v !== null)
+    {
+      $v = (int) $v;
+    }
+
+    if ($this->graph_id !== $v)
+    {
+      $this->graph_id = $v;
+      $this->modifiedColumns[] = CollectiblePeer::GRAPH_ID;
     }
 
     return $this;
@@ -682,28 +723,6 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [eblob] column.
-   * 
-   * @param      string $v new value
-   * @return     Collectible The current object (for fluent API support)
-   */
-  public function setEblob($v)
-  {
-    if ($v !== null)
-    {
-      $v = (string) $v;
-    }
-
-    if ($this->eblob !== $v)
-    {
-      $this->eblob = $v;
-      $this->modifiedColumns[] = CollectiblePeer::EBLOB;
-    }
-
-    return $this;
-  }
-
-  /**
    * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -722,6 +741,28 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
         $this->deleted_at = $newDateAsString;
         $this->modifiedColumns[] = CollectiblePeer::DELETED_AT;
       }
+    }
+
+    return $this;
+  }
+
+  /**
+   * Set the value of [eblob] column.
+   * 
+   * @param      string $v new value
+   * @return     Collectible The current object (for fluent API support)
+   */
+  public function setEblob($v)
+  {
+    if ($v !== null)
+    {
+      $v = (string) $v;
+    }
+
+    if ($this->eblob !== $v)
+    {
+      $this->eblob = $v;
+      $this->modifiedColumns[] = CollectiblePeer::EBLOB;
     }
 
     return $this;
@@ -829,19 +870,20 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     {
 
       $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-      $this->collector_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-      $this->collection_id = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-      $this->name = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-      $this->slug = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-      $this->description = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-      $this->num_comments = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
-      $this->score = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
-      $this->position = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
-      $this->is_name_automatic = ($row[$startcol + 9] !== null) ? (boolean) $row[$startcol + 9] : null;
-      $this->eblob = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+      $this->graph_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+      $this->collector_id = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+      $this->collection_id = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
+      $this->name = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+      $this->slug = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+      $this->description = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+      $this->num_comments = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
+      $this->score = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
+      $this->position = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
+      $this->is_name_automatic = ($row[$startcol + 10] !== null) ? (boolean) $row[$startcol + 10] : null;
       $this->deleted_at = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-      $this->created_at = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
-      $this->updated_at = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+      $this->eblob = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+      $this->created_at = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+      $this->updated_at = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -851,7 +893,7 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 14; // 14 = CollectiblePeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 15; // 15 = CollectiblePeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -967,16 +1009,14 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
       $deleteQuery = CollectibleQuery::create()
         ->filterByPrimaryKey($this->getPrimaryKey());
       $ret = $this->preDelete($con);
-      // soft_delete behavior
-      if (!empty($ret) && CollectibleQuery::isSoftDeleteEnabled())
-      {
-        $this->keepUpdateDateUnchanged();
-        $this->setDeletedAt(time());
-        $this->save($con);
-        $this->postDelete($con);
-        $con->commit();
-        CollectiblePeer::removeInstanceFromPool($this);
-        return;
+      // archivable behavior
+      if ($ret) {
+        if ($this->archiveOnDelete) {
+          // do nothing yet. The object will be archived later when calling CollectibleQuery::delete().
+        } else {
+          $deleteQuery->setArchiveOnDelete(false);
+          $this->archiveOnDelete = true;
+        }
       }
 
       // symfony_behaviors behavior
@@ -1404,42 +1444,45 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
         return $this->getId();
         break;
       case 1:
-        return $this->getCollectorId();
+        return $this->getGraphId();
         break;
       case 2:
-        return $this->getCollectionId();
+        return $this->getCollectorId();
         break;
       case 3:
-        return $this->getName();
+        return $this->getCollectionId();
         break;
       case 4:
-        return $this->getSlug();
+        return $this->getName();
         break;
       case 5:
-        return $this->getDescription();
+        return $this->getSlug();
         break;
       case 6:
-        return $this->getNumComments();
+        return $this->getDescription();
         break;
       case 7:
-        return $this->getScore();
+        return $this->getNumComments();
         break;
       case 8:
-        return $this->getPosition();
+        return $this->getScore();
         break;
       case 9:
-        return $this->getIsNameAutomatic();
+        return $this->getPosition();
         break;
       case 10:
-        return $this->getEblob();
+        return $this->getIsNameAutomatic();
         break;
       case 11:
         return $this->getDeletedAt();
         break;
       case 12:
-        return $this->getCreatedAt();
+        return $this->getEblob();
         break;
       case 13:
+        return $this->getCreatedAt();
+        break;
+      case 14:
         return $this->getUpdatedAt();
         break;
       default:
@@ -1473,19 +1516,20 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     $keys = CollectiblePeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
-      $keys[1] => $this->getCollectorId(),
-      $keys[2] => $this->getCollectionId(),
-      $keys[3] => $this->getName(),
-      $keys[4] => $this->getSlug(),
-      $keys[5] => $this->getDescription(),
-      $keys[6] => $this->getNumComments(),
-      $keys[7] => $this->getScore(),
-      $keys[8] => $this->getPosition(),
-      $keys[9] => $this->getIsNameAutomatic(),
-      $keys[10] => $this->getEblob(),
+      $keys[1] => $this->getGraphId(),
+      $keys[2] => $this->getCollectorId(),
+      $keys[3] => $this->getCollectionId(),
+      $keys[4] => $this->getName(),
+      $keys[5] => $this->getSlug(),
+      $keys[6] => $this->getDescription(),
+      $keys[7] => $this->getNumComments(),
+      $keys[8] => $this->getScore(),
+      $keys[9] => $this->getPosition(),
+      $keys[10] => $this->getIsNameAutomatic(),
       $keys[11] => $this->getDeletedAt(),
-      $keys[12] => $this->getCreatedAt(),
-      $keys[13] => $this->getUpdatedAt(),
+      $keys[12] => $this->getEblob(),
+      $keys[13] => $this->getCreatedAt(),
+      $keys[14] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -1549,42 +1593,45 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
         $this->setId($value);
         break;
       case 1:
-        $this->setCollectorId($value);
+        $this->setGraphId($value);
         break;
       case 2:
-        $this->setCollectionId($value);
+        $this->setCollectorId($value);
         break;
       case 3:
-        $this->setName($value);
+        $this->setCollectionId($value);
         break;
       case 4:
-        $this->setSlug($value);
+        $this->setName($value);
         break;
       case 5:
-        $this->setDescription($value);
+        $this->setSlug($value);
         break;
       case 6:
-        $this->setNumComments($value);
+        $this->setDescription($value);
         break;
       case 7:
-        $this->setScore($value);
+        $this->setNumComments($value);
         break;
       case 8:
-        $this->setPosition($value);
+        $this->setScore($value);
         break;
       case 9:
-        $this->setIsNameAutomatic($value);
+        $this->setPosition($value);
         break;
       case 10:
-        $this->setEblob($value);
+        $this->setIsNameAutomatic($value);
         break;
       case 11:
         $this->setDeletedAt($value);
         break;
       case 12:
-        $this->setCreatedAt($value);
+        $this->setEblob($value);
         break;
       case 13:
+        $this->setCreatedAt($value);
+        break;
+      case 14:
         $this->setUpdatedAt($value);
         break;
     }
@@ -1612,19 +1659,20 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     $keys = CollectiblePeer::getFieldNames($keyType);
 
     if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-    if (array_key_exists($keys[1], $arr)) $this->setCollectorId($arr[$keys[1]]);
-    if (array_key_exists($keys[2], $arr)) $this->setCollectionId($arr[$keys[2]]);
-    if (array_key_exists($keys[3], $arr)) $this->setName($arr[$keys[3]]);
-    if (array_key_exists($keys[4], $arr)) $this->setSlug($arr[$keys[4]]);
-    if (array_key_exists($keys[5], $arr)) $this->setDescription($arr[$keys[5]]);
-    if (array_key_exists($keys[6], $arr)) $this->setNumComments($arr[$keys[6]]);
-    if (array_key_exists($keys[7], $arr)) $this->setScore($arr[$keys[7]]);
-    if (array_key_exists($keys[8], $arr)) $this->setPosition($arr[$keys[8]]);
-    if (array_key_exists($keys[9], $arr)) $this->setIsNameAutomatic($arr[$keys[9]]);
-    if (array_key_exists($keys[10], $arr)) $this->setEblob($arr[$keys[10]]);
+    if (array_key_exists($keys[1], $arr)) $this->setGraphId($arr[$keys[1]]);
+    if (array_key_exists($keys[2], $arr)) $this->setCollectorId($arr[$keys[2]]);
+    if (array_key_exists($keys[3], $arr)) $this->setCollectionId($arr[$keys[3]]);
+    if (array_key_exists($keys[4], $arr)) $this->setName($arr[$keys[4]]);
+    if (array_key_exists($keys[5], $arr)) $this->setSlug($arr[$keys[5]]);
+    if (array_key_exists($keys[6], $arr)) $this->setDescription($arr[$keys[6]]);
+    if (array_key_exists($keys[7], $arr)) $this->setNumComments($arr[$keys[7]]);
+    if (array_key_exists($keys[8], $arr)) $this->setScore($arr[$keys[8]]);
+    if (array_key_exists($keys[9], $arr)) $this->setPosition($arr[$keys[9]]);
+    if (array_key_exists($keys[10], $arr)) $this->setIsNameAutomatic($arr[$keys[10]]);
     if (array_key_exists($keys[11], $arr)) $this->setDeletedAt($arr[$keys[11]]);
-    if (array_key_exists($keys[12], $arr)) $this->setCreatedAt($arr[$keys[12]]);
-    if (array_key_exists($keys[13], $arr)) $this->setUpdatedAt($arr[$keys[13]]);
+    if (array_key_exists($keys[12], $arr)) $this->setEblob($arr[$keys[12]]);
+    if (array_key_exists($keys[13], $arr)) $this->setCreatedAt($arr[$keys[13]]);
+    if (array_key_exists($keys[14], $arr)) $this->setUpdatedAt($arr[$keys[14]]);
   }
 
   /**
@@ -1637,6 +1685,7 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     $criteria = new Criteria(CollectiblePeer::DATABASE_NAME);
 
     if ($this->isColumnModified(CollectiblePeer::ID)) $criteria->add(CollectiblePeer::ID, $this->id);
+    if ($this->isColumnModified(CollectiblePeer::GRAPH_ID)) $criteria->add(CollectiblePeer::GRAPH_ID, $this->graph_id);
     if ($this->isColumnModified(CollectiblePeer::COLLECTOR_ID)) $criteria->add(CollectiblePeer::COLLECTOR_ID, $this->collector_id);
     if ($this->isColumnModified(CollectiblePeer::COLLECTION_ID)) $criteria->add(CollectiblePeer::COLLECTION_ID, $this->collection_id);
     if ($this->isColumnModified(CollectiblePeer::NAME)) $criteria->add(CollectiblePeer::NAME, $this->name);
@@ -1646,8 +1695,8 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectiblePeer::SCORE)) $criteria->add(CollectiblePeer::SCORE, $this->score);
     if ($this->isColumnModified(CollectiblePeer::POSITION)) $criteria->add(CollectiblePeer::POSITION, $this->position);
     if ($this->isColumnModified(CollectiblePeer::IS_NAME_AUTOMATIC)) $criteria->add(CollectiblePeer::IS_NAME_AUTOMATIC, $this->is_name_automatic);
-    if ($this->isColumnModified(CollectiblePeer::EBLOB)) $criteria->add(CollectiblePeer::EBLOB, $this->eblob);
     if ($this->isColumnModified(CollectiblePeer::DELETED_AT)) $criteria->add(CollectiblePeer::DELETED_AT, $this->deleted_at);
+    if ($this->isColumnModified(CollectiblePeer::EBLOB)) $criteria->add(CollectiblePeer::EBLOB, $this->eblob);
     if ($this->isColumnModified(CollectiblePeer::CREATED_AT)) $criteria->add(CollectiblePeer::CREATED_AT, $this->created_at);
     if ($this->isColumnModified(CollectiblePeer::UPDATED_AT)) $criteria->add(CollectiblePeer::UPDATED_AT, $this->updated_at);
 
@@ -1712,6 +1761,7 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
    */
   public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
+    $copyObj->setGraphId($this->getGraphId());
     $copyObj->setCollectorId($this->getCollectorId());
     $copyObj->setCollectionId($this->getCollectionId());
     $copyObj->setName($this->getName());
@@ -1721,8 +1771,8 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     $copyObj->setScore($this->getScore());
     $copyObj->setPosition($this->getPosition());
     $copyObj->setIsNameAutomatic($this->getIsNameAutomatic());
-    $copyObj->setEblob($this->getEblob());
     $copyObj->setDeletedAt($this->getDeletedAt());
+    $copyObj->setEblob($this->getEblob());
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
 
@@ -2596,6 +2646,7 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   public function clear()
   {
     $this->id = null;
+    $this->graph_id = null;
     $this->collector_id = null;
     $this->collection_id = null;
     $this->name = null;
@@ -2605,8 +2656,8 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     $this->score = null;
     $this->position = null;
     $this->is_name_automatic = null;
-    $this->eblob = null;
     $this->deleted_at = null;
+    $this->eblob = null;
     $this->created_at = null;
     $this->updated_at = null;
     $this->alreadyInSave = false;
@@ -2695,33 +2746,118 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     return (string) $this->getName();
   }
 
-  // soft_delete behavior
+  // archivable behavior
   
   /**
-   * Bypass the soft_delete behavior and force a hard delete of the current object
+   * Get an archived version of the current object.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     CollectibleArchive An archive object, or null if the current object was never archived
    */
-  public function forceDelete(PropelPDO $con = null)
+  public function getArchive(PropelPDO $con = null)
   {
-    if($isSoftDeleteEnabled = CollectiblePeer::isSoftDeleteEnabled())
-    {
-      CollectiblePeer::disableSoftDelete();
+    if ($this->isNew()) {
+      return null;
     }
-    $this->delete($con);
-    if ($isSoftDeleteEnabled)
-    {
-      CollectiblePeer::enableSoftDelete();
-    }
+    $archive = CollectibleArchiveQuery::create()
+      ->filterByPrimaryKey($this->getPrimaryKey())
+      ->findOne($con);
+  
+    return $archive;
   }
   
   /**
-   * Undelete a row that was soft_deleted
+   * Copy the data of the current object into a $archiveTablePhpName archive object.
+   * The archived object is then saved.
+   * If the current object has already been archived, the archived object
+   * is updated and not duplicated.
    *
-   * @return     int The number of rows affected by this update and any referring fk objects' save() operations.
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object is new
+   *
+   * @return     CollectibleArchive The archive object based on this object
    */
-  public function unDelete(PropelPDO $con = null)
+  public function archive(PropelPDO $con = null)
   {
-    $this->setDeletedAt(null);
-    return $this->save($con);
+    if ($this->isNew()) {
+      throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
+    }
+    if (!$archive = $this->getArchive($con)) {
+      $archive = new CollectibleArchive();
+      $archive->setPrimaryKey($this->getPrimaryKey());
+    }
+    $this->copyInto($archive, $deepCopy = false, $makeNew = false);
+    $archive->save($con);
+  
+    return $archive;
+  }
+  
+  /**
+   * Revert the the current object to the state it had when it was last archived.
+   * The object must be saved afterwards if the changes must persist.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @throws PropelException If the object has no corresponding archive.
+   *
+   * @return Collectible The current object (for fluent API support)
+   */
+  public function restoreFromArchive(PropelPDO $con = null)
+  {
+    if (!$archive = $this->getArchive($con)) {
+      throw new PropelException('The current object has never been archived and cannot be restored');
+    }
+    $this->populateFromArchive($archive);
+  
+    return $this;
+  }
+  
+  /**
+   * Populates the the current object based on a $archiveTablePhpName archive object.
+   *
+   * @param      CollectibleArchive $archive An archived object based on the same class
+    * @param      Boolean $populateAutoIncrementPrimaryKeys 
+   *               If true, autoincrement columns are copied from the archive object.
+   *               If false, autoincrement columns are left intact.
+    *
+   * @return     Collectible The current object (for fluent API support)
+   */
+  public function populateFromArchive($archive, $populateAutoIncrementPrimaryKeys = false)
+  {
+    if ($populateAutoIncrementPrimaryKeys) {
+      $this->setId($archive->getId());
+    }
+    $this->setGraphId($archive->getGraphId());
+    $this->setCollectorId($archive->getCollectorId());
+    $this->setCollectionId($archive->getCollectionId());
+    $this->setName($archive->getName());
+    $this->setSlug($archive->getSlug());
+    $this->setDescription($archive->getDescription());
+    $this->setNumComments($archive->getNumComments());
+    $this->setScore($archive->getScore());
+    $this->setPosition($archive->getPosition());
+    $this->setIsNameAutomatic($archive->getIsNameAutomatic());
+    $this->setDeletedAt($archive->getDeletedAt());
+    $this->setEblob($archive->getEblob());
+    $this->setCreatedAt($archive->getCreatedAt());
+    $this->setUpdatedAt($archive->getUpdatedAt());
+  
+    return $this;
+  }
+  
+  /**
+   * Removes the object from the database without archiving it.
+   *
+   * @param PropelPDO $con Optional connection object
+   *
+   * @return     Collectible The current object (for fluent API support)
+   */
+  public function deleteWithoutArchive(PropelPDO $con = null)
+  {
+    $this->archiveOnDelete = false;
+    return $this->delete($con);
   }
 
   // timestampable behavior

@@ -7,6 +7,7 @@
  * 
  *
  * @method     CollectorQuery orderById($order = Criteria::ASC) Order by the id column
+ * @method     CollectorQuery orderByGraphId($order = Criteria::ASC) Order by the graph_id column
  * @method     CollectorQuery orderByFacebookId($order = Criteria::ASC) Order by the facebook_id column
  * @method     CollectorQuery orderByUsername($order = Criteria::ASC) Order by the username column
  * @method     CollectorQuery orderByDisplayName($order = Criteria::ASC) Order by the display_name column
@@ -22,18 +23,20 @@
  * @method     CollectorQuery orderByAnnuallySpend($order = Criteria::ASC) Order by the annually_spend column
  * @method     CollectorQuery orderByMostExpensiveItem($order = Criteria::ASC) Order by the most_expensive_item column
  * @method     CollectorQuery orderByCompany($order = Criteria::ASC) Order by the company column
+ * @method     CollectorQuery orderByLocale($order = Criteria::ASC) Order by the locale column
  * @method     CollectorQuery orderByScore($order = Criteria::ASC) Order by the score column
  * @method     CollectorQuery orderBySpamScore($order = Criteria::ASC) Order by the spam_score column
  * @method     CollectorQuery orderByIsSpam($order = Criteria::ASC) Order by the is_spam column
  * @method     CollectorQuery orderByIsPublic($order = Criteria::ASC) Order by the is_public column
  * @method     CollectorQuery orderBySessionId($order = Criteria::ASC) Order by the session_id column
  * @method     CollectorQuery orderByLastSeenAt($order = Criteria::ASC) Order by the last_seen_at column
- * @method     CollectorQuery orderByEblob($order = Criteria::ASC) Order by the eblob column
  * @method     CollectorQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
+ * @method     CollectorQuery orderByEblob($order = Criteria::ASC) Order by the eblob column
  * @method     CollectorQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     CollectorQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
  * @method     CollectorQuery groupById() Group by the id column
+ * @method     CollectorQuery groupByGraphId() Group by the graph_id column
  * @method     CollectorQuery groupByFacebookId() Group by the facebook_id column
  * @method     CollectorQuery groupByUsername() Group by the username column
  * @method     CollectorQuery groupByDisplayName() Group by the display_name column
@@ -49,14 +52,15 @@
  * @method     CollectorQuery groupByAnnuallySpend() Group by the annually_spend column
  * @method     CollectorQuery groupByMostExpensiveItem() Group by the most_expensive_item column
  * @method     CollectorQuery groupByCompany() Group by the company column
+ * @method     CollectorQuery groupByLocale() Group by the locale column
  * @method     CollectorQuery groupByScore() Group by the score column
  * @method     CollectorQuery groupBySpamScore() Group by the spam_score column
  * @method     CollectorQuery groupByIsSpam() Group by the is_spam column
  * @method     CollectorQuery groupByIsPublic() Group by the is_public column
  * @method     CollectorQuery groupBySessionId() Group by the session_id column
  * @method     CollectorQuery groupByLastSeenAt() Group by the last_seen_at column
- * @method     CollectorQuery groupByEblob() Group by the eblob column
  * @method     CollectorQuery groupByDeletedAt() Group by the deleted_at column
+ * @method     CollectorQuery groupByEblob() Group by the eblob column
  * @method     CollectorQuery groupByCreatedAt() Group by the created_at column
  * @method     CollectorQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -71,6 +75,10 @@
  * @method     CollectorQuery leftJoinCollectorProfile($relationAlias = null) Adds a LEFT JOIN clause to the query using the CollectorProfile relation
  * @method     CollectorQuery rightJoinCollectorProfile($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CollectorProfile relation
  * @method     CollectorQuery innerJoinCollectorProfile($relationAlias = null) Adds a INNER JOIN clause to the query using the CollectorProfile relation
+ *
+ * @method     CollectorQuery leftJoinCollectorEmail($relationAlias = null) Adds a LEFT JOIN clause to the query using the CollectorEmail relation
+ * @method     CollectorQuery rightJoinCollectorEmail($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CollectorEmail relation
+ * @method     CollectorQuery innerJoinCollectorEmail($relationAlias = null) Adds a INNER JOIN clause to the query using the CollectorEmail relation
  *
  * @method     CollectorQuery leftJoinCollectorIdentifier($relationAlias = null) Adds a LEFT JOIN clause to the query using the CollectorIdentifier relation
  * @method     CollectorQuery rightJoinCollectorIdentifier($relationAlias = null) Adds a RIGHT JOIN clause to the query using the CollectorIdentifier relation
@@ -120,6 +128,7 @@
  * @method     Collector findOneOrCreate(PropelPDO $con = null) Return the first Collector matching the query, or a new Collector object populated from the query conditions when no match is found
  *
  * @method     Collector findOneById(int $id) Return the first Collector filtered by the id column
+ * @method     Collector findOneByGraphId(int $graph_id) Return the first Collector filtered by the graph_id column
  * @method     Collector findOneByFacebookId(string $facebook_id) Return the first Collector filtered by the facebook_id column
  * @method     Collector findOneByUsername(string $username) Return the first Collector filtered by the username column
  * @method     Collector findOneByDisplayName(string $display_name) Return the first Collector filtered by the display_name column
@@ -135,18 +144,20 @@
  * @method     Collector findOneByAnnuallySpend(double $annually_spend) Return the first Collector filtered by the annually_spend column
  * @method     Collector findOneByMostExpensiveItem(double $most_expensive_item) Return the first Collector filtered by the most_expensive_item column
  * @method     Collector findOneByCompany(string $company) Return the first Collector filtered by the company column
+ * @method     Collector findOneByLocale(string $locale) Return the first Collector filtered by the locale column
  * @method     Collector findOneByScore(int $score) Return the first Collector filtered by the score column
  * @method     Collector findOneBySpamScore(int $spam_score) Return the first Collector filtered by the spam_score column
  * @method     Collector findOneByIsSpam(boolean $is_spam) Return the first Collector filtered by the is_spam column
  * @method     Collector findOneByIsPublic(boolean $is_public) Return the first Collector filtered by the is_public column
  * @method     Collector findOneBySessionId(string $session_id) Return the first Collector filtered by the session_id column
  * @method     Collector findOneByLastSeenAt(string $last_seen_at) Return the first Collector filtered by the last_seen_at column
- * @method     Collector findOneByEblob(string $eblob) Return the first Collector filtered by the eblob column
  * @method     Collector findOneByDeletedAt(string $deleted_at) Return the first Collector filtered by the deleted_at column
+ * @method     Collector findOneByEblob(string $eblob) Return the first Collector filtered by the eblob column
  * @method     Collector findOneByCreatedAt(string $created_at) Return the first Collector filtered by the created_at column
  * @method     Collector findOneByUpdatedAt(string $updated_at) Return the first Collector filtered by the updated_at column
  *
  * @method     array findById(int $id) Return Collector objects filtered by the id column
+ * @method     array findByGraphId(int $graph_id) Return Collector objects filtered by the graph_id column
  * @method     array findByFacebookId(string $facebook_id) Return Collector objects filtered by the facebook_id column
  * @method     array findByUsername(string $username) Return Collector objects filtered by the username column
  * @method     array findByDisplayName(string $display_name) Return Collector objects filtered by the display_name column
@@ -162,14 +173,15 @@
  * @method     array findByAnnuallySpend(double $annually_spend) Return Collector objects filtered by the annually_spend column
  * @method     array findByMostExpensiveItem(double $most_expensive_item) Return Collector objects filtered by the most_expensive_item column
  * @method     array findByCompany(string $company) Return Collector objects filtered by the company column
+ * @method     array findByLocale(string $locale) Return Collector objects filtered by the locale column
  * @method     array findByScore(int $score) Return Collector objects filtered by the score column
  * @method     array findBySpamScore(int $spam_score) Return Collector objects filtered by the spam_score column
  * @method     array findByIsSpam(boolean $is_spam) Return Collector objects filtered by the is_spam column
  * @method     array findByIsPublic(boolean $is_public) Return Collector objects filtered by the is_public column
  * @method     array findBySessionId(string $session_id) Return Collector objects filtered by the session_id column
  * @method     array findByLastSeenAt(string $last_seen_at) Return Collector objects filtered by the last_seen_at column
- * @method     array findByEblob(string $eblob) Return Collector objects filtered by the eblob column
  * @method     array findByDeletedAt(string $deleted_at) Return Collector objects filtered by the deleted_at column
+ * @method     array findByEblob(string $eblob) Return Collector objects filtered by the eblob column
  * @method     array findByCreatedAt(string $created_at) Return Collector objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return Collector objects filtered by the updated_at column
  *
@@ -178,9 +190,8 @@
 abstract class BaseCollectorQuery extends ModelCriteria
 {
     
-  // soft_delete behavior
-  protected static $softDelete = true;
-  protected $localSoftDelete = true;
+  // archivable behavior
+  protected $archiveOnDelete = true;
 
     /**
      * Initializes internal state of BaseCollectorQuery object.
@@ -309,6 +320,46 @@ abstract class BaseCollectorQuery extends ModelCriteria
             $comparison = Criteria::IN;
         }
         return $this->addUsingAlias(CollectorPeer::ID, $id, $comparison);
+    }
+
+    /**
+     * Filter the query on the graph_id column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByGraphId(1234); // WHERE graph_id = 1234
+     * $query->filterByGraphId(array(12, 34)); // WHERE graph_id IN (12, 34)
+     * $query->filterByGraphId(array('min' => 12)); // WHERE graph_id > 12
+     * </code>
+     *
+     * @param     mixed $graphId The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorQuery The current query, for fluid interface
+     */
+    public function filterByGraphId($graphId = null, $comparison = null)
+    {
+        if (is_array($graphId)) {
+            $useMinMax = false;
+            if (isset($graphId['min'])) {
+                $this->addUsingAlias(CollectorPeer::GRAPH_ID, $graphId['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($graphId['max'])) {
+                $this->addUsingAlias(CollectorPeer::GRAPH_ID, $graphId['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+        }
+        return $this->addUsingAlias(CollectorPeer::GRAPH_ID, $graphId, $comparison);
     }
 
     /**
@@ -780,6 +831,34 @@ abstract class BaseCollectorQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query on the locale column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByLocale('fooValue');   // WHERE locale = 'fooValue'
+     * $query->filterByLocale('%fooValue%'); // WHERE locale LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $locale The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorQuery The current query, for fluid interface
+     */
+    public function filterByLocale($locale = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($locale)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $locale)) {
+                $locale = str_replace('*', '%', $locale);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectorPeer::LOCALE, $locale, $comparison);
+    }
+
+    /**
      * Filter the query on the score column
      *
      * Example usage:
@@ -982,34 +1061,6 @@ abstract class BaseCollectorQuery extends ModelCriteria
     }
 
     /**
-     * Filter the query on the eblob column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByEblob('fooValue');   // WHERE eblob = 'fooValue'
-     * $query->filterByEblob('%fooValue%'); // WHERE eblob LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $eblob The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectorQuery The current query, for fluid interface
-     */
-    public function filterByEblob($eblob = null, $comparison = null)
-    {
-        if (null === $comparison) {
-            if (is_array($eblob)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $eblob)) {
-                $eblob = str_replace('*', '%', $eblob);
-                $comparison = Criteria::LIKE;
-            }
-        }
-        return $this->addUsingAlias(CollectorPeer::EBLOB, $eblob, $comparison);
-    }
-
-    /**
      * Filter the query on the deleted_at column
      *
      * Example usage:
@@ -1049,6 +1100,34 @@ abstract class BaseCollectorQuery extends ModelCriteria
             }
         }
         return $this->addUsingAlias(CollectorPeer::DELETED_AT, $deletedAt, $comparison);
+    }
+
+    /**
+     * Filter the query on the eblob column
+     *
+     * Example usage:
+     * <code>
+     * $query->filterByEblob('fooValue');   // WHERE eblob = 'fooValue'
+     * $query->filterByEblob('%fooValue%'); // WHERE eblob LIKE '%fooValue%'
+     * </code>
+     *
+     * @param     string $eblob The value to use as filter.
+     *              Accepts wildcards (* and % trigger a LIKE)
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorQuery The current query, for fluid interface
+     */
+    public function filterByEblob($eblob = null, $comparison = null)
+    {
+        if (null === $comparison) {
+            if (is_array($eblob)) {
+                $comparison = Criteria::IN;
+            } elseif (preg_match('/[\%\*]/', $eblob)) {
+                $eblob = str_replace('*', '%', $eblob);
+                $comparison = Criteria::LIKE;
+            }
+        }
+        return $this->addUsingAlias(CollectorPeer::EBLOB, $eblob, $comparison);
     }
 
     /**
@@ -1282,6 +1361,79 @@ abstract class BaseCollectorQuery extends ModelCriteria
     }
 
     /**
+     * Filter the query by a related CollectorEmail object
+     *
+     * @param     CollectorEmail $collectorEmail  the related object to use as filter
+     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @return    CollectorQuery The current query, for fluid interface
+     */
+    public function filterByCollectorEmail($collectorEmail, $comparison = null)
+    {
+        if ($collectorEmail instanceof CollectorEmail) {
+            return $this
+                ->addUsingAlias(CollectorPeer::ID, $collectorEmail->getCollectorId(), $comparison);
+        } elseif ($collectorEmail instanceof PropelCollection) {
+            return $this
+                ->useCollectorEmailQuery()
+                ->filterByPrimaryKeys($collectorEmail->getPrimaryKeys())
+                ->endUse();
+        } else {
+            throw new PropelException('filterByCollectorEmail() only accepts arguments of type CollectorEmail or PropelCollection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the CollectorEmail relation
+     *
+     * @param     string $relationAlias optional alias for the relation
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CollectorQuery The current query, for fluid interface
+     */
+    public function joinCollectorEmail($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('CollectorEmail');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'CollectorEmail');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the CollectorEmail relation CollectorEmail object
+     *
+     * @see       useQuery()
+     *
+     * @param     string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return    CollectorEmailQuery A secondary query class using the current class as primary query
+     */
+    public function useCollectorEmailQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    {
+        return $this
+            ->joinCollectorEmail($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'CollectorEmail', 'CollectorEmailQuery');
+    }
+
+    /**
      * Filter the query by a related CollectorIdentifier object
      *
      * @param     CollectorIdentifier $collectorIdentifier  the related object to use as filter
@@ -1312,7 +1464,7 @@ abstract class BaseCollectorQuery extends ModelCriteria
      *
      * @return    CollectorQuery The current query, for fluid interface
      */
-    public function joinCollectorIdentifier($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinCollectorIdentifier($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('CollectorIdentifier');
@@ -1347,7 +1499,7 @@ abstract class BaseCollectorQuery extends ModelCriteria
      *
      * @return    CollectorIdentifierQuery A secondary query class using the current class as primary query
      */
-    public function useCollectorIdentifierQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useCollectorIdentifierQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinCollectorIdentifier($relationAlias, $joinType)
@@ -1385,7 +1537,7 @@ abstract class BaseCollectorQuery extends ModelCriteria
      *
      * @return    CollectorQuery The current query, for fluid interface
      */
-    public function joinCollectorInterview($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function joinCollectorInterview($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('CollectorInterview');
@@ -1420,7 +1572,7 @@ abstract class BaseCollectorQuery extends ModelCriteria
      *
      * @return    CollectorInterviewQuery A secondary query class using the current class as primary query
      */
-    public function useCollectorInterviewQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    public function useCollectorInterviewQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
     {
         return $this
             ->joinCollectorInterview($relationAlias, $joinType)
@@ -1823,7 +1975,7 @@ abstract class BaseCollectorQuery extends ModelCriteria
      *
      * @return    CollectorQuery The current query, for fluid interface
      */
-    public function joinCollectibleOffer($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function joinCollectibleOffer($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         $tableMap = $this->getTableMap();
         $relationMap = $tableMap->getRelation('CollectibleOffer');
@@ -1858,7 +2010,7 @@ abstract class BaseCollectorQuery extends ModelCriteria
      *
      * @return    CollectibleOfferQuery A secondary query class using the current class as primary query
      */
-    public function useCollectibleOfferQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    public function useCollectibleOfferQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
     {
         return $this
             ->joinCollectibleOffer($relationAlias, $joinType)
@@ -2101,132 +2253,107 @@ abstract class BaseCollectorQuery extends ModelCriteria
     }
 
     /**
-     * Code to execute before every SELECT statement
-     *
-     * @param     PropelPDO $con The connection object used by the query
-     */
-    protected function basePreSelect(PropelPDO $con)
-    {
-    // soft_delete behavior
-    if (CollectorQuery::isSoftDeleteEnabled() && $this->localSoftDelete)
-    {
-      $this->addUsingAlias(CollectorPeer::DELETED_AT, null, Criteria::ISNULL);
-    }
-    else
-    {
-      CollectorPeer::enableSoftDelete();
-    }
-
-        return $this->preSelect($con);
-    }
-
-    /**
      * Code to execute before every DELETE statement
      *
      * @param     PropelPDO $con The connection object used by the query
      */
     protected function basePreDelete(PropelPDO $con)
     {
-    // soft_delete behavior
-    if (CollectorQuery::isSoftDeleteEnabled() && $this->localSoftDelete)
+    // archivable behavior
+    
+    if ($this->archiveOnDelete)
     {
-      return $this->softDelete($con);
+      $this->archive($con);
     }
     else
     {
-      return $this->hasWhereClause() ? $this->forceDelete($con) : $this->forceDeleteAll($con);
+      $this->archiveOnDelete = true;
     }
+
 
         return $this->preDelete($con);
     }
 
-  // soft_delete behavior
+  // archivable behavior
   
   /**
-   * Temporarily disable the filter on deleted rows
-   * Valid only for the current query
+   * Copy the data of the objects satisfying the query into CollectorArchive archive objects.
+   * The archived objects are then saved.
+   * If any of the objects has already been archived, the archived object
+   * is updated and not duplicated.
+   * Warning: This termination methods issues 2n+1 queries.
    *
-   * @see CollectorQuery::disableSoftDelete() to disable the filter for more than one query
+   * @param      PropelPDO $con  Connection to use.
+   * @param      Boolean $useLittleMemory  Whether or not to use PropelOnDemandFormatter to retrieve objects.
+   *               Set to false if the identity map matters.
+   *               Set to true (default) to use less memory.
    *
-   * @return CollectorQuery The current query, for fluid interface
+   * @return     int the number of archived objects
    */
-  public function includeDeleted()
+  public function archive($con = null, $useLittleMemory = true)
   {
-    $this->localSoftDelete = false;
-    return $this;
+    $totalArchivedObjects = 0;
+    $criteria = clone $this;
+    // prepare the query
+    $criteria->setWith(array());
+    if ($useLittleMemory) {
+      $criteria->setFormatter(ModelCriteria::FORMAT_ON_DEMAND);
+    }
+    if ($con === null) {
+      $con = Propel::getConnection(CollectorPeer::DATABASE_NAME, Propel::CONNECTION_WRITE);
+    }
+    $con->beginTransaction();
+    try {
+      // archive all results one by one
+      foreach ($criteria->find($con) as $object) {
+        $object->archive($con);
+        $totalArchivedObjects++;
+      }
+      $con->commit();
+    } catch (PropelException $e) {
+      $con->rollBack();
+      throw $e;
+    }
+    
+    return $totalArchivedObjects;
   }
   
   /**
-   * Soft delete the selected rows
+   * Enable/disable auto-archiving on delete for the next query.
    *
-   * @param      PropelPDO $con an optional connection object
-   *
-   * @return    int Number of updated rows
+   * @param Boolean True if the query must archive deleted objects, false otherwise.
    */
-  public function softDelete(PropelPDO $con = null)
+  public function setArchiveOnDelete($archiveOnDelete)
   {
-    return $this->update(array('DeletedAt' => time()), $con);
+    $this->archiveOnDelete = $archiveOnDelete;
   }
   
   /**
-   * Bypass the soft_delete behavior and force a hard delete of the selected rows
+   * Delete records matching the current query without archiving them.
    *
-   * @param      PropelPDO $con an optional connection object
+   * @param      PropelPDO $con  Connection to use.
    *
-   * @return    int Number of deleted rows
+   * @return integer the number of deleted rows
    */
-  public function forceDelete(PropelPDO $con = null)
+  public function deleteWithoutArchive($con = null)
   {
-    return CollectorPeer::doForceDelete($this, $con);
+    $this->archiveOnDelete = false;
+  
+    return $this->delete($con);
   }
   
   /**
-   * Bypass the soft_delete behavior and force a hard delete of all the rows
+   * Delete all records without archiving them.
    *
-   * @param      PropelPDO $con an optional connection object
+   * @param      PropelPDO $con  Connection to use.
    *
-   * @return    int Number of deleted rows
+   * @return integer the number of deleted rows
    */
-  public function forceDeleteAll(PropelPDO $con = null)
+  public function deleteAllWithoutArchive($con = null)
   {
-    return CollectorPeer::doForceDeleteAll($con);}
+    $this->archiveOnDelete = false;
   
-  /**
-   * Undelete selected rows
-   *
-   * @param      PropelPDO $con an optional connection object
-   *
-   * @return    int The number of rows affected by this update and any referring fk objects' save() operations.
-   */
-  public function unDelete(PropelPDO $con = null)
-  {
-    return $this->update(array('DeletedAt' => null), $con);
-  }
-  
-  /**
-   * Enable the soft_delete behavior for this model
-   */
-  public static function enableSoftDelete()
-  {
-    self::$softDelete = true;
-  }
-  
-  /**
-   * Disable the soft_delete behavior for this model
-   */
-  public static function disableSoftDelete()
-  {
-    self::$softDelete = false;
-  }
-  
-  /**
-   * Check the soft_delete behavior for this model
-   *
-   * @return boolean true if the soft_delete behavior is enabled
-   */
-  public static function isSoftDeleteEnabled()
-  {
-    return self::$softDelete;
+    return $this->deleteAll($con);
   }
 
   // timestampable behavior

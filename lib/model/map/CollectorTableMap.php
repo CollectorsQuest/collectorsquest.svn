@@ -39,6 +39,7 @@ class CollectorTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
+    $this->addColumn('GRAPH_ID', 'GraphId', 'INTEGER', false, null, null);
     $this->addColumn('FACEBOOK_ID', 'FacebookId', 'VARCHAR', false, 20, null);
     $this->addColumn('USERNAME', 'Username', 'VARCHAR', true, 64, null);
     $this->addColumn('DISPLAY_NAME', 'DisplayName', 'VARCHAR', true, 64, null);
@@ -55,14 +56,15 @@ class CollectorTableMap extends TableMap
     $this->addColumn('ANNUALLY_SPEND', 'AnnuallySpend', 'FLOAT', false, null, 0);
     $this->addColumn('MOST_EXPENSIVE_ITEM', 'MostExpensiveItem', 'FLOAT', false, null, 0);
     $this->addColumn('COMPANY', 'Company', 'VARCHAR', false, 255, null);
+    $this->addColumn('LOCALE', 'Locale', 'VARCHAR', false, 5, 'en_US');
     $this->addColumn('SCORE', 'Score', 'INTEGER', false, null, 0);
     $this->addColumn('SPAM_SCORE', 'SpamScore', 'INTEGER', false, null, 0);
     $this->addColumn('IS_SPAM', 'IsSpam', 'BOOLEAN', false, 1, false);
     $this->addColumn('IS_PUBLIC', 'IsPublic', 'BOOLEAN', false, 1, true);
     $this->addColumn('SESSION_ID', 'SessionId', 'VARCHAR', false, 32, null);
     $this->addColumn('LAST_SEEN_AT', 'LastSeenAt', 'TIMESTAMP', false, null, null);
-    $this->addColumn('EBLOB', 'Eblob', 'LONGVARCHAR', false, null, null);
     $this->addColumn('DELETED_AT', 'DeletedAt', 'TIMESTAMP', false, null, null);
+    $this->addColumn('EBLOB', 'Eblob', 'LONGVARCHAR', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     // validators
@@ -75,8 +77,9 @@ class CollectorTableMap extends TableMap
   {
     $this->addRelation('CollectionItemOffer', 'CollectionItemOffer', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), null, null, 'CollectionItemOffers');
     $this->addRelation('CollectorProfile', 'CollectorProfile', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'CollectorProfiles');
+    $this->addRelation('CollectorEmail', 'CollectorEmail', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'CollectorEmails');
     $this->addRelation('CollectorIdentifier', 'CollectorIdentifier', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'CollectorIdentifiers');
-    $this->addRelation('CollectorInterview', 'CollectorInterview', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'CollectorInterviews');
+    $this->addRelation('CollectorInterview', 'CollectorInterview', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'SET NULL', null, 'CollectorInterviews');
     $this->addRelation('CollectorGeocache', 'CollectorGeocache', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), 'CASCADE', null, 'CollectorGeocaches');
     $this->addRelation('CollectorFriendRelatedByCollectorId', 'CollectorFriend', RelationMap::ONE_TO_MANY, array('id' => 'collector_id', ), null, null, 'CollectorFriendsRelatedByCollectorId');
     $this->addRelation('CollectorFriendRelatedByFriendId', 'CollectorFriend', RelationMap::ONE_TO_MANY, array('id' => 'friend_id', ), null, null, 'CollectorFriendsRelatedByFriendId');
@@ -97,7 +100,7 @@ class CollectorTableMap extends TableMap
   public function getBehaviors()
   {
     return array(
-      'soft_delete' => array('deleted_column' => 'deleted_at', ),
+      'archivable' => array('archive_table' => '', 'archive_class' => 'CollectorArchive', 'log_archived_at' => 'true', 'archived_at_column' => 'archived_at', 'archive_on_insert' => 'false', 'archive_on_update' => 'false', 'archive_on_delete' => 'true', ),
       'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
       'symfony' => array('form' => 'true', 'filter' => 'true', ),
       'symfony_behaviors' => array(),

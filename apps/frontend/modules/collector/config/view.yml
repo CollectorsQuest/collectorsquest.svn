@@ -7,3 +7,6 @@ signupSuccess:
   components:
     sidebar: [general, sidebar]
 
+signupFacebookSuccess:
+  components:
+    sidebar: [general, sidebar]

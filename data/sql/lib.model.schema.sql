@@ -12,6 +12,7 @@ DROP TABLE IF EXISTS `collector`;
 CREATE TABLE `collector`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`graph_id` INTEGER,
 	`facebook_id` VARCHAR(20),
 	`username` VARCHAR(64) NOT NULL,
 	`display_name` VARCHAR(64) NOT NULL,
@@ -27,20 +28,22 @@ CREATE TABLE `collector`
 	`annually_spend` FLOAT DEFAULT 0,
 	`most_expensive_item` FLOAT DEFAULT 0,
 	`company` VARCHAR(255),
+	`locale` VARCHAR(5) DEFAULT 'en_US',
 	`score` INTEGER DEFAULT 0,
 	`spam_score` INTEGER DEFAULT 0,
 	`is_spam` TINYINT(1) DEFAULT 0,
 	`is_public` TINYINT(1) DEFAULT 1,
 	`session_id` VARCHAR(32),
 	`last_seen_at` DATETIME,
-	`eblob` TEXT,
 	`deleted_at` DATETIME,
+	`eblob` TEXT,
 	`created_at` DATETIME,
 	`updated_at` DATETIME,
 	PRIMARY KEY (`id`),
-	UNIQUE INDEX `collector_U_1` (`facebook_id`),
-	UNIQUE INDEX `collector_U_2` (`slug`),
-	UNIQUE INDEX `collector_U_3` (`email`)
+	UNIQUE INDEX `collector_U_1` (`graph_id`),
+	UNIQUE INDEX `collector_U_2` (`facebook_id`),
+	UNIQUE INDEX `collector_U_3` (`slug`),
+	UNIQUE INDEX `collector_U_4` (`email`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
@@ -83,6 +86,31 @@ CREATE TABLE `collector_profile`
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
+-- collector_email
+-- ---------------------------------------------------------------------
+
+DROP TABLE IF EXISTS `collector_email`;
+
+CREATE TABLE `collector_email`
+(
+	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`collector_id` INTEGER NOT NULL,
+	`email` VARCHAR(128),
+	`hash` VARCHAR(40) NOT NULL,
+	`salt` VARCHAR(32) NOT NULL,
+	`is_verified` TINYINT(1) DEFAULT 0,
+	`updated_at` DATETIME,
+	`created_at` DATETIME,
+	PRIMARY KEY (`id`),
+	INDEX `collector_email_I_1` (`email`),
+	INDEX `collector_email_FI_1` (`collector_id`),
+	CONSTRAINT `collector_email_FK_1`
+		FOREIGN KEY (`collector_id`)
+		REFERENCES `collector` (`id`)
+		ON DELETE CASCADE
+) ENGINE=InnoDB;
+
+-- ---------------------------------------------------------------------
 -- collector_identifier
 -- ---------------------------------------------------------------------
 
@@ -91,11 +119,12 @@ DROP TABLE IF EXISTS `collector_identifier`;
 CREATE TABLE `collector_identifier`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
-	`collector_id` INTEGER,
+	`collector_id` INTEGER NOT NULL,
 	`identifier` VARCHAR(255),
 	`created_at` DATETIME,
 	PRIMARY KEY (`id`),
-	UNIQUE INDEX `collector_identifier_U_1` (`collector_id`, `identifier`),
+	UNIQUE INDEX `collector_identifier_U_1` (`identifier`),
+	INDEX `collector_identifier_FI_1` (`collector_id`),
 	CONSTRAINT `collector_identifier_FK_1`
 		FOREIGN KEY (`collector_id`)
 		REFERENCES `collector` (`id`)
@@ -111,7 +140,7 @@ DROP TABLE IF EXISTS `collector_interview`;
 CREATE TABLE `collector_interview`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
-	`collector_id` INTEGER NOT NULL,
+	`collector_id` INTEGER,
 	`collection_category_id` INTEGER,
 	`collection_id` INTEGER,
 	`title` VARCHAR(128) NOT NULL,
@@ -125,7 +154,7 @@ CREATE TABLE `collector_interview`
 	CONSTRAINT `collector_interview_FK_1`
 		FOREIGN KEY (`collector_id`)
 		REFERENCES `collector` (`id`)
-		ON DELETE CASCADE,
+		ON DELETE SET NULL,
 	CONSTRAINT `collector_interview_FK_2`
 		FOREIGN KEY (`collection_category_id`)
 		REFERENCES `collection_category` (`id`)
@@ -217,6 +246,7 @@ DROP TABLE IF EXISTS `collection`;
 CREATE TABLE `collection`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`graph_id` INTEGER,
 	`collection_category_id` INTEGER,
 	`collector_id` INTEGER NOT NULL,
 	`name` VARCHAR(255) NOT NULL,
@@ -231,11 +261,12 @@ CREATE TABLE `collection`
 	`is_featured` TINYINT(1) DEFAULT 0,
 	`comments_on` TINYINT(1) DEFAULT 1,
 	`rating_on` TINYINT(1) DEFAULT 1,
-	`eblob` TEXT,
 	`deleted_at` DATETIME,
+	`eblob` TEXT,
 	`created_at` DATETIME,
 	`updated_at` DATETIME,
 	PRIMARY KEY (`id`),
+	UNIQUE INDEX `collection_U_1` (`graph_id`),
 	INDEX `collection_FI_1` (`collection_category_id`),
 	INDEX `collection_FI_2` (`collector_id`),
 	CONSTRAINT `collection_FK_1`
@@ -296,6 +327,7 @@ DROP TABLE IF EXISTS `collectible`;
 CREATE TABLE `collectible`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`graph_id` INTEGER,
 	`collector_id` INTEGER NOT NULL,
 	`collection_id` INTEGER NOT NULL,
 	`name` VARCHAR(255) NOT NULL,
@@ -305,12 +337,13 @@ CREATE TABLE `collectible`
 	`score` INTEGER DEFAULT 0,
 	`position` INTEGER DEFAULT 0,
 	`is_name_automatic` TINYINT(1) DEFAULT 0,
-	`eblob` TEXT,
 	`deleted_at` DATETIME,
+	`eblob` TEXT,
 	`created_at` DATETIME,
 	`updated_at` DATETIME,
 	PRIMARY KEY (`id`),
-	UNIQUE INDEX `collectible_U_1` (`slug`),
+	UNIQUE INDEX `collectible_U_1` (`graph_id`),
+	UNIQUE INDEX `collectible_U_2` (`slug`),
 	INDEX `collectible_FI_1` (`collector_id`),
 	INDEX `collectible_FI_2` (`collection_id`),
 	CONSTRAINT `collectible_FK_1`
@@ -362,7 +395,7 @@ CREATE TABLE `collectible_offer`
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
 	`collectible_id` INTEGER NOT NULL,
 	`collectible_for_sale_id` INTEGER NOT NULL,
-	`collector_id` INTEGER,
+	`collector_id` INTEGER NOT NULL,
 	`price` FLOAT,
 	`status` ENUM('pending','counter','rejected','accepted') NOT NULL,
 	`deleted_at` DATETIME,
