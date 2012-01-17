@@ -11,7 +11,6 @@ CREATE TABLE `collectible_for_sale` (
   `is_sold` tinyint(1) DEFAULT '0',
   `is_ready` tinyint(1) DEFAULT '0' COMMENT 'Show in the market or no',
   `quantity` int(11) NOT NULL DEFAULT '1',
-  `deleted_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),

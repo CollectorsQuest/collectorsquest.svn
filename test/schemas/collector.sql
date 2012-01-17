@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS `collector`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `collector` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `graph_id` int(11) DEFAULT NULL,
   `facebook_id` varchar(20) DEFAULT NULL,
   `username` varchar(64) NOT NULL,
   `display_name` varchar(64) NOT NULL,
@@ -25,14 +26,14 @@ CREATE TABLE `collector` (
   `is_public` tinyint(1) DEFAULT '1',
   `session_id` varchar(32) DEFAULT NULL,
   `last_seen_at` datetime DEFAULT NULL,
-  `deleted_at` datetime DEFAULT NULL,
   `eblob` text,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `collector_U_2` (`slug`),
-  UNIQUE KEY `collector_U_1` (`facebook_id`),
-  UNIQUE KEY `collector_U_3` (`email`)
+  UNIQUE KEY `collector_U_3` (`slug`),
+  UNIQUE KEY `collector_U_1` (`graph_id`),
+  UNIQUE KEY `collector_U_2` (`facebook_id`),
+  UNIQUE KEY `collector_U_4` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 LOCK TABLES `collector` WRITE;

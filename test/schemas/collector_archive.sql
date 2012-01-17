@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS `collector_archive`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `collector_archive` (
   `id` int(11) NOT NULL,
+  `graph_id` int(11) DEFAULT NULL,
   `facebook_id` varchar(20) DEFAULT NULL,
   `username` varchar(64) NOT NULL,
   `display_name` varchar(64) NOT NULL,
@@ -26,14 +27,15 @@ CREATE TABLE `collector_archive` (
   `session_id` varchar(32) DEFAULT NULL,
   `last_seen_at` datetime DEFAULT NULL,
   `eblob` text,
-  `deleted_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `archived_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `collector_archive_I_1` (`facebook_id`),
-  KEY `collector_archive_I_2` (`slug`),
-  KEY `collector_archive_I_3` (`email`)
+  KEY `collector_archive_I_1` (`id`),
+  KEY `collector_archive_I_2` (`graph_id`),
+  KEY `collector_archive_I_3` (`facebook_id`),
+  KEY `collector_archive_I_4` (`slug`),
+  KEY `collector_archive_I_5` (`email`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 LOCK TABLES `collector_archive` WRITE;

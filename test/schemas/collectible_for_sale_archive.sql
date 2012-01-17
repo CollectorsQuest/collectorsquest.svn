@@ -11,12 +11,12 @@ CREATE TABLE `collectible_for_sale_archive` (
   `is_sold` tinyint(1) DEFAULT '0',
   `is_ready` tinyint(1) DEFAULT '0' COMMENT 'Show in the market or no',
   `quantity` int(11) NOT NULL DEFAULT '1',
-  `deleted_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `archived_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `collectible_for_sale_archive_I_1` (`collectible_id`)
+  KEY `collectible_for_sale_archive_I_1` (`id`),
+  KEY `collectible_for_sale_archive_I_2` (`collectible_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 LOCK TABLES `collectible_for_sale_archive` WRITE;

@@ -15,7 +15,8 @@ CREATE TABLE `collector_geocache_archive` (
   `longitude` decimal(8,5) DEFAULT NULL,
   `timezone` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `collector_geocache_archive_I_1` (`collector_id`)
+  KEY `collector_geocache_archive_I_1` (`id`),
+  KEY `collector_geocache_archive_I_2` (`collector_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 LOCK TABLES `collector_geocache_archive` WRITE;

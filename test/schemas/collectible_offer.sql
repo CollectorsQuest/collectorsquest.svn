@@ -8,7 +8,6 @@ CREATE TABLE `collectible_offer` (
   `collector_id` int(11) NOT NULL,
   `price` float DEFAULT NULL,
   `status` enum('pending','counter','rejected','accepted') NOT NULL,
-  `deleted_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),

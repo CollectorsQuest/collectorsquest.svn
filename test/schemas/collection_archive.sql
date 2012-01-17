@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS `collection_archive`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `collection_archive` (
   `id` int(11) NOT NULL,
+  `graph_id` int(11) DEFAULT NULL,
   `collection_category_id` int(11) DEFAULT NULL,
   `collector_id` int(11) DEFAULT NULL,
   `name` varchar(255) NOT NULL,
@@ -18,13 +19,14 @@ CREATE TABLE `collection_archive` (
   `comments_on` tinyint(1) DEFAULT '1',
   `rating_on` tinyint(1) DEFAULT '1',
   `eblob` text,
-  `deleted_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `archived_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `collection_archive_I_1` (`collection_category_id`),
-  KEY `collection_archive_I_2` (`collector_id`)
+  KEY `collection_archive_I_1` (`id`),
+  KEY `collection_archive_I_2` (`graph_id`),
+  KEY `collection_archive_I_3` (`collection_category_id`),
+  KEY `collection_archive_I_4` (`collector_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 LOCK TABLES `collection_archive` WRITE;

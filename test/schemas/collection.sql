@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS `collection`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `collection` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `graph_id` int(11) DEFAULT NULL,
   `collection_category_id` int(11) DEFAULT NULL,
   `collector_id` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -17,11 +18,11 @@ CREATE TABLE `collection` (
   `is_featured` tinyint(1) DEFAULT '0',
   `comments_on` tinyint(1) DEFAULT '1',
   `rating_on` tinyint(1) DEFAULT '1',
-  `deleted_at` datetime DEFAULT NULL,
   `eblob` text,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
+  UNIQUE KEY `collection_U_1` (`graph_id`),
   KEY `collection_FI_1` (`collection_category_id`),
   KEY `collection_FI_2` (`collector_id`),
   CONSTRAINT `collection_FK_1` FOREIGN KEY (`collection_category_id`) REFERENCES `collection_category` (`id`) ON DELETE SET NULL,

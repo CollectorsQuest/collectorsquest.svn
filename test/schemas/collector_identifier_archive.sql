@@ -8,8 +8,9 @@ CREATE TABLE `collector_identifier_archive` (
   `created_at` datetime DEFAULT NULL,
   `archived_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `collector_identifier_archive_I_1` (`collector_id`),
-  KEY `collector_identifier_archive_I_2` (`identifier`)
+  KEY `collector_identifier_archive_I_1` (`id`),
+  KEY `collector_identifier_archive_I_2` (`collector_id`),
+  KEY `collector_identifier_archive_I_3` (`identifier`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 LOCK TABLES `collector_identifier_archive` WRITE;

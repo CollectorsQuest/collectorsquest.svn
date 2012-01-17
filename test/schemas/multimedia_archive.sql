@@ -16,6 +16,7 @@ CREATE TABLE `multimedia_archive` (
   `created_at` datetime DEFAULT NULL,
   `archived_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
+  KEY `multimedia_archive_I_1` (`id`),
   KEY `multimedia_I_1` (`model`,`model_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;

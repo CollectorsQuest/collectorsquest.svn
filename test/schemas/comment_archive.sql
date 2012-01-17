@@ -17,9 +17,10 @@ CREATE TABLE `comment_archive` (
   `created_at` datetime DEFAULT NULL,
   `archived_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `comment_archive_I_1` (`collection_id`),
-  KEY `comment_archive_I_2` (`collectible_id`),
-  KEY `comment_archive_I_3` (`collector_id`)
+  KEY `comment_archive_I_1` (`id`),
+  KEY `comment_archive_I_2` (`collection_id`),
+  KEY `comment_archive_I_3` (`collectible_id`),
+  KEY `comment_archive_I_4` (`collector_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 LOCK TABLES `comment_archive` WRITE;
