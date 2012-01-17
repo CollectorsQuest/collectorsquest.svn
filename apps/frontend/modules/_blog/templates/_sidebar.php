@@ -52,12 +52,22 @@
   <li id="widget-bloggers" class="widget">
     <h2 class="widget-title">Our Bloggers</h2>
     <ul>
-      <li class="colin-david">
-        <a href="/blog/people/collin-david">
+      <li class="collin-david">
+        <a href="/blog/people/collin-david" title="Bio of blogger Collin David">
           <img src="/images/blog/avatar-collin-david.png" align="left" style="height: 40px; margin-right: 10px;">
         </a>
         <b style="font-size: 14px;">Collin David</b><br>
-        <a href="/blog/index.php?author=7">[read his articles]</a>
+        <a href="/blog/people/collin-david" title="Bio of blogger Collin David">[bio]</a> &nbsp;
+        <a href="/blog/index.php?author=7" title="Collin David's articles on collecting...">[articles]</a>
+        <br clear="all">
+      </li>
+      <li class="brian-rubin">
+        <a href="/blog/people/brian-rubin">
+          <img src="/images/blog/avatar-brian-rubin.png" align="left" style="height: 40px; margin-right: 10px;">
+        </a>
+        <b style="font-size: 14px;">Brian Rubin</b><br>
+        <a href="/blog/people/brian-rubin" title="Bio of blogger Brian Rubin">[bio]</a> &nbsp;
+        <a href="/blog/index.php?author=7" title="Brian Rubin's articles on collecting...">[articles]</a>
         <br clear="all">
       </li>
       <li class="dean-ferber">
@@ -65,7 +75,8 @@
           <img src="/images/blog/avatar-dean-ferber.png" align="left" style="height: 40px; margin-right: 10px;">
         </a>
         <b style="font-size: 14px;">Dean Ferber</b><br>
-        <a href="/blog/index.php?author=9">[read his articles]</a>
+        <a href="/blog/people/dean-ferber">[bio]</a> &nbsp;
+        <a href="/blog/index.php?author=9">[articles]</a>
         <br clear="all">
       </li>
       <li class="deanna-dahlsad">
@@ -73,7 +84,8 @@
           <img src="/images/blog/avatar-deanna-dahlsad.png" align="left" style="height: 40px; margin-right: 10px;">
         </a>
         <b style="font-size: 14px;">Deanna Dahlsad</b><br>
-        <a href="/blog/index.php?author=3">[read her articles]</a>
+        <a href="/blog/people/deanna-dahlsad">[bio]</a> &nbsp;
+        <a href="/blog/index.php?author=3">[articles]</a>
         <br clear="all">
       </li>
       <li class="derek-dahlsad">
@@ -81,7 +93,8 @@
           <img src="/images/blog/avatar-derek-dahlsad.png" align="left" style="height: 40px; margin-right: 10px;">
         </a>
         <b style="font-size: 14px;">Derek Dahlsad</b><br>
-        <a href="/blog/index.php?author=4">[read his articles]</a>
+        <a href="/blog/people/derek-dahlsad">[bio]</a> &nbsp;
+        <a href="/blog/index.php?author=4">[articles]</a>
         <br clear="all">
       </li>
       <li class="val-ubell">
@@ -89,7 +102,8 @@
           <img src="/images/blog/avatar-val-ubell.png" align="left" style="height: 40px; margin-right: 10px;">
         </a>
         <b style="font-size: 14px;">Val Ubell</b><br>
-        <a href="/blog/index.php?author=8">[read her articles]</a>
+        <a href="/blog/people/val-ubell">[bio]</a> &nbsp;
+        <a href="/blog/index.php?author=8">[articles]</a>
         <br clear="all">
       </li>
     </ul>
