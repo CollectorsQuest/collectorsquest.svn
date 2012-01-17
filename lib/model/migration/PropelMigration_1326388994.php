@@ -28,7 +28,6 @@ class PropelMigration_1326388994
   {
     return array('propel' => "
       ALTER TABLE `collector` ADD `locale` VARCHAR(5) NOT NULL DEFAULT 'en_US' AFTER `company`;
-      ALTER TABLE `collector` ADD UNIQUE INDEX `collector_U_3` (`username`);
 
       DROP TABLE IF EXISTS `collector_email`;
       CREATE TABLE `collector_email`
