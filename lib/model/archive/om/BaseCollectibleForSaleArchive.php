@@ -84,12 +84,6 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
   protected $quantity;
 
   /**
-   * The value for the deleted_at field.
-   * @var        string
-   */
-  protected $deleted_at;
-
-  /**
    * The value for the updated_at field.
    * @var        string
    */
@@ -234,56 +228,6 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
   public function getQuantity()
   {
     return $this->quantity;
-  }
-
-  /**
-   * Get the [optionally formatted] temporal [deleted_at] column value.
-   * 
-   *
-   * @param      string $format The date/time format string (either date()-style or strftime()-style).
-   *              If format is NULL, then the raw DateTime object will be returned.
-   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-   * @throws     PropelException - if unable to parse/validate the date/time value.
-   */
-  public function getDeletedAt($format = 'Y-m-d H:i:s')
-  {
-    if ($this->deleted_at === null)
-    {
-      return null;
-    }
-
-
-    if ($this->deleted_at === '0000-00-00 00:00:00')
-    {
-      // while technically this is not a default value of NULL,
-      // this seems to be closest in meaning.
-      return null;
-    }
-    else
-    {
-      try
-      {
-        $dt = new DateTime($this->deleted_at);
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->deleted_at, true), $x);
-      }
-    }
-
-    if ($format === null)
-    {
-      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-      return $dt;
-    }
-    elseif (strpos($format, '%') !== false)
-    {
-      return strftime($format, $dt->format('U'));
-    }
-    else
-    {
-      return $dt->format($format);
-    }
   }
 
   /**
@@ -679,30 +623,6 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
   }
 
   /**
-   * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
-   * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.
-   *               Empty strings are treated as NULL.
-   * @return     CollectibleForSaleArchive The current object (for fluent API support)
-   */
-  public function setDeletedAt($v)
-  {
-    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-    if ($this->deleted_at !== null || $dt !== null)
-    {
-      $currentDateAsString = ($this->deleted_at !== null && $tmpDt = new DateTime($this->deleted_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
-        $this->deleted_at = $newDateAsString;
-        $this->modifiedColumns[] = CollectibleForSaleArchivePeer::DELETED_AT;
-      }
-    }
-
-    return $this;
-  }
-
-  /**
    * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -841,10 +761,9 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
       $this->is_sold = ($row[$startcol + 6] !== null) ? (boolean) $row[$startcol + 6] : null;
       $this->is_ready = ($row[$startcol + 7] !== null) ? (boolean) $row[$startcol + 7] : null;
       $this->quantity = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
-      $this->deleted_at = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-      $this->updated_at = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-      $this->created_at = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-      $this->archived_at = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+      $this->updated_at = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+      $this->created_at = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+      $this->archived_at = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -854,7 +773,7 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
         $this->ensureConsistency();
       }
 
-      return $startcol + 13; // 13 = CollectibleForSaleArchivePeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 12; // 12 = CollectibleForSaleArchivePeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -1255,15 +1174,12 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
         return $this->getQuantity();
         break;
       case 9:
-        return $this->getDeletedAt();
-        break;
-      case 10:
         return $this->getUpdatedAt();
         break;
-      case 11:
+      case 10:
         return $this->getCreatedAt();
         break;
-      case 12:
+      case 11:
         return $this->getArchivedAt();
         break;
       default:
@@ -1304,10 +1220,9 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
       $keys[6] => $this->getIsSold(),
       $keys[7] => $this->getIsReady(),
       $keys[8] => $this->getQuantity(),
-      $keys[9] => $this->getDeletedAt(),
-      $keys[10] => $this->getUpdatedAt(),
-      $keys[11] => $this->getCreatedAt(),
-      $keys[12] => $this->getArchivedAt(),
+      $keys[9] => $this->getUpdatedAt(),
+      $keys[10] => $this->getCreatedAt(),
+      $keys[11] => $this->getArchivedAt(),
     );
     return $result;
   }
@@ -1368,15 +1283,12 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
         $this->setQuantity($value);
         break;
       case 9:
-        $this->setDeletedAt($value);
-        break;
-      case 10:
         $this->setUpdatedAt($value);
         break;
-      case 11:
+      case 10:
         $this->setCreatedAt($value);
         break;
-      case 12:
+      case 11:
         $this->setArchivedAt($value);
         break;
     }
@@ -1412,10 +1324,9 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
     if (array_key_exists($keys[6], $arr)) $this->setIsSold($arr[$keys[6]]);
     if (array_key_exists($keys[7], $arr)) $this->setIsReady($arr[$keys[7]]);
     if (array_key_exists($keys[8], $arr)) $this->setQuantity($arr[$keys[8]]);
-    if (array_key_exists($keys[9], $arr)) $this->setDeletedAt($arr[$keys[9]]);
-    if (array_key_exists($keys[10], $arr)) $this->setUpdatedAt($arr[$keys[10]]);
-    if (array_key_exists($keys[11], $arr)) $this->setCreatedAt($arr[$keys[11]]);
-    if (array_key_exists($keys[12], $arr)) $this->setArchivedAt($arr[$keys[12]]);
+    if (array_key_exists($keys[9], $arr)) $this->setUpdatedAt($arr[$keys[9]]);
+    if (array_key_exists($keys[10], $arr)) $this->setCreatedAt($arr[$keys[10]]);
+    if (array_key_exists($keys[11], $arr)) $this->setArchivedAt($arr[$keys[11]]);
   }
 
   /**
@@ -1436,7 +1347,6 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
     if ($this->isColumnModified(CollectibleForSaleArchivePeer::IS_SOLD)) $criteria->add(CollectibleForSaleArchivePeer::IS_SOLD, $this->is_sold);
     if ($this->isColumnModified(CollectibleForSaleArchivePeer::IS_READY)) $criteria->add(CollectibleForSaleArchivePeer::IS_READY, $this->is_ready);
     if ($this->isColumnModified(CollectibleForSaleArchivePeer::QUANTITY)) $criteria->add(CollectibleForSaleArchivePeer::QUANTITY, $this->quantity);
-    if ($this->isColumnModified(CollectibleForSaleArchivePeer::DELETED_AT)) $criteria->add(CollectibleForSaleArchivePeer::DELETED_AT, $this->deleted_at);
     if ($this->isColumnModified(CollectibleForSaleArchivePeer::UPDATED_AT)) $criteria->add(CollectibleForSaleArchivePeer::UPDATED_AT, $this->updated_at);
     if ($this->isColumnModified(CollectibleForSaleArchivePeer::CREATED_AT)) $criteria->add(CollectibleForSaleArchivePeer::CREATED_AT, $this->created_at);
     if ($this->isColumnModified(CollectibleForSaleArchivePeer::ARCHIVED_AT)) $criteria->add(CollectibleForSaleArchivePeer::ARCHIVED_AT, $this->archived_at);
@@ -1511,7 +1421,6 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
     $copyObj->setIsSold($this->getIsSold());
     $copyObj->setIsReady($this->getIsReady());
     $copyObj->setQuantity($this->getQuantity());
-    $copyObj->setDeletedAt($this->getDeletedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setArchivedAt($this->getArchivedAt());
@@ -1574,7 +1483,6 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
     $this->is_sold = null;
     $this->is_ready = null;
     $this->quantity = null;
-    $this->deleted_at = null;
     $this->updated_at = null;
     $this->created_at = null;
     $this->archived_at = null;

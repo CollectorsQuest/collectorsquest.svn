@@ -15,7 +15,6 @@
  * @method     CollectibleForSaleQuery orderByIsSold($order = Criteria::ASC) Order by the is_sold column
  * @method     CollectibleForSaleQuery orderByIsReady($order = Criteria::ASC) Order by the is_ready column
  * @method     CollectibleForSaleQuery orderByQuantity($order = Criteria::ASC) Order by the quantity column
- * @method     CollectibleForSaleQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     CollectibleForSaleQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     CollectibleForSaleQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -28,7 +27,6 @@
  * @method     CollectibleForSaleQuery groupByIsSold() Group by the is_sold column
  * @method     CollectibleForSaleQuery groupByIsReady() Group by the is_ready column
  * @method     CollectibleForSaleQuery groupByQuantity() Group by the quantity column
- * @method     CollectibleForSaleQuery groupByDeletedAt() Group by the deleted_at column
  * @method     CollectibleForSaleQuery groupByCreatedAt() Group by the created_at column
  * @method     CollectibleForSaleQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -56,7 +54,6 @@
  * @method     CollectibleForSale findOneByIsSold(boolean $is_sold) Return the first CollectibleForSale filtered by the is_sold column
  * @method     CollectibleForSale findOneByIsReady(boolean $is_ready) Return the first CollectibleForSale filtered by the is_ready column
  * @method     CollectibleForSale findOneByQuantity(int $quantity) Return the first CollectibleForSale filtered by the quantity column
- * @method     CollectibleForSale findOneByDeletedAt(string $deleted_at) Return the first CollectibleForSale filtered by the deleted_at column
  * @method     CollectibleForSale findOneByCreatedAt(string $created_at) Return the first CollectibleForSale filtered by the created_at column
  * @method     CollectibleForSale findOneByUpdatedAt(string $updated_at) Return the first CollectibleForSale filtered by the updated_at column
  *
@@ -69,7 +66,6 @@
  * @method     array findByIsSold(boolean $is_sold) Return CollectibleForSale objects filtered by the is_sold column
  * @method     array findByIsReady(boolean $is_ready) Return CollectibleForSale objects filtered by the is_ready column
  * @method     array findByQuantity(int $quantity) Return CollectibleForSale objects filtered by the quantity column
- * @method     array findByDeletedAt(string $deleted_at) Return CollectibleForSale objects filtered by the deleted_at column
  * @method     array findByCreatedAt(string $created_at) Return CollectibleForSale objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return CollectibleForSale objects filtered by the updated_at column
  *
@@ -462,48 +458,6 @@ abstract class BaseCollectibleForSaleQuery extends ModelCriteria
             }
         }
         return $this->addUsingAlias(CollectibleForSalePeer::QUANTITY, $quantity, $comparison);
-    }
-
-    /**
-     * Filter the query on the deleted_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByDeletedAt('2011-03-14'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt('now'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt(array('max' => 'yesterday')); // WHERE deleted_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $deletedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectibleForSaleQuery The current query, for fluid interface
-     */
-    public function filterByDeletedAt($deletedAt = null, $comparison = null)
-    {
-        if (is_array($deletedAt)) {
-            $useMinMax = false;
-            if (isset($deletedAt['min'])) {
-                $this->addUsingAlias(CollectibleForSalePeer::DELETED_AT, $deletedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($deletedAt['max'])) {
-                $this->addUsingAlias(CollectibleForSalePeer::DELETED_AT, $deletedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-        return $this->addUsingAlias(CollectibleForSalePeer::DELETED_AT, $deletedAt, $comparison);
     }
 
     /**

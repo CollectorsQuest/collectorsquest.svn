@@ -44,7 +44,6 @@ class CollectibleOfferTableMap extends TableMap
     $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
     $this->addColumn('PRICE', 'Price', 'FLOAT', false, null, null);
     $this->addColumn('STATUS', 'Status', 'CHAR', true, null, null);
-    $this->addColumn('DELETED_AT', 'DeletedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     // validators

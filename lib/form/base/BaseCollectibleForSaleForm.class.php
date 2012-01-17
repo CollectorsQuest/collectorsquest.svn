@@ -23,7 +23,6 @@ abstract class BaseCollectibleForSaleForm extends BaseFormPropel
       'is_sold'             => new sfWidgetFormInputCheckbox(),
       'is_ready'            => new sfWidgetFormInputCheckbox(),
       'quantity'            => new sfWidgetFormInputText(),
-      'deleted_at'          => new sfWidgetFormDateTime(),
       'created_at'          => new sfWidgetFormDateTime(),
       'updated_at'          => new sfWidgetFormDateTime(),
     ));
@@ -38,7 +37,6 @@ abstract class BaseCollectibleForSaleForm extends BaseFormPropel
       'is_sold'             => new sfValidatorBoolean(array('required' => false)),
       'is_ready'            => new sfValidatorBoolean(array('required' => false)),
       'quantity'            => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),
-      'deleted_at'          => new sfValidatorDateTime(array('required' => false)),
       'created_at'          => new sfValidatorDateTime(array('required' => false)),
       'updated_at'          => new sfValidatorDateTime(array('required' => false)),
     ));

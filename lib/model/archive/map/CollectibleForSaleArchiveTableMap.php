@@ -47,7 +47,6 @@ class CollectibleForSaleArchiveTableMap extends TableMap
     $this->addColumn('IS_SOLD', 'IsSold', 'BOOLEAN', false, 1, false);
     $this->addColumn('IS_READY', 'IsReady', 'BOOLEAN', false, 1, false);
     $this->addColumn('QUANTITY', 'Quantity', 'INTEGER', true, null, 1);
-    $this->addColumn('DELETED_AT', 'DeletedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('ARCHIVED_AT', 'ArchivedAt', 'TIMESTAMP', false, null, null);

@@ -36,7 +36,6 @@ CREATE TABLE `collector_archive`
 	`session_id` VARCHAR(32),
 	`last_seen_at` DATETIME,
 	`eblob` TEXT,
-	`deleted_at` DATETIME,
 	`updated_at` DATETIME,
 	`created_at` DATETIME,
 	`archived_at` DATETIME,
@@ -46,7 +45,7 @@ CREATE TABLE `collector_archive`
 	INDEX `collector_archive_I_3` (`facebook_id`),
 	INDEX `collector_archive_I_4` (`slug`),
 	INDEX `collector_archive_I_5` (`email`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- collector_profile_archive
@@ -83,7 +82,7 @@ CREATE TABLE `collector_profile_archive`
 	PRIMARY KEY (`id`),
 	INDEX `collector_profile_archive_I_1` (`id`),
 	INDEX `collector_profile_archive_I_2` (`collector_id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- collector_identifier_archive
@@ -102,7 +101,7 @@ CREATE TABLE `collector_identifier_archive`
 	INDEX `collector_identifier_archive_I_1` (`id`),
 	INDEX `collector_identifier_archive_I_2` (`collector_id`),
 	INDEX `collector_identifier_archive_I_3` (`identifier`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- collector_geocache_archive
@@ -127,7 +126,7 @@ CREATE TABLE `collector_geocache_archive`
 	PRIMARY KEY (`id`),
 	INDEX `collector_geocache_archive_I_1` (`id`),
 	INDEX `collector_geocache_archive_I_2` (`collector_id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- collection_archive
@@ -154,7 +153,6 @@ CREATE TABLE `collection_archive`
 	`comments_on` TINYINT(1) DEFAULT 1,
 	`rating_on` TINYINT(1) DEFAULT 1,
 	`eblob` TEXT,
-	`deleted_at` DATETIME,
 	`updated_at` DATETIME,
 	`created_at` DATETIME,
 	`archived_at` DATETIME,
@@ -163,7 +161,7 @@ CREATE TABLE `collection_archive`
 	INDEX `collection_archive_I_2` (`graph_id`),
 	INDEX `collection_archive_I_3` (`collection_category_id`),
 	INDEX `collection_archive_I_4` (`collector_id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- collectible_archive
@@ -185,7 +183,6 @@ CREATE TABLE `collectible_archive`
 	`position` INTEGER DEFAULT 0,
 	`is_name_automatic` TINYINT(1) DEFAULT 0,
 	`eblob` TEXT,
-	`deleted_at` DATETIME,
 	`updated_at` DATETIME,
 	`created_at` DATETIME,
 	`archived_at` DATETIME,
@@ -195,7 +192,7 @@ CREATE TABLE `collectible_archive`
 	INDEX `collectible_archive_I_3` (`collector_id`),
 	INDEX `collectible_archive_I_4` (`collection_id`),
 	INDEX `collectible_archive_I_5` (`slug`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- collectible_for_sale_archive
@@ -214,14 +211,13 @@ CREATE TABLE `collectible_for_sale_archive`
 	`is_sold` TINYINT(1) DEFAULT 0,
 	`is_ready` TINYINT(1) DEFAULT 0 COMMENT 'Show in the market or no',
 	`quantity` INTEGER DEFAULT 1 NOT NULL,
-	`deleted_at` DATETIME,
 	`updated_at` DATETIME,
 	`created_at` DATETIME,
 	`archived_at` DATETIME,
 	PRIMARY KEY (`id`),
 	INDEX `collectible_for_sale_archive_I_1` (`id`),
 	INDEX `collectible_for_sale_archive_I_2` (`collectible_id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- collectible_offer_archive
@@ -237,14 +233,13 @@ CREATE TABLE `collectible_offer_archive`
 	`collector_id` INTEGER,
 	`price` FLOAT,
 	`status` ENUM('pending','counter','rejected','accepted') NOT NULL,
-	`deleted_at` DATETIME,
 	`updated_at` DATETIME,
 	`created_at` DATETIME,
 	`archived_at` DATETIME,
 	PRIMARY KEY (`id`),
 	INDEX `collectible_offer_archive_I_1` (`id`),
 	INDEX `collectible_offer_archive_I_2` (`collectible_id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- comment_archive
@@ -273,7 +268,7 @@ CREATE TABLE `comment_archive`
 	INDEX `comment_archive_I_2` (`collection_id`),
 	INDEX `comment_archive_I_3` (`collectible_id`),
 	INDEX `comment_archive_I_4` (`collector_id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 -- ---------------------------------------------------------------------
 -- multimedia_archive
@@ -299,7 +294,7 @@ CREATE TABLE `multimedia_archive`
 	PRIMARY KEY (`id`),
 	INDEX `multimedia_archive_I_1` (`id`),
 	INDEX `multimedia_I_1` (`model`, `model_id`)
-) ENGINE=InnoDB;
+) ENGINE=MyISAM;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;

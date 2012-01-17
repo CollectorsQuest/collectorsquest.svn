@@ -30,7 +30,6 @@
  * @method     CollectorQuery orderByIsPublic($order = Criteria::ASC) Order by the is_public column
  * @method     CollectorQuery orderBySessionId($order = Criteria::ASC) Order by the session_id column
  * @method     CollectorQuery orderByLastSeenAt($order = Criteria::ASC) Order by the last_seen_at column
- * @method     CollectorQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     CollectorQuery orderByEblob($order = Criteria::ASC) Order by the eblob column
  * @method     CollectorQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     CollectorQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
@@ -59,7 +58,6 @@
  * @method     CollectorQuery groupByIsPublic() Group by the is_public column
  * @method     CollectorQuery groupBySessionId() Group by the session_id column
  * @method     CollectorQuery groupByLastSeenAt() Group by the last_seen_at column
- * @method     CollectorQuery groupByDeletedAt() Group by the deleted_at column
  * @method     CollectorQuery groupByEblob() Group by the eblob column
  * @method     CollectorQuery groupByCreatedAt() Group by the created_at column
  * @method     CollectorQuery groupByUpdatedAt() Group by the updated_at column
@@ -151,7 +149,6 @@
  * @method     Collector findOneByIsPublic(boolean $is_public) Return the first Collector filtered by the is_public column
  * @method     Collector findOneBySessionId(string $session_id) Return the first Collector filtered by the session_id column
  * @method     Collector findOneByLastSeenAt(string $last_seen_at) Return the first Collector filtered by the last_seen_at column
- * @method     Collector findOneByDeletedAt(string $deleted_at) Return the first Collector filtered by the deleted_at column
  * @method     Collector findOneByEblob(string $eblob) Return the first Collector filtered by the eblob column
  * @method     Collector findOneByCreatedAt(string $created_at) Return the first Collector filtered by the created_at column
  * @method     Collector findOneByUpdatedAt(string $updated_at) Return the first Collector filtered by the updated_at column
@@ -180,7 +177,6 @@
  * @method     array findByIsPublic(boolean $is_public) Return Collector objects filtered by the is_public column
  * @method     array findBySessionId(string $session_id) Return Collector objects filtered by the session_id column
  * @method     array findByLastSeenAt(string $last_seen_at) Return Collector objects filtered by the last_seen_at column
- * @method     array findByDeletedAt(string $deleted_at) Return Collector objects filtered by the deleted_at column
  * @method     array findByEblob(string $eblob) Return Collector objects filtered by the eblob column
  * @method     array findByCreatedAt(string $created_at) Return Collector objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return Collector objects filtered by the updated_at column
@@ -1058,48 +1054,6 @@ abstract class BaseCollectorQuery extends ModelCriteria
             }
         }
         return $this->addUsingAlias(CollectorPeer::LAST_SEEN_AT, $lastSeenAt, $comparison);
-    }
-
-    /**
-     * Filter the query on the deleted_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByDeletedAt('2011-03-14'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt('now'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt(array('max' => 'yesterday')); // WHERE deleted_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $deletedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectorQuery The current query, for fluid interface
-     */
-    public function filterByDeletedAt($deletedAt = null, $comparison = null)
-    {
-        if (is_array($deletedAt)) {
-            $useMinMax = false;
-            if (isset($deletedAt['min'])) {
-                $this->addUsingAlias(CollectorPeer::DELETED_AT, $deletedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($deletedAt['max'])) {
-                $this->addUsingAlias(CollectorPeer::DELETED_AT, $deletedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-        return $this->addUsingAlias(CollectorPeer::DELETED_AT, $deletedAt, $comparison);
     }
 
     /**

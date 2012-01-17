@@ -12,7 +12,6 @@
  * @method     CollectibleOfferArchiveQuery orderByCollectorId($order = Criteria::ASC) Order by the collector_id column
  * @method     CollectibleOfferArchiveQuery orderByPrice($order = Criteria::ASC) Order by the price column
  * @method     CollectibleOfferArchiveQuery orderByStatus($order = Criteria::ASC) Order by the status column
- * @method     CollectibleOfferArchiveQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     CollectibleOfferArchiveQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  * @method     CollectibleOfferArchiveQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     CollectibleOfferArchiveQuery orderByArchivedAt($order = Criteria::ASC) Order by the archived_at column
@@ -23,7 +22,6 @@
  * @method     CollectibleOfferArchiveQuery groupByCollectorId() Group by the collector_id column
  * @method     CollectibleOfferArchiveQuery groupByPrice() Group by the price column
  * @method     CollectibleOfferArchiveQuery groupByStatus() Group by the status column
- * @method     CollectibleOfferArchiveQuery groupByDeletedAt() Group by the deleted_at column
  * @method     CollectibleOfferArchiveQuery groupByUpdatedAt() Group by the updated_at column
  * @method     CollectibleOfferArchiveQuery groupByCreatedAt() Group by the created_at column
  * @method     CollectibleOfferArchiveQuery groupByArchivedAt() Group by the archived_at column
@@ -41,7 +39,6 @@
  * @method     CollectibleOfferArchive findOneByCollectorId(int $collector_id) Return the first CollectibleOfferArchive filtered by the collector_id column
  * @method     CollectibleOfferArchive findOneByPrice(double $price) Return the first CollectibleOfferArchive filtered by the price column
  * @method     CollectibleOfferArchive findOneByStatus(string $status) Return the first CollectibleOfferArchive filtered by the status column
- * @method     CollectibleOfferArchive findOneByDeletedAt(string $deleted_at) Return the first CollectibleOfferArchive filtered by the deleted_at column
  * @method     CollectibleOfferArchive findOneByUpdatedAt(string $updated_at) Return the first CollectibleOfferArchive filtered by the updated_at column
  * @method     CollectibleOfferArchive findOneByCreatedAt(string $created_at) Return the first CollectibleOfferArchive filtered by the created_at column
  * @method     CollectibleOfferArchive findOneByArchivedAt(string $archived_at) Return the first CollectibleOfferArchive filtered by the archived_at column
@@ -52,7 +49,6 @@
  * @method     array findByCollectorId(int $collector_id) Return CollectibleOfferArchive objects filtered by the collector_id column
  * @method     array findByPrice(double $price) Return CollectibleOfferArchive objects filtered by the price column
  * @method     array findByStatus(string $status) Return CollectibleOfferArchive objects filtered by the status column
- * @method     array findByDeletedAt(string $deleted_at) Return CollectibleOfferArchive objects filtered by the deleted_at column
  * @method     array findByUpdatedAt(string $updated_at) Return CollectibleOfferArchive objects filtered by the updated_at column
  * @method     array findByCreatedAt(string $created_at) Return CollectibleOfferArchive objects filtered by the created_at column
  * @method     array findByArchivedAt(string $archived_at) Return CollectibleOfferArchive objects filtered by the archived_at column
@@ -377,48 +373,6 @@ abstract class BaseCollectibleOfferArchiveQuery extends ModelCriteria
             }
         }
         return $this->addUsingAlias(CollectibleOfferArchivePeer::STATUS, $status, $comparison);
-    }
-
-    /**
-     * Filter the query on the deleted_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByDeletedAt('2011-03-14'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt('now'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt(array('max' => 'yesterday')); // WHERE deleted_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $deletedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectibleOfferArchiveQuery The current query, for fluid interface
-     */
-    public function filterByDeletedAt($deletedAt = null, $comparison = null)
-    {
-        if (is_array($deletedAt)) {
-            $useMinMax = false;
-            if (isset($deletedAt['min'])) {
-                $this->addUsingAlias(CollectibleOfferArchivePeer::DELETED_AT, $deletedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($deletedAt['max'])) {
-                $this->addUsingAlias(CollectibleOfferArchivePeer::DELETED_AT, $deletedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-        return $this->addUsingAlias(CollectibleOfferArchivePeer::DELETED_AT, $deletedAt, $comparison);
     }
 
     /**

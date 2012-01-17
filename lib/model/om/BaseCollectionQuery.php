@@ -22,7 +22,6 @@
  * @method     CollectionQuery orderByIsFeatured($order = Criteria::ASC) Order by the is_featured column
  * @method     CollectionQuery orderByCommentsOn($order = Criteria::ASC) Order by the comments_on column
  * @method     CollectionQuery orderByRatingOn($order = Criteria::ASC) Order by the rating_on column
- * @method     CollectionQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     CollectionQuery orderByEblob($order = Criteria::ASC) Order by the eblob column
  * @method     CollectionQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     CollectionQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
@@ -43,7 +42,6 @@
  * @method     CollectionQuery groupByIsFeatured() Group by the is_featured column
  * @method     CollectionQuery groupByCommentsOn() Group by the comments_on column
  * @method     CollectionQuery groupByRatingOn() Group by the rating_on column
- * @method     CollectionQuery groupByDeletedAt() Group by the deleted_at column
  * @method     CollectionQuery groupByEblob() Group by the eblob column
  * @method     CollectionQuery groupByCreatedAt() Group by the created_at column
  * @method     CollectionQuery groupByUpdatedAt() Group by the updated_at column
@@ -99,7 +97,6 @@
  * @method     Collection findOneByIsFeatured(boolean $is_featured) Return the first Collection filtered by the is_featured column
  * @method     Collection findOneByCommentsOn(boolean $comments_on) Return the first Collection filtered by the comments_on column
  * @method     Collection findOneByRatingOn(boolean $rating_on) Return the first Collection filtered by the rating_on column
- * @method     Collection findOneByDeletedAt(string $deleted_at) Return the first Collection filtered by the deleted_at column
  * @method     Collection findOneByEblob(string $eblob) Return the first Collection filtered by the eblob column
  * @method     Collection findOneByCreatedAt(string $created_at) Return the first Collection filtered by the created_at column
  * @method     Collection findOneByUpdatedAt(string $updated_at) Return the first Collection filtered by the updated_at column
@@ -120,7 +117,6 @@
  * @method     array findByIsFeatured(boolean $is_featured) Return Collection objects filtered by the is_featured column
  * @method     array findByCommentsOn(boolean $comments_on) Return Collection objects filtered by the comments_on column
  * @method     array findByRatingOn(boolean $rating_on) Return Collection objects filtered by the rating_on column
- * @method     array findByDeletedAt(string $deleted_at) Return Collection objects filtered by the deleted_at column
  * @method     array findByEblob(string $eblob) Return Collection objects filtered by the eblob column
  * @method     array findByCreatedAt(string $created_at) Return Collection objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return Collection objects filtered by the updated_at column
@@ -772,48 +768,6 @@ abstract class BaseCollectionQuery extends ModelCriteria
             $rating_on = in_array(strtolower($ratingOn), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
         return $this->addUsingAlias(CollectionPeer::RATING_ON, $ratingOn, $comparison);
-    }
-
-    /**
-     * Filter the query on the deleted_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByDeletedAt('2011-03-14'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt('now'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt(array('max' => 'yesterday')); // WHERE deleted_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $deletedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectionQuery The current query, for fluid interface
-     */
-    public function filterByDeletedAt($deletedAt = null, $comparison = null)
-    {
-        if (is_array($deletedAt)) {
-            $useMinMax = false;
-            if (isset($deletedAt['min'])) {
-                $this->addUsingAlias(CollectionPeer::DELETED_AT, $deletedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($deletedAt['max'])) {
-                $this->addUsingAlias(CollectionPeer::DELETED_AT, $deletedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-        return $this->addUsingAlias(CollectionPeer::DELETED_AT, $deletedAt, $comparison);
     }
 
     /**

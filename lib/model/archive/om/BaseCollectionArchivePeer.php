@@ -27,13 +27,13 @@ abstract class BaseCollectionArchivePeer
   const TM_CLASS = 'CollectionArchiveTableMap';
 
   /** The total number of columns. */
-  const NUM_COLUMNS = 21;
+  const NUM_COLUMNS = 20;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
   /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-  const NUM_HYDRATE_COLUMNS = 21;
+  const NUM_HYDRATE_COLUMNS = 20;
 
   /** the column name for the ID field */
   const ID = 'collection_archive.ID';
@@ -86,9 +86,6 @@ abstract class BaseCollectionArchivePeer
   /** the column name for the EBLOB field */
   const EBLOB = 'collection_archive.EBLOB';
 
-  /** the column name for the DELETED_AT field */
-  const DELETED_AT = 'collection_archive.DELETED_AT';
-
   /** the column name for the UPDATED_AT field */
   const UPDATED_AT = 'collection_archive.UPDATED_AT';
 
@@ -117,12 +114,12 @@ abstract class BaseCollectionArchivePeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'GraphId', 'CollectionCategoryId', 'CollectorId', 'Name', 'Slug', 'Description', 'NumItems', 'NumViews', 'NumComments', 'NumRatings', 'Score', 'IsPublic', 'IsFeatured', 'CommentsOn', 'RatingOn', 'Eblob', 'DeletedAt', 'UpdatedAt', 'CreatedAt', 'ArchivedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'graphId', 'collectionCategoryId', 'collectorId', 'name', 'slug', 'description', 'numItems', 'numViews', 'numComments', 'numRatings', 'score', 'isPublic', 'isFeatured', 'commentsOn', 'ratingOn', 'eblob', 'deletedAt', 'updatedAt', 'createdAt', 'archivedAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::GRAPH_ID, self::COLLECTION_CATEGORY_ID, self::COLLECTOR_ID, self::NAME, self::SLUG, self::DESCRIPTION, self::NUM_ITEMS, self::NUM_VIEWS, self::NUM_COMMENTS, self::NUM_RATINGS, self::SCORE, self::IS_PUBLIC, self::IS_FEATURED, self::COMMENTS_ON, self::RATING_ON, self::EBLOB, self::DELETED_AT, self::UPDATED_AT, self::CREATED_AT, self::ARCHIVED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'GRAPH_ID', 'COLLECTION_CATEGORY_ID', 'COLLECTOR_ID', 'NAME', 'SLUG', 'DESCRIPTION', 'NUM_ITEMS', 'NUM_VIEWS', 'NUM_COMMENTS', 'NUM_RATINGS', 'SCORE', 'IS_PUBLIC', 'IS_FEATURED', 'COMMENTS_ON', 'RATING_ON', 'EBLOB', 'DELETED_AT', 'UPDATED_AT', 'CREATED_AT', 'ARCHIVED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'graph_id', 'collection_category_id', 'collector_id', 'name', 'slug', 'description', 'num_items', 'num_views', 'num_comments', 'num_ratings', 'score', 'is_public', 'is_featured', 'comments_on', 'rating_on', 'eblob', 'deleted_at', 'updated_at', 'created_at', 'archived_at', ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, )
+    BasePeer::TYPE_PHPNAME => array ('Id', 'GraphId', 'CollectionCategoryId', 'CollectorId', 'Name', 'Slug', 'Description', 'NumItems', 'NumViews', 'NumComments', 'NumRatings', 'Score', 'IsPublic', 'IsFeatured', 'CommentsOn', 'RatingOn', 'Eblob', 'UpdatedAt', 'CreatedAt', 'ArchivedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'graphId', 'collectionCategoryId', 'collectorId', 'name', 'slug', 'description', 'numItems', 'numViews', 'numComments', 'numRatings', 'score', 'isPublic', 'isFeatured', 'commentsOn', 'ratingOn', 'eblob', 'updatedAt', 'createdAt', 'archivedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::GRAPH_ID, self::COLLECTION_CATEGORY_ID, self::COLLECTOR_ID, self::NAME, self::SLUG, self::DESCRIPTION, self::NUM_ITEMS, self::NUM_VIEWS, self::NUM_COMMENTS, self::NUM_RATINGS, self::SCORE, self::IS_PUBLIC, self::IS_FEATURED, self::COMMENTS_ON, self::RATING_ON, self::EBLOB, self::UPDATED_AT, self::CREATED_AT, self::ARCHIVED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'GRAPH_ID', 'COLLECTION_CATEGORY_ID', 'COLLECTOR_ID', 'NAME', 'SLUG', 'DESCRIPTION', 'NUM_ITEMS', 'NUM_VIEWS', 'NUM_COMMENTS', 'NUM_RATINGS', 'SCORE', 'IS_PUBLIC', 'IS_FEATURED', 'COMMENTS_ON', 'RATING_ON', 'EBLOB', 'UPDATED_AT', 'CREATED_AT', 'ARCHIVED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'graph_id', 'collection_category_id', 'collector_id', 'name', 'slug', 'description', 'num_items', 'num_views', 'num_comments', 'num_ratings', 'score', 'is_public', 'is_featured', 'comments_on', 'rating_on', 'eblob', 'updated_at', 'created_at', 'archived_at', ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, )
   );
 
   /**
@@ -132,12 +129,12 @@ abstract class BaseCollectionArchivePeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'GraphId' => 1, 'CollectionCategoryId' => 2, 'CollectorId' => 3, 'Name' => 4, 'Slug' => 5, 'Description' => 6, 'NumItems' => 7, 'NumViews' => 8, 'NumComments' => 9, 'NumRatings' => 10, 'Score' => 11, 'IsPublic' => 12, 'IsFeatured' => 13, 'CommentsOn' => 14, 'RatingOn' => 15, 'Eblob' => 16, 'DeletedAt' => 17, 'UpdatedAt' => 18, 'CreatedAt' => 19, 'ArchivedAt' => 20, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'graphId' => 1, 'collectionCategoryId' => 2, 'collectorId' => 3, 'name' => 4, 'slug' => 5, 'description' => 6, 'numItems' => 7, 'numViews' => 8, 'numComments' => 9, 'numRatings' => 10, 'score' => 11, 'isPublic' => 12, 'isFeatured' => 13, 'commentsOn' => 14, 'ratingOn' => 15, 'eblob' => 16, 'deletedAt' => 17, 'updatedAt' => 18, 'createdAt' => 19, 'archivedAt' => 20, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::GRAPH_ID => 1, self::COLLECTION_CATEGORY_ID => 2, self::COLLECTOR_ID => 3, self::NAME => 4, self::SLUG => 5, self::DESCRIPTION => 6, self::NUM_ITEMS => 7, self::NUM_VIEWS => 8, self::NUM_COMMENTS => 9, self::NUM_RATINGS => 10, self::SCORE => 11, self::IS_PUBLIC => 12, self::IS_FEATURED => 13, self::COMMENTS_ON => 14, self::RATING_ON => 15, self::EBLOB => 16, self::DELETED_AT => 17, self::UPDATED_AT => 18, self::CREATED_AT => 19, self::ARCHIVED_AT => 20, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'GRAPH_ID' => 1, 'COLLECTION_CATEGORY_ID' => 2, 'COLLECTOR_ID' => 3, 'NAME' => 4, 'SLUG' => 5, 'DESCRIPTION' => 6, 'NUM_ITEMS' => 7, 'NUM_VIEWS' => 8, 'NUM_COMMENTS' => 9, 'NUM_RATINGS' => 10, 'SCORE' => 11, 'IS_PUBLIC' => 12, 'IS_FEATURED' => 13, 'COMMENTS_ON' => 14, 'RATING_ON' => 15, 'EBLOB' => 16, 'DELETED_AT' => 17, 'UPDATED_AT' => 18, 'CREATED_AT' => 19, 'ARCHIVED_AT' => 20, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'graph_id' => 1, 'collection_category_id' => 2, 'collector_id' => 3, 'name' => 4, 'slug' => 5, 'description' => 6, 'num_items' => 7, 'num_views' => 8, 'num_comments' => 9, 'num_ratings' => 10, 'score' => 11, 'is_public' => 12, 'is_featured' => 13, 'comments_on' => 14, 'rating_on' => 15, 'eblob' => 16, 'deleted_at' => 17, 'updated_at' => 18, 'created_at' => 19, 'archived_at' => 20, ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, )
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'GraphId' => 1, 'CollectionCategoryId' => 2, 'CollectorId' => 3, 'Name' => 4, 'Slug' => 5, 'Description' => 6, 'NumItems' => 7, 'NumViews' => 8, 'NumComments' => 9, 'NumRatings' => 10, 'Score' => 11, 'IsPublic' => 12, 'IsFeatured' => 13, 'CommentsOn' => 14, 'RatingOn' => 15, 'Eblob' => 16, 'UpdatedAt' => 17, 'CreatedAt' => 18, 'ArchivedAt' => 19, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'graphId' => 1, 'collectionCategoryId' => 2, 'collectorId' => 3, 'name' => 4, 'slug' => 5, 'description' => 6, 'numItems' => 7, 'numViews' => 8, 'numComments' => 9, 'numRatings' => 10, 'score' => 11, 'isPublic' => 12, 'isFeatured' => 13, 'commentsOn' => 14, 'ratingOn' => 15, 'eblob' => 16, 'updatedAt' => 17, 'createdAt' => 18, 'archivedAt' => 19, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::GRAPH_ID => 1, self::COLLECTION_CATEGORY_ID => 2, self::COLLECTOR_ID => 3, self::NAME => 4, self::SLUG => 5, self::DESCRIPTION => 6, self::NUM_ITEMS => 7, self::NUM_VIEWS => 8, self::NUM_COMMENTS => 9, self::NUM_RATINGS => 10, self::SCORE => 11, self::IS_PUBLIC => 12, self::IS_FEATURED => 13, self::COMMENTS_ON => 14, self::RATING_ON => 15, self::EBLOB => 16, self::UPDATED_AT => 17, self::CREATED_AT => 18, self::ARCHIVED_AT => 19, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'GRAPH_ID' => 1, 'COLLECTION_CATEGORY_ID' => 2, 'COLLECTOR_ID' => 3, 'NAME' => 4, 'SLUG' => 5, 'DESCRIPTION' => 6, 'NUM_ITEMS' => 7, 'NUM_VIEWS' => 8, 'NUM_COMMENTS' => 9, 'NUM_RATINGS' => 10, 'SCORE' => 11, 'IS_PUBLIC' => 12, 'IS_FEATURED' => 13, 'COMMENTS_ON' => 14, 'RATING_ON' => 15, 'EBLOB' => 16, 'UPDATED_AT' => 17, 'CREATED_AT' => 18, 'ARCHIVED_AT' => 19, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'graph_id' => 1, 'collection_category_id' => 2, 'collector_id' => 3, 'name' => 4, 'slug' => 5, 'description' => 6, 'num_items' => 7, 'num_views' => 8, 'num_comments' => 9, 'num_ratings' => 10, 'score' => 11, 'is_public' => 12, 'is_featured' => 13, 'comments_on' => 14, 'rating_on' => 15, 'eblob' => 16, 'updated_at' => 17, 'created_at' => 18, 'archived_at' => 19, ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, )
   );
 
   /**
@@ -229,7 +226,6 @@ abstract class BaseCollectionArchivePeer
       $criteria->addSelectColumn(CollectionArchivePeer::COMMENTS_ON);
       $criteria->addSelectColumn(CollectionArchivePeer::RATING_ON);
       $criteria->addSelectColumn(CollectionArchivePeer::EBLOB);
-      $criteria->addSelectColumn(CollectionArchivePeer::DELETED_AT);
       $criteria->addSelectColumn(CollectionArchivePeer::UPDATED_AT);
       $criteria->addSelectColumn(CollectionArchivePeer::CREATED_AT);
       $criteria->addSelectColumn(CollectionArchivePeer::ARCHIVED_AT);
@@ -253,7 +249,6 @@ abstract class BaseCollectionArchivePeer
       $criteria->addSelectColumn($alias . '.COMMENTS_ON');
       $criteria->addSelectColumn($alias . '.RATING_ON');
       $criteria->addSelectColumn($alias . '.EBLOB');
-      $criteria->addSelectColumn($alias . '.DELETED_AT');
       $criteria->addSelectColumn($alias . '.UPDATED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
       $criteria->addSelectColumn($alias . '.ARCHIVED_AT');

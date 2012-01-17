@@ -101,12 +101,6 @@ abstract class BaseCollectibleArchive extends BaseObject  implements Persistent
   protected $eblob;
 
   /**
-   * The value for the deleted_at field.
-   * @var        string
-   */
-  protected $deleted_at;
-
-  /**
    * The value for the updated_at field.
    * @var        string
    */
@@ -280,56 +274,6 @@ abstract class BaseCollectibleArchive extends BaseObject  implements Persistent
   public function getEblob()
   {
     return $this->eblob;
-  }
-
-  /**
-   * Get the [optionally formatted] temporal [deleted_at] column value.
-   * 
-   *
-   * @param      string $format The date/time format string (either date()-style or strftime()-style).
-   *              If format is NULL, then the raw DateTime object will be returned.
-   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-   * @throws     PropelException - if unable to parse/validate the date/time value.
-   */
-  public function getDeletedAt($format = 'Y-m-d H:i:s')
-  {
-    if ($this->deleted_at === null)
-    {
-      return null;
-    }
-
-
-    if ($this->deleted_at === '0000-00-00 00:00:00')
-    {
-      // while technically this is not a default value of NULL,
-      // this seems to be closest in meaning.
-      return null;
-    }
-    else
-    {
-      try
-      {
-        $dt = new DateTime($this->deleted_at);
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->deleted_at, true), $x);
-      }
-    }
-
-    if ($format === null)
-    {
-      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-      return $dt;
-    }
-    elseif (strpos($format, '%') !== false)
-    {
-      return strftime($format, $dt->format('U'));
-    }
-    else
-    {
-      return $dt->format($format);
-    }
   }
 
   /**
@@ -758,30 +702,6 @@ abstract class BaseCollectibleArchive extends BaseObject  implements Persistent
   }
 
   /**
-   * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
-   * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.
-   *               Empty strings are treated as NULL.
-   * @return     CollectibleArchive The current object (for fluent API support)
-   */
-  public function setDeletedAt($v)
-  {
-    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-    if ($this->deleted_at !== null || $dt !== null)
-    {
-      $currentDateAsString = ($this->deleted_at !== null && $tmpDt = new DateTime($this->deleted_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
-        $this->deleted_at = $newDateAsString;
-        $this->modifiedColumns[] = CollectibleArchivePeer::DELETED_AT;
-      }
-    }
-
-    return $this;
-  }
-
-  /**
    * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -918,10 +838,9 @@ abstract class BaseCollectibleArchive extends BaseObject  implements Persistent
       $this->position = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
       $this->is_name_automatic = ($row[$startcol + 10] !== null) ? (boolean) $row[$startcol + 10] : null;
       $this->eblob = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-      $this->deleted_at = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
-      $this->updated_at = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
-      $this->created_at = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
-      $this->archived_at = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+      $this->updated_at = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+      $this->created_at = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+      $this->archived_at = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -931,7 +850,7 @@ abstract class BaseCollectibleArchive extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 16; // 16 = CollectibleArchivePeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 15; // 15 = CollectibleArchivePeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -1341,15 +1260,12 @@ abstract class BaseCollectibleArchive extends BaseObject  implements Persistent
         return $this->getEblob();
         break;
       case 12:
-        return $this->getDeletedAt();
-        break;
-      case 13:
         return $this->getUpdatedAt();
         break;
-      case 14:
+      case 13:
         return $this->getCreatedAt();
         break;
-      case 15:
+      case 14:
         return $this->getArchivedAt();
         break;
       default:
@@ -1393,10 +1309,9 @@ abstract class BaseCollectibleArchive extends BaseObject  implements Persistent
       $keys[9] => $this->getPosition(),
       $keys[10] => $this->getIsNameAutomatic(),
       $keys[11] => $this->getEblob(),
-      $keys[12] => $this->getDeletedAt(),
-      $keys[13] => $this->getUpdatedAt(),
-      $keys[14] => $this->getCreatedAt(),
-      $keys[15] => $this->getArchivedAt(),
+      $keys[12] => $this->getUpdatedAt(),
+      $keys[13] => $this->getCreatedAt(),
+      $keys[14] => $this->getArchivedAt(),
     );
     return $result;
   }
@@ -1466,15 +1381,12 @@ abstract class BaseCollectibleArchive extends BaseObject  implements Persistent
         $this->setEblob($value);
         break;
       case 12:
-        $this->setDeletedAt($value);
-        break;
-      case 13:
         $this->setUpdatedAt($value);
         break;
-      case 14:
+      case 13:
         $this->setCreatedAt($value);
         break;
-      case 15:
+      case 14:
         $this->setArchivedAt($value);
         break;
     }
@@ -1513,10 +1425,9 @@ abstract class BaseCollectibleArchive extends BaseObject  implements Persistent
     if (array_key_exists($keys[9], $arr)) $this->setPosition($arr[$keys[9]]);
     if (array_key_exists($keys[10], $arr)) $this->setIsNameAutomatic($arr[$keys[10]]);
     if (array_key_exists($keys[11], $arr)) $this->setEblob($arr[$keys[11]]);
-    if (array_key_exists($keys[12], $arr)) $this->setDeletedAt($arr[$keys[12]]);
-    if (array_key_exists($keys[13], $arr)) $this->setUpdatedAt($arr[$keys[13]]);
-    if (array_key_exists($keys[14], $arr)) $this->setCreatedAt($arr[$keys[14]]);
-    if (array_key_exists($keys[15], $arr)) $this->setArchivedAt($arr[$keys[15]]);
+    if (array_key_exists($keys[12], $arr)) $this->setUpdatedAt($arr[$keys[12]]);
+    if (array_key_exists($keys[13], $arr)) $this->setCreatedAt($arr[$keys[13]]);
+    if (array_key_exists($keys[14], $arr)) $this->setArchivedAt($arr[$keys[14]]);
   }
 
   /**
@@ -1540,7 +1451,6 @@ abstract class BaseCollectibleArchive extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectibleArchivePeer::POSITION)) $criteria->add(CollectibleArchivePeer::POSITION, $this->position);
     if ($this->isColumnModified(CollectibleArchivePeer::IS_NAME_AUTOMATIC)) $criteria->add(CollectibleArchivePeer::IS_NAME_AUTOMATIC, $this->is_name_automatic);
     if ($this->isColumnModified(CollectibleArchivePeer::EBLOB)) $criteria->add(CollectibleArchivePeer::EBLOB, $this->eblob);
-    if ($this->isColumnModified(CollectibleArchivePeer::DELETED_AT)) $criteria->add(CollectibleArchivePeer::DELETED_AT, $this->deleted_at);
     if ($this->isColumnModified(CollectibleArchivePeer::UPDATED_AT)) $criteria->add(CollectibleArchivePeer::UPDATED_AT, $this->updated_at);
     if ($this->isColumnModified(CollectibleArchivePeer::CREATED_AT)) $criteria->add(CollectibleArchivePeer::CREATED_AT, $this->created_at);
     if ($this->isColumnModified(CollectibleArchivePeer::ARCHIVED_AT)) $criteria->add(CollectibleArchivePeer::ARCHIVED_AT, $this->archived_at);
@@ -1618,7 +1528,6 @@ abstract class BaseCollectibleArchive extends BaseObject  implements Persistent
     $copyObj->setPosition($this->getPosition());
     $copyObj->setIsNameAutomatic($this->getIsNameAutomatic());
     $copyObj->setEblob($this->getEblob());
-    $copyObj->setDeletedAt($this->getDeletedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setArchivedAt($this->getArchivedAt());
@@ -1684,7 +1593,6 @@ abstract class BaseCollectibleArchive extends BaseObject  implements Persistent
     $this->position = null;
     $this->is_name_automatic = null;
     $this->eblob = null;
-    $this->deleted_at = null;
     $this->updated_at = null;
     $this->created_at = null;
     $this->archived_at = null;

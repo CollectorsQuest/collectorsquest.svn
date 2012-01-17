@@ -130,12 +130,6 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   protected $rating_on;
 
   /**
-   * The value for the deleted_at field.
-   * @var        string
-   */
-  protected $deleted_at;
-
-  /**
    * The value for the eblob field.
    * @var        string
    */
@@ -392,56 +386,6 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   public function getRatingOn()
   {
     return $this->rating_on;
-  }
-
-  /**
-   * Get the [optionally formatted] temporal [deleted_at] column value.
-   * 
-   *
-   * @param      string $format The date/time format string (either date()-style or strftime()-style).
-   *              If format is NULL, then the raw DateTime object will be returned.
-   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-   * @throws     PropelException - if unable to parse/validate the date/time value.
-   */
-  public function getDeletedAt($format = 'Y-m-d H:i:s')
-  {
-    if ($this->deleted_at === null)
-    {
-      return null;
-    }
-
-
-    if ($this->deleted_at === '0000-00-00 00:00:00')
-    {
-      // while technically this is not a default value of NULL,
-      // this seems to be closest in meaning.
-      return null;
-    }
-    else
-    {
-      try
-      {
-        $dt = new DateTime($this->deleted_at);
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->deleted_at, true), $x);
-      }
-    }
-
-    if ($format === null)
-    {
-      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-      return $dt;
-    }
-    elseif (strpos($format, '%') !== false)
-    {
-      return strftime($format, $dt->format('U'));
-    }
-    else
-    {
-      return $dt->format($format);
-    }
   }
 
   /**
@@ -961,30 +905,6 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   }
 
   /**
-   * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
-   * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.
-   *               Empty strings are treated as NULL.
-   * @return     Collection The current object (for fluent API support)
-   */
-  public function setDeletedAt($v)
-  {
-    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-    if ($this->deleted_at !== null || $dt !== null)
-    {
-      $currentDateAsString = ($this->deleted_at !== null && $tmpDt = new DateTime($this->deleted_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
-        $this->deleted_at = $newDateAsString;
-        $this->modifiedColumns[] = CollectionPeer::DELETED_AT;
-      }
-    }
-
-    return $this;
-  }
-
-  /**
    * Set the value of [eblob] column.
    * 
    * @param      string $v new value
@@ -1148,10 +1068,9 @@ abstract class BaseCollection extends BaseObject  implements Persistent
       $this->is_featured = ($row[$startcol + 13] !== null) ? (boolean) $row[$startcol + 13] : null;
       $this->comments_on = ($row[$startcol + 14] !== null) ? (boolean) $row[$startcol + 14] : null;
       $this->rating_on = ($row[$startcol + 15] !== null) ? (boolean) $row[$startcol + 15] : null;
-      $this->deleted_at = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
-      $this->eblob = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
-      $this->created_at = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
-      $this->updated_at = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
+      $this->eblob = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+      $this->created_at = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
+      $this->updated_at = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -1161,7 +1080,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 20; // 20 = CollectionPeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 19; // 19 = CollectionPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -1781,15 +1700,12 @@ abstract class BaseCollection extends BaseObject  implements Persistent
         return $this->getRatingOn();
         break;
       case 16:
-        return $this->getDeletedAt();
-        break;
-      case 17:
         return $this->getEblob();
         break;
-      case 18:
+      case 17:
         return $this->getCreatedAt();
         break;
-      case 19:
+      case 18:
         return $this->getUpdatedAt();
         break;
       default:
@@ -1838,10 +1754,9 @@ abstract class BaseCollection extends BaseObject  implements Persistent
       $keys[13] => $this->getIsFeatured(),
       $keys[14] => $this->getCommentsOn(),
       $keys[15] => $this->getRatingOn(),
-      $keys[16] => $this->getDeletedAt(),
-      $keys[17] => $this->getEblob(),
-      $keys[18] => $this->getCreatedAt(),
-      $keys[19] => $this->getUpdatedAt(),
+      $keys[16] => $this->getEblob(),
+      $keys[17] => $this->getCreatedAt(),
+      $keys[18] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -1954,15 +1869,12 @@ abstract class BaseCollection extends BaseObject  implements Persistent
         $this->setRatingOn($value);
         break;
       case 16:
-        $this->setDeletedAt($value);
-        break;
-      case 17:
         $this->setEblob($value);
         break;
-      case 18:
+      case 17:
         $this->setCreatedAt($value);
         break;
-      case 19:
+      case 18:
         $this->setUpdatedAt($value);
         break;
     }
@@ -2005,10 +1917,9 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     if (array_key_exists($keys[13], $arr)) $this->setIsFeatured($arr[$keys[13]]);
     if (array_key_exists($keys[14], $arr)) $this->setCommentsOn($arr[$keys[14]]);
     if (array_key_exists($keys[15], $arr)) $this->setRatingOn($arr[$keys[15]]);
-    if (array_key_exists($keys[16], $arr)) $this->setDeletedAt($arr[$keys[16]]);
-    if (array_key_exists($keys[17], $arr)) $this->setEblob($arr[$keys[17]]);
-    if (array_key_exists($keys[18], $arr)) $this->setCreatedAt($arr[$keys[18]]);
-    if (array_key_exists($keys[19], $arr)) $this->setUpdatedAt($arr[$keys[19]]);
+    if (array_key_exists($keys[16], $arr)) $this->setEblob($arr[$keys[16]]);
+    if (array_key_exists($keys[17], $arr)) $this->setCreatedAt($arr[$keys[17]]);
+    if (array_key_exists($keys[18], $arr)) $this->setUpdatedAt($arr[$keys[18]]);
   }
 
   /**
@@ -2036,7 +1947,6 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectionPeer::IS_FEATURED)) $criteria->add(CollectionPeer::IS_FEATURED, $this->is_featured);
     if ($this->isColumnModified(CollectionPeer::COMMENTS_ON)) $criteria->add(CollectionPeer::COMMENTS_ON, $this->comments_on);
     if ($this->isColumnModified(CollectionPeer::RATING_ON)) $criteria->add(CollectionPeer::RATING_ON, $this->rating_on);
-    if ($this->isColumnModified(CollectionPeer::DELETED_AT)) $criteria->add(CollectionPeer::DELETED_AT, $this->deleted_at);
     if ($this->isColumnModified(CollectionPeer::EBLOB)) $criteria->add(CollectionPeer::EBLOB, $this->eblob);
     if ($this->isColumnModified(CollectionPeer::CREATED_AT)) $criteria->add(CollectionPeer::CREATED_AT, $this->created_at);
     if ($this->isColumnModified(CollectionPeer::UPDATED_AT)) $criteria->add(CollectionPeer::UPDATED_AT, $this->updated_at);
@@ -2117,7 +2027,6 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     $copyObj->setIsFeatured($this->getIsFeatured());
     $copyObj->setCommentsOn($this->getCommentsOn());
     $copyObj->setRatingOn($this->getRatingOn());
-    $copyObj->setDeletedAt($this->getDeletedAt());
     $copyObj->setEblob($this->getEblob());
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
@@ -3173,7 +3082,6 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     $this->is_featured = null;
     $this->comments_on = null;
     $this->rating_on = null;
-    $this->deleted_at = null;
     $this->eblob = null;
     $this->created_at = null;
     $this->updated_at = null;
@@ -3373,7 +3281,6 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     $this->setIsFeatured($archive->getIsFeatured());
     $this->setCommentsOn($archive->getCommentsOn());
     $this->setRatingOn($archive->getRatingOn());
-    $this->setDeletedAt($archive->getDeletedAt());
     $this->setEblob($archive->getEblob());
     $this->setCreatedAt($archive->getCreatedAt());
     $this->setUpdatedAt($archive->getUpdatedAt());

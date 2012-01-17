@@ -95,12 +95,6 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   protected $is_name_automatic;
 
   /**
-   * The value for the deleted_at field.
-   * @var        string
-   */
-  protected $deleted_at;
-
-  /**
    * The value for the eblob field.
    * @var        string
    */
@@ -297,56 +291,6 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   public function getIsNameAutomatic()
   {
     return $this->is_name_automatic;
-  }
-
-  /**
-   * Get the [optionally formatted] temporal [deleted_at] column value.
-   * 
-   *
-   * @param      string $format The date/time format string (either date()-style or strftime()-style).
-   *              If format is NULL, then the raw DateTime object will be returned.
-   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-   * @throws     PropelException - if unable to parse/validate the date/time value.
-   */
-  public function getDeletedAt($format = 'Y-m-d H:i:s')
-  {
-    if ($this->deleted_at === null)
-    {
-      return null;
-    }
-
-
-    if ($this->deleted_at === '0000-00-00 00:00:00')
-    {
-      // while technically this is not a default value of NULL,
-      // this seems to be closest in meaning.
-      return null;
-    }
-    else
-    {
-      try
-      {
-        $dt = new DateTime($this->deleted_at);
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->deleted_at, true), $x);
-      }
-    }
-
-    if ($format === null)
-    {
-      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-      return $dt;
-    }
-    elseif (strpos($format, '%') !== false)
-    {
-      return strftime($format, $dt->format('U'));
-    }
-    else
-    {
-      return $dt->format($format);
-    }
   }
 
   /**
@@ -723,30 +667,6 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   }
 
   /**
-   * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
-   * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.
-   *               Empty strings are treated as NULL.
-   * @return     Collectible The current object (for fluent API support)
-   */
-  public function setDeletedAt($v)
-  {
-    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-    if ($this->deleted_at !== null || $dt !== null)
-    {
-      $currentDateAsString = ($this->deleted_at !== null && $tmpDt = new DateTime($this->deleted_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
-        $this->deleted_at = $newDateAsString;
-        $this->modifiedColumns[] = CollectiblePeer::DELETED_AT;
-      }
-    }
-
-    return $this;
-  }
-
-  /**
    * Set the value of [eblob] column.
    * 
    * @param      string $v new value
@@ -880,10 +800,9 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
       $this->score = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
       $this->position = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
       $this->is_name_automatic = ($row[$startcol + 10] !== null) ? (boolean) $row[$startcol + 10] : null;
-      $this->deleted_at = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-      $this->eblob = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
-      $this->created_at = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
-      $this->updated_at = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+      $this->eblob = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+      $this->created_at = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+      $this->updated_at = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -893,7 +812,7 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 15; // 15 = CollectiblePeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 14; // 14 = CollectiblePeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -1474,15 +1393,12 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
         return $this->getIsNameAutomatic();
         break;
       case 11:
-        return $this->getDeletedAt();
-        break;
-      case 12:
         return $this->getEblob();
         break;
-      case 13:
+      case 12:
         return $this->getCreatedAt();
         break;
-      case 14:
+      case 13:
         return $this->getUpdatedAt();
         break;
       default:
@@ -1526,10 +1442,9 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
       $keys[8] => $this->getScore(),
       $keys[9] => $this->getPosition(),
       $keys[10] => $this->getIsNameAutomatic(),
-      $keys[11] => $this->getDeletedAt(),
-      $keys[12] => $this->getEblob(),
-      $keys[13] => $this->getCreatedAt(),
-      $keys[14] => $this->getUpdatedAt(),
+      $keys[11] => $this->getEblob(),
+      $keys[12] => $this->getCreatedAt(),
+      $keys[13] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -1623,15 +1538,12 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
         $this->setIsNameAutomatic($value);
         break;
       case 11:
-        $this->setDeletedAt($value);
-        break;
-      case 12:
         $this->setEblob($value);
         break;
-      case 13:
+      case 12:
         $this->setCreatedAt($value);
         break;
-      case 14:
+      case 13:
         $this->setUpdatedAt($value);
         break;
     }
@@ -1669,10 +1581,9 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     if (array_key_exists($keys[8], $arr)) $this->setScore($arr[$keys[8]]);
     if (array_key_exists($keys[9], $arr)) $this->setPosition($arr[$keys[9]]);
     if (array_key_exists($keys[10], $arr)) $this->setIsNameAutomatic($arr[$keys[10]]);
-    if (array_key_exists($keys[11], $arr)) $this->setDeletedAt($arr[$keys[11]]);
-    if (array_key_exists($keys[12], $arr)) $this->setEblob($arr[$keys[12]]);
-    if (array_key_exists($keys[13], $arr)) $this->setCreatedAt($arr[$keys[13]]);
-    if (array_key_exists($keys[14], $arr)) $this->setUpdatedAt($arr[$keys[14]]);
+    if (array_key_exists($keys[11], $arr)) $this->setEblob($arr[$keys[11]]);
+    if (array_key_exists($keys[12], $arr)) $this->setCreatedAt($arr[$keys[12]]);
+    if (array_key_exists($keys[13], $arr)) $this->setUpdatedAt($arr[$keys[13]]);
   }
 
   /**
@@ -1695,7 +1606,6 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectiblePeer::SCORE)) $criteria->add(CollectiblePeer::SCORE, $this->score);
     if ($this->isColumnModified(CollectiblePeer::POSITION)) $criteria->add(CollectiblePeer::POSITION, $this->position);
     if ($this->isColumnModified(CollectiblePeer::IS_NAME_AUTOMATIC)) $criteria->add(CollectiblePeer::IS_NAME_AUTOMATIC, $this->is_name_automatic);
-    if ($this->isColumnModified(CollectiblePeer::DELETED_AT)) $criteria->add(CollectiblePeer::DELETED_AT, $this->deleted_at);
     if ($this->isColumnModified(CollectiblePeer::EBLOB)) $criteria->add(CollectiblePeer::EBLOB, $this->eblob);
     if ($this->isColumnModified(CollectiblePeer::CREATED_AT)) $criteria->add(CollectiblePeer::CREATED_AT, $this->created_at);
     if ($this->isColumnModified(CollectiblePeer::UPDATED_AT)) $criteria->add(CollectiblePeer::UPDATED_AT, $this->updated_at);
@@ -1771,7 +1681,6 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     $copyObj->setScore($this->getScore());
     $copyObj->setPosition($this->getPosition());
     $copyObj->setIsNameAutomatic($this->getIsNameAutomatic());
-    $copyObj->setDeletedAt($this->getDeletedAt());
     $copyObj->setEblob($this->getEblob());
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
@@ -2656,7 +2565,6 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     $this->score = null;
     $this->position = null;
     $this->is_name_automatic = null;
-    $this->deleted_at = null;
     $this->eblob = null;
     $this->created_at = null;
     $this->updated_at = null;
@@ -2839,7 +2747,6 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     $this->setScore($archive->getScore());
     $this->setPosition($archive->getPosition());
     $this->setIsNameAutomatic($archive->getIsNameAutomatic());
-    $this->setDeletedAt($archive->getDeletedAt());
     $this->setEblob($archive->getEblob());
     $this->setCreatedAt($archive->getCreatedAt());
     $this->setUpdatedAt($archive->getUpdatedAt());

@@ -64,7 +64,6 @@ class CollectorArchiveTableMap extends TableMap
     $this->addColumn('SESSION_ID', 'SessionId', 'VARCHAR', false, 32, null);
     $this->addColumn('LAST_SEEN_AT', 'LastSeenAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('EBLOB', 'Eblob', 'LONGVARCHAR', false, null, null);
-    $this->addColumn('DELETED_AT', 'DeletedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('ARCHIVED_AT', 'ArchivedAt', 'TIMESTAMP', false, null, null);

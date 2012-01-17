@@ -61,12 +61,6 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
   protected $status;
 
   /**
-   * The value for the deleted_at field.
-   * @var        string
-   */
-  protected $deleted_at;
-
-  /**
    * The value for the created_at field.
    * @var        string
    */
@@ -168,56 +162,6 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
   public function getStatus()
   {
     return $this->status;
-  }
-
-  /**
-   * Get the [optionally formatted] temporal [deleted_at] column value.
-   * 
-   *
-   * @param      string $format The date/time format string (either date()-style or strftime()-style).
-   *              If format is NULL, then the raw DateTime object will be returned.
-   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-   * @throws     PropelException - if unable to parse/validate the date/time value.
-   */
-  public function getDeletedAt($format = 'Y-m-d H:i:s')
-  {
-    if ($this->deleted_at === null)
-    {
-      return null;
-    }
-
-
-    if ($this->deleted_at === '0000-00-00 00:00:00')
-    {
-      // while technically this is not a default value of NULL,
-      // this seems to be closest in meaning.
-      return null;
-    }
-    else
-    {
-      try
-      {
-        $dt = new DateTime($this->deleted_at);
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->deleted_at, true), $x);
-      }
-    }
-
-    if ($format === null)
-    {
-      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-      return $dt;
-    }
-    elseif (strpos($format, '%') !== false)
-    {
-      return strftime($format, $dt->format('U'));
-    }
-    else
-    {
-      return $dt->format($format);
-    }
   }
 
   /**
@@ -468,30 +412,6 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
   }
 
   /**
-   * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
-   * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.
-   *               Empty strings are treated as NULL.
-   * @return     CollectibleOffer The current object (for fluent API support)
-   */
-  public function setDeletedAt($v)
-  {
-    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-    if ($this->deleted_at !== null || $dt !== null)
-    {
-      $currentDateAsString = ($this->deleted_at !== null && $tmpDt = new DateTime($this->deleted_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
-        $this->deleted_at = $newDateAsString;
-        $this->modifiedColumns[] = CollectibleOfferPeer::DELETED_AT;
-      }
-    }
-
-    return $this;
-  }
-
-  /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -578,9 +498,8 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
       $this->collector_id = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
       $this->price = ($row[$startcol + 4] !== null) ? (double) $row[$startcol + 4] : null;
       $this->status = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-      $this->deleted_at = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-      $this->created_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-      $this->updated_at = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+      $this->created_at = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+      $this->updated_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -590,7 +509,7 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 9; // 9 = CollectibleOfferPeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 8; // 8 = CollectibleOfferPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -1082,12 +1001,9 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
         return $this->getStatus();
         break;
       case 6:
-        return $this->getDeletedAt();
-        break;
-      case 7:
         return $this->getCreatedAt();
         break;
-      case 8:
+      case 7:
         return $this->getUpdatedAt();
         break;
       default:
@@ -1126,9 +1042,8 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
       $keys[3] => $this->getCollectorId(),
       $keys[4] => $this->getPrice(),
       $keys[5] => $this->getStatus(),
-      $keys[6] => $this->getDeletedAt(),
-      $keys[7] => $this->getCreatedAt(),
-      $keys[8] => $this->getUpdatedAt(),
+      $keys[6] => $this->getCreatedAt(),
+      $keys[7] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -1195,12 +1110,9 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
         $this->setStatus($value);
         break;
       case 6:
-        $this->setDeletedAt($value);
-        break;
-      case 7:
         $this->setCreatedAt($value);
         break;
-      case 8:
+      case 7:
         $this->setUpdatedAt($value);
         break;
     }
@@ -1233,9 +1145,8 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
     if (array_key_exists($keys[3], $arr)) $this->setCollectorId($arr[$keys[3]]);
     if (array_key_exists($keys[4], $arr)) $this->setPrice($arr[$keys[4]]);
     if (array_key_exists($keys[5], $arr)) $this->setStatus($arr[$keys[5]]);
-    if (array_key_exists($keys[6], $arr)) $this->setDeletedAt($arr[$keys[6]]);
-    if (array_key_exists($keys[7], $arr)) $this->setCreatedAt($arr[$keys[7]]);
-    if (array_key_exists($keys[8], $arr)) $this->setUpdatedAt($arr[$keys[8]]);
+    if (array_key_exists($keys[6], $arr)) $this->setCreatedAt($arr[$keys[6]]);
+    if (array_key_exists($keys[7], $arr)) $this->setUpdatedAt($arr[$keys[7]]);
   }
 
   /**
@@ -1253,7 +1164,6 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectibleOfferPeer::COLLECTOR_ID)) $criteria->add(CollectibleOfferPeer::COLLECTOR_ID, $this->collector_id);
     if ($this->isColumnModified(CollectibleOfferPeer::PRICE)) $criteria->add(CollectibleOfferPeer::PRICE, $this->price);
     if ($this->isColumnModified(CollectibleOfferPeer::STATUS)) $criteria->add(CollectibleOfferPeer::STATUS, $this->status);
-    if ($this->isColumnModified(CollectibleOfferPeer::DELETED_AT)) $criteria->add(CollectibleOfferPeer::DELETED_AT, $this->deleted_at);
     if ($this->isColumnModified(CollectibleOfferPeer::CREATED_AT)) $criteria->add(CollectibleOfferPeer::CREATED_AT, $this->created_at);
     if ($this->isColumnModified(CollectibleOfferPeer::UPDATED_AT)) $criteria->add(CollectibleOfferPeer::UPDATED_AT, $this->updated_at);
 
@@ -1323,7 +1233,6 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
     $copyObj->setCollectorId($this->getCollectorId());
     $copyObj->setPrice($this->getPrice());
     $copyObj->setStatus($this->getStatus());
-    $copyObj->setDeletedAt($this->getDeletedAt());
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
     if ($makeNew)
@@ -1545,7 +1454,6 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
     $this->collector_id = null;
     $this->price = null;
     $this->status = null;
-    $this->deleted_at = null;
     $this->created_at = null;
     $this->updated_at = null;
     $this->alreadyInSave = false;
@@ -1674,7 +1582,6 @@ abstract class BaseCollectibleOffer extends BaseObject  implements Persistent
     $this->setCollectorId($archive->getCollectorId());
     $this->setPrice($archive->getPrice());
     $this->setStatus($archive->getStatus());
-    $this->setDeletedAt($archive->getDeletedAt());
     $this->setCreatedAt($archive->getCreatedAt());
     $this->setUpdatedAt($archive->getUpdatedAt());
   

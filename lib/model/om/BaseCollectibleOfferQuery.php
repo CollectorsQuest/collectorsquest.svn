@@ -12,7 +12,6 @@
  * @method     CollectibleOfferQuery orderByCollectorId($order = Criteria::ASC) Order by the collector_id column
  * @method     CollectibleOfferQuery orderByPrice($order = Criteria::ASC) Order by the price column
  * @method     CollectibleOfferQuery orderByStatus($order = Criteria::ASC) Order by the status column
- * @method     CollectibleOfferQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     CollectibleOfferQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     CollectibleOfferQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
  *
@@ -22,7 +21,6 @@
  * @method     CollectibleOfferQuery groupByCollectorId() Group by the collector_id column
  * @method     CollectibleOfferQuery groupByPrice() Group by the price column
  * @method     CollectibleOfferQuery groupByStatus() Group by the status column
- * @method     CollectibleOfferQuery groupByDeletedAt() Group by the deleted_at column
  * @method     CollectibleOfferQuery groupByCreatedAt() Group by the created_at column
  * @method     CollectibleOfferQuery groupByUpdatedAt() Group by the updated_at column
  *
@@ -51,7 +49,6 @@
  * @method     CollectibleOffer findOneByCollectorId(int $collector_id) Return the first CollectibleOffer filtered by the collector_id column
  * @method     CollectibleOffer findOneByPrice(double $price) Return the first CollectibleOffer filtered by the price column
  * @method     CollectibleOffer findOneByStatus(string $status) Return the first CollectibleOffer filtered by the status column
- * @method     CollectibleOffer findOneByDeletedAt(string $deleted_at) Return the first CollectibleOffer filtered by the deleted_at column
  * @method     CollectibleOffer findOneByCreatedAt(string $created_at) Return the first CollectibleOffer filtered by the created_at column
  * @method     CollectibleOffer findOneByUpdatedAt(string $updated_at) Return the first CollectibleOffer filtered by the updated_at column
  *
@@ -61,7 +58,6 @@
  * @method     array findByCollectorId(int $collector_id) Return CollectibleOffer objects filtered by the collector_id column
  * @method     array findByPrice(double $price) Return CollectibleOffer objects filtered by the price column
  * @method     array findByStatus(string $status) Return CollectibleOffer objects filtered by the status column
- * @method     array findByDeletedAt(string $deleted_at) Return CollectibleOffer objects filtered by the deleted_at column
  * @method     array findByCreatedAt(string $created_at) Return CollectibleOffer objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return CollectibleOffer objects filtered by the updated_at column
  *
@@ -394,48 +390,6 @@ abstract class BaseCollectibleOfferQuery extends ModelCriteria
             }
         }
         return $this->addUsingAlias(CollectibleOfferPeer::STATUS, $status, $comparison);
-    }
-
-    /**
-     * Filter the query on the deleted_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByDeletedAt('2011-03-14'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt('now'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt(array('max' => 'yesterday')); // WHERE deleted_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $deletedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectibleOfferQuery The current query, for fluid interface
-     */
-    public function filterByDeletedAt($deletedAt = null, $comparison = null)
-    {
-        if (is_array($deletedAt)) {
-            $useMinMax = false;
-            if (isset($deletedAt['min'])) {
-                $this->addUsingAlias(CollectibleOfferPeer::DELETED_AT, $deletedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($deletedAt['max'])) {
-                $this->addUsingAlias(CollectibleOfferPeer::DELETED_AT, $deletedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-        return $this->addUsingAlias(CollectibleOfferPeer::DELETED_AT, $deletedAt, $comparison);
     }
 
     /**

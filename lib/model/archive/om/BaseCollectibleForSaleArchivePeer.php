@@ -27,13 +27,13 @@ abstract class BaseCollectibleForSaleArchivePeer
   const TM_CLASS = 'CollectibleForSaleArchiveTableMap';
 
   /** The total number of columns. */
-  const NUM_COLUMNS = 13;
+  const NUM_COLUMNS = 12;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
   /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-  const NUM_HYDRATE_COLUMNS = 13;
+  const NUM_HYDRATE_COLUMNS = 12;
 
   /** the column name for the ID field */
   const ID = 'collectible_for_sale_archive.ID';
@@ -61,9 +61,6 @@ abstract class BaseCollectibleForSaleArchivePeer
 
   /** the column name for the QUANTITY field */
   const QUANTITY = 'collectible_for_sale_archive.QUANTITY';
-
-  /** the column name for the DELETED_AT field */
-  const DELETED_AT = 'collectible_for_sale_archive.DELETED_AT';
 
   /** the column name for the UPDATED_AT field */
   const UPDATED_AT = 'collectible_for_sale_archive.UPDATED_AT';
@@ -93,12 +90,12 @@ abstract class BaseCollectibleForSaleArchivePeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectibleId', 'Price', 'Condition', 'IsPriceNegotiable', 'IsShippingFree', 'IsSold', 'IsReady', 'Quantity', 'DeletedAt', 'UpdatedAt', 'CreatedAt', 'ArchivedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectibleId', 'price', 'condition', 'isPriceNegotiable', 'isShippingFree', 'isSold', 'isReady', 'quantity', 'deletedAt', 'updatedAt', 'createdAt', 'archivedAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTIBLE_ID, self::PRICE, self::CONDITION, self::IS_PRICE_NEGOTIABLE, self::IS_SHIPPING_FREE, self::IS_SOLD, self::IS_READY, self::QUANTITY, self::DELETED_AT, self::UPDATED_AT, self::CREATED_AT, self::ARCHIVED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTIBLE_ID', 'PRICE', 'CONDITION', 'IS_PRICE_NEGOTIABLE', 'IS_SHIPPING_FREE', 'IS_SOLD', 'IS_READY', 'QUANTITY', 'DELETED_AT', 'UPDATED_AT', 'CREATED_AT', 'ARCHIVED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'collectible_id', 'price', 'condition', 'is_price_negotiable', 'is_shipping_free', 'is_sold', 'is_ready', 'quantity', 'deleted_at', 'updated_at', 'created_at', 'archived_at', ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectibleId', 'Price', 'Condition', 'IsPriceNegotiable', 'IsShippingFree', 'IsSold', 'IsReady', 'Quantity', 'UpdatedAt', 'CreatedAt', 'ArchivedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectibleId', 'price', 'condition', 'isPriceNegotiable', 'isShippingFree', 'isSold', 'isReady', 'quantity', 'updatedAt', 'createdAt', 'archivedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTIBLE_ID, self::PRICE, self::CONDITION, self::IS_PRICE_NEGOTIABLE, self::IS_SHIPPING_FREE, self::IS_SOLD, self::IS_READY, self::QUANTITY, self::UPDATED_AT, self::CREATED_AT, self::ARCHIVED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTIBLE_ID', 'PRICE', 'CONDITION', 'IS_PRICE_NEGOTIABLE', 'IS_SHIPPING_FREE', 'IS_SOLD', 'IS_READY', 'QUANTITY', 'UPDATED_AT', 'CREATED_AT', 'ARCHIVED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'collectible_id', 'price', 'condition', 'is_price_negotiable', 'is_shipping_free', 'is_sold', 'is_ready', 'quantity', 'updated_at', 'created_at', 'archived_at', ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
   );
 
   /**
@@ -108,12 +105,12 @@ abstract class BaseCollectibleForSaleArchivePeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectibleId' => 1, 'Price' => 2, 'Condition' => 3, 'IsPriceNegotiable' => 4, 'IsShippingFree' => 5, 'IsSold' => 6, 'IsReady' => 7, 'Quantity' => 8, 'DeletedAt' => 9, 'UpdatedAt' => 10, 'CreatedAt' => 11, 'ArchivedAt' => 12, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectibleId' => 1, 'price' => 2, 'condition' => 3, 'isPriceNegotiable' => 4, 'isShippingFree' => 5, 'isSold' => 6, 'isReady' => 7, 'quantity' => 8, 'deletedAt' => 9, 'updatedAt' => 10, 'createdAt' => 11, 'archivedAt' => 12, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTIBLE_ID => 1, self::PRICE => 2, self::CONDITION => 3, self::IS_PRICE_NEGOTIABLE => 4, self::IS_SHIPPING_FREE => 5, self::IS_SOLD => 6, self::IS_READY => 7, self::QUANTITY => 8, self::DELETED_AT => 9, self::UPDATED_AT => 10, self::CREATED_AT => 11, self::ARCHIVED_AT => 12, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTIBLE_ID' => 1, 'PRICE' => 2, 'CONDITION' => 3, 'IS_PRICE_NEGOTIABLE' => 4, 'IS_SHIPPING_FREE' => 5, 'IS_SOLD' => 6, 'IS_READY' => 7, 'QUANTITY' => 8, 'DELETED_AT' => 9, 'UPDATED_AT' => 10, 'CREATED_AT' => 11, 'ARCHIVED_AT' => 12, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collectible_id' => 1, 'price' => 2, 'condition' => 3, 'is_price_negotiable' => 4, 'is_shipping_free' => 5, 'is_sold' => 6, 'is_ready' => 7, 'quantity' => 8, 'deleted_at' => 9, 'updated_at' => 10, 'created_at' => 11, 'archived_at' => 12, ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, )
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectibleId' => 1, 'Price' => 2, 'Condition' => 3, 'IsPriceNegotiable' => 4, 'IsShippingFree' => 5, 'IsSold' => 6, 'IsReady' => 7, 'Quantity' => 8, 'UpdatedAt' => 9, 'CreatedAt' => 10, 'ArchivedAt' => 11, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectibleId' => 1, 'price' => 2, 'condition' => 3, 'isPriceNegotiable' => 4, 'isShippingFree' => 5, 'isSold' => 6, 'isReady' => 7, 'quantity' => 8, 'updatedAt' => 9, 'createdAt' => 10, 'archivedAt' => 11, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTIBLE_ID => 1, self::PRICE => 2, self::CONDITION => 3, self::IS_PRICE_NEGOTIABLE => 4, self::IS_SHIPPING_FREE => 5, self::IS_SOLD => 6, self::IS_READY => 7, self::QUANTITY => 8, self::UPDATED_AT => 9, self::CREATED_AT => 10, self::ARCHIVED_AT => 11, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTIBLE_ID' => 1, 'PRICE' => 2, 'CONDITION' => 3, 'IS_PRICE_NEGOTIABLE' => 4, 'IS_SHIPPING_FREE' => 5, 'IS_SOLD' => 6, 'IS_READY' => 7, 'QUANTITY' => 8, 'UPDATED_AT' => 9, 'CREATED_AT' => 10, 'ARCHIVED_AT' => 11, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collectible_id' => 1, 'price' => 2, 'condition' => 3, 'is_price_negotiable' => 4, 'is_shipping_free' => 5, 'is_sold' => 6, 'is_ready' => 7, 'quantity' => 8, 'updated_at' => 9, 'created_at' => 10, 'archived_at' => 11, ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
   );
 
   /**
@@ -197,7 +194,6 @@ abstract class BaseCollectibleForSaleArchivePeer
       $criteria->addSelectColumn(CollectibleForSaleArchivePeer::IS_SOLD);
       $criteria->addSelectColumn(CollectibleForSaleArchivePeer::IS_READY);
       $criteria->addSelectColumn(CollectibleForSaleArchivePeer::QUANTITY);
-      $criteria->addSelectColumn(CollectibleForSaleArchivePeer::DELETED_AT);
       $criteria->addSelectColumn(CollectibleForSaleArchivePeer::UPDATED_AT);
       $criteria->addSelectColumn(CollectibleForSaleArchivePeer::CREATED_AT);
       $criteria->addSelectColumn(CollectibleForSaleArchivePeer::ARCHIVED_AT);
@@ -213,7 +209,6 @@ abstract class BaseCollectibleForSaleArchivePeer
       $criteria->addSelectColumn($alias . '.IS_SOLD');
       $criteria->addSelectColumn($alias . '.IS_READY');
       $criteria->addSelectColumn($alias . '.QUANTITY');
-      $criteria->addSelectColumn($alias . '.DELETED_AT');
       $criteria->addSelectColumn($alias . '.UPDATED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
       $criteria->addSelectColumn($alias . '.ARCHIVED_AT');

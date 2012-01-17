@@ -34,12 +34,11 @@ classes:
       is_public:      { type: boolean, default: true }
       session_id:     { type: varchar, size: 32 }
       last_seen_at:   { type: timestamp }
-      deleted_at:     { type: timestamp }
 
       eblob: { type: longvarchar, default: null }
 
     propel_behaviors:
-      archivable: { archive_class: CollectorArchive }
+      archivable: { archive_class: CollectorArchive, archived_at_column: archived_at }
       timestampable: ~
 
   ###
@@ -76,7 +75,7 @@ classes:
       collector_profile_U_1: [collector_id]
 
     propel_behaviors:
-      archivable: { archive_class: CollectorProfileArchive }
+      archivable: { archive_class: CollectorProfileArchive, archived_at_column: archived_at }
 
   CollectorEmail:
     columns:
@@ -101,7 +100,7 @@ classes:
       created_at:  ~
 
     propel_behaviors:
-      archivable: { archive_class: CollectorIdentifierArchive }
+      archivable: { archive_class: CollectorIdentifierArchive, archived_at_column: archived_at }
 
   CollectorInterview:
     columns:
@@ -133,7 +132,7 @@ classes:
       timezone:         { type: varchar, size: 128 }
 
     propel_behaviors:
-      archivable: { archive_class: CollectorGeocacheArchive }
+      archivable: { archive_class: CollectorGeocacheArchive, log_archived_at: false }
 
   CollectorFriend:
     columns:
@@ -171,12 +170,11 @@ classes:
       is_featured:             { type: boolean, default: false }
       comments_on:             { type: boolean, default: true }
       rating_on:               { type: boolean, default: true }
-      deleted_at:              { type: timestamp }
 
       eblob: { type: longvarchar, default: null }
 
     propel_behaviors:
-      archivable: { archive_class: CollectionArchive }
+      archivable: { archive_class: CollectionArchive, archived_at_column: archived_at }
       timestampable: ~
 
   CollectionCategory:
@@ -211,12 +209,11 @@ classes:
       score:             { type: integer, default: 0 }
       position:          { type: integer, default: 0 }
       is_name_automatic: { type: boolean, default: false }
-      deleted_at:        { type: timestamp }
 
       eblob: { type: longvarchar, default: null }
 
     propel_behaviors:
-      archivable: { archive_class: CollectibleArchive }
+      archivable: { archive_class: CollectibleArchive, archived_at_column: archived_at }
       timestampable: ~
 
   ###
@@ -233,13 +230,12 @@ classes:
       is_sold:              { type: boolean, default: false }
       is_ready:             { type: boolean, default: false, description: 'Show in the market or no' }
       quantity:             { type: integer, required: true, default: 1 }
-      deleted_at:           { type: timestamp }
 
     uniques:
       collectible_for_sale_item: [collectible_id]
 
     propel_behaviors:
-      archivable: { archive_class: CollectibleForSaleArchive }
+      archivable: { archive_class: CollectibleForSaleArchive, archived_at_column: archived_at }
       timestampable: ~
 
   ###
@@ -253,10 +249,9 @@ classes:
       collector_id:             { type: integer, required: true, foreignClass: Collector, foreignReference: id }
       price:                    { type: float }
       status:                   { type: char, sqlType: "ENUM('pending','counter','rejected','accepted')", required: true }
-      deleted_at:               { type: timestamp }
 
     propel_behaviors:
-      archivable: { archive_class: CollectibleOfferArchive }
+      archivable: { archive_class: CollectibleOfferArchive, archived_at_column: archived_at }
       timestampable: ~
 
   ###
@@ -284,7 +279,7 @@ classes:
       multimedia_U_1: [model, model_id, md5]
 
     propel_behaviors:
-      archivable: { archive_class: MultimediaArchive }
+      archivable: { archive_class: MultimediaArchive, archived_at_column: archived_at }
 
   PrivateMessage:
     columns:
@@ -330,7 +325,7 @@ classes:
       comment_U_1:  [disqus_id]
 
     propel_behaviors:
-      archivable: { archive_class: CommentArchive }
+      archivable: { archive_class: CommentArchive, archived_at_column: archived_at }
 
   CustomField:
     columns:

@@ -61,12 +61,6 @@ abstract class BaseCollectibleOfferArchive extends BaseObject  implements Persis
   protected $status;
 
   /**
-   * The value for the deleted_at field.
-   * @var        string
-   */
-  protected $deleted_at;
-
-  /**
    * The value for the updated_at field.
    * @var        string
    */
@@ -156,56 +150,6 @@ abstract class BaseCollectibleOfferArchive extends BaseObject  implements Persis
   public function getStatus()
   {
     return $this->status;
-  }
-
-  /**
-   * Get the [optionally formatted] temporal [deleted_at] column value.
-   * 
-   *
-   * @param      string $format The date/time format string (either date()-style or strftime()-style).
-   *              If format is NULL, then the raw DateTime object will be returned.
-   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-   * @throws     PropelException - if unable to parse/validate the date/time value.
-   */
-  public function getDeletedAt($format = 'Y-m-d H:i:s')
-  {
-    if ($this->deleted_at === null)
-    {
-      return null;
-    }
-
-
-    if ($this->deleted_at === '0000-00-00 00:00:00')
-    {
-      // while technically this is not a default value of NULL,
-      // this seems to be closest in meaning.
-      return null;
-    }
-    else
-    {
-      try
-      {
-        $dt = new DateTime($this->deleted_at);
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->deleted_at, true), $x);
-      }
-    }
-
-    if ($format === null)
-    {
-      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-      return $dt;
-    }
-    elseif (strpos($format, '%') !== false)
-    {
-      return strftime($format, $dt->format('U'));
-    }
-    else
-    {
-      return $dt->format($format);
-    }
   }
 
   /**
@@ -491,30 +435,6 @@ abstract class BaseCollectibleOfferArchive extends BaseObject  implements Persis
   }
 
   /**
-   * Sets the value of [deleted_at] column to a normalized version of the date/time value specified.
-   * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.
-   *               Empty strings are treated as NULL.
-   * @return     CollectibleOfferArchive The current object (for fluent API support)
-   */
-  public function setDeletedAt($v)
-  {
-    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-    if ($this->deleted_at !== null || $dt !== null)
-    {
-      $currentDateAsString = ($this->deleted_at !== null && $tmpDt = new DateTime($this->deleted_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
-        $this->deleted_at = $newDateAsString;
-        $this->modifiedColumns[] = CollectibleOfferArchivePeer::DELETED_AT;
-      }
-    }
-
-    return $this;
-  }
-
-  /**
    * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -625,10 +545,9 @@ abstract class BaseCollectibleOfferArchive extends BaseObject  implements Persis
       $this->collector_id = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
       $this->price = ($row[$startcol + 4] !== null) ? (double) $row[$startcol + 4] : null;
       $this->status = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-      $this->deleted_at = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-      $this->updated_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-      $this->created_at = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-      $this->archived_at = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+      $this->updated_at = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+      $this->created_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+      $this->archived_at = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -638,7 +557,7 @@ abstract class BaseCollectibleOfferArchive extends BaseObject  implements Persis
         $this->ensureConsistency();
       }
 
-      return $startcol + 10; // 10 = CollectibleOfferArchivePeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 9; // 9 = CollectibleOfferArchivePeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -1030,15 +949,12 @@ abstract class BaseCollectibleOfferArchive extends BaseObject  implements Persis
         return $this->getStatus();
         break;
       case 6:
-        return $this->getDeletedAt();
-        break;
-      case 7:
         return $this->getUpdatedAt();
         break;
-      case 8:
+      case 7:
         return $this->getCreatedAt();
         break;
-      case 9:
+      case 8:
         return $this->getArchivedAt();
         break;
       default:
@@ -1076,10 +992,9 @@ abstract class BaseCollectibleOfferArchive extends BaseObject  implements Persis
       $keys[3] => $this->getCollectorId(),
       $keys[4] => $this->getPrice(),
       $keys[5] => $this->getStatus(),
-      $keys[6] => $this->getDeletedAt(),
-      $keys[7] => $this->getUpdatedAt(),
-      $keys[8] => $this->getCreatedAt(),
-      $keys[9] => $this->getArchivedAt(),
+      $keys[6] => $this->getUpdatedAt(),
+      $keys[7] => $this->getCreatedAt(),
+      $keys[8] => $this->getArchivedAt(),
     );
     return $result;
   }
@@ -1131,15 +1046,12 @@ abstract class BaseCollectibleOfferArchive extends BaseObject  implements Persis
         $this->setStatus($value);
         break;
       case 6:
-        $this->setDeletedAt($value);
-        break;
-      case 7:
         $this->setUpdatedAt($value);
         break;
-      case 8:
+      case 7:
         $this->setCreatedAt($value);
         break;
-      case 9:
+      case 8:
         $this->setArchivedAt($value);
         break;
     }
@@ -1172,10 +1084,9 @@ abstract class BaseCollectibleOfferArchive extends BaseObject  implements Persis
     if (array_key_exists($keys[3], $arr)) $this->setCollectorId($arr[$keys[3]]);
     if (array_key_exists($keys[4], $arr)) $this->setPrice($arr[$keys[4]]);
     if (array_key_exists($keys[5], $arr)) $this->setStatus($arr[$keys[5]]);
-    if (array_key_exists($keys[6], $arr)) $this->setDeletedAt($arr[$keys[6]]);
-    if (array_key_exists($keys[7], $arr)) $this->setUpdatedAt($arr[$keys[7]]);
-    if (array_key_exists($keys[8], $arr)) $this->setCreatedAt($arr[$keys[8]]);
-    if (array_key_exists($keys[9], $arr)) $this->setArchivedAt($arr[$keys[9]]);
+    if (array_key_exists($keys[6], $arr)) $this->setUpdatedAt($arr[$keys[6]]);
+    if (array_key_exists($keys[7], $arr)) $this->setCreatedAt($arr[$keys[7]]);
+    if (array_key_exists($keys[8], $arr)) $this->setArchivedAt($arr[$keys[8]]);
   }
 
   /**
@@ -1193,7 +1104,6 @@ abstract class BaseCollectibleOfferArchive extends BaseObject  implements Persis
     if ($this->isColumnModified(CollectibleOfferArchivePeer::COLLECTOR_ID)) $criteria->add(CollectibleOfferArchivePeer::COLLECTOR_ID, $this->collector_id);
     if ($this->isColumnModified(CollectibleOfferArchivePeer::PRICE)) $criteria->add(CollectibleOfferArchivePeer::PRICE, $this->price);
     if ($this->isColumnModified(CollectibleOfferArchivePeer::STATUS)) $criteria->add(CollectibleOfferArchivePeer::STATUS, $this->status);
-    if ($this->isColumnModified(CollectibleOfferArchivePeer::DELETED_AT)) $criteria->add(CollectibleOfferArchivePeer::DELETED_AT, $this->deleted_at);
     if ($this->isColumnModified(CollectibleOfferArchivePeer::UPDATED_AT)) $criteria->add(CollectibleOfferArchivePeer::UPDATED_AT, $this->updated_at);
     if ($this->isColumnModified(CollectibleOfferArchivePeer::CREATED_AT)) $criteria->add(CollectibleOfferArchivePeer::CREATED_AT, $this->created_at);
     if ($this->isColumnModified(CollectibleOfferArchivePeer::ARCHIVED_AT)) $criteria->add(CollectibleOfferArchivePeer::ARCHIVED_AT, $this->archived_at);
@@ -1265,7 +1175,6 @@ abstract class BaseCollectibleOfferArchive extends BaseObject  implements Persis
     $copyObj->setCollectorId($this->getCollectorId());
     $copyObj->setPrice($this->getPrice());
     $copyObj->setStatus($this->getStatus());
-    $copyObj->setDeletedAt($this->getDeletedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setArchivedAt($this->getArchivedAt());
@@ -1325,7 +1234,6 @@ abstract class BaseCollectibleOfferArchive extends BaseObject  implements Persis
     $this->collector_id = null;
     $this->price = null;
     $this->status = null;
-    $this->deleted_at = null;
     $this->updated_at = null;
     $this->created_at = null;
     $this->archived_at = null;

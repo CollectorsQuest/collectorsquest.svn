@@ -70,7 +70,7 @@ class CollectorGeocacheTableMap extends TableMap
   public function getBehaviors()
   {
     return array(
-      'archivable' => array('archive_table' => '', 'archive_class' => 'CollectorGeocacheArchive', 'log_archived_at' => 'true', 'archived_at_column' => 'archived_at', 'archive_on_insert' => 'false', 'archive_on_update' => 'false', 'archive_on_delete' => 'true', ),
+      'archivable' => array('archive_table' => '', 'archive_class' => 'CollectorGeocacheArchive', 'log_archived_at' => 'false', 'archived_at_column' => 'archived_at', 'archive_on_insert' => 'false', 'archive_on_update' => 'false', 'archive_on_delete' => 'true', ),
       'symfony' => array('form' => 'true', 'filter' => 'true', ),
       'symfony_behaviors' => array(),
       'alternative_coding_standards' => array('brackets_newline' => 'true', 'remove_closing_comments' => 'true', 'use_whitespace' => 'true', 'tab_size' => '2', 'strip_comments' => 'false', ),

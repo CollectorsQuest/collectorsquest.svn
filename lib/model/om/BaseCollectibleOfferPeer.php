@@ -27,13 +27,13 @@ abstract class BaseCollectibleOfferPeer
   const TM_CLASS = 'CollectibleOfferTableMap';
 
   /** The total number of columns. */
-  const NUM_COLUMNS = 9;
+  const NUM_COLUMNS = 8;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
   /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-  const NUM_HYDRATE_COLUMNS = 9;
+  const NUM_HYDRATE_COLUMNS = 8;
 
   /** the column name for the ID field */
   const ID = 'collectible_offer.ID';
@@ -52,9 +52,6 @@ abstract class BaseCollectibleOfferPeer
 
   /** the column name for the STATUS field */
   const STATUS = 'collectible_offer.STATUS';
-
-  /** the column name for the DELETED_AT field */
-  const DELETED_AT = 'collectible_offer.DELETED_AT';
 
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'collectible_offer.CREATED_AT';
@@ -81,12 +78,12 @@ abstract class BaseCollectibleOfferPeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectibleId', 'CollectibleForSaleId', 'CollectorId', 'Price', 'Status', 'DeletedAt', 'CreatedAt', 'UpdatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectibleId', 'collectibleForSaleId', 'collectorId', 'price', 'status', 'deletedAt', 'createdAt', 'updatedAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTIBLE_ID, self::COLLECTIBLE_FOR_SALE_ID, self::COLLECTOR_ID, self::PRICE, self::STATUS, self::DELETED_AT, self::CREATED_AT, self::UPDATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTIBLE_ID', 'COLLECTIBLE_FOR_SALE_ID', 'COLLECTOR_ID', 'PRICE', 'STATUS', 'DELETED_AT', 'CREATED_AT', 'UPDATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'collectible_id', 'collectible_for_sale_id', 'collector_id', 'price', 'status', 'deleted_at', 'created_at', 'updated_at', ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
+    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectibleId', 'CollectibleForSaleId', 'CollectorId', 'Price', 'Status', 'CreatedAt', 'UpdatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectibleId', 'collectibleForSaleId', 'collectorId', 'price', 'status', 'createdAt', 'updatedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTIBLE_ID, self::COLLECTIBLE_FOR_SALE_ID, self::COLLECTOR_ID, self::PRICE, self::STATUS, self::CREATED_AT, self::UPDATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTIBLE_ID', 'COLLECTIBLE_FOR_SALE_ID', 'COLLECTOR_ID', 'PRICE', 'STATUS', 'CREATED_AT', 'UPDATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'collectible_id', 'collectible_for_sale_id', 'collector_id', 'price', 'status', 'created_at', 'updated_at', ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
   );
 
   /**
@@ -96,12 +93,12 @@ abstract class BaseCollectibleOfferPeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectibleId' => 1, 'CollectibleForSaleId' => 2, 'CollectorId' => 3, 'Price' => 4, 'Status' => 5, 'DeletedAt' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectibleId' => 1, 'collectibleForSaleId' => 2, 'collectorId' => 3, 'price' => 4, 'status' => 5, 'deletedAt' => 6, 'createdAt' => 7, 'updatedAt' => 8, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTIBLE_ID => 1, self::COLLECTIBLE_FOR_SALE_ID => 2, self::COLLECTOR_ID => 3, self::PRICE => 4, self::STATUS => 5, self::DELETED_AT => 6, self::CREATED_AT => 7, self::UPDATED_AT => 8, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTIBLE_ID' => 1, 'COLLECTIBLE_FOR_SALE_ID' => 2, 'COLLECTOR_ID' => 3, 'PRICE' => 4, 'STATUS' => 5, 'DELETED_AT' => 6, 'CREATED_AT' => 7, 'UPDATED_AT' => 8, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collectible_id' => 1, 'collectible_for_sale_id' => 2, 'collector_id' => 3, 'price' => 4, 'status' => 5, 'deleted_at' => 6, 'created_at' => 7, 'updated_at' => 8, ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectibleId' => 1, 'CollectibleForSaleId' => 2, 'CollectorId' => 3, 'Price' => 4, 'Status' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectibleId' => 1, 'collectibleForSaleId' => 2, 'collectorId' => 3, 'price' => 4, 'status' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTIBLE_ID => 1, self::COLLECTIBLE_FOR_SALE_ID => 2, self::COLLECTOR_ID => 3, self::PRICE => 4, self::STATUS => 5, self::CREATED_AT => 6, self::UPDATED_AT => 7, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTIBLE_ID' => 1, 'COLLECTIBLE_FOR_SALE_ID' => 2, 'COLLECTOR_ID' => 3, 'PRICE' => 4, 'STATUS' => 5, 'CREATED_AT' => 6, 'UPDATED_AT' => 7, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collectible_id' => 1, 'collectible_for_sale_id' => 2, 'collector_id' => 3, 'price' => 4, 'status' => 5, 'created_at' => 6, 'updated_at' => 7, ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
   );
 
   /**
@@ -182,7 +179,6 @@ abstract class BaseCollectibleOfferPeer
       $criteria->addSelectColumn(CollectibleOfferPeer::COLLECTOR_ID);
       $criteria->addSelectColumn(CollectibleOfferPeer::PRICE);
       $criteria->addSelectColumn(CollectibleOfferPeer::STATUS);
-      $criteria->addSelectColumn(CollectibleOfferPeer::DELETED_AT);
       $criteria->addSelectColumn(CollectibleOfferPeer::CREATED_AT);
       $criteria->addSelectColumn(CollectibleOfferPeer::UPDATED_AT);
     }
@@ -194,7 +190,6 @@ abstract class BaseCollectibleOfferPeer
       $criteria->addSelectColumn($alias . '.COLLECTOR_ID');
       $criteria->addSelectColumn($alias . '.PRICE');
       $criteria->addSelectColumn($alias . '.STATUS');
-      $criteria->addSelectColumn($alias . '.DELETED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
       $criteria->addSelectColumn($alias . '.UPDATED_AT');
     }

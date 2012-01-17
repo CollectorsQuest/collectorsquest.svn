@@ -20,7 +20,6 @@ abstract class BaseCollectibleOfferForm extends BaseFormPropel
       'collector_id'            => new sfWidgetFormPropelChoice(array('model' => 'Collector', 'add_empty' => false)),
       'price'                   => new sfWidgetFormInputText(),
       'status'                  => new sfWidgetFormInputText(),
-      'deleted_at'              => new sfWidgetFormDateTime(),
       'created_at'              => new sfWidgetFormDateTime(),
       'updated_at'              => new sfWidgetFormDateTime(),
     ));
@@ -32,7 +31,6 @@ abstract class BaseCollectibleOfferForm extends BaseFormPropel
       'collector_id'            => new sfValidatorPropelChoice(array('model' => 'Collector', 'column' => 'id')),
       'price'                   => new sfValidatorNumber(array('required' => false)),
       'status'                  => new sfValidatorString(),
-      'deleted_at'              => new sfValidatorDateTime(array('required' => false)),
       'created_at'              => new sfValidatorDateTime(array('required' => false)),
       'updated_at'              => new sfValidatorDateTime(array('required' => false)),
     ));

@@ -17,7 +17,6 @@
  * @method     CollectibleQuery orderByScore($order = Criteria::ASC) Order by the score column
  * @method     CollectibleQuery orderByPosition($order = Criteria::ASC) Order by the position column
  * @method     CollectibleQuery orderByIsNameAutomatic($order = Criteria::ASC) Order by the is_name_automatic column
- * @method     CollectibleQuery orderByDeletedAt($order = Criteria::ASC) Order by the deleted_at column
  * @method     CollectibleQuery orderByEblob($order = Criteria::ASC) Order by the eblob column
  * @method     CollectibleQuery orderByCreatedAt($order = Criteria::ASC) Order by the created_at column
  * @method     CollectibleQuery orderByUpdatedAt($order = Criteria::ASC) Order by the updated_at column
@@ -33,7 +32,6 @@
  * @method     CollectibleQuery groupByScore() Group by the score column
  * @method     CollectibleQuery groupByPosition() Group by the position column
  * @method     CollectibleQuery groupByIsNameAutomatic() Group by the is_name_automatic column
- * @method     CollectibleQuery groupByDeletedAt() Group by the deleted_at column
  * @method     CollectibleQuery groupByEblob() Group by the eblob column
  * @method     CollectibleQuery groupByCreatedAt() Group by the created_at column
  * @method     CollectibleQuery groupByUpdatedAt() Group by the updated_at column
@@ -80,7 +78,6 @@
  * @method     Collectible findOneByScore(int $score) Return the first Collectible filtered by the score column
  * @method     Collectible findOneByPosition(int $position) Return the first Collectible filtered by the position column
  * @method     Collectible findOneByIsNameAutomatic(boolean $is_name_automatic) Return the first Collectible filtered by the is_name_automatic column
- * @method     Collectible findOneByDeletedAt(string $deleted_at) Return the first Collectible filtered by the deleted_at column
  * @method     Collectible findOneByEblob(string $eblob) Return the first Collectible filtered by the eblob column
  * @method     Collectible findOneByCreatedAt(string $created_at) Return the first Collectible filtered by the created_at column
  * @method     Collectible findOneByUpdatedAt(string $updated_at) Return the first Collectible filtered by the updated_at column
@@ -96,7 +93,6 @@
  * @method     array findByScore(int $score) Return Collectible objects filtered by the score column
  * @method     array findByPosition(int $position) Return Collectible objects filtered by the position column
  * @method     array findByIsNameAutomatic(boolean $is_name_automatic) Return Collectible objects filtered by the is_name_automatic column
- * @method     array findByDeletedAt(string $deleted_at) Return Collectible objects filtered by the deleted_at column
  * @method     array findByEblob(string $eblob) Return Collectible objects filtered by the eblob column
  * @method     array findByCreatedAt(string $created_at) Return Collectible objects filtered by the created_at column
  * @method     array findByUpdatedAt(string $updated_at) Return Collectible objects filtered by the updated_at column
@@ -590,48 +586,6 @@ abstract class BaseCollectibleQuery extends ModelCriteria
             $is_name_automatic = in_array(strtolower($isNameAutomatic), array('false', 'off', '-', 'no', 'n', '0', '')) ? false : true;
         }
         return $this->addUsingAlias(CollectiblePeer::IS_NAME_AUTOMATIC, $isNameAutomatic, $comparison);
-    }
-
-    /**
-     * Filter the query on the deleted_at column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByDeletedAt('2011-03-14'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt('now'); // WHERE deleted_at = '2011-03-14'
-     * $query->filterByDeletedAt(array('max' => 'yesterday')); // WHERE deleted_at > '2011-03-13'
-     * </code>
-     *
-     * @param     mixed $deletedAt The value to use as filter.
-     *              Values can be integers (unix timestamps), DateTime objects, or strings.
-     *              Empty strings are treated as NULL.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectibleQuery The current query, for fluid interface
-     */
-    public function filterByDeletedAt($deletedAt = null, $comparison = null)
-    {
-        if (is_array($deletedAt)) {
-            $useMinMax = false;
-            if (isset($deletedAt['min'])) {
-                $this->addUsingAlias(CollectiblePeer::DELETED_AT, $deletedAt['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($deletedAt['max'])) {
-                $this->addUsingAlias(CollectiblePeer::DELETED_AT, $deletedAt['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-        return $this->addUsingAlias(CollectiblePeer::DELETED_AT, $deletedAt, $comparison);
     }
 
     /**

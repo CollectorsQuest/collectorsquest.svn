@@ -27,13 +27,13 @@ abstract class BaseCollectibleOfferArchivePeer
   const TM_CLASS = 'CollectibleOfferArchiveTableMap';
 
   /** The total number of columns. */
-  const NUM_COLUMNS = 10;
+  const NUM_COLUMNS = 9;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
   /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-  const NUM_HYDRATE_COLUMNS = 10;
+  const NUM_HYDRATE_COLUMNS = 9;
 
   /** the column name for the ID field */
   const ID = 'collectible_offer_archive.ID';
@@ -52,9 +52,6 @@ abstract class BaseCollectibleOfferArchivePeer
 
   /** the column name for the STATUS field */
   const STATUS = 'collectible_offer_archive.STATUS';
-
-  /** the column name for the DELETED_AT field */
-  const DELETED_AT = 'collectible_offer_archive.DELETED_AT';
 
   /** the column name for the UPDATED_AT field */
   const UPDATED_AT = 'collectible_offer_archive.UPDATED_AT';
@@ -84,12 +81,12 @@ abstract class BaseCollectibleOfferArchivePeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectibleId', 'CollectibleForSaleId', 'CollectorId', 'Price', 'Status', 'DeletedAt', 'UpdatedAt', 'CreatedAt', 'ArchivedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectibleId', 'collectibleForSaleId', 'collectorId', 'price', 'status', 'deletedAt', 'updatedAt', 'createdAt', 'archivedAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTIBLE_ID, self::COLLECTIBLE_FOR_SALE_ID, self::COLLECTOR_ID, self::PRICE, self::STATUS, self::DELETED_AT, self::UPDATED_AT, self::CREATED_AT, self::ARCHIVED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTIBLE_ID', 'COLLECTIBLE_FOR_SALE_ID', 'COLLECTOR_ID', 'PRICE', 'STATUS', 'DELETED_AT', 'UPDATED_AT', 'CREATED_AT', 'ARCHIVED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'collectible_id', 'collectible_for_sale_id', 'collector_id', 'price', 'status', 'deleted_at', 'updated_at', 'created_at', 'archived_at', ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectibleId', 'CollectibleForSaleId', 'CollectorId', 'Price', 'Status', 'UpdatedAt', 'CreatedAt', 'ArchivedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectibleId', 'collectibleForSaleId', 'collectorId', 'price', 'status', 'updatedAt', 'createdAt', 'archivedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTIBLE_ID, self::COLLECTIBLE_FOR_SALE_ID, self::COLLECTOR_ID, self::PRICE, self::STATUS, self::UPDATED_AT, self::CREATED_AT, self::ARCHIVED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTIBLE_ID', 'COLLECTIBLE_FOR_SALE_ID', 'COLLECTOR_ID', 'PRICE', 'STATUS', 'UPDATED_AT', 'CREATED_AT', 'ARCHIVED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'collectible_id', 'collectible_for_sale_id', 'collector_id', 'price', 'status', 'updated_at', 'created_at', 'archived_at', ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
   );
 
   /**
@@ -99,12 +96,12 @@ abstract class BaseCollectibleOfferArchivePeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectibleId' => 1, 'CollectibleForSaleId' => 2, 'CollectorId' => 3, 'Price' => 4, 'Status' => 5, 'DeletedAt' => 6, 'UpdatedAt' => 7, 'CreatedAt' => 8, 'ArchivedAt' => 9, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectibleId' => 1, 'collectibleForSaleId' => 2, 'collectorId' => 3, 'price' => 4, 'status' => 5, 'deletedAt' => 6, 'updatedAt' => 7, 'createdAt' => 8, 'archivedAt' => 9, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTIBLE_ID => 1, self::COLLECTIBLE_FOR_SALE_ID => 2, self::COLLECTOR_ID => 3, self::PRICE => 4, self::STATUS => 5, self::DELETED_AT => 6, self::UPDATED_AT => 7, self::CREATED_AT => 8, self::ARCHIVED_AT => 9, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTIBLE_ID' => 1, 'COLLECTIBLE_FOR_SALE_ID' => 2, 'COLLECTOR_ID' => 3, 'PRICE' => 4, 'STATUS' => 5, 'DELETED_AT' => 6, 'UPDATED_AT' => 7, 'CREATED_AT' => 8, 'ARCHIVED_AT' => 9, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collectible_id' => 1, 'collectible_for_sale_id' => 2, 'collector_id' => 3, 'price' => 4, 'status' => 5, 'deleted_at' => 6, 'updated_at' => 7, 'created_at' => 8, 'archived_at' => 9, ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectibleId' => 1, 'CollectibleForSaleId' => 2, 'CollectorId' => 3, 'Price' => 4, 'Status' => 5, 'UpdatedAt' => 6, 'CreatedAt' => 7, 'ArchivedAt' => 8, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectibleId' => 1, 'collectibleForSaleId' => 2, 'collectorId' => 3, 'price' => 4, 'status' => 5, 'updatedAt' => 6, 'createdAt' => 7, 'archivedAt' => 8, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTIBLE_ID => 1, self::COLLECTIBLE_FOR_SALE_ID => 2, self::COLLECTOR_ID => 3, self::PRICE => 4, self::STATUS => 5, self::UPDATED_AT => 6, self::CREATED_AT => 7, self::ARCHIVED_AT => 8, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTIBLE_ID' => 1, 'COLLECTIBLE_FOR_SALE_ID' => 2, 'COLLECTOR_ID' => 3, 'PRICE' => 4, 'STATUS' => 5, 'UPDATED_AT' => 6, 'CREATED_AT' => 7, 'ARCHIVED_AT' => 8, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collectible_id' => 1, 'collectible_for_sale_id' => 2, 'collector_id' => 3, 'price' => 4, 'status' => 5, 'updated_at' => 6, 'created_at' => 7, 'archived_at' => 8, ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
   );
 
   /**
@@ -185,7 +182,6 @@ abstract class BaseCollectibleOfferArchivePeer
       $criteria->addSelectColumn(CollectibleOfferArchivePeer::COLLECTOR_ID);
       $criteria->addSelectColumn(CollectibleOfferArchivePeer::PRICE);
       $criteria->addSelectColumn(CollectibleOfferArchivePeer::STATUS);
-      $criteria->addSelectColumn(CollectibleOfferArchivePeer::DELETED_AT);
       $criteria->addSelectColumn(CollectibleOfferArchivePeer::UPDATED_AT);
       $criteria->addSelectColumn(CollectibleOfferArchivePeer::CREATED_AT);
       $criteria->addSelectColumn(CollectibleOfferArchivePeer::ARCHIVED_AT);
@@ -198,7 +194,6 @@ abstract class BaseCollectibleOfferArchivePeer
       $criteria->addSelectColumn($alias . '.COLLECTOR_ID');
       $criteria->addSelectColumn($alias . '.PRICE');
       $criteria->addSelectColumn($alias . '.STATUS');
-      $criteria->addSelectColumn($alias . '.DELETED_AT');
       $criteria->addSelectColumn($alias . '.UPDATED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
       $criteria->addSelectColumn($alias . '.ARCHIVED_AT');

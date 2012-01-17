@@ -33,7 +33,6 @@ classes:
 
       eblob:        { type: longvarchar, default: null }
 
-      deleted_at:   { type: timestamp }
       updated_at:   { type: timestamp }
       created_at:   { type: timestamp }
       archived_at:  { type: timestamp }
@@ -110,7 +109,6 @@ classes:
 
       eblob:        { type: longvarchar, default: null }
 
-      deleted_at:   { type: timestamp }
       updated_at:   { type: timestamp }
       created_at:   { type: timestamp }
       archived_at:  { type: timestamp }
@@ -131,7 +129,6 @@ classes:
 
       eblob:        { type: longvarchar, default: null }
 
-      deleted_at:   { type: timestamp }
       updated_at:   { type: timestamp }
       created_at:   { type: timestamp }
       archived_at:  { type: timestamp }
@@ -148,7 +145,6 @@ classes:
       is_ready:             { type: boolean, default: false, description: 'Show in the market or no' }
       quantity:             { type: integer, required: true, default: 1 }
 
-      deleted_at:   { type: timestamp }
       updated_at:   { type: timestamp }
       created_at:   { type: timestamp }
       archived_at:  { type: timestamp }
@@ -162,7 +158,6 @@ classes:
       price:           { type: float }
       status:          { type: char, sqlType: "ENUM('pending','counter','rejected','accepted')", required: true }
 
-      deleted_at:   { type: timestamp }
       updated_at:   { type: timestamp }
       created_at:   { type: timestamp }
       archived_at:  { type: timestamp }
@@ -181,6 +176,7 @@ classes:
       subject:         { type: varchar, size: 128 }
       body:            { type: longvarchar, required: true }
       ip_address:      { type: varchar, size: 15 }
+
       created_at:      { type: timestamp }
       archived_at:     { type: timestamp }
 
