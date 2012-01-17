@@ -157,11 +157,11 @@ function link_to_collectible(Collectible $collectible, $type = 'text', $options 
   {
     case 'image':
       $which = (isset($options['width']) && isset($options['height'])) ? $options['width'].'x'.$options['height'] : '150x150';
-      $link = link_to_if($collectible->getDeletedAt() === null, image_tag_collectible($collectible, $which, $options), $url, $options);
+      $link = link_to(image_tag_collectible($collectible, $which, $options), $url, $options);
       break;
     case 'text':
     default:
-      $link = link_to_if($collectible->getDeletedAt() === null, $collectible->getName(), $url, $options);
+      $link = link_to($collectible->getName(), $url, $options);
       break;
   }
 
