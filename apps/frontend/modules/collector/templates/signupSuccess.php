@@ -22,5 +22,15 @@
 <?php end_slot(); ?>
 
 <div id="collector_signup_div">
-  <?php include_partial('collector/signupStep'.$snStep, array('form' => $form, 'amStep1Data' => $amStep1Data, 'amStep2Data' => $amStep2Data)); ?>
+  <?php
+    include_partial(
+      'collector/signupStep'.$snStep,
+      array(
+        'form' => $form,
+        'amStep1Data' => $amStep1Data,
+        'amStep2Data' => $amStep2Data,
+        'rpxnow' => $rpxnow
+      )
+    );
+  ?>
 </div>

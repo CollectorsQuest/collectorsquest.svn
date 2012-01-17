@@ -116,13 +116,19 @@ class collectorActions extends cqActions
       $form = new CollectorSignupStep3Form();
     }
 
-    $amStep1Data = $request->getParameter('first_step_data', base64_encode(serialize($request->getParameter('collectorstep1', array()))));
+    $amStep1Data = $request->getParameter(
+      'first_step_data', base64_encode(serialize($request->getParameter('collectorstep1', array())))
+    );
     $amStep1Data = @unserialize(base64_decode($amStep1Data));
 
-    $amStep2Data = $request->getParameter('second_step_data', base64_encode(serialize($request->getParameter('collectorstep2', array()))));
+    $amStep2Data = $request->getParameter(
+      'second_step_data', base64_encode(serialize($request->getParameter('collectorstep2', array())))
+    );
     $amStep2Data = @unserialize(base64_decode($amStep2Data));
 
-    $amStep3Data = $request->getParameter('third_step_data', base64_encode(serialize($request->getParameter('collectorstep2', array()))));
+    $amStep3Data = $request->getParameter(
+      'third_step_data', base64_encode(serialize($request->getParameter('collectorstep2', array())))
+    );
     $amStep3Data = @unserialize(base64_decode($amStep3Data));
 
     $facebook = $this->getUser()->getFacebook();
@@ -144,53 +150,6 @@ class collectorActions extends cqActions
         $amStep3Data['birthday'] = $params['birthday'];
         $amStep3Data['country'] = $signed_request['user']['country'];
       }
-
-      /*
-        array(8) {
-          ["algorithm"]=>
-          string(11) "HMAC-SHA256"
-          ["expires"]=>
-          int(1326135600)
-          ["issued_at"]=>
-          int(1326130050)
-          ["oauth_token"]=>
-          string(111) "<!-- Edited -->"
-          ["registration"]=>
-          array(6) {
-            ["name"]=>
-            string(11) "Kiril Angov"
-            ["email"]=>
-            string(20) "kupokomapa@gmail.com"
-            ["gender"]=>
-            string(4) "male"
-            ["birthday"]=>
-            string(10) "03/25/1983"
-            ["location"]=>
-            array(2) {
-              ["name"]=>
-              string(15) "Sofia, Bulgaria"
-              ["id"]=>
-              float(1.0601348277267E+14)
-            }
-            ["password"]=>
-            string(8) "123456789"
-          }
-          ["registration_metadata"]=>
-          array(1) {
-            ["fields"]=>
-            string(131) "[{"name":"name"},{"name":"email"},{"name":"gender"},{"name":"birthday"},{"name":"location"},{"name":"password"},{"name":"captcha"}]"
-          }
-          ["user"]=>
-          array(2) {
-            ["country"]=>
-            string(2) "bg"
-            ["locale"]=>
-            string(5) "bg_BG"
-          }
-          ["user_id"]=>
-          string(8) "74502459"
-        }
-      */
     }
     else if ($request->isMethod('post'))
     {
@@ -206,7 +165,10 @@ class collectorActions extends cqActions
           $snNextStep = $this->snStep + 1;
           $ssFormName = 'CollectorSignupStep' . $snNextStep . 'Form';
 
-          return $this->renderPartial('collector/signupStep' . $snNextStep, array('form' => new $ssFormName(), 'amStep1Data' => $amStep1Data, 'amStep2Data' => $amStep2Data));
+          return $this->renderPartial(
+            'collector/signupStep' . $snNextStep,
+            array('form' => new $ssFormName(), 'amStep1Data' => $amStep1Data, 'amStep2Data' => $amStep2Data)
+          );
         }
 
         $amStep3Data = $request->getParameter($form->getName());
@@ -233,10 +195,6 @@ class collectorActions extends cqActions
         {
           $this->getUser()->Authenticate(true, $collector, false);
 
-          // Create the default profile photo
-          // $images = sfFinder::type('file')->name('*.jpg')->in(sfConfig::get('sf_web_dir').'/images/frontend/multimedia/Collector/default');
-          // $collector->setPhoto($images[array_rand($images)]);
-
           // Send the welcome message
           PrivateMessagePeer::sendFromTemplate(
             PrivateMessageTemplatePeer::COLLECTOR_SIGNUP_WELCOME, $collector->getId(), 1, array()
@@ -248,6 +206,8 @@ class collectorActions extends cqActions
     }
 
     $form->setDefaults(array_merge($amStep1Data, $amStep2Data, $amStep3Data));
+
+    $this->rpxnow = sfConfig::get('app_credentials_rpxnow');
 
     $this->amStep1Data = $amStep1Data;
     $this->amStep2Data = $amStep2Data;

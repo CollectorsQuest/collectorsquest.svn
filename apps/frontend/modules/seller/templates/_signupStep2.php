@@ -29,10 +29,10 @@
       <div class="span-3" style="text-align: right;"> <?php echo  cq_label_for($form, 'zip_postal', __('Zip/Postal Code:')); ?>
         <div class="required"><?php echo  __('(required if from US)'); ?></div>
       </div>
-      <div class="prepend-1 span-6 last"> 
+      <div class="prepend-1 span-6 last">
         <?php echo $form['zip_postal']->renderError() ?>
         <?php echo $form['zip_postal']->render(array('style'=>'width: 100px; border: 1px solid #A7A7A7; font-size: 16px; height: 23px; width: 90px; padding: 4px; margin: 0;')) ?>
-        <?php //echo cq_input_tag($form, 'zip_postal', array('width' => 100)); ?> 
+        <?php //echo cq_input_tag($form, 'zip_postal', array('width' => 100)); ?>
       </div>
       <br clear="all"/>
       <br>
@@ -40,7 +40,7 @@
         <?php echo  cq_label_for($form, 'country', __('Country:')); ?>
             <div class="required"><?= __('(required)'); ?></div>
       </div>
-      <div class="prepend-1 span-6 last"> 
+      <div class="prepend-1 span-6 last">
         <?php echo  cq_select_tag($form, 'country'); ?>
         <span style="color:#FF0000"><?php echo  $form['country']->renderError(); ?></span></div>
       <br clear="all"/>
@@ -68,7 +68,7 @@
   <div class="clearfix append-bottom">&nbsp;</div>
   <div class="prepend-5">
     <a name="openid"></a>
-    <iframe src="https://collectors-quest.rpxnow.com/openid/embed?token_url=<?php echo  url_for('@rpx_token', true); ?>"
+    <iframe src="https://collectorsquest.rpxnow.com/openid/embed?token_url=<?php echo  url_for('@rpx_token', true); ?>"
           scrolling="no" frameBorder="no" style="width:350px; height:220px;" width="350" height="220"></iframe>
   </div>
 </div>

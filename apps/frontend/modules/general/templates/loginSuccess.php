@@ -14,7 +14,7 @@
     <?= cq_input_tag($form, 'username', array('width' => 420)); ?>
   </div>
   <div class="clearfix append-bottom">&nbsp;</div>
-  
+
   <div class="prepend-1 span-3" style="text-align: right;">
     <?= cq_label_for($form, 'password', __('Password:')); ?>
     <div class="required"><?= __('(required)'); ?></div>
@@ -44,7 +44,7 @@
 <div class="clearfix append-bottom">&nbsp;</div><br><br>
 <fieldset class="span-10" style="margin-left: 200px;">
   <legend><?= __('Third Party Accounts:'); ?></legend>
-  <iframe src="https://collectors-quest.rpxnow.com/openid/embed?token_url=<?= url_for('@rpx_token', true); ?>"
+  <iframe src="<?= $rpxnow['application_domain']; ?>/openid/embed?token_url=<?= url_for('@rpx_token', true); ?>"
           scrolling="no" frameBorder="no" style="width:350px; height:220px;" width="350" height="220"></iframe>
 </fieldset>
 <br>

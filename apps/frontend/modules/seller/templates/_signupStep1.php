@@ -62,7 +62,7 @@
     <div class="clearfix append-bottom">&nbsp;</div>
     <div class="prepend-5">
       <a name="openid"></a>
-      <iframe src="https://collectors-quest.rpxnow.com/openid/embed?token_url=<?php echo url_for('@rpx_token', true); ?>"
+      <iframe src="https://collectorsquest.rpxnow.com/openid/embed?token_url=<?php echo url_for('@rpx_token', true); ?>"
               scrolling="no" frameBorder="no" style="width:350px; height:220px;" width="350" height="220"></iframe>
     </div>
   </form>

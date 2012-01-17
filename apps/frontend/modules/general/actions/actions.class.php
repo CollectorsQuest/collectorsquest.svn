@@ -10,11 +10,7 @@
  */
 class generalActions extends cqActions
 {
-  /**
-   * Executes index action
-   *
-   * @return string
-   */
+
   public function executeIndex()
   {
     // Get the latest Blog post and its first image
@@ -125,21 +121,28 @@ class generalActions extends cqActions
         $to = $collector->getEmail();
         $subject = $this->__('Your new password for CollectorsQuest.com');
         $body = $this->getPartial(
-            'emails/collector_password_reminder', array('collector' => $collector, 'password' => $password)
+          'emails/collector_password_reminder',
+          array('collector' => $collector, 'password' => $password)
         );
 
         if ($this->sendEmail($to, $subject, $body))
         {
-          $this->getUser()->setFlash('success', $this->__('We have sent an email to %email% with your new password.', array('%email%' => $to)));
+          $this->getUser()->setFlash(
+            'success', $this->__('We have sent an email to %email% with your new password.', array('%email%' => $to))
+          );
         }
         else
         {
-          $this->getUser()->setFlash('error', $this->__('There was a problem sending an email. Please try again a little bit later!'));
+          $this->getUser()->setFlash(
+            'error', $this->__('There was a problem sending an email. Please try again a little bit later!')
+          );
         }
       }
       else
       {
-        $this->getUser()->setFlash("error", 'We could not find this email address as a valid collector!');
+        $this->getUser()->setFlash(
+          'error', 'We could not find this email address as a valid collector!'
+        );
       }
     }
 
@@ -172,7 +175,9 @@ class generalActions extends cqActions
           $welcomePage = $request->getReferer();
           if (!$welcomePage || $welcomePage == $request->getUri())
           {
-            $welcomePage = $request->getReferer($this->getUser()->isAuthenticated() && $this->getUser()->hasCredential('seller') ? '@marketplace' : '@community');
+            $welcomePage = $request->getReferer(
+              $this->getUser()->isAuthenticated() && $this->getUser()->hasCredential('seller') ? '@marketplace' : '@community'
+            );
           }
 
           $goto = $this->getUser()->getAttribute('return_url', $request->getParameter('goto', $welcomePage), 'system');
@@ -183,12 +188,14 @@ class generalActions extends cqActions
         }
       }
 
-      $this->getUser()->setFlash(
-        "error", sprintf(
-          '%s <a href="%s">%s</a>', $this->__("This username/password combination is not valid."), '#reminder', $this->__("Forgot your username or password?")
-        ));
+      $this->getUser()->setFlash("error", sprintf(
+        '%s <a href="#reminder">%s</a>',
+        $this->__("This username/password combination is not valid."),
+        $this->__("Forgot your username or password?")
+      ));
     }
 
+    $this->rpxnow = sfConfig::get('app_credentials_rpxnow');
     $this->form = $form;
 
     $url = $this->getUser()->getAttribute('return_url', $request->getParameter('goto'), 'system');
@@ -197,13 +204,6 @@ class generalActions extends cqActions
     // Building the breadcrumbs and page title
     $this->addBreadcrumb($this->__('Sign in to Your Account'));
     $this->prependTitle($this->__('Sign in to Your Account'));
-
-    return sfView::SUCCESS;
-  }
-
-  public function executePassword()
-  {
-    $this->redirectIf($this->getUser()->isAuthenticated(), "@community");
 
     return sfView::SUCCESS;
   }
@@ -224,6 +224,13 @@ class generalActions extends cqActions
     $this->getUser()->setFlash('success', $this->__('You have successfully signed out of your account'));
 
     return $this->redirect(!empty($url) ? $url : '@community');
+  }
+
+  public function executePassword()
+  {
+    $this->redirectIf($this->getUser()->isAuthenticated(), "@community");
+
+    return sfView::SUCCESS;
   }
 
   public function executeRPXToken(sfWebRequest $request)
