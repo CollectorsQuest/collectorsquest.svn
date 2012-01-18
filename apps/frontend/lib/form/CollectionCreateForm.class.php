@@ -12,5 +12,8 @@ class CollectionCreateForm extends BaseCollectionForm
 
     $this->widgetSchema['tags'] = new sfWidgetFormInput();
     $this->validatorSchema['tags'] = new sfValidatorPass();
+
+    unset($this->widgetSchema['graph_id']);
+    unset($this->validatorSchema['graph_id']);
   }
 }
