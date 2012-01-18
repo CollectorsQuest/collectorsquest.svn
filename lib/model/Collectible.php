@@ -25,7 +25,6 @@ class Collectible extends BaseCollectible
       if ($collection = $this->getCollection($con))
       {
         $q = CollectibleQuery::create()
-           ->filterByDeletedAt(null, Criteria::ISNULL)
            ->filterByCollectionId($this->getCollectionId());
         $num_items = $q->count($con);
         $collection->setNumItems($num_items);
@@ -69,7 +68,7 @@ class Collectible extends BaseCollectible
   {
     $this->setIsNameAutomatic($is_automatic);
 
-    parent::setName(IceStatic::cleanText($v, 'none'));
+    parent::setName(IceStatic::cleanText($v, false, 'none'));
   }
 
   /**
@@ -82,7 +81,7 @@ class Collectible extends BaseCollectible
   {
     if ($type == 'html')
     {
-      $v = IceStatic::cleanText($v, 'p, b, u, i, em, strong, h1, h2, h3, h4, h5, h6, div, span, ul, ol, li, blockquote');
+      $v = IceStatic::cleanText($v, false, 'p, b, u, i, em, strong, h1, h2, h3, h4, h5, h6, div, span, ul, ol, li, blockquote');
       $v = cqMarkdownify::doConvert($v);
     }
 
