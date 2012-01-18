@@ -67,7 +67,7 @@
         </a>
         <b style="font-size: 14px;">Brian Rubin</b><br>
         <a href="/blog/people/brian-rubin" title="Bio of blogger Brian Rubin">[bio]</a> &nbsp;
-        <a href="/blog/index.php?author=7" title="Brian Rubin's articles on collecting...">[articles]</a>
+        <a href="/blog/index.php?author=14" title="Brian Rubin's articles on collecting...">[articles]</a>
         <br clear="all">
       </li>
       <li class="dean-ferber">
