@@ -13,24 +13,25 @@ generator:
 
     config:
       actions: ~
+
       fields:
         promotion_name: { label: Promotion Name }
         promotion_code: { label: Promotion Code }
         amount: { label: Amount }
         amount_type: { label: Amount Type }
-        no_of_time_used: { label: No of Times Used }
-        created_at: { label: Publish Date }
+        no_of_time_used: { label: Limit }
         expiry_date: { label: Expiry Date }
+
       list:
-        title: List of Promotion
-        display: [id, =promotion_name, promotion_code, amount, amount_type, no_of_time_used, created_at, expiry_date]
+        title: Promotions
+        display: [id, =promotion_name, promotion_code, amount, amount_type, no_of_time_used, expiry_date]
       filter:
-        display: [promotion_name, amount, amount_type, expiry_date]
+        class: false
+
       form:
-        display:
-          "Promotion":          [promotion_name, promotion_desc, promotion_code, amount, amount_type, no_of_time_used, expiry_date]
+        display: [promotion_name, promotion_desc, promotion_code, amount, amount_type, no_of_time_used, expiry_date]
       edit:
         title: Edit Promotion
       new:
-        title: Add Promotion
+        title: New Promotion
         actions:  { _list: ~, _save: ~ }

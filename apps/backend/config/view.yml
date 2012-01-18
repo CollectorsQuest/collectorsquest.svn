@@ -7,7 +7,7 @@ default:
     language:     en
     robots:       noindex, nofollow
 
-  stylesheets:    [backend/yui.css, backend/default.css, backend/main.css]
+  stylesheets:    [backend/default.css]
   javascripts:
     - jquery.js
     - tiny_mce/tiny_mce.js

@@ -14,23 +14,26 @@ generator:
     config:
       actions: ~
       fields:
-        collector: { label: Seller Name}
-        package_id: { label: Package Name, renderer: [Package, packageName]}
+        collector: { label: Seller }
+        package_id: { label: Package, renderer: [Package, packageName]}
         max_items_for_sale: { label: Max Items }
-        package_price: { label: Package Price }
+        package_price: { label: Price }
         expiry_date: { label: Expiry Date }
-        payment_status: { label: Payment Status }
-        created_at: { label: 'Ordered at' }
+        payment_status: { label: Status }
+        created_at: { label: 'Order Date' }
+
       list:
-        title: List of Package Transaction
-        display: [collector, package_id, max_items_for_sale, package_price, created_at, payment_status, expiry_date]
+        title: Package Transactions
+        display: [collector, payment_status, package_id, max_items_for_sale, package_price, expiry_date, created_at]
         hide: [id]
         sort: [id, desc]
         object_actions: { }
         batch_actions: { }
         actions: { }
+
       filter:
-        display: [collector_id, package_id, expiry_date]
+        display: [collector_id, package_id]
+
       form: ~
       edit: ~
       new:

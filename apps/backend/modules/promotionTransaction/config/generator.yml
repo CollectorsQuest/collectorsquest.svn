@@ -12,22 +12,30 @@ generator:
     actions_base_class:    cqBackendActions
 
     config:
-      actions: ~
+      actions:  ~
+
       fields:
-        collector_id: { label: Collector Name }
-        promotion_id: { label: Promotion Name }
-        amount: { label: Amount }
-        amount_type: { label: Amount Type }
+        collector_id: { label: Collector }
+        promotion_id: { label: Promotion }
+        amount:       { label: Amount }
+        amount_type:  { label: Amount Type }
+        created_at:   { label: Date of Transaction }
+
       list:
-        title: List of Promotion Transaction
-        display: [collector, promotion, amount, amount_type]
+        title: Promotion Transactions
+        display: [collector, promotion, amount, amount_type, created_at]
         hide: [id]
         sort: [id, desc]
         object_actions: { }
         batch_actions: { }
         actions: { }
+
       filter:
         display: [collector_id, promotion_id, amount]
-      form:    ~
-      edit:    ~
-      new:     ~
+        fields:
+          amount:
+            widgetOptions: { with_empty: false }
+
+      form:  ~
+      edit:  ~
+      new:   ~

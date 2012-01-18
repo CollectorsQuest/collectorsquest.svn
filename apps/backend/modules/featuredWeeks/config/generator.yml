@@ -33,6 +33,7 @@ generator:
 
       form:
         class: FeaturedWeekForm
+
         fields:
           title:
             attributes: { class: span8 }
@@ -48,6 +49,31 @@ generator:
           is_active:
             label: "Active?"
             attributes: { class: 'yes_no' }
+
+          category_ids:
+            label: Category IDs
+            attributes: { class: span8 }
+            help: "List the IDs for the categories, sepearated with 'commas'"
+          collector_ids:
+            label: Collector IDs
+            attributes: { class: span8 }
+            help: "List the IDs for the collectors, sepearated with 'commas'"
+          collection_ids:
+            label: Collection IDs
+            attributes: { class: span8 }
+            help: "List the IDs for the collections, sepearated with 'commas'"
+          collectible_ids:
+            label: Collectible IDs
+            attributes: { class: span8 }
+            help: "List the IDs for the collectibles, sepearated with 'commas'"
+
+        display:
+          "": [title, homepage_text, start_date, end_date, is_active]
+          Categories: [category_ids, _edit_categories]
+          Collectors: [collector_ids, _edit_collectors]
+          Collections: [collection_ids, _edit_collections]
+          Collectibles: [collectible_ids, _edit_collectibles]
+
       edit:
         title: Edit Featured Week
       new:
