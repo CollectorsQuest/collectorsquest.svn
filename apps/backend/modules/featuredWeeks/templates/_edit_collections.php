@@ -9,11 +9,22 @@ if ($featured_week = $form->getObject())
   /** @var $featured_week Featured */
 
   $ids = $featured_week->getCollectionIds();
-  echo implode(',', $ids);
+  $items = array();
 
   $collections = CollectionQuery::create()->filterById($ids, Criteria::IN)->find();
   foreach ($collections as $collection)
   {
-    include_partial('collections/grid_view', array('collection' => $collection));
+    $items[] = get_partial('collections/list_view', array('collection' => $collection));
   }
 }
+
+?>
+
+<?php if (!empty($items)): ?>
+<div class="clearfix sf_admin_form_row sf_admin_text">
+  <label>Collection Names:</label>
+  <div class="input" style="padding-top: 9px;">
+    <?= implode(', ', $items); ?>
+  </div>
+</div>
+<?php endif; ?>

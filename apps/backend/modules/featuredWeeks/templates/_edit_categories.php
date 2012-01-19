@@ -21,7 +21,7 @@ if ($featured_week = $form->getObject())
 <div class="clearfix sf_admin_form_row sf_admin_text">
   <label>Category Names:</label>
   <div class="input" style="padding-top: 9px;">
-    <?= implode(',', $collection_categories->toArray()); ?>
+    <?= implode(', ', $collection_categories->toArray()); ?>
   </div>
 </div>
 <?php endif; ?>

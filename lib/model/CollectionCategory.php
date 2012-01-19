@@ -20,6 +20,11 @@ class CollectionCategory extends BaseCollectionCategory
     return CollectionCategoryFieldPeer::doCountJoinCollectionCategory($c);
   }
 
+  public function getCollectionsCount()
+  {
+    return CollectionQuery::create()->filterByCollectionCategoryId($this->getId())->count();
+  }
+
   public function addField($field)
   {
     if (is_numeric($field))

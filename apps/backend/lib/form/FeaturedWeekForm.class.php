@@ -51,6 +51,7 @@ class FeaturedWeekForm extends BaseFeaturedForm
 
   public function updateObject($values = null)
   {
+    /** @var $object Featured */
     $object = parent::updateObject($values);
 
     if (null === $values)
@@ -60,12 +61,126 @@ class FeaturedWeekForm extends BaseFeaturedForm
     $object->title = $values['title'];
     $object->homepage_text = $values['homepage_text'];
 
-    $category_ids = explode(',', $values['category_ids']);
-    $collector_ids = explode(',', $values['collector_ids']);
-    $collection_ids = explode(',', $values['collection_ids']);
-    $collectible_ids = explode(',', $values['collectible_ids']);
+    if ($object->isNew())
+    {
+      $object->setFeaturedTypeId(6);
+      $object->setFeaturedModel('FeaturedWeek');
+      $object->makeRoot();
+      $object->save();
+    }
 
+    $category_ids    = array_map('trim', explode(',', $values['category_ids']));
+    $collector_ids   = array_map('trim', explode(',', $values['collector_ids']));
+    $collection_ids  = array_map('trim', explode(',', $values['collection_ids']));
+    $collectible_ids = array_map('trim', explode(',', $values['collectible_ids']));
 
+    /** @var Featured $child */
+    foreach ($object->getChildren() as $child)
+    {
+      switch ($child->getFeaturedModel())
+      {
+        case 'CollectionCategory':
+          if (!in_array($child->getFeaturedId(), $category_ids)) {
+            $child->delete();
+          } else {
+            $category_ids = array_diff($category_ids, array($child->getFeaturedId()));
+          }
+          break;
+        case 'Collector':
+          if (!in_array($child->getFeaturedId(), $collector_ids)) {
+            $child->delete();
+          } else {
+            $collector_ids = array_diff($collector_ids, array($child->getFeaturedId()));
+          }
+          break;
+        case 'Collection':
+          if (!in_array($child->getFeaturedId(), $collection_ids)) {
+            $child->delete();
+          } else {
+            $collection_ids = array_diff($collection_ids, array($child->getFeaturedId()));
+          }
+          break;
+        case 'Collectible':
+          if (!in_array($child->getFeaturedId(), $collectible_ids)) {
+            $child->delete();
+          } else {
+            $collectible_ids = array_diff($collectible_ids, array($child->getFeaturedId()));
+          }
+          break;
+      }
+    }
+
+    if (($category_ids = array_filter($category_ids)) && !empty($category_ids))
+    {
+      foreach ($category_ids as $category_id)
+      {
+        $featured = new Featured();
+        $featured->setFeaturedTypeId(6);
+        $featured->setFeaturedModel('CollectionCategory');
+        $featured->setFeaturedId($category_id);
+        $featured->setIsActive(true);
+        $featured->insertAsLastChildOf($object);
+        $featured->save();
+      }
+    }
+    else if (empty($values['category_ids']))
+    {
+      FeaturedQuery::create()->filterByTreeScope($object->getId())->filterByFeaturedModel('CollectionCategory')->delete();
+    }
+
+    if (($collector_ids = array_filter($collector_ids)) && !empty($collector_ids))
+    {
+      foreach ($collector_ids as $collector_id)
+      {
+        $featured = new Featured();
+        $featured->setFeaturedTypeId(6);
+        $featured->setFeaturedModel('Collector');
+        $featured->setFeaturedId($collector_id);
+        $featured->setIsActive(true);
+        $featured->insertAsLastChildOf($object);
+        $featured->save();
+      }
+    }
+    else if (empty($values['collector_ids']))
+    {
+      FeaturedQuery::create()->filterByTreeScope($object->getId())->filterByFeaturedModel('Collector')->delete();
+    }
+
+    if (($collection_ids = array_filter($collection_ids)) && !empty($collection_ids))
+    {
+      foreach ($collection_ids as $collection_id)
+      {
+        $featured = new Featured();
+        $featured->setFeaturedTypeId(6);
+        $featured->setFeaturedModel('Collection');
+        $featured->setFeaturedId($collection_id);
+        $featured->setIsActive(true);
+        $featured->insertAsLastChildOf($object);
+        $featured->save();
+      }
+    }
+    else if (empty($values['collection_ids']))
+    {
+      FeaturedQuery::create()->filterByTreeScope($object->getId())->filterByFeaturedModel('Collection')->delete();
+    }
+
+    if (($collectible_ids = array_filter($collectible_ids)) && !empty($collectible_ids))
+    {
+      foreach ($collectible_ids as $collectible_id)
+      {
+        $featured = new Featured();
+        $featured->setFeaturedTypeId(6);
+        $featured->setFeaturedModel('Collectible');
+        $featured->setFeaturedId($collectible_id);
+        $featured->setIsActive(true);
+        $featured->insertAsLastChildOf($object);
+        $featured->save();
+      }
+    }
+    else if (empty($values['collectible_ids']))
+    {
+      FeaturedQuery::create()->filterByTreeScope($object->getId())->filterByFeaturedModel('Collectible')->delete();
+    }
 
     return $object;
   }

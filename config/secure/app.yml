@@ -32,6 +32,7 @@ prod:
     disqus_forum_key: "nqopSzGkkro8tc53AgA3DNW56WSYBbZRetdoNPE8whwKY7b7dvELc05Nm9Yq5nMD"
     impermium: "6eed575e07cc2431293287a570d0afd0c3efde87"
     defensio: "B7107AA9A90675C6072F5D788FF21D94"
+    dlvrit: "2d8ba224796541ff8c87659ee82fda93"
 
     rpxnow:
       application_domain: "https://collectorsquest.rpxnow.com/"
