@@ -61,10 +61,11 @@ class FeaturedWeekForm extends BaseFeaturedForm
     $object->homepage_text = $values['homepage_text'];
 
     $category_ids = explode(',', $values['category_ids']);
-    foreach ($category_ids as $category_id)
-    {
+    $collector_ids = explode(',', $values['collector_ids']);
+    $collection_ids = explode(',', $values['collection_ids']);
+    $collectible_ids = explode(',', $values['collectible_ids']);
 
-    }
+
 
     return $object;
   }

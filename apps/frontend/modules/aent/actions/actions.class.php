@@ -27,14 +27,12 @@ class aentActions extends cqActions
     $american_pickers = sfConfig::get('app_aent_american_pickers');
 
     $q = CollectibleQuery::create()
-       ->includeDeleted()
        ->filterByCollectorId($pawn_stars['collector'])
        ->filterByCollectionId($pawn_stars['collection'])
        ->orderById(Criteria::ASC);
     $ps_collectibles = $q->find();
 
     $q = CollectibleQuery::create()
-       ->includeDeleted()
        ->filterByCollectorId($american_pickers['collector'])
        ->filterByCollectionId($american_pickers['collection'])
        ->orderById(Criteria::ASC);
@@ -58,7 +56,7 @@ class aentActions extends cqActions
     $collectibles[5] = array($ap_collectibles[5], $ap_collectibles[4]);
     $collectibles[6] = array($ap_collectibles[6], $ap_collectibles[7]);
 
-    $this->featured = CollectibleQuery::create()->includeDeleted()->filterById(
+    $this->featured = CollectibleQuery::create()->filterById(
       array(3964, 11789, 9305, 5342, 13721, 15667, 46313, 8932), Criteria::IN
     )->find();
 
@@ -120,7 +118,7 @@ class aentActions extends cqActions
     // Setting the Canonical URL
     $this->loadHelpers(array('cqLinks'));
     $this->getResponse()->setCanonicalUrl(url_for_collectible($collectible, true));
-    
+
     return sfView::SUCCESS;
   }
 }
