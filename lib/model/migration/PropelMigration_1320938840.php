@@ -28,8 +28,6 @@ class PropelMigration_1320938840
     {
       if (empty($email)) continue;
 
-      CollectorQuery::disableSoftDelete();
-
       $collectors = CollectorQuery::create()->filterByEmail($email)->find();
       for ($i=1; $i<count($collectors); $i++)
       {

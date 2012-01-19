@@ -79,8 +79,6 @@ class aentActions extends cqActions
 
   public function executeCollectible()
   {
-    CollectibleQuery::disableSoftDelete();
-
     /** @var $collectible Collectible */
     $collectible = $this->getRoute()->getObject();
 
