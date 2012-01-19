@@ -3,3 +3,8 @@ signupSuccess:
   stylesheets: [frontend/forms.css]
   components:
     sidebar: [general, sidebar]
+
+packagesSuccess:
+  stylesheets: [frontend/forms.css, frontend/package.css]
+  components:
+    sidebar: []

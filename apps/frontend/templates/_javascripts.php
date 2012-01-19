@@ -13,11 +13,12 @@
 
   sfConfig::set('symfony.asset.javascripts_included', true);
   $js = @implode(',', array_keys($sf_response->getJavascripts()));
-?>
 
-<?php if (!empty($js)): ?>
-  <script type="text/javascript" src="/combine.php?type=javascript&files=<?php echo $js; ?>&revision=<?php echo SVN_REVISION; ?>"></script>
-<?php endif; ?>
+  if (!empty($js))
+  {
+    echo '<script type="text/javascript" src="/combine.php?type=javascript&files='. $js .'&revision='. SVN_REVISION .'"></script>';
+  }
+?>
 
 <?php cq_javascript_tag(); ?>
 <script type="text/javascript">

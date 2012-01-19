@@ -10,7 +10,7 @@ classes:
   ##
   Collector:
     columns:
-      id: ~
+      id:  ~
       graph_id:       { type: integer, required: false, index: unique }
       facebook_id:    { type: varchar, size: 20, index: unique }
       username:       { type: varchar, size: 64, required: true }
@@ -39,14 +39,14 @@ classes:
 
     propel_behaviors:
       archivable: { archive_class: CollectorArchive, archived_at_column: archived_at }
-      timestampable: ~
+      timestampable:  ~
 
   ###
   # NOTE: Make SURE to update also CollectorProfileArchive in archive.schema.yml
   ##
   CollectorProfile:
     columns:
-      id: ~
+      id:  ~
       collector_id:    { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
       collector_type:  { type: char, sqlType: "ENUM('Collector','Seller')", default: "Collector", required: true }
       birthday:        date
@@ -68,14 +68,12 @@ classes:
       preferences:     longvarchar
       notifications:   longvarchar
 
-      updated_at: ~
-      created_at: ~
-
     uniques:
       collector_profile_U_1: [collector_id]
 
     propel_behaviors:
       archivable: { archive_class: CollectorProfileArchive, archived_at_column: archived_at }
+      timestampable:  ~
 
   CollectorEmail:
     columns:
@@ -86,8 +84,8 @@ classes:
       salt:          { type: varchar, size: 32, required: true }
       is_verified:   { type: boolean, default: false }
 
-      updated_at: ~
-      created_at: ~
+    propel_behaviors:
+      timestampable:  ~
 
   ###
   # NOTE: Make SURE to update also CollectorIdentifierArchive in archive.schema.yml
@@ -97,7 +95,7 @@ classes:
       id:  ~
       collector_id:  { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
       identifier:    { type: varchar, size: 255, index: unique }
-      created_at:  ~
+      created_at:    ~
 
     propel_behaviors:
       archivable: { archive_class: CollectorIdentifierArchive, archived_at_column: archived_at }
@@ -139,11 +137,11 @@ classes:
       id:  ~
       collector_id:  { type: integer, required: true, foreignClass: Collector, foreignReference: id }
       friend_id:     { type: integer, required: true, foreignClass: Collector, foreignReference: id }
-      created_at:  ~
+      created_at:    ~
 
   InterviewQuestion:
     columns:
-      id:                      ~
+      id:  ~
       collector_interview_id:  { type: integer, foreignClass: CollectorInterview, foreignReference: id, required: true, onDelete: cascade }
       question:                { type: varchar, size: 128, required: true }
       answer:                  { type: longvarchar, required: true }
@@ -154,7 +152,7 @@ classes:
   ##
   Collection:
     columns:
-      id: ~
+      id:  ~
       graph_id:                { type: integer, required: false, index: unique }
       collection_category_id:  { type: integer, foreignClass: CollectionCategory, foreignReference: id, onDelete: setnull }
       collector_id:            { type: integer, required: true, foreignClass: Collector, foreignReference: id, onDelete: cascade }
@@ -175,7 +173,7 @@ classes:
 
     propel_behaviors:
       archivable: { archive_class: CollectionArchive, archived_at_column: archived_at }
-      timestampable: ~
+      timestampable:  ~
 
   CollectionCategory:
     columns:
@@ -187,9 +185,9 @@ classes:
 
   CollectionCategoryField:
     columns:
-      id: ~
+      id:  ~
       collection_category_id:  { type: integer, required: true, foreignClass: CollectionCategory, foreignReference: id, onDelete: cascade }
-      custom_field_id: ~
+      custom_field_id:  ~
     uniques:
       collection_category_field: [collection_category_id, custom_field_id]
 
@@ -198,7 +196,7 @@ classes:
   ##
   Collectible:
     columns:
-      id: ~
+      id:  ~
       graph_id:          { type: integer, required: false, index: unique }
       collector_id:      { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
       collection_id:     { type: integer, foreignClass: Collection, foreignReference: id, required: true, onDelete: cascade }
@@ -210,11 +208,11 @@ classes:
       position:          { type: integer, default: 0 }
       is_name_automatic: { type: boolean, default: false }
 
-      eblob: { type: longvarchar, default: null }
+      eblob:             { type: longvarchar, default: null }
 
     propel_behaviors:
       archivable: { archive_class: CollectibleArchive, archived_at_column: archived_at }
-      timestampable: ~
+      timestampable:  ~
 
   ###
   # NOTE: Make SURE to update also CollectibleForSaleArchive in archive.schema.yml
@@ -236,7 +234,7 @@ classes:
 
     propel_behaviors:
       archivable: { archive_class: CollectibleForSaleArchive, archived_at_column: archived_at }
-      timestampable: ~
+      timestampable:  ~
 
   ###
   # NOTE: Make SURE to update also CollectibleOfferArchive in archive.schema.yml
@@ -252,7 +250,7 @@ classes:
 
     propel_behaviors:
       archivable: { archive_class: CollectibleOfferArchive, archived_at_column: archived_at }
-      timestampable: ~
+      timestampable:  ~
 
   ###
   # NOTE: Make SURE to update also MultimediaArchive in archive.schema.yml
@@ -260,17 +258,15 @@ classes:
   Multimedia:
     columns:
       id:  ~
-      model:       { type: char, size: 64, required: true }
-      model_id:    { type: integer }
-      type:        { type: char, sqlType: "ENUM('image','video')", default: image, required: true }
-      name:        { type: varchar, size: 128 }
-      md5:         { type: char, size: 32, required: true }
-      colors:      { type: varchar(128) }
-      orientation: { type: char, sqlType: "ENUM('landscape','portrait')", default: landscape }
-      source:      { type: varchar(255) }
-      is_primary:  { type: boolean, default: false }
-      updated_at:  ~
-      created_at:  ~
+      model:        { type: char, size: 64, required: true }
+      model_id:     { type: integer }
+      type:         { type: char, sqlType: "ENUM('image','video')", default: image, required: true }
+      name:         { type: varchar, size: 128 }
+      md5:          { type: char, size: 32, required: true }
+      colors:       { type: varchar(128) }
+      orientation:  { type: char, sqlType: "ENUM('landscape','portrait')", default: landscape }
+      source:       { type: varchar(255) }
+      is_primary:   { type: boolean, default: false }
 
     indexes:
       multimedia_I_1: [model, model_id]
@@ -280,31 +276,33 @@ classes:
 
     propel_behaviors:
       archivable: { archive_class: MultimediaArchive, archived_at_column: archived_at }
+      timestampable:  ~
 
   PrivateMessage:
     columns:
       id:  ~
-      thread:  { type: varchar, size: 32 }
-      sender:  { type: integer, required: true }
-      receiver:  { type: integer, required: true }
-      subject:  { type: varchar, size: 255, required: true }
-      body:  { type: longvarchar, required: true }
-      is_rich: { type: boolean, default: false }
-      is_read:  { type: boolean, default: false }
-      is_replied:  { type: boolean, default: false }
+      thread:        { type: varchar, size: 32 }
+      sender:        { type: integer, required: true }
+      receiver:      { type: integer, required: true }
+      subject:       { type: varchar, size: 255, required: true }
+      body:          { type: longvarchar, required: true }
+      is_rich:       { type: boolean, default: false }
+      is_read:       { type: boolean, default: false }
+      is_replied:    { type: boolean, default: false }
       is_forwarded:  { type: boolean, default: false }
-      is_marked: { type: boolean, default: false }
-      is_deleted:  { type: boolean, default: false }
-      created_at:  ~
+      is_marked:     { type: boolean, default: false }
+      is_deleted:    { type: boolean, default: false }
+      created_at:    ~
 
   PrivateMessageTemplate:
     columns:
       id:  ~
-      subject:  { type: varchar, size: 255, required: true }
-      body:  { type: longvarchar, required: true }
+      subject:      { type: varchar, size: 255, required: true }
+      body:         { type: longvarchar, required: true }
       description:  { type: varchar, size: 255 }
-      updated_at:  ~
-      created_at:  ~
+
+    propel_behaviors:
+      timestampable:  ~
 
   Comment:
     columns:
@@ -321,6 +319,7 @@ classes:
       body:            { type: longvarchar, required: true }
       ip_address:      { type: varchar, size: 15 }
       created_at:  ~
+
     uniques:
       comment_U_1:  [disqus_id]
 
@@ -329,7 +328,7 @@ classes:
 
   CustomField:
     columns:
-      id: ~
+      id:  ~
       name:        { type: varchar, size: 64, required: true }
       type:        { type: tinyint, required: true }
       object:      longvarchar
@@ -337,7 +336,7 @@ classes:
 
   CustomValue:
     columns:
-      id: ~
+      id:  ~
       collection_id:    { type: integer, foreignClass: Collection, foreignReference: id, required: true, onDelete: cascade }
       collectible_id:   { type: integer, foreignClass: Collectible, foreignReference: id, required: true, onDelete: cascade }
       field_id:         { type: integer, required: true }
@@ -345,20 +344,21 @@ classes:
       value_date:       date
       value_numeric:    float
       value_bool:       { type: boolean, default: false }
-      created_at: ~
-      updated_at: ~
+
+    propel_behaviors:
+      timestampable:  ~
 
   Event:
     columns:
-      id: ~
+      id:  ~
       title:        { type: varchar, size: 128, required: true }
       description:  { type: longvarchar, required: true }
-      created_at: ~
+      created_at:   ~
 
   EventVideo:
     columns:
-      id: ~
-      event_id: ~
+      id:  ~
+      event_id:  ~
       title:        { type: varchar, size: 128, required: true }
       description:  { type: longvarchar, required: true }
       lenght:       integer
@@ -366,11 +366,11 @@ classes:
       thumb_large:  varchar(255)
       filename:     varchar(255)
       views:        integer
-      created_at: ~
+      created_at:   ~
 
   Video:
     columns:
-      id: ~
+      id:  ~
       title:         { type: varchar, size: 64, required: true }
       slug:          { type: varchar, size: 64 }
       description:   { type: longvarchar, required: true }
@@ -386,21 +386,21 @@ classes:
 
   VideoPlaylist:
     columns:
-      id:           ~
-      video_id:     ~
+      id:  ~
+      video_id:  ~
       playlist_id:  ~
       position:     tinyint
 
   VideoCollectionCategory:
     columns:
-      id:           ~
-      video_id:     ~
+      id:  ~
+      video_id:  ~
       collection_category_id:  { type: integer, required: true, foreignClass: CollectionCategory, foreignReference: id, onDelete: cascade }
-      created_at:   ~
+      created_at:  ~
 
   Playlist:
     columns:
-      id:            ~
+      id:  ~
       title:         { type: varchar, size: 64, required: true }
       slug:          { type: varchar, size: 64 }
       description:   { type: longvarchar, required: true }
@@ -412,7 +412,7 @@ classes:
 
   Trivia:
     columns:
-      id:          ~
+      id:  ~
       content:     { type: longvarchar, required: true }
       created_at:  ~
 
@@ -426,7 +426,7 @@ classes:
 
   ResourceEntry:
     columns:
-      id:           ~
+      id:  ~
       category_id:  { type: integer, required: true, foreignClass: ResourceCategory, foreignReference: id }
       type:         { type: varchar, size: 24, required: true, default: Blog }
       name:         { type: varchar, size: 128, required: true }
@@ -441,94 +441,99 @@ classes:
 
   Term:
     columns:
-      id:    ~
+      id:  ~
       name:  { type: varchar, size: 100, primaryString: true }
 
   TermRelationship:
     columns:
-      id:        ~
+      id:  ~
       term_id:   ~
       model:     { type: varchar, size: 30, index: true }
-      model_id:  integer
+      model_id:  { type: integer }
 
   Score:
     columns:
       id:  ~
-      day:          { type: date }
-      model:        { type: char, size: 64, required: true }
-      model_id:     { type: integer }
-      views:        { type: integer, default: 0 }
-      ratings:      { type: integer, default: 0 }
-      score:        { type: integer, default: 0 }
-      updated_at:   ~
-      created_at:   ~
+      day:         { type: date }
+      model:       { type: char, size: 64, required: true }
+      model_id:    { type: integer }
+      views:       { type: integer, default: 0 }
+      ratings:     { type: integer, default: 0 }
+      score:       { type: integer, default: 0 }
+
     uniques:
       score_U_1:  [day, model, model_id]
+
+    propel_behaviors:
+      timestampable:  ~
 
   Featured:
     treeMode: NestedSet
     columns:
-      id:                ~
+      id:  ~
       featured_type_id:  { type: tinyint, required: true }
       featured_model:    { type: varchar, size: 64, required: true }
       featured_id:       { type: integer }
       tree_left:         { type: integer, required: true, default: 0, nestedSetLeftKey: true }
       tree_right:        { type: integer, required: true, default: 0, nestedSetRightKey: true }
       tree_scope:        { type: integer, required: true, default: 0, treeScopeKey: true }
-      eblob:             longvarchar
-      start_date:        date
-      end_date:          date
+      eblob:             { type: longvarchar }
+      start_date:        { type: date }
+      end_date:          { type: date }
       position:          { type: tinyint, default: 0 }
       is_active:         { type: boolean, default: true, required: true }
 
   Package:
     columns:
-      id:                  ~
-      package_name:        { type: varchar, size: 255, required: true }
-      package_description: { type: longvarchar }
-      max_items_for_sale:  integer
-      package_price:       float
-      plan_type:           { type: char, sqlType: "ENUM('Casual','Power')", default: NULL, required: true }
-      updated_at:          ~
-      created_at:          ~
+      id:  ~
+      plan_type:            { type: char, sqlType: "ENUM('Casual','Power')", default: NULL, required: true }
+      package_name:         { type: varchar, size: 255, required: true }
+      package_description:  { type: longvarchar }
+      max_items_for_sale:   { type: integer }
+      package_price:        { type: float }
+
+    propel_behaviors:
+      timestampable:  ~
 
   PackageTransaction:
     columns:
-      id: ~
+      id:  ~
+      package_id:          { type: integer, foreignClass: Package, foreignReference: id, required: true, onDelete: restrict }
       collector_id:        { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
-      package_id:          { type: integer, foreignClass: Package, foreignReference: id, required: true, onDelete: cascade }
-      max_items_for_sale:  integer
-      package_price:       float
-      expiry_date:         timestamp
       payment_status:      { type: varchar, default: pending, size: 255 }
-      created_at:          ~
+      max_items_for_sale:  { type: integer }
+      package_price:       { type: float }
+      expiry_date:         { type: timestamp }
+      created_at:  ~
 
   Promotion:
     columns:
-      id: ~
+      id:  ~
+      promotion_code:   { type: varchar, size: 255, required: true }
       promotion_name:   { type: varchar, size: 255, required: true }
       promotion_desc:   { type: longvarchar }
-      promotion_code:   { type: varchar, size: 255, required: true }
-      amount:           float
+      amount:           { type: float}
       amount_type:      { type: char, sqlType: "ENUM('Fix','Percentage')", default: Fix, required: true }
-      no_of_time_used:  integer
-      expiry_date:      timestamp
-      updated_at:       ~
-      created_at:       ~
+      no_of_time_used:  { type: integer }
+      expiry_date:      { type: timestamp }
+
     uniques:
       promotion_U_I: [promotion_code]
 
+    propel_behaviors:
+      timestampable:  ~
+
   PromotionTransaction:
     columns:
-      id: ~
-      promotion_id: { type: integer, foreignClass: Promotion, foreignReference: id, required: true, onDelete: cascade }
-      collector_id: { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
-      amount:       float
-      amount_type:  { type: varchar, default: pending, size: 255 }
-      created_at:   ~
+      id:  ~
+      promotion_id:  { type: integer, foreignClass: Promotion, foreignReference: id, required: true, onDelete: restrict }
+      collector_id:  { type: integer, foreignClass: Collector, foreignReference: id, required: true, onDelete: cascade }
+      amount:        { type: float }
+      amount_type:   { type: varchar, default: pending, size: 255 }
+      created_at:  ~
 
   NewsletterSignup:
     columns:
-      id: ~
-      email:        { type: varchar, size: 255, required: true }
-      name:         { type: varchar, size: 255, required: true }
+      id:  ~
+      email:  { type: varchar, size: 255, required: true }
+      name:   { type: varchar, size: 255, required: true }

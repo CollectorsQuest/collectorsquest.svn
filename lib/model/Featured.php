@@ -6,7 +6,7 @@ class Featured extends BaseFeaturedNestedSet
 {
   private $_eblob = array();
 
-  public function __get($name) 
+  public function __get($name)
   {
     if (empty($this->_eblob))
     {
@@ -36,8 +36,68 @@ class Featured extends BaseFeaturedNestedSet
     parent::save($con);
   }
 
-	public function getCollections($limit = 5)
+  public function getCategoryIds()
+  {
+    $ids = array();
+
+    foreach ($this->getChildren() as $child)
+    {
+      if ($child->getFeaturedModel() == 'CollectionCategory')
+      {
+        $ids[] = $child->getFeaturedId();
+      }
+    }
+
+    return $ids;
+  }
+
+	public function getCollectorIds()
 	{
+    $ids = array();
+
+    foreach ($this->getChildren() as $child)
+    {
+      if ($child->getFeaturedModel() == 'Collector')
+      {
+        $ids[] = $child->getFeaturedId();
+      }
+    }
+
+    return $ids;
+	}
+
+  public function getCollectionIds()
+  {
+    $ids = array();
+
+    foreach ($this->getChildren() as $child)
+    {
+      if ($child->getFeaturedModel() == 'Collection')
+      {
+        $ids[] = $child->getFeaturedId();
+      }
+    }
+
+    return $ids;
+  }
+
+  public function getCollectibleIds()
+  {
+    $ids = array();
+
+    foreach ($this->getChildren() as $child)
+    {
+      if ($child->getFeaturedModel() == 'Collectible')
+      {
+        $ids[] = $child->getFeaturedId();
+      }
+    }
+
+    return $ids;
+  }
+
+  public function getCollections($limit = 5)
+  {
     $pks = $collector_pks = $collection_category_pks = array();
 
     foreach ($this->getChildren() as $child)
@@ -72,13 +132,13 @@ class Featured extends BaseFeaturedNestedSet
 
     $q->limit($limit);
 
-		return $q->find();
-	}
+    return $q->find();
+  }
 
   public function getHomepageCollectible()
   {
     $q = new CollectibleQuery();
-    
+
     $pks = explode(',', $this->homepage_collectibles);
     $pks = array_filter($pks);
 

@@ -53,10 +53,6 @@ ajax_marketplace_listing_by_category:
 
 ### SELLERS
 
-seller_signup:
-  url:   /seller/signup/:step
-  param: { module: seller, action: signup, step: 1 }
-
 seller_subscribe:
   url:   /seller/subscribe
   param: { module: general, action: comingSoon }
@@ -74,6 +70,10 @@ seller_upgrade_package:
 seller_ajax_save:
   url:   /seller/ajax/save
   param: { module: seller, action: ajaxSaveData }
+
+seller_signup:
+  url:   /collector/signup/:step
+  param: { module: collector, action: signup, step: 1 }
 
 sellers:
   url:   /sellers
@@ -105,6 +105,13 @@ collector_me:
   class: sfPropelRoute
   options: { model: Collector, type: object, method: getObjectForRoute }
   param: { module: collector, action: me }
+
+collector_by_slug_depreciated:
+  url:  /collector/:slug
+  class: sfPropelRoute
+  options: { model: Collector, type: object, method: getObjectForRoute }
+  param: { module: collector, action: index }
+  requirements: { slug: '[\-\w\.]+' }
 
 collectors_by_filter:
   url:   /collectors/filter/:filter

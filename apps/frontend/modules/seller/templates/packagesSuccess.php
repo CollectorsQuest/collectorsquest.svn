@@ -1,24 +1,4 @@
-<?php
-use_helper('Form');
-use_stylesheet('frontend/forms.css');
-use_stylesheet('frontend/package.css');
 
-$countries = sfCultureInfo::getInstance('en')->getCountries();
-//Dirty hack but only solution currently
-$top = array(
-  '' => '',
-  'US' => $countries['US'],
-  'GB' => $countries['GB'],
-  'AU' => $countries['AU'],
-);
-//$countries = array_intersect($countries, $top);
-
-foreach ($top as $key => $value)
-{
-  unset($countries[$key]);
-}
-$countries = array_merge($top, $countries);
-?>
 <br clear="all"/>
 <?php if ($sf_params->get('msg')): ?>
   <ul class="error_list">
@@ -27,6 +7,7 @@ $countries = array_merge($top, $countries);
     </li>
   </ul>
 <?php endif; ?>
+
 <table width="902px" border="0" cellspacing="0" cellpadding="0" class="formoffer">
   <tr>
     <td width="50%" valign="top">
@@ -50,15 +31,16 @@ $countries = array_merge($top, $countries);
     </td>
     <td width="50%" valign="top">
       <?php
-      echo form_tag($ssAction . $sf_user->getCollector()->getId(), array('name' => 'frmpackage', 'id' => 'frmpackage', 'method' => 'post'));
-      // Seller Details
-      echo input_hidden_tag('user_type', 'Seller');
-      echo input_hidden_tag('items_allowed');
-      echo input_hidden_tag('package_price');
-      echo input_hidden_tag('package_name');
-      echo input_hidden_tag('free_subscription', $bFreeSubscription);
-      echo input_hidden_tag('commit');
-      echo input_hidden_tag('type', $sf_params->get('type'));
+        echo form_tag($ssAction . $sf_user->getCollector()->getId(), array('name' => 'frmpackage', 'id' => 'frmpackage', 'method' => 'post'));
+
+        // Seller Details
+        echo input_hidden_tag('user_type', 'Seller');
+        echo input_hidden_tag('items_allowed');
+        echo input_hidden_tag('package_price');
+        echo input_hidden_tag('package_name');
+        echo input_hidden_tag('free_subscription', $bFreeSubscription);
+        echo input_hidden_tag('commit');
+        echo input_hidden_tag('type', $sf_params->get('type'));
       ?>
       <table width="100%" border="0" cellspacing="0" cellpadding="0" class="offerright">
         <tr>
@@ -316,7 +298,7 @@ $countries = array_merge($top, $countries);
                 <span><span>Sign up</span></span>
               </button>
             <?php else: ?>
-              <button type="submit" value="Sign up" class="submit" style="margin-left:190px;" onclick="getpayment(jQuery('input[name*=payment_type]:checked').val()); return false;" >
+              <button type="submit" value="Sign up" class="submit" style="margin-left:190px;" onclick="getpayment($('input[name*=payment_type]:checked').val()); return false;" >
                 <span><span>Sign up</span></span>
               </button>
             <?php endif; ?>
@@ -356,24 +338,26 @@ $countries = array_merge($top, $countries);
 </form>
 <div class="clearfix append-bottom">&nbsp;</div>
 <div id="no_update"></div>
+
 <?php cq_javascript_tag(); ?>
 <script type="text/javascript">
   function setPackageInformation(snItemAllwed,snPackageId,snPackagePrice,ssPackageName)
   {
-    jQuery('#items_allowed').val(snItemAllwed);
-    //    jQuery('#package_id').val(snPackageId);
-    jQuery('#package_price').val(snPackagePrice);
-    jQuery('#package_name').val(ssPackageName);
+    $('#items_allowed').val(snItemAllwed);
+    //    $('#package_id').val(snPackageId);
+    $('#package_price').val(snPackagePrice);
+    $('#package_name').val(ssPackageName);
 
     // For PayPal
-    jQuery('#item_number').val(snPackageId);
-    jQuery('#item_name').val(ssPackageName);
-    jQuery('#amount').val(snPackagePrice);
-    jQuery('#custom').val(snItemAllwed);
+    $('#item_number').val(snPackageId);
+    $('#item_name').val(ssPackageName);
+    $('#amount').val(snPackagePrice);
+    $('#custom').val(snItemAllwed);
   }
+
   function freeSubscription(frm)
   {
-    var numberOfItems = jQuery("#items_allowed").val();
+    var numberOfItems = $("#items_allowed").val();
     var bTermCondition = true;
 
     console.log(numberOfItems);
@@ -403,9 +387,10 @@ $countries = array_merge($top, $countries);
       }
     }
   }
+
   function getpayment(frm)
   {
-    var numberOfItems = jQuery("#items_allowed").val();
+    var numberOfItems = $("#items_allowed").val();
     var bTermCondition = true;
 
     if(frm == 'paypal')
@@ -456,11 +441,16 @@ $countries = array_merge($top, $countries);
             });
           }
         }
-        else{
-          alert('Please Accept Term and Condition');return false;
+        else
+        {
+          alert('Please Accept Term and Condition');
+          return false;
         }
-      }else{
-        alert('Please Choose a Plan');return false;
+      }
+      else
+      {
+        alert('Please Choose a Plan');
+        return false;
       }
     }
     else // For Pay via paypal pro.
@@ -530,29 +520,34 @@ $countries = array_merge($top, $countries);
   }
   function isFloat(value)
   {
-    if(isNaN(value) || value.indexOf(".")<0){
+    if (isNaN(value) || value.indexOf(".") < 0)
+    {
       return false;
-    } else {
-      if(parseFloat(value)) {
-        return true;
-      } else {
-        return false;
-      }
+    }
+    else
+    {
+      return parseFloat(value);
     }
   }
 
-  function setCCDisplay(value) {
-    if (value == 'package') {
-      jQuery('#fieldset_cc').show();
-    } else {
-      jQuery('#fieldset_cc').hide();
+  function setCCDisplay(value)
+  {
+    if (value == 'package')
+    {
+      $('#fieldset_cc').show();
+    }
+    else
+    {
+      $('#fieldset_cc').hide();
     }
   }
-  jQuery(document).ready(function() {
-    jQuery('input[name*=payment_type]').click(function() {
-      setCCDisplay(jQuery('input[name*=payment_type]:checked').val());
+
+  $(document).ready(function()
+  {
+    $('input[name*=payment_type]').click(function() {
+      setCCDisplay($('input[name*=payment_type]:checked').val());
     });
-    setCCDisplay(jQuery('input[name*=payment_type]:checked').val());
+    setCCDisplay($('input[name*=payment_type]:checked').val());
   });
 </script>
 <?php cq_end_javascript_tag(); ?>

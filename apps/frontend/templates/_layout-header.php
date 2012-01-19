@@ -30,11 +30,12 @@
 
     sfConfig::set('symfony.asset.stylesheets_included', true);
     $css = @implode(',', array_keys($sf_response->getStylesheets()));
-  ?>
 
-  <?php if (!empty($css)): ?>
-  <link rel="stylesheet" type="text/css" media="screen" href="/combine.php?type=css&files=<?php echo $css; ?>&revision=<?php echo SVN_REVISION; ?>" />
-  <?php endif; ?>
+    if (!empty($css))
+    {
+      echo '<link rel="stylesheet" type="text/css" media="screen" href="/combine.php?type=css&files='. $css .'&revision='. SVN_REVISION .'" />';
+    }
+  ?>
 
   <!--[if lt IE 8]>
   <link rel="stylesheet" href="/css/frontend/ie.css" type="text/css" media="screen, projection"><![endif]-->

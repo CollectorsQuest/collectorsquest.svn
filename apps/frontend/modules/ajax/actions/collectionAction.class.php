@@ -30,7 +30,7 @@ class collectionAction extends cqAjaxAction
     if ($section == 'partial')
     {
       return $this->renderPartial('collection/'. $page, array('collection' => $collection));
-    } 
+    }
     else if ($section == 'component')
     {
       return $this->renderComponent('collection', $page, array('collection' => $collection));
@@ -44,7 +44,7 @@ class collectionAction extends cqAjaxAction
 
   /**
    * @param sfWebRequest $request
-   * 
+   *
    * @return sfView::NONE
    */
   protected function executeUploadCollectibles(sfWebRequest $request)

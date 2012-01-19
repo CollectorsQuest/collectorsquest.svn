@@ -152,21 +152,21 @@
     <?php if ($collector_profile->getAbout()): ?>
     <fieldset>
       <legend><?= __('about %username%', array('%username%'=>$collector)); ?></legend>
-      <?php echo nl2br(IceStatic::cleanText($collector_profile->getAbout(), 'a, b, u, i, strong')); ?>
+      <?php echo nl2br(IceStatic::cleanText($collector_profile->getAbout(), false, 'a, b, u, i, strong')); ?>
     </fieldset>
     <?php endif; ?>
 
     <?php if ($collector_profile->getCollections()): ?>
     <fieldset>
       <legend><?= __("about %username%'s collections", array('%username%'=>$collector)); ?></legend>
-      <?php echo nl2br(IceStatic::cleanText($collector_profile->getCollections(), 'a, b, u, i, strong')); ?>
+      <?php echo nl2br(IceStatic::cleanText($collector_profile->getCollections(), false, 'a, b, u, i, strong')); ?>
     </fieldset>
     <?php endif; ?>
 
     <?php if ($collector_profile->getInterests()): ?>
     <fieldset>
       <legend><?= __("%username%'s interests", array('%username%'=>$collector)); ?></legend>
-      <?php echo nl2br(IceStatic::cleanText($collector_profile->getInterests(), 'a, b, u, i, strong')); ?>
+      <?php echo nl2br(IceStatic::cleanText($collector_profile->getInterests(), false, 'a, b, u, i, strong')); ?>
     </fieldset>
     <?php endif; ?>
   </div>

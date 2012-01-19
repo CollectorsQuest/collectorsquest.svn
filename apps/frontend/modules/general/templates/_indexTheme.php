@@ -1,7 +1,7 @@
 <?php $error_reporting = error_reporting(0); ?>
 <?php if ($theme == 1): ?>
 <div class="span-25 last" style="margin: auto; text-align: center;">
-  <div style="width: 242px; float: left;">
+  <div style="width: 242px; float: left; position: relative;">
     <?php
       if ($collectibles[2] instanceof Collectible)
       {
@@ -332,7 +332,7 @@
   </div>
 </div>
 <?php elseif ($theme == 2): ?>
-  
+
 <?php endif; ?>
 
 <?php error_reporting($error_reporting); ?>

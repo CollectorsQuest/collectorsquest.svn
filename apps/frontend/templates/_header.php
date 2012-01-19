@@ -19,13 +19,13 @@
   </form>
   <div id="header-account">
     <?php if (!$sf_user->isAuthenticated()): ?>
-      <a href="<?php echo  url_for('@ajax_signup_choice'); ?>" id="header-signup" onclick="return false;"><b><?php echo  __('Sign up for an Account'); ?></b></a>
+      <a href="<?php echo url_for('@collector_signup'); ?>" id="header-signup"><strong><?php echo  __('Sign up for an Account'); ?></strong></a>
       &nbsp;|&nbsp;
-      <a href="<?php echo  url_for('@ajax_login'); ?>" id="header-login" onclick="return false;"><?php echo  __('Sign in to Your Account'); ?></a>
+      <a href="<?php echo url_for('@ajax_login'); ?>" id="header-login" onclick="return false;"><?php echo  __('Sign in to Your Account'); ?></a>
     <?php else: ?>
-      <?php echo  sprintf(__('Hello again, %s'), '<b>'.$sf_user->getCollector().'</b>'); ?>!
+      <?php echo sprintf(__('Hello again, %s'), '<b>'.$sf_user->getCollector().'</b>'); ?>!
       &nbsp;
-      <?php echo  link_to(__('(Sign out)'), $sf_user->getLogoutUrl(), array('style' => 'color: #000;')); ?>
+      <?php echo link_to(__('(Sign out)'), $sf_user->getLogoutUrl(), array('style' => 'color: #000;')); ?>
     <?php endif; ?>
   </div>
   <h4 style="color: #fff; margin-top: 9px;"><?php echo  __("Where hunters gather!™"); ?></h4>
@@ -80,16 +80,6 @@ $(function()
     {
       $(this).val('<?php echo  __('Search for collections or collectibles'); ?>');
     }
-  });
-
-  $("a#header-signup").fancybox(
-  {
-    hideOnContentClick: false,
-    overlayOpacity: 0.2,
-    autoDimensions: false,
-    width: 450, height: 180, padding: 20,
-    enableEscapeButton: true,
-    centerOnScroll: true
   });
 
   $("a#header-login").fancybox(

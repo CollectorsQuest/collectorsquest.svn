@@ -219,11 +219,6 @@ class collectorActions extends cqActions
         'text' => 'Use Another Web ID',
         'icon' => 'person',
         'route' => '@collector_signup#openid'
-      ),
-      1 => array(
-        'text' => 'Are you a Seller?',
-        'icon' => 'person',
-        'route' => '@seller_signup'
       )
     );
 

@@ -24,123 +24,6 @@ class sellerActions extends cqActions
    * @param  sfWebRequest  $request
    * @return string
    */
-  public function executeSignup(sfWebRequest $request)
-  {
-    $this->redirectIf($this->getUser()->isAuthenticated(), "@manage_collections");
-    $this->snStep = $request->getParameter('step', 1);
-    $form = ($this->snStep == 1) ? new SellerSignupStep1Form() : new SellerSignupStep2Form();
-
-    if ($request->isMethod('post'))
-    {
-      if ($this->snStep == 2)
-      {
-        if ($request->getParameter('recaptcha_challenge_field') && $request->getParameter('recaptcha_response_field'))
-        {
-          $captcha = array(
-            'recaptcha_challenge_field' => $request->getParameter('recaptcha_challenge_field'),
-            'recaptcha_response_field' => $request->getParameter('recaptcha_response_field'),
-          );
-        }
-        else
-        {
-          $captcha = array(
-            'recaptcha_challenge_field' => $request->getParameter('sellerstep2[recaptcha_challenge_field]'),
-            'recaptcha_response_field' => $request->getParameter('sellerstep2[recaptcha_response_field]'),
-          );
-        }
-        // Bind the POST variables to the form object for validation and sanitation
-        $form->bind(array_merge($request->getParameter($form->getName()), array('captcha' => $captcha)));
-      }
-      else
-      {
-        $form->bind($request->getParameter($form->getName()), $request->getFiles($form->getName()));
-      }
-
-      if ($form->isValid())
-      {
-        $amPreviousData = ($request->getParameter('previous_data')) ? unserialize($request->getParameter('previous_data')) : $request->getParameter($form->getName());
-
-        // Create the collector, based on the submited data
-        if ($this->snStep != 2)
-        {
-          $snNextStep = $this->snStep + 1;
-          $ssFormName = 'SellerSignupStep' . $snNextStep . 'Form';
-          return $this->renderPartial('seller/signupStep' . $snNextStep, array('form' => new $ssFormName(), 'amPreviousData' => $amPreviousData));
-        }
-
-        $amStep2Data = $request->getParameter($form->getName());
-
-        $amUserData = array(
-          'username' => $amPreviousData['username'],
-          'display_name' => $amPreviousData['display_name'],
-          'password' => $amPreviousData['password'],
-          'email' => $amPreviousData['email'],
-          'what_you_sell' => $amPreviousData['what_you_sell'],
-          'what_you_collect' => $amPreviousData['what_you_collect'],
-          'birthday' => $amStep2Data['birthday'],
-          'gender' => $amStep2Data['gender'],
-          'zip_postal' => $amStep2Data['zip_postal'],
-          'country' => $amStep2Data['country'],
-          'website' => $amStep2Data['website'],
-          'company' => $amStep2Data['company'],
-        );
-
-        if ($collector = CollectorPeer::saveUserDataFromArray($amUserData))
-        {
-          $this->getUser()->Authenticate(true, $collector, false);
-
-          // Create the default profile photo
-          // $images = sfFinder::type('file')->name('*.jpg')->in(sfConfig::get('sf_web_dir').'/images/frontend/multimedia/Collector/default');
-          // $collector->setPhoto($images[array_rand($images)]);
-
-          // Send the welcome message
-          PrivateMessagePeer::sendFromTemplate(
-            PrivateMessageTemplatePeer::SELLER_SIGNUP_WELCOME, $collector->getId(), 1, array()
-          );
-
-          // Update user_type is seller while signup as a seller
-          $amSellerInfo = array(
-            'id' => $collector->getId(),
-            'user_type' => 'Seller',
-            'items_allowed' => 0
-          );
-
-          $omSeller = CollectorPeer::updateCollectorAsSeller($amSellerInfo);
-          $this->getUser()->setAttribute('user_type', $omSeller->getUserType(), 'collector');
-          $this->getUser()->addCredential(strtolower($omSeller->getUserType()));
-
-          // Redicrect to select package for sell your collectibles if user is seller else manage collections page
-          return $this->redirect('@seller_become?id=' . $collector->getId());
-        }
-      }
-    }
-
-    $this->form = $form;
-    $this->amPreviousData = ($request->getParameter('previous_data')) ? unserialize($request->getParameter('previous_data')) : $request->getParameter($form->getName());
-
-    $this->buttons = array(
-      0 => array(
-        'text' => 'Use Another Web ID',
-        'icon' => 'person',
-        'route' => '@seller_signup#openid'
-      ),
-      1 => array(
-        'text' => 'Are you a Collector?',
-        'icon' => 'person',
-        'route' => '@collector_signup'
-      )
-    );
-
-    $this->addBreadcrumb($this->__('Sign Up for a Seller Account'));
-    $this->prependTitle($this->__('Sign Up for a Seller Account'));
-
-    return sfView::SUCCESS;
-  }
-
-  /**
-   * @param  sfWebRequest  $request
-   * @return string
-   */
   public function executePackages(sfWebRequest $request)
   {
     if (!$this->getUser()->isAuthenticated())
@@ -483,6 +366,23 @@ class sellerActions extends cqActions
         // ----------------------- End PayPal Code ---------------------------
       }
     }
+
+    $countries = sfCultureInfo::getInstance('en')->getCountries();
+
+    // Dirty hack but only solution currently
+    $top = array(
+      '' => '',
+      'US' => $countries['US'],
+      'GB' => $countries['GB'],
+      'AU' => $countries['AU'],
+    );
+
+    foreach ($top as $key => $value)
+    {
+      unset($countries[$key]);
+    }
+
+    $this->countries = array_merge($top, $countries);
 
     return sfView::SUCCESS;
   }

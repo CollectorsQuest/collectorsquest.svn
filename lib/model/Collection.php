@@ -38,7 +38,7 @@ class Collection extends BaseCollection
    */
   public function setName($v)
   {
-    parent::setName(IceStatic::cleanText($v, 'none'));
+    parent::setName(IceStatic::cleanText($v, false, 'none'));
   }
 
   /**
@@ -51,7 +51,7 @@ class Collection extends BaseCollection
   {
     if ($type == 'html')
     {
-      $v = IceStatic::cleanText($v, 'p, b, u, i, em, strong, h1, h2, h3, h4, h5, h6, div, span, ul, ol, li, blockquote');
+      $v = IceStatic::cleanText($v, false, 'p, b, u, i, em, strong, h1, h2, h3, h4, h5, h6, div, span, ul, ol, li, blockquote');
       $v = cqMarkdownify::doConvert($v);
     }
 

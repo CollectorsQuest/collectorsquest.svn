@@ -74,7 +74,6 @@
     </td>
     <td style="width: 135px; vertical-align: top; padding-top: 30px;">
       <?= link_to(image_tag('frontend/aetn/btn_start_collection.png'), '@collector_signup'); ?><br/><br/>
-      <?= link_to(image_tag('frontend/aetn/btn_sell_collectibles.png'), '@seller_signup'); ?><br/><br/>
       <?= link_to(image_tag('frontend/aetn/btn_browse_marketplace.png'), '@marketplace'); ?>
     </td>
   </tr>
@@ -141,7 +140,6 @@
     </td>
     <td style="vertical-align: top; padding-top: 30px;">
       <?= link_to(image_tag('frontend/aetn/btn_start_collection.png'), '@collector_signup'); ?><br/><br/>
-      <?= link_to(image_tag('frontend/aetn/btn_sell_collectibles.png'), '@seller_signup'); ?><br/><br/>
       <?= link_to(image_tag('frontend/aetn/btn_browse_marketplace.png'), '@marketplace'); ?>
     </td>
   </tr>

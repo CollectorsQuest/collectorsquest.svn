@@ -3,10 +3,6 @@
 date_default_timezone_set('America/New_York');
 
 $parts = explode('.collectorsquest.', $_SERVER['SERVER_NAME']);
-if (count($parts) != 2)
-{
-  $parts = explode('.cqstaging.', $_SERVER['SERVER_NAME']);
-}
 
 list($app, $env) = $parts;
 if ('new' == $env || 'com' == $env)
@@ -17,10 +13,18 @@ if ('new' == $env || 'com' == $env)
 @list(, $type, $size, $filename) = explode('/', $_SERVER['REQUEST_URI']);
 if (in_array($type, array('image', 'video')))
 {
-  include_once('/www/libs/symfony-1.3.x/lib/yaml/sfYaml.php');
+  include_once('/www/libs/symfony-1.4.x/lib/yaml/sfYaml.php');
 
-  $databases = sfYaml::load(dirname(__FILE__).'/../config/databases.yml');
-  $databases['prod'] = $databases['all'];
+  $databases = sfYaml::load(__DIR__.'/../config/databases.yml');
+
+  if (empty($databases['prod']))
+  {
+    $databases['prod'] = $databases['all'];
+  }
+  if (empty($databases['dev']))
+  {
+    $databases['dev']  = $databases['all'];
+  }
 
   $dbh = new PDO(
     $databases[$env]['propel']['param']['dsn'],
