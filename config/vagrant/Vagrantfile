@@ -1,6 +1,6 @@
 Vagrant::Config.run do |config|
-  config.vm.box = "collectorsquest"
-  config.vm.box_url = "http://collectorsquest.s3.amazonaws.com/virtualbox/collectorsquest.2012-01-08.box"
+  config.vm.box = "collectorsquest-centos"
+  config.vm.box_url = "http://collectorsquest.s3.amazonaws.com/virtualbox/collectorsquest.2012-01-20.box"
 
   # If you want to specify the host OS, create a file 'platform'
   # in the same directory as the .vagrant file.
@@ -26,15 +26,15 @@ Vagrant::Config.run do |config|
   config.vm.customize do |vm|
     vm.name = "Collectors Quest"
     vm.memory_size = 1024
-    vm.cpu_count = 2
+    vm.cpu_count = 1
   end
 
   config.vm.provision :chef_solo do |chef|
-    chef.cookbooks_path = "../cookbooks"
+    # chef.cookbooks_path = "../cookbooks"
+    chef.cookbooks_path = "../cookbooks2"
 
     chef.add_recipe("main")
     chef.add_recipe("main::subversion")
-    chef.add_recipe("main::database")
     chef.add_recipe("main::web")
     chef.add_recipe("development")
   end
