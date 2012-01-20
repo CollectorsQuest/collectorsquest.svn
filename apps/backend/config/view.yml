@@ -9,9 +9,7 @@ default:
 
   stylesheets:    [backend/default.css]
   javascripts:
-    - jquery.js
-    - tiny_mce/tiny_mce.js
-    - backend/main.js
+    - backend/default.js
 
   has_layout:     true
   layout:         layout

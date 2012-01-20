@@ -31,7 +31,7 @@ generator:
           export: { label: "Export to CSV", action: export }
 
       filter:
-        display: [name]
+        display: [name, collection_category_id]
 
       form:    ~
       edit:    ~

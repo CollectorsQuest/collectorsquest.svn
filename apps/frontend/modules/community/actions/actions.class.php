@@ -54,13 +54,16 @@ class communityActions extends cqActions
     $this->collections = CollectionPeer::doSelectJoinCollector($c);
 
     $this->featured_collection = $this->featured_week->getCollections(5);
+
     if (count($this->featured_collection) > 0)
     {
       $this->featured_collection = $this->featured_collection[rand(0,count($this->featured_collection)-1)];
       $this->featured_collector = $this->featured_collection->getCollector();
 
       $c = new Criteria();
+      $c->addAscendingOrderByColumn(CollectiblePeer::POSITION);
       $c->setLimit(12);
+
       $this->featured_collectibles = $this->featured_collection->getCollectibles($c);
     }
 
