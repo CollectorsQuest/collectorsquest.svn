@@ -21,8 +21,8 @@ abstract class BaseScoreForm extends BaseFormPropel
       'views'      => new sfWidgetFormInputText(),
       'ratings'    => new sfWidgetFormInputText(),
       'score'      => new sfWidgetFormInputText(),
-      'updated_at' => new sfWidgetFormDateTime(),
       'created_at' => new sfWidgetFormDateTime(),
+      'updated_at' => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
@@ -33,8 +33,8 @@ abstract class BaseScoreForm extends BaseFormPropel
       'views'      => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
       'ratings'    => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
       'score'      => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
-      'updated_at' => new sfValidatorDateTime(array('required' => false)),
       'created_at' => new sfValidatorDateTime(array('required' => false)),
+      'updated_at' => new sfValidatorDateTime(array('required' => false)),
     ));
 
     $this->validatorSchema->setPostValidator(

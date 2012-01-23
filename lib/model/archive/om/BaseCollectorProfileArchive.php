@@ -25,6 +25,12 @@ abstract class BaseCollectorProfileArchive extends BaseObject  implements Persis
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -1391,7 +1397,7 @@ abstract class BaseCollectorProfileArchive extends BaseObject  implements Persis
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1484,7 +1490,7 @@ abstract class BaseCollectorProfileArchive extends BaseObject  implements Persis
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1509,29 +1515,249 @@ abstract class BaseCollectorProfileArchive extends BaseObject  implements Persis
     {
       $this->alreadyInSave = true;
 
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
+      if ($this->isNew() || $this->isModified())
       {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = CollectorProfileArchivePeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CollectorProfileArchivePeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::COLLECTOR_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_ID`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::COLLECTOR_TYPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_TYPE`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::BIRTHDAY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`BIRTHDAY`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::GENDER))
+    {
+      $modifiedColumns[':p' . $index++]  = '`GENDER`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::ZIP_POSTAL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ZIP_POSTAL`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::COUNTRY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COUNTRY`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::COUNTRY_ISO3166))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COUNTRY_ISO3166`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::WEBSITE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`WEBSITE`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::ABOUT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ABOUT`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::COLLECTIONS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTIONS`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::COLLECTING))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTING`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::MOST_SPENT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`MOST_SPENT`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::ANUALLY_SPENT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ANUALLY_SPENT`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::NEW_ITEM_EVERY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`NEW_ITEM_EVERY`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::INTERESTS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`INTERESTS`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::IS_FEATURED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_FEATURED`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::IS_SELLER))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_SELLER`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::IS_IMAGE_AUTO))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_IMAGE_AUTO`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::PREFERENCES))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PREFERENCES`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::NOTIFICATIONS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`NOTIFICATIONS`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::UPDATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(CollectorProfileArchivePeer::ARCHIVED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ARCHIVED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `collector_profile_archive` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_ID`':
+            $stmt->bindValue($identifier, $this->collector_id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_TYPE`':
+            $stmt->bindValue($identifier, $this->collector_type, PDO::PARAM_STR);
+            break;
+          case '`BIRTHDAY`':
+            $stmt->bindValue($identifier, $this->birthday, PDO::PARAM_STR);
+            break;
+          case '`GENDER`':
+            $stmt->bindValue($identifier, $this->gender, PDO::PARAM_STR);
+            break;
+          case '`ZIP_POSTAL`':
+            $stmt->bindValue($identifier, $this->zip_postal, PDO::PARAM_STR);
+            break;
+          case '`COUNTRY`':
+            $stmt->bindValue($identifier, $this->country, PDO::PARAM_STR);
+            break;
+          case '`COUNTRY_ISO3166`':
+            $stmt->bindValue($identifier, $this->country_iso3166, PDO::PARAM_STR);
+            break;
+          case '`WEBSITE`':
+            $stmt->bindValue($identifier, $this->website, PDO::PARAM_STR);
+            break;
+          case '`ABOUT`':
+            $stmt->bindValue($identifier, $this->about, PDO::PARAM_STR);
+            break;
+          case '`COLLECTIONS`':
+            $stmt->bindValue($identifier, $this->collections, PDO::PARAM_STR);
+            break;
+          case '`COLLECTING`':
+            $stmt->bindValue($identifier, $this->collecting, PDO::PARAM_STR);
+            break;
+          case '`MOST_SPENT`':
+            $stmt->bindValue($identifier, $this->most_spent, PDO::PARAM_INT);
+            break;
+          case '`ANUALLY_SPENT`':
+            $stmt->bindValue($identifier, $this->anually_spent, PDO::PARAM_INT);
+            break;
+          case '`NEW_ITEM_EVERY`':
+            $stmt->bindValue($identifier, $this->new_item_every, PDO::PARAM_STR);
+            break;
+          case '`INTERESTS`':
+            $stmt->bindValue($identifier, $this->interests, PDO::PARAM_STR);
+            break;
+          case '`IS_FEATURED`':
+            $stmt->bindValue($identifier, (int) $this->is_featured, PDO::PARAM_INT);
+            break;
+          case '`IS_SELLER`':
+            $stmt->bindValue($identifier, (int) $this->is_seller, PDO::PARAM_INT);
+            break;
+          case '`IS_IMAGE_AUTO`':
+            $stmt->bindValue($identifier, (int) $this->is_image_auto, PDO::PARAM_INT);
+            break;
+          case '`PREFERENCES`':
+            $stmt->bindValue($identifier, $this->preferences, PDO::PARAM_STR);
+            break;
+          case '`NOTIFICATIONS`':
+            $stmt->bindValue($identifier, $this->notifications, PDO::PARAM_STR);
+            break;
+          case '`UPDATED_AT`':
+            $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`ARCHIVED_AT`':
+            $stmt->bindValue($identifier, $this->archived_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -2012,7 +2238,6 @@ abstract class BaseCollectorProfileArchive extends BaseObject  implements Persis
    */
   public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setId($this->getId());
     $copyObj->setCollectorId($this->getCollectorId());
     $copyObj->setCollectorType($this->getCollectorType());
     $copyObj->setBirthday($this->getBirthday());
@@ -2039,6 +2264,7 @@ abstract class BaseCollectorProfileArchive extends BaseObject  implements Persis
     if ($makeNew)
     {
       $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
     }
   }
 

@@ -25,6 +25,12 @@ abstract class BaseCollectorIdentifierArchive extends BaseObject  implements Per
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -485,7 +491,7 @@ abstract class BaseCollectorIdentifierArchive extends BaseObject  implements Per
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -573,7 +579,7 @@ abstract class BaseCollectorIdentifierArchive extends BaseObject  implements Per
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -598,29 +604,116 @@ abstract class BaseCollectorIdentifierArchive extends BaseObject  implements Per
     {
       $this->alreadyInSave = true;
 
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
+      if ($this->isNew() || $this->isModified())
       {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = CollectorIdentifierArchivePeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CollectorIdentifierArchivePeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CollectorIdentifierArchivePeer::COLLECTOR_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_ID`';
+    }
+    if ($this->isColumnModified(CollectorIdentifierArchivePeer::IDENTIFIER))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IDENTIFIER`';
+    }
+    if ($this->isColumnModified(CollectorIdentifierArchivePeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(CollectorIdentifierArchivePeer::ARCHIVED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ARCHIVED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `collector_identifier_archive` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_ID`':
+            $stmt->bindValue($identifier, $this->collector_id, PDO::PARAM_INT);
+            break;
+          case '`IDENTIFIER`':
+            $stmt->bindValue($identifier, $this->identifier, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`ARCHIVED_AT`':
+            $stmt->bindValue($identifier, $this->archived_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -930,7 +1023,6 @@ abstract class BaseCollectorIdentifierArchive extends BaseObject  implements Per
    */
   public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setId($this->getId());
     $copyObj->setCollectorId($this->getCollectorId());
     $copyObj->setIdentifier($this->getIdentifier());
     $copyObj->setCreatedAt($this->getCreatedAt());
@@ -938,6 +1030,7 @@ abstract class BaseCollectorIdentifierArchive extends BaseObject  implements Per
     if ($makeNew)
     {
       $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
     }
   }
 

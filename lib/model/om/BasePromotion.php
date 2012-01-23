@@ -25,10 +25,22 @@ abstract class BasePromotion extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
   protected $id;
+
+  /**
+   * The value for the promotion_code field.
+   * @var        string
+   */
+  protected $promotion_code;
 
   /**
    * The value for the promotion_name field.
@@ -41,12 +53,6 @@ abstract class BasePromotion extends BaseObject  implements Persistent
    * @var        string
    */
   protected $promotion_desc;
-
-  /**
-   * The value for the promotion_code field.
-   * @var        string
-   */
-  protected $promotion_code;
 
   /**
    * The value for the amount field.
@@ -74,16 +80,16 @@ abstract class BasePromotion extends BaseObject  implements Persistent
   protected $expiry_date;
 
   /**
-   * The value for the updated_at field.
-   * @var        string
-   */
-  protected $updated_at;
-
-  /**
    * The value for the created_at field.
    * @var        string
    */
   protected $created_at;
+
+  /**
+   * The value for the updated_at field.
+   * @var        string
+   */
+  protected $updated_at;
 
   /**
    * @var        array PromotionTransaction[] Collection to store aggregation of PromotionTransaction objects.
@@ -103,6 +109,12 @@ abstract class BasePromotion extends BaseObject  implements Persistent
    * @var        boolean
    */
   protected $alreadyInValidation = false;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $promotionTransactionsScheduledForDeletion = null;
 
   /**
    * Applies default values to this object.
@@ -136,6 +148,16 @@ abstract class BasePromotion extends BaseObject  implements Persistent
   }
 
   /**
+   * Get the [promotion_code] column value.
+   * 
+   * @return     string
+   */
+  public function getPromotionCode()
+  {
+    return $this->promotion_code;
+  }
+
+  /**
    * Get the [promotion_name] column value.
    * 
    * @return     string
@@ -153,16 +175,6 @@ abstract class BasePromotion extends BaseObject  implements Persistent
   public function getPromotionDesc()
   {
     return $this->promotion_desc;
-  }
-
-  /**
-   * Get the [promotion_code] column value.
-   * 
-   * @return     string
-   */
-  public function getPromotionCode()
-  {
-    return $this->promotion_code;
   }
 
   /**
@@ -246,56 +258,6 @@ abstract class BasePromotion extends BaseObject  implements Persistent
   }
 
   /**
-   * Get the [optionally formatted] temporal [updated_at] column value.
-   * 
-   *
-   * @param      string $format The date/time format string (either date()-style or strftime()-style).
-   *              If format is NULL, then the raw DateTime object will be returned.
-   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-   * @throws     PropelException - if unable to parse/validate the date/time value.
-   */
-  public function getUpdatedAt($format = 'Y-m-d H:i:s')
-  {
-    if ($this->updated_at === null)
-    {
-      return null;
-    }
-
-
-    if ($this->updated_at === '0000-00-00 00:00:00')
-    {
-      // while technically this is not a default value of NULL,
-      // this seems to be closest in meaning.
-      return null;
-    }
-    else
-    {
-      try
-      {
-        $dt = new DateTime($this->updated_at);
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->updated_at, true), $x);
-      }
-    }
-
-    if ($format === null)
-    {
-      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-      return $dt;
-    }
-    elseif (strpos($format, '%') !== false)
-    {
-      return strftime($format, $dt->format('U'));
-    }
-    else
-    {
-      return $dt->format($format);
-    }
-  }
-
-  /**
    * Get the [optionally formatted] temporal [created_at] column value.
    * 
    *
@@ -346,6 +308,56 @@ abstract class BasePromotion extends BaseObject  implements Persistent
   }
 
   /**
+   * Get the [optionally formatted] temporal [updated_at] column value.
+   * 
+   *
+   * @param      string $format The date/time format string (either date()-style or strftime()-style).
+   *              If format is NULL, then the raw DateTime object will be returned.
+   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+   * @throws     PropelException - if unable to parse/validate the date/time value.
+   */
+  public function getUpdatedAt($format = 'Y-m-d H:i:s')
+  {
+    if ($this->updated_at === null)
+    {
+      return null;
+    }
+
+
+    if ($this->updated_at === '0000-00-00 00:00:00')
+    {
+      // while technically this is not a default value of NULL,
+      // this seems to be closest in meaning.
+      return null;
+    }
+    else
+    {
+      try
+      {
+        $dt = new DateTime($this->updated_at);
+      }
+      catch (Exception $x)
+      {
+        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->updated_at, true), $x);
+      }
+    }
+
+    if ($format === null)
+    {
+      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+      return $dt;
+    }
+    elseif (strpos($format, '%') !== false)
+    {
+      return strftime($format, $dt->format('U'));
+    }
+    else
+    {
+      return $dt->format($format);
+    }
+  }
+
+  /**
    * Set the value of [id] column.
    * 
    * @param      int $v new value
@@ -362,6 +374,28 @@ abstract class BasePromotion extends BaseObject  implements Persistent
     {
       $this->id = $v;
       $this->modifiedColumns[] = PromotionPeer::ID;
+    }
+
+    return $this;
+  }
+
+  /**
+   * Set the value of [promotion_code] column.
+   * 
+   * @param      string $v new value
+   * @return     Promotion The current object (for fluent API support)
+   */
+  public function setPromotionCode($v)
+  {
+    if ($v !== null)
+    {
+      $v = (string) $v;
+    }
+
+    if ($this->promotion_code !== $v)
+    {
+      $this->promotion_code = $v;
+      $this->modifiedColumns[] = PromotionPeer::PROMOTION_CODE;
     }
 
     return $this;
@@ -406,28 +440,6 @@ abstract class BasePromotion extends BaseObject  implements Persistent
     {
       $this->promotion_desc = $v;
       $this->modifiedColumns[] = PromotionPeer::PROMOTION_DESC;
-    }
-
-    return $this;
-  }
-
-  /**
-   * Set the value of [promotion_code] column.
-   * 
-   * @param      string $v new value
-   * @return     Promotion The current object (for fluent API support)
-   */
-  public function setPromotionCode($v)
-  {
-    if ($v !== null)
-    {
-      $v = (string) $v;
-    }
-
-    if ($this->promotion_code !== $v)
-    {
-      $this->promotion_code = $v;
-      $this->modifiedColumns[] = PromotionPeer::PROMOTION_CODE;
     }
 
     return $this;
@@ -524,30 +536,6 @@ abstract class BasePromotion extends BaseObject  implements Persistent
   }
 
   /**
-   * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
-   * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.
-   *               Empty strings are treated as NULL.
-   * @return     Promotion The current object (for fluent API support)
-   */
-  public function setUpdatedAt($v)
-  {
-    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-    if ($this->updated_at !== null || $dt !== null)
-    {
-      $currentDateAsString = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
-        $this->updated_at = $newDateAsString;
-        $this->modifiedColumns[] = PromotionPeer::UPDATED_AT;
-      }
-    }
-
-    return $this;
-  }
-
-  /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -565,6 +553,30 @@ abstract class BasePromotion extends BaseObject  implements Persistent
       {
         $this->created_at = $newDateAsString;
         $this->modifiedColumns[] = PromotionPeer::CREATED_AT;
+      }
+    }
+
+    return $this;
+  }
+
+  /**
+   * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
+   * 
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
+   * @return     Promotion The current object (for fluent API support)
+   */
+  public function setUpdatedAt($v)
+  {
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->updated_at !== null || $dt !== null)
+    {
+      $currentDateAsString = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
+      {
+        $this->updated_at = $newDateAsString;
+        $this->modifiedColumns[] = PromotionPeer::UPDATED_AT;
       }
     }
 
@@ -610,15 +622,15 @@ abstract class BasePromotion extends BaseObject  implements Persistent
     {
 
       $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-      $this->promotion_name = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-      $this->promotion_desc = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-      $this->promotion_code = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+      $this->promotion_code = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+      $this->promotion_name = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+      $this->promotion_desc = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
       $this->amount = ($row[$startcol + 4] !== null) ? (double) $row[$startcol + 4] : null;
       $this->amount_type = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
       $this->no_of_time_used = ($row[$startcol + 6] !== null) ? (int) $row[$startcol + 6] : null;
       $this->expiry_date = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
-      $this->updated_at = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-      $this->created_at = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+      $this->created_at = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+      $this->updated_at = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -756,7 +768,7 @@ abstract class BasePromotion extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -803,24 +815,27 @@ abstract class BasePromotion extends BaseObject  implements Persistent
         }
       }
 
-      // symfony_timestampable behavior
-      if ($this->isModified() && !$this->isColumnModified(PromotionPeer::UPDATED_AT))
-      {
-        $this->setUpdatedAt(time());
-      }
       if ($isInsert)
       {
         $ret = $ret && $this->preInsert($con);
-        // symfony_timestampable behavior
+        // timestampable behavior
         if (!$this->isColumnModified(PromotionPeer::CREATED_AT))
         {
           $this->setCreatedAt(time());
         }
-
+        if (!$this->isColumnModified(PromotionPeer::UPDATED_AT))
+        {
+          $this->setUpdatedAt(time());
+        }
       }
       else
       {
         $ret = $ret && $this->preUpdate($con);
+        // timestampable behavior
+        if ($this->isModified() && !$this->isColumnModified(PromotionPeer::UPDATED_AT))
+        {
+          $this->setUpdatedAt(time());
+        }
       }
       if ($ret)
       {
@@ -849,7 +864,7 @@ abstract class BasePromotion extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -874,33 +889,30 @@ abstract class BasePromotion extends BaseObject  implements Persistent
     {
       $this->alreadyInSave = true;
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = PromotionPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(PromotionPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PromotionPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = PromotionPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
+        $affectedRows += 1;
+        $this->resetModified();
+      }
 
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+      if ($this->promotionTransactionsScheduledForDeletion !== null)
+      {
+        if (!$this->promotionTransactionsScheduledForDeletion->isEmpty())
+        {
+          PromotionTransactionQuery::create()
+            ->filterByPrimaryKeys($this->promotionTransactionsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->promotionTransactionsScheduledForDeletion = null;
+        }
       }
 
       if ($this->collPromotionTransactions !== null)
@@ -918,6 +930,147 @@ abstract class BasePromotion extends BaseObject  implements Persistent
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = PromotionPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . PromotionPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(PromotionPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(PromotionPeer::PROMOTION_CODE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PROMOTION_CODE`';
+    }
+    if ($this->isColumnModified(PromotionPeer::PROMOTION_NAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PROMOTION_NAME`';
+    }
+    if ($this->isColumnModified(PromotionPeer::PROMOTION_DESC))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PROMOTION_DESC`';
+    }
+    if ($this->isColumnModified(PromotionPeer::AMOUNT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`AMOUNT`';
+    }
+    if ($this->isColumnModified(PromotionPeer::AMOUNT_TYPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`AMOUNT_TYPE`';
+    }
+    if ($this->isColumnModified(PromotionPeer::NO_OF_TIME_USED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`NO_OF_TIME_USED`';
+    }
+    if ($this->isColumnModified(PromotionPeer::EXPIRY_DATE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`EXPIRY_DATE`';
+    }
+    if ($this->isColumnModified(PromotionPeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(PromotionPeer::UPDATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `promotion` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`PROMOTION_CODE`':
+            $stmt->bindValue($identifier, $this->promotion_code, PDO::PARAM_STR);
+            break;
+          case '`PROMOTION_NAME`':
+            $stmt->bindValue($identifier, $this->promotion_name, PDO::PARAM_STR);
+            break;
+          case '`PROMOTION_DESC`':
+            $stmt->bindValue($identifier, $this->promotion_desc, PDO::PARAM_STR);
+            break;
+          case '`AMOUNT`':
+            $stmt->bindValue($identifier, $this->amount, PDO::PARAM_STR);
+            break;
+          case '`AMOUNT_TYPE`':
+            $stmt->bindValue($identifier, $this->amount_type, PDO::PARAM_STR);
+            break;
+          case '`NO_OF_TIME_USED`':
+            $stmt->bindValue($identifier, $this->no_of_time_used, PDO::PARAM_INT);
+            break;
+          case '`EXPIRY_DATE`':
+            $stmt->bindValue($identifier, $this->expiry_date, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`UPDATED_AT`':
+            $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1039,13 +1192,13 @@ abstract class BasePromotion extends BaseObject  implements Persistent
         return $this->getId();
         break;
       case 1:
-        return $this->getPromotionName();
+        return $this->getPromotionCode();
         break;
       case 2:
-        return $this->getPromotionDesc();
+        return $this->getPromotionName();
         break;
       case 3:
-        return $this->getPromotionCode();
+        return $this->getPromotionDesc();
         break;
       case 4:
         return $this->getAmount();
@@ -1060,10 +1213,10 @@ abstract class BasePromotion extends BaseObject  implements Persistent
         return $this->getExpiryDate();
         break;
       case 8:
-        return $this->getUpdatedAt();
+        return $this->getCreatedAt();
         break;
       case 9:
-        return $this->getCreatedAt();
+        return $this->getUpdatedAt();
         break;
       default:
         return null;
@@ -1096,15 +1249,15 @@ abstract class BasePromotion extends BaseObject  implements Persistent
     $keys = PromotionPeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
-      $keys[1] => $this->getPromotionName(),
-      $keys[2] => $this->getPromotionDesc(),
-      $keys[3] => $this->getPromotionCode(),
+      $keys[1] => $this->getPromotionCode(),
+      $keys[2] => $this->getPromotionName(),
+      $keys[3] => $this->getPromotionDesc(),
       $keys[4] => $this->getAmount(),
       $keys[5] => $this->getAmountType(),
       $keys[6] => $this->getNoOfTimeUsed(),
       $keys[7] => $this->getExpiryDate(),
-      $keys[8] => $this->getUpdatedAt(),
-      $keys[9] => $this->getCreatedAt(),
+      $keys[8] => $this->getCreatedAt(),
+      $keys[9] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -1148,13 +1301,13 @@ abstract class BasePromotion extends BaseObject  implements Persistent
         $this->setId($value);
         break;
       case 1:
-        $this->setPromotionName($value);
+        $this->setPromotionCode($value);
         break;
       case 2:
-        $this->setPromotionDesc($value);
+        $this->setPromotionName($value);
         break;
       case 3:
-        $this->setPromotionCode($value);
+        $this->setPromotionDesc($value);
         break;
       case 4:
         $this->setAmount($value);
@@ -1169,10 +1322,10 @@ abstract class BasePromotion extends BaseObject  implements Persistent
         $this->setExpiryDate($value);
         break;
       case 8:
-        $this->setUpdatedAt($value);
+        $this->setCreatedAt($value);
         break;
       case 9:
-        $this->setCreatedAt($value);
+        $this->setUpdatedAt($value);
         break;
     }
   }
@@ -1199,15 +1352,15 @@ abstract class BasePromotion extends BaseObject  implements Persistent
     $keys = PromotionPeer::getFieldNames($keyType);
 
     if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-    if (array_key_exists($keys[1], $arr)) $this->setPromotionName($arr[$keys[1]]);
-    if (array_key_exists($keys[2], $arr)) $this->setPromotionDesc($arr[$keys[2]]);
-    if (array_key_exists($keys[3], $arr)) $this->setPromotionCode($arr[$keys[3]]);
+    if (array_key_exists($keys[1], $arr)) $this->setPromotionCode($arr[$keys[1]]);
+    if (array_key_exists($keys[2], $arr)) $this->setPromotionName($arr[$keys[2]]);
+    if (array_key_exists($keys[3], $arr)) $this->setPromotionDesc($arr[$keys[3]]);
     if (array_key_exists($keys[4], $arr)) $this->setAmount($arr[$keys[4]]);
     if (array_key_exists($keys[5], $arr)) $this->setAmountType($arr[$keys[5]]);
     if (array_key_exists($keys[6], $arr)) $this->setNoOfTimeUsed($arr[$keys[6]]);
     if (array_key_exists($keys[7], $arr)) $this->setExpiryDate($arr[$keys[7]]);
-    if (array_key_exists($keys[8], $arr)) $this->setUpdatedAt($arr[$keys[8]]);
-    if (array_key_exists($keys[9], $arr)) $this->setCreatedAt($arr[$keys[9]]);
+    if (array_key_exists($keys[8], $arr)) $this->setCreatedAt($arr[$keys[8]]);
+    if (array_key_exists($keys[9], $arr)) $this->setUpdatedAt($arr[$keys[9]]);
   }
 
   /**
@@ -1220,15 +1373,15 @@ abstract class BasePromotion extends BaseObject  implements Persistent
     $criteria = new Criteria(PromotionPeer::DATABASE_NAME);
 
     if ($this->isColumnModified(PromotionPeer::ID)) $criteria->add(PromotionPeer::ID, $this->id);
+    if ($this->isColumnModified(PromotionPeer::PROMOTION_CODE)) $criteria->add(PromotionPeer::PROMOTION_CODE, $this->promotion_code);
     if ($this->isColumnModified(PromotionPeer::PROMOTION_NAME)) $criteria->add(PromotionPeer::PROMOTION_NAME, $this->promotion_name);
     if ($this->isColumnModified(PromotionPeer::PROMOTION_DESC)) $criteria->add(PromotionPeer::PROMOTION_DESC, $this->promotion_desc);
-    if ($this->isColumnModified(PromotionPeer::PROMOTION_CODE)) $criteria->add(PromotionPeer::PROMOTION_CODE, $this->promotion_code);
     if ($this->isColumnModified(PromotionPeer::AMOUNT)) $criteria->add(PromotionPeer::AMOUNT, $this->amount);
     if ($this->isColumnModified(PromotionPeer::AMOUNT_TYPE)) $criteria->add(PromotionPeer::AMOUNT_TYPE, $this->amount_type);
     if ($this->isColumnModified(PromotionPeer::NO_OF_TIME_USED)) $criteria->add(PromotionPeer::NO_OF_TIME_USED, $this->no_of_time_used);
     if ($this->isColumnModified(PromotionPeer::EXPIRY_DATE)) $criteria->add(PromotionPeer::EXPIRY_DATE, $this->expiry_date);
-    if ($this->isColumnModified(PromotionPeer::UPDATED_AT)) $criteria->add(PromotionPeer::UPDATED_AT, $this->updated_at);
     if ($this->isColumnModified(PromotionPeer::CREATED_AT)) $criteria->add(PromotionPeer::CREATED_AT, $this->created_at);
+    if ($this->isColumnModified(PromotionPeer::UPDATED_AT)) $criteria->add(PromotionPeer::UPDATED_AT, $this->updated_at);
 
     return $criteria;
   }
@@ -1291,21 +1444,23 @@ abstract class BasePromotion extends BaseObject  implements Persistent
    */
   public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
+    $copyObj->setPromotionCode($this->getPromotionCode());
     $copyObj->setPromotionName($this->getPromotionName());
     $copyObj->setPromotionDesc($this->getPromotionDesc());
-    $copyObj->setPromotionCode($this->getPromotionCode());
     $copyObj->setAmount($this->getAmount());
     $copyObj->setAmountType($this->getAmountType());
     $copyObj->setNoOfTimeUsed($this->getNoOfTimeUsed());
     $copyObj->setExpiryDate($this->getExpiryDate());
-    $copyObj->setUpdatedAt($this->getUpdatedAt());
     $copyObj->setCreatedAt($this->getCreatedAt());
+    $copyObj->setUpdatedAt($this->getUpdatedAt());
 
-    if ($deepCopy)
+    if ($deepCopy && !$this->startCopy)
     {
       // important: temporarily setNew(false) because this affects the behavior of
       // the getter/setter methods for fkey referrer objects.
       $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
 
       foreach ($this->getPromotionTransactions() as $relObj)
       {
@@ -1314,6 +1469,8 @@ abstract class BasePromotion extends BaseObject  implements Persistent
         }
       }
 
+      //unflag object copy
+      $this->startCopy = false;
     }
 
     if ($makeNew)
@@ -1454,6 +1611,32 @@ abstract class BasePromotion extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of PromotionTransaction objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $promotionTransactions A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setPromotionTransactions(PropelCollection $promotionTransactions, PropelPDO $con = null)
+  {
+    $this->promotionTransactionsScheduledForDeletion = $this->getPromotionTransactions(new Criteria(), $con)->diff($promotionTransactions);
+
+    foreach ($promotionTransactions as $promotionTransaction)
+    {
+      // Fix issue with collection modified by reference
+      if ($promotionTransaction->isNew())
+      {
+        $promotionTransaction->setPromotion($this);
+      }
+      $this->addPromotionTransaction($promotionTransaction);
+    }
+
+    $this->collPromotionTransactions = $promotionTransactions;
+  }
+
+  /**
    * Returns the number of related PromotionTransaction objects.
    *
    * @param      Criteria $criteria
@@ -1502,11 +1685,19 @@ abstract class BasePromotion extends BaseObject  implements Persistent
       $this->initPromotionTransactions();
     }
     if (!$this->collPromotionTransactions->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collPromotionTransactions[]= $l;
-      $l->setPromotion($this);
+      $this->doAddPromotionTransaction($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  PromotionTransaction $promotionTransaction The promotionTransaction object to add.
+   */
+  protected function doAddPromotionTransaction($promotionTransaction)
+  {
+    $this->collPromotionTransactions[]= $promotionTransaction;
+    $promotionTransaction->setPromotion($this);
   }
 
 
@@ -1540,15 +1731,15 @@ abstract class BasePromotion extends BaseObject  implements Persistent
   public function clear()
   {
     $this->id = null;
+    $this->promotion_code = null;
     $this->promotion_name = null;
     $this->promotion_desc = null;
-    $this->promotion_code = null;
     $this->amount = null;
     $this->amount_type = null;
     $this->no_of_time_used = null;
     $this->expiry_date = null;
-    $this->updated_at = null;
     $this->created_at = null;
+    $this->updated_at = null;
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;
     $this->clearAllReferences();
@@ -1595,6 +1786,19 @@ abstract class BasePromotion extends BaseObject  implements Persistent
   public function __toString()
   {
     return (string) $this->exportTo(PromotionPeer::DEFAULT_STRING_FORMAT);
+  }
+
+  // timestampable behavior
+  
+  /**
+   * Mark the current object so that the update date doesn't get updated during next save
+   *
+   * @return     Promotion The current object (for fluent API support)
+   */
+  public function keepUpdateDateUnchanged()
+  {
+    $this->modifiedColumns[] = PromotionPeer::UPDATED_AT;
+    return $this;
   }
 
   /**

@@ -25,6 +25,12 @@ abstract class BaseResourceEntry extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -758,7 +764,7 @@ abstract class BaseResourceEntry extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -846,7 +852,7 @@ abstract class BaseResourceEntry extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -885,39 +891,180 @@ abstract class BaseResourceEntry extends BaseObject  implements Persistent
         $this->setResourceCategory($this->aResourceCategory);
       }
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = ResourceEntryPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(ResourceEntryPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.ResourceEntryPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows += 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows += ResourceEntryPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = ResourceEntryPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . ResourceEntryPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(ResourceEntryPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(ResourceEntryPeer::CATEGORY_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CATEGORY_ID`';
+    }
+    if ($this->isColumnModified(ResourceEntryPeer::TYPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TYPE`';
+    }
+    if ($this->isColumnModified(ResourceEntryPeer::NAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`NAME`';
+    }
+    if ($this->isColumnModified(ResourceEntryPeer::SLUG))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SLUG`';
+    }
+    if ($this->isColumnModified(ResourceEntryPeer::DESCRIPTION))
+    {
+      $modifiedColumns[':p' . $index++]  = '`DESCRIPTION`';
+    }
+    if ($this->isColumnModified(ResourceEntryPeer::URL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`URL`';
+    }
+    if ($this->isColumnModified(ResourceEntryPeer::RSS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`RSS`';
+    }
+    if ($this->isColumnModified(ResourceEntryPeer::THUMBNAIL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`THUMBNAIL`';
+    }
+    if ($this->isColumnModified(ResourceEntryPeer::BLOGGER))
+    {
+      $modifiedColumns[':p' . $index++]  = '`BLOGGER`';
+    }
+    if ($this->isColumnModified(ResourceEntryPeer::EMAIL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`EMAIL`';
+    }
+    if ($this->isColumnModified(ResourceEntryPeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `resource_entry` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`CATEGORY_ID`':
+            $stmt->bindValue($identifier, $this->category_id, PDO::PARAM_INT);
+            break;
+          case '`TYPE`':
+            $stmt->bindValue($identifier, $this->type, PDO::PARAM_STR);
+            break;
+          case '`NAME`':
+            $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+            break;
+          case '`SLUG`':
+            $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
+            break;
+          case '`DESCRIPTION`':
+            $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
+            break;
+          case '`URL`':
+            $stmt->bindValue($identifier, $this->url, PDO::PARAM_STR);
+            break;
+          case '`RSS`':
+            $stmt->bindValue($identifier, $this->rss, PDO::PARAM_STR);
+            break;
+          case '`THUMBNAIL`':
+            $stmt->bindValue($identifier, $this->thumbnail, PDO::PARAM_STR);
+            break;
+          case '`BLOGGER`':
+            $stmt->bindValue($identifier, $this->blogger, PDO::PARAM_STR);
+            break;
+          case '`EMAIL`':
+            $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1323,6 +1470,19 @@ abstract class BaseResourceEntry extends BaseObject  implements Persistent
     $copyObj->setBlogger($this->getBlogger());
     $copyObj->setEmail($this->getEmail());
     $copyObj->setCreatedAt($this->getCreatedAt());
+
+    if ($deepCopy && !$this->startCopy)
+    {
+      // important: temporarily setNew(false) because this affects the behavior of
+      // the getter/setter methods for fkey referrer objects.
+      $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
+
+      //unflag object copy
+      $this->startCopy = false;
+    }
+
     if ($makeNew)
     {
       $copyObj->setNew(true);

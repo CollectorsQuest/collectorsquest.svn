@@ -25,6 +25,12 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -824,7 +830,7 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -906,7 +912,7 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -931,39 +937,180 @@ abstract class BaseFeatured extends BaseObject  implements Persistent
     {
       $this->alreadyInSave = true;
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = FeaturedPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(FeaturedPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.FeaturedPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = FeaturedPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = FeaturedPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . FeaturedPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(FeaturedPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(FeaturedPeer::FEATURED_TYPE_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`FEATURED_TYPE_ID`';
+    }
+    if ($this->isColumnModified(FeaturedPeer::FEATURED_MODEL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`FEATURED_MODEL`';
+    }
+    if ($this->isColumnModified(FeaturedPeer::FEATURED_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`FEATURED_ID`';
+    }
+    if ($this->isColumnModified(FeaturedPeer::TREE_LEFT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TREE_LEFT`';
+    }
+    if ($this->isColumnModified(FeaturedPeer::TREE_RIGHT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TREE_RIGHT`';
+    }
+    if ($this->isColumnModified(FeaturedPeer::TREE_SCOPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TREE_SCOPE`';
+    }
+    if ($this->isColumnModified(FeaturedPeer::EBLOB))
+    {
+      $modifiedColumns[':p' . $index++]  = '`EBLOB`';
+    }
+    if ($this->isColumnModified(FeaturedPeer::START_DATE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`START_DATE`';
+    }
+    if ($this->isColumnModified(FeaturedPeer::END_DATE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`END_DATE`';
+    }
+    if ($this->isColumnModified(FeaturedPeer::POSITION))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POSITION`';
+    }
+    if ($this->isColumnModified(FeaturedPeer::IS_ACTIVE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_ACTIVE`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `featured` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`FEATURED_TYPE_ID`':
+            $stmt->bindValue($identifier, $this->featured_type_id, PDO::PARAM_INT);
+            break;
+          case '`FEATURED_MODEL`':
+            $stmt->bindValue($identifier, $this->featured_model, PDO::PARAM_STR);
+            break;
+          case '`FEATURED_ID`':
+            $stmt->bindValue($identifier, $this->featured_id, PDO::PARAM_INT);
+            break;
+          case '`TREE_LEFT`':
+            $stmt->bindValue($identifier, $this->tree_left, PDO::PARAM_INT);
+            break;
+          case '`TREE_RIGHT`':
+            $stmt->bindValue($identifier, $this->tree_right, PDO::PARAM_INT);
+            break;
+          case '`TREE_SCOPE`':
+            $stmt->bindValue($identifier, $this->tree_scope, PDO::PARAM_INT);
+            break;
+          case '`EBLOB`':
+            $stmt->bindValue($identifier, $this->eblob, PDO::PARAM_STR);
+            break;
+          case '`START_DATE`':
+            $stmt->bindValue($identifier, $this->start_date, PDO::PARAM_STR);
+            break;
+          case '`END_DATE`':
+            $stmt->bindValue($identifier, $this->end_date, PDO::PARAM_STR);
+            break;
+          case '`POSITION`':
+            $stmt->bindValue($identifier, $this->position, PDO::PARAM_INT);
+            break;
+          case '`IS_ACTIVE`':
+            $stmt->bindValue($identifier, (int) $this->is_active, PDO::PARAM_INT);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**

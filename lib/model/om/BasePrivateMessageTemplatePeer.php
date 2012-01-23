@@ -47,11 +47,11 @@ abstract class BasePrivateMessageTemplatePeer
   /** the column name for the DESCRIPTION field */
   const DESCRIPTION = 'private_message_template.DESCRIPTION';
 
-  /** the column name for the UPDATED_AT field */
-  const UPDATED_AT = 'private_message_template.UPDATED_AT';
-
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'private_message_template.CREATED_AT';
+
+  /** the column name for the UPDATED_AT field */
+  const UPDATED_AT = 'private_message_template.UPDATED_AT';
 
   /** The default string format for model objects of the related table **/
   const DEFAULT_STRING_FORMAT = 'YAML';
@@ -72,11 +72,11 @@ abstract class BasePrivateMessageTemplatePeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'Subject', 'Body', 'Description', 'UpdatedAt', 'CreatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'subject', 'body', 'description', 'updatedAt', 'createdAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::SUBJECT, self::BODY, self::DESCRIPTION, self::UPDATED_AT, self::CREATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'SUBJECT', 'BODY', 'DESCRIPTION', 'UPDATED_AT', 'CREATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'subject', 'body', 'description', 'updated_at', 'created_at', ),
+    BasePeer::TYPE_PHPNAME => array ('Id', 'Subject', 'Body', 'Description', 'CreatedAt', 'UpdatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'subject', 'body', 'description', 'createdAt', 'updatedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::SUBJECT, self::BODY, self::DESCRIPTION, self::CREATED_AT, self::UPDATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'SUBJECT', 'BODY', 'DESCRIPTION', 'CREATED_AT', 'UPDATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'subject', 'body', 'description', 'created_at', 'updated_at', ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
   );
 
@@ -87,11 +87,11 @@ abstract class BasePrivateMessageTemplatePeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Subject' => 1, 'Body' => 2, 'Description' => 3, 'UpdatedAt' => 4, 'CreatedAt' => 5, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'subject' => 1, 'body' => 2, 'description' => 3, 'updatedAt' => 4, 'createdAt' => 5, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::SUBJECT => 1, self::BODY => 2, self::DESCRIPTION => 3, self::UPDATED_AT => 4, self::CREATED_AT => 5, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'SUBJECT' => 1, 'BODY' => 2, 'DESCRIPTION' => 3, 'UPDATED_AT' => 4, 'CREATED_AT' => 5, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'subject' => 1, 'body' => 2, 'description' => 3, 'updated_at' => 4, 'created_at' => 5, ),
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Subject' => 1, 'Body' => 2, 'Description' => 3, 'CreatedAt' => 4, 'UpdatedAt' => 5, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'subject' => 1, 'body' => 2, 'description' => 3, 'createdAt' => 4, 'updatedAt' => 5, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::SUBJECT => 1, self::BODY => 2, self::DESCRIPTION => 3, self::CREATED_AT => 4, self::UPDATED_AT => 5, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'SUBJECT' => 1, 'BODY' => 2, 'DESCRIPTION' => 3, 'CREATED_AT' => 4, 'UPDATED_AT' => 5, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'subject' => 1, 'body' => 2, 'description' => 3, 'created_at' => 4, 'updated_at' => 5, ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, )
   );
 
@@ -171,8 +171,8 @@ abstract class BasePrivateMessageTemplatePeer
       $criteria->addSelectColumn(PrivateMessageTemplatePeer::SUBJECT);
       $criteria->addSelectColumn(PrivateMessageTemplatePeer::BODY);
       $criteria->addSelectColumn(PrivateMessageTemplatePeer::DESCRIPTION);
-      $criteria->addSelectColumn(PrivateMessageTemplatePeer::UPDATED_AT);
       $criteria->addSelectColumn(PrivateMessageTemplatePeer::CREATED_AT);
+      $criteria->addSelectColumn(PrivateMessageTemplatePeer::UPDATED_AT);
     }
     else
     {
@@ -180,8 +180,8 @@ abstract class BasePrivateMessageTemplatePeer
       $criteria->addSelectColumn($alias . '.SUBJECT');
       $criteria->addSelectColumn($alias . '.BODY');
       $criteria->addSelectColumn($alias . '.DESCRIPTION');
-      $criteria->addSelectColumn($alias . '.UPDATED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
+      $criteria->addSelectColumn($alias . '.UPDATED_AT');
     }
   }
 

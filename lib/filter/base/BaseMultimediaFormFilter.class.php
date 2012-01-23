@@ -21,8 +21,8 @@ abstract class BaseMultimediaFormFilter extends BaseFormFilterPropel
       'orientation' => new sfWidgetFormFilterInput(),
       'source'      => new sfWidgetFormFilterInput(),
       'is_primary'  => new sfWidgetFormChoice(array('choices' => array('' => 'yes or no', 1 => 'yes', 0 => 'no'))),
-      'updated_at'  => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),
       'created_at'  => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),
+      'updated_at'  => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),
     ));
 
     $this->setValidators(array(
@@ -35,8 +35,8 @@ abstract class BaseMultimediaFormFilter extends BaseFormFilterPropel
       'orientation' => new sfValidatorPass(array('required' => false)),
       'source'      => new sfValidatorPass(array('required' => false)),
       'is_primary'  => new sfValidatorChoice(array('required' => false, 'choices' => array('', 1, 0))),
-      'updated_at'  => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDate(array('required' => false)), 'to_date' => new sfValidatorDate(array('required' => false)))),
       'created_at'  => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDate(array('required' => false)), 'to_date' => new sfValidatorDate(array('required' => false)))),
+      'updated_at'  => new sfValidatorDateRange(array('required' => false, 'from_date' => new sfValidatorDate(array('required' => false)), 'to_date' => new sfValidatorDate(array('required' => false)))),
     ));
 
     $this->widgetSchema->setNameFormat('multimedia_filters[%s]');
@@ -64,8 +64,8 @@ abstract class BaseMultimediaFormFilter extends BaseFormFilterPropel
       'orientation' => 'Text',
       'source'      => 'Text',
       'is_primary'  => 'Boolean',
-      'updated_at'  => 'Date',
       'created_at'  => 'Date',
+      'updated_at'  => 'Date',
     );
   }
 }

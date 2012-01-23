@@ -41,382 +41,491 @@
  */
 abstract class BaseCollectionCategoryFieldQuery extends ModelCriteria
 {
-    
-    /**
-     * Initializes internal state of BaseCollectionCategoryFieldQuery object.
-     *
-     * @param     string $dbName The dabase name
-     * @param     string $modelName The phpName of a model, e.g. 'Book'
-     * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
-     */
-    public function __construct($dbName = 'propel', $modelName = 'CollectionCategoryField', $modelAlias = null)
+  
+  /**
+   * Initializes internal state of BaseCollectionCategoryFieldQuery object.
+   *
+   * @param     string $dbName The dabase name
+   * @param     string $modelName The phpName of a model, e.g. 'Book'
+   * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+   */
+  public function __construct($dbName = 'propel', $modelName = 'CollectionCategoryField', $modelAlias = null)
+  {
+    parent::__construct($dbName, $modelName, $modelAlias);
+  }
+
+  /**
+   * Returns a new CollectionCategoryFieldQuery object.
+   *
+   * @param     string $modelAlias The alias of a model in the query
+   * @param     Criteria $criteria Optional Criteria to build the query from
+   *
+   * @return    CollectionCategoryFieldQuery
+   */
+  public static function create($modelAlias = null, $criteria = null)
+  {
+    if ($criteria instanceof CollectionCategoryFieldQuery)
     {
-        parent::__construct($dbName, $modelName, $modelAlias);
+      return $criteria;
     }
-
-    /**
-     * Returns a new CollectionCategoryFieldQuery object.
-     *
-     * @param     string $modelAlias The alias of a model in the query
-     * @param     Criteria $criteria Optional Criteria to build the query from
-     *
-     * @return    CollectionCategoryFieldQuery
-     */
-    public static function create($modelAlias = null, $criteria = null)
+    $query = new CollectionCategoryFieldQuery();
+    if (null !== $modelAlias)
     {
-        if ($criteria instanceof CollectionCategoryFieldQuery) {
-            return $criteria;
-        }
-        $query = new CollectionCategoryFieldQuery();
-        if (null !== $modelAlias) {
-            $query->setModelAlias($modelAlias);
-        }
-        if ($criteria instanceof Criteria) {
-            $query->mergeWith($criteria);
-        }
-        return $query;
+      $query->setModelAlias($modelAlias);
     }
-
-    /**
-     * Find object by primary key
-     * Use instance pooling to avoid a database query if the object exists
-     * <code>
-     * $obj  = $c->findPk(12, $con);
-     * </code>
-     * @param     mixed $key Primary key to use for the query
-     * @param     PropelPDO $con an optional connection object
-     *
-     * @return    CollectionCategoryField|array|mixed the result, formatted by the current formatter
-     */
-    public function findPk($key, $con = null)
+    if ($criteria instanceof Criteria)
     {
-        if ((null !== ($obj = CollectionCategoryFieldPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
-            // the object is alredy in the instance pool
-            return $obj;
-        } else {
-            // the object has not been requested yet, or the formatter is not an object formatter
-            $criteria = $this->isKeepQuery() ? clone $this : $this;
-            $stmt = $criteria
-                ->filterByPrimaryKey($key)
-                ->getSelectStatement($con);
-            return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
-        }
+      $query->mergeWith($criteria);
     }
+    return $query;
+  }
 
-    /**
-     * Find objects by primary key
-     * <code>
-     * $objs = $c->findPks(array(12, 56, 832), $con);
-     * </code>
-     * @param     array $keys Primary keys to use for the query
-     * @param     PropelPDO $con an optional connection object
-     *
-     * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
-     */
-    public function findPks($keys, $con = null)
+  /**
+   * Find object by primary key.
+   * Propel uses the instance pool to skip the database if the object exists.
+   * Go fast if the query is untouched.
+   *
+   * <code>
+   * $obj  = $c->findPk(12, $con);
+   * </code>
+   *
+   * @param     mixed $key Primary key to use for the query
+   * @param     PropelPDO $con an optional connection object
+   *
+   * @return    CollectionCategoryField|array|mixed the result, formatted by the current formatter
+   */
+  public function findPk($key, $con = null)
+  {
+    if ($key === null)
     {
-        $criteria = $this->isKeepQuery() ? clone $this : $this;
-        return $this
-            ->filterByPrimaryKeys($keys)
-            ->find($con);
+      return null;
     }
-
-    /**
-     * Filter the query by primary key
-     *
-     * @param     mixed $key Primary key to use for the query
-     *
-     * @return    CollectionCategoryFieldQuery The current query, for fluid interface
-     */
-    public function filterByPrimaryKey($key)
+    if ((null !== ($obj = CollectionCategoryFieldPeer::getInstanceFromPool((string) $key))) && !$this->formatter)
     {
-        return $this->addUsingAlias(CollectionCategoryFieldPeer::ID, $key, Criteria::EQUAL);
+      // the object is alredy in the instance pool
+      return $obj;
     }
-
-    /**
-     * Filter the query by a list of primary keys
-     *
-     * @param     array $keys The list of primary key to use for the query
-     *
-     * @return    CollectionCategoryFieldQuery The current query, for fluid interface
-     */
-    public function filterByPrimaryKeys($keys)
+    if ($con === null)
     {
-        return $this->addUsingAlias(CollectionCategoryFieldPeer::ID, $keys, Criteria::IN);
+      $con = Propel::getConnection(CollectionCategoryFieldPeer::DATABASE_NAME, Propel::CONNECTION_READ);
     }
-
-    /**
-     * Filter the query on the id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterById(1234); // WHERE id = 1234
-     * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
-     * $query->filterById(array('min' => 12)); // WHERE id > 12
-     * </code>
-     *
-     * @param     mixed $id The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectionCategoryFieldQuery The current query, for fluid interface
-     */
-    public function filterById($id = null, $comparison = null)
-    {
-        if (is_array($id) && null === $comparison) {
-            $comparison = Criteria::IN;
-        }
-        return $this->addUsingAlias(CollectionCategoryFieldPeer::ID, $id, $comparison);
+    $this->basePreSelect($con);
+    if ($this->formatter || $this->modelAlias || $this->with || $this->select
+     || $this->selectColumns || $this->asColumns || $this->selectModifiers
+     || $this->map || $this->having || $this->joins) {
+      return $this->findPkComplex($key, $con);
     }
-
-    /**
-     * Filter the query on the collection_category_id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByCollectionCategoryId(1234); // WHERE collection_category_id = 1234
-     * $query->filterByCollectionCategoryId(array(12, 34)); // WHERE collection_category_id IN (12, 34)
-     * $query->filterByCollectionCategoryId(array('min' => 12)); // WHERE collection_category_id > 12
-     * </code>
-     *
-     * @see       filterByCollectionCategory()
-     *
-     * @param     mixed $collectionCategoryId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectionCategoryFieldQuery The current query, for fluid interface
-     */
-    public function filterByCollectionCategoryId($collectionCategoryId = null, $comparison = null)
+    else
     {
-        if (is_array($collectionCategoryId)) {
-            $useMinMax = false;
-            if (isset($collectionCategoryId['min'])) {
-                $this->addUsingAlias(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, $collectionCategoryId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($collectionCategoryId['max'])) {
-                $this->addUsingAlias(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, $collectionCategoryId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-        return $this->addUsingAlias(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, $collectionCategoryId, $comparison);
+      return $this->findPkSimple($key, $con);
     }
+  }
 
-    /**
-     * Filter the query on the custom_field_id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByCustomFieldId(1234); // WHERE custom_field_id = 1234
-     * $query->filterByCustomFieldId(array(12, 34)); // WHERE custom_field_id IN (12, 34)
-     * $query->filterByCustomFieldId(array('min' => 12)); // WHERE custom_field_id > 12
-     * </code>
-     *
-     * @see       filterByCustomField()
-     *
-     * @param     mixed $customFieldId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectionCategoryFieldQuery The current query, for fluid interface
-     */
-    public function filterByCustomFieldId($customFieldId = null, $comparison = null)
+  /**
+   * Find object by primary key using raw SQL to go fast.
+   * Bypass doSelect() and the object formatter by using generated code.
+   *
+   * @param     mixed $key Primary key to use for the query
+   * @param     PropelPDO $con A connection object
+   *
+   * @return    CollectionCategoryField A model object, or null if the key is not found
+   */
+  protected function findPkSimple($key, $con)
+  {
+    $sql = 'SELECT `ID`, `COLLECTION_CATEGORY_ID`, `CUSTOM_FIELD_ID` FROM `collection_category_field` WHERE `ID` = :p0';
+    try
     {
-        if (is_array($customFieldId)) {
-            $useMinMax = false;
-            if (isset($customFieldId['min'])) {
-                $this->addUsingAlias(CollectionCategoryFieldPeer::CUSTOM_FIELD_ID, $customFieldId['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($customFieldId['max'])) {
-                $this->addUsingAlias(CollectionCategoryFieldPeer::CUSTOM_FIELD_ID, $customFieldId['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-        return $this->addUsingAlias(CollectionCategoryFieldPeer::CUSTOM_FIELD_ID, $customFieldId, $comparison);
+      $stmt = $con->prepare($sql);
+      $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
+      $stmt->execute();
     }
-
-    /**
-     * Filter the query by a related CollectionCategory object
-     *
-     * @param     CollectionCategory|PropelCollection $collectionCategory The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectionCategoryFieldQuery The current query, for fluid interface
-     */
-    public function filterByCollectionCategory($collectionCategory, $comparison = null)
+    catch (Exception $e)
     {
-        if ($collectionCategory instanceof CollectionCategory) {
-            return $this
-                ->addUsingAlias(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, $collectionCategory->getId(), $comparison);
-        } elseif ($collectionCategory instanceof PropelCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-            return $this
-                ->addUsingAlias(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, $collectionCategory->toKeyValue('PrimaryKey', 'Id'), $comparison);
-        } else {
-            throw new PropelException('filterByCollectionCategory() only accepts arguments of type CollectionCategory or PropelCollection');
-        }
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), $e);
     }
-
-    /**
-     * Adds a JOIN clause to the query using the CollectionCategory relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return    CollectionCategoryFieldQuery The current query, for fluid interface
-     */
-    public function joinCollectionCategory($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+    $obj = null;
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
     {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('CollectionCategory');
+      $obj = new CollectionCategoryField();
+      $obj->hydrate($row);
+      CollectionCategoryFieldPeer::addInstanceToPool($obj, (string) $row[0]);
+    }
+    $stmt->closeCursor();
 
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
+    return $obj;
+  }
 
-        // add the ModelJoin to the current object
-        if($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'CollectionCategory');
-        }
+  /**
+   * Find object by primary key.
+   *
+   * @param     mixed $key Primary key to use for the query
+   * @param     PropelPDO $con A connection object
+   *
+   * @return    CollectionCategoryField|array|mixed the result, formatted by the current formatter
+   */
+  protected function findPkComplex($key, $con)
+  {
+    // As the query uses a PK condition, no limit(1) is necessary.
+    $criteria = $this->isKeepQuery() ? clone $this : $this;
+    $stmt = $criteria
+      ->filterByPrimaryKey($key)
+      ->doSelect($con);
+    return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+  }
 
+  /**
+   * Find objects by primary key
+   * <code>
+   * $objs = $c->findPks(array(12, 56, 832), $con);
+   * </code>
+   * @param     array $keys Primary keys to use for the query
+   * @param     PropelPDO $con an optional connection object
+   *
+   * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
+   */
+  public function findPks($keys, $con = null)
+  {
+    if ($con === null)
+    {
+      $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+    }
+    $this->basePreSelect($con);
+    $criteria = $this->isKeepQuery() ? clone $this : $this;
+    $stmt = $criteria
+      ->filterByPrimaryKeys($keys)
+      ->doSelect($con);
+    return $criteria->getFormatter()->init($criteria)->format($stmt);
+  }
+
+  /**
+   * Filter the query by primary key
+   *
+   * @param     mixed $key Primary key to use for the query
+   *
+   * @return    CollectionCategoryFieldQuery The current query, for fluid interface
+   */
+  public function filterByPrimaryKey($key)
+  {
+    return $this->addUsingAlias(CollectionCategoryFieldPeer::ID, $key, Criteria::EQUAL);
+  }
+
+  /**
+   * Filter the query by a list of primary keys
+   *
+   * @param     array $keys The list of primary key to use for the query
+   *
+   * @return    CollectionCategoryFieldQuery The current query, for fluid interface
+   */
+  public function filterByPrimaryKeys($keys)
+  {
+    return $this->addUsingAlias(CollectionCategoryFieldPeer::ID, $keys, Criteria::IN);
+  }
+
+  /**
+   * Filter the query on the id column
+   *
+   * Example usage:
+   * <code>
+   * $query->filterById(1234); // WHERE id = 1234
+   * $query->filterById(array(12, 34)); // WHERE id IN (12, 34)
+   * $query->filterById(array('min' => 12)); // WHERE id > 12
+   * </code>
+   *
+   * @param     mixed $id The value to use as filter.
+   *              Use scalar values for equality.
+   *              Use array values for in_array() equivalent.
+   *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    CollectionCategoryFieldQuery The current query, for fluid interface
+   */
+  public function filterById($id = null, $comparison = null)
+  {
+    if (is_array($id) && null === $comparison)
+    {
+      $comparison = Criteria::IN;
+    }
+    return $this->addUsingAlias(CollectionCategoryFieldPeer::ID, $id, $comparison);
+  }
+
+  /**
+   * Filter the query on the collection_category_id column
+   *
+   * Example usage:
+   * <code>
+   * $query->filterByCollectionCategoryId(1234); // WHERE collection_category_id = 1234
+   * $query->filterByCollectionCategoryId(array(12, 34)); // WHERE collection_category_id IN (12, 34)
+   * $query->filterByCollectionCategoryId(array('min' => 12)); // WHERE collection_category_id > 12
+   * </code>
+   *
+   * @see       filterByCollectionCategory()
+   *
+   * @param     mixed $collectionCategoryId The value to use as filter.
+   *              Use scalar values for equality.
+   *              Use array values for in_array() equivalent.
+   *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    CollectionCategoryFieldQuery The current query, for fluid interface
+   */
+  public function filterByCollectionCategoryId($collectionCategoryId = null, $comparison = null)
+  {
+    if (is_array($collectionCategoryId))
+    {
+      $useMinMax = false;
+      if (isset($collectionCategoryId['min']))
+      {
+        $this->addUsingAlias(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, $collectionCategoryId['min'], Criteria::GREATER_EQUAL);
+        $useMinMax = true;
+      }
+      if (isset($collectionCategoryId['max']))
+      {
+        $this->addUsingAlias(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, $collectionCategoryId['max'], Criteria::LESS_EQUAL);
+        $useMinMax = true;
+      }
+      if ($useMinMax)
+      {
         return $this;
+      }
+      if (null === $comparison)
+      {
+        $comparison = Criteria::IN;
+      }
     }
+    return $this->addUsingAlias(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, $collectionCategoryId, $comparison);
+  }
 
-    /**
-     * Use the CollectionCategory relation CollectionCategory object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return    CollectionCategoryQuery A secondary query class using the current class as primary query
-     */
-    public function useCollectionCategoryQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  /**
+   * Filter the query on the custom_field_id column
+   *
+   * Example usage:
+   * <code>
+   * $query->filterByCustomFieldId(1234); // WHERE custom_field_id = 1234
+   * $query->filterByCustomFieldId(array(12, 34)); // WHERE custom_field_id IN (12, 34)
+   * $query->filterByCustomFieldId(array('min' => 12)); // WHERE custom_field_id > 12
+   * </code>
+   *
+   * @see       filterByCustomField()
+   *
+   * @param     mixed $customFieldId The value to use as filter.
+   *              Use scalar values for equality.
+   *              Use array values for in_array() equivalent.
+   *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    CollectionCategoryFieldQuery The current query, for fluid interface
+   */
+  public function filterByCustomFieldId($customFieldId = null, $comparison = null)
+  {
+    if (is_array($customFieldId))
     {
-        return $this
-            ->joinCollectionCategory($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'CollectionCategory', 'CollectionCategoryQuery');
-    }
-
-    /**
-     * Filter the query by a related CustomField object
-     *
-     * @param     CustomField|PropelCollection $customField The related object(s) to use as filter
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    CollectionCategoryFieldQuery The current query, for fluid interface
-     */
-    public function filterByCustomField($customField, $comparison = null)
-    {
-        if ($customField instanceof CustomField) {
-            return $this
-                ->addUsingAlias(CollectionCategoryFieldPeer::CUSTOM_FIELD_ID, $customField->getId(), $comparison);
-        } elseif ($customField instanceof PropelCollection) {
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-            return $this
-                ->addUsingAlias(CollectionCategoryFieldPeer::CUSTOM_FIELD_ID, $customField->toKeyValue('PrimaryKey', 'Id'), $comparison);
-        } else {
-            throw new PropelException('filterByCustomField() only accepts arguments of type CustomField or PropelCollection');
-        }
-    }
-
-    /**
-     * Adds a JOIN clause to the query using the CustomField relation
-     *
-     * @param     string $relationAlias optional alias for the relation
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return    CollectionCategoryFieldQuery The current query, for fluid interface
-     */
-    public function joinCustomField($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
-    {
-        $tableMap = $this->getTableMap();
-        $relationMap = $tableMap->getRelation('CustomField');
-
-        // create a ModelJoin object for this join
-        $join = new ModelJoin();
-        $join->setJoinType($joinType);
-        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
-        if ($previousJoin = $this->getPreviousJoin()) {
-            $join->setPreviousJoin($previousJoin);
-        }
-
-        // add the ModelJoin to the current object
-        if($relationAlias) {
-            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
-            $this->addJoinObject($join, $relationAlias);
-        } else {
-            $this->addJoinObject($join, 'CustomField');
-        }
-
+      $useMinMax = false;
+      if (isset($customFieldId['min']))
+      {
+        $this->addUsingAlias(CollectionCategoryFieldPeer::CUSTOM_FIELD_ID, $customFieldId['min'], Criteria::GREATER_EQUAL);
+        $useMinMax = true;
+      }
+      if (isset($customFieldId['max']))
+      {
+        $this->addUsingAlias(CollectionCategoryFieldPeer::CUSTOM_FIELD_ID, $customFieldId['max'], Criteria::LESS_EQUAL);
+        $useMinMax = true;
+      }
+      if ($useMinMax)
+      {
         return $this;
+      }
+      if (null === $comparison)
+      {
+        $comparison = Criteria::IN;
+      }
     }
+    return $this->addUsingAlias(CollectionCategoryFieldPeer::CUSTOM_FIELD_ID, $customFieldId, $comparison);
+  }
 
-    /**
-     * Use the CustomField relation CustomField object
-     *
-     * @see       useQuery()
-     *
-     * @param     string $relationAlias optional alias for the relation,
-     *                                   to be used as main alias in the secondary query
-     * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
-     *
-     * @return    CustomFieldQuery A secondary query class using the current class as primary query
-     */
-    public function useCustomFieldQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+  /**
+   * Filter the query by a related CollectionCategory object
+   *
+   * @param     CollectionCategory|PropelCollection $collectionCategory The related object(s) to use as filter
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    CollectionCategoryFieldQuery The current query, for fluid interface
+   */
+  public function filterByCollectionCategory($collectionCategory, $comparison = null)
+  {
+    if ($collectionCategory instanceof CollectionCategory)
     {
-        return $this
-            ->joinCustomField($relationAlias, $joinType)
-            ->useQuery($relationAlias ? $relationAlias : 'CustomField', 'CustomFieldQuery');
+      return $this
+        ->addUsingAlias(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, $collectionCategory->getId(), $comparison);
     }
-
-    /**
-     * Exclude object from result
-     *
-     * @param     CollectionCategoryField $collectionCategoryField Object to remove from the list of results
-     *
-     * @return    CollectionCategoryFieldQuery The current query, for fluid interface
-     */
-    public function prune($collectionCategoryField = null)
+    elseif ($collectionCategory instanceof PropelCollection)
     {
-        if ($collectionCategoryField) {
-            $this->addUsingAlias(CollectionCategoryFieldPeer::ID, $collectionCategoryField->getId(), Criteria::NOT_EQUAL);
-        }
-
-        return $this;
+      if (null === $comparison)
+      {
+        $comparison = Criteria::IN;
+      }
+      return $this
+        ->addUsingAlias(CollectionCategoryFieldPeer::COLLECTION_CATEGORY_ID, $collectionCategory->toKeyValue('PrimaryKey', 'Id'), $comparison);
     }
+    else
+    {
+      throw new PropelException('filterByCollectionCategory() only accepts arguments of type CollectionCategory or PropelCollection');
+    }
+  }
+
+  /**
+   * Adds a JOIN clause to the query using the CollectionCategory relation
+   *
+   * @param     string $relationAlias optional alias for the relation
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    CollectionCategoryFieldQuery The current query, for fluid interface
+   */
+  public function joinCollectionCategory($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    $tableMap = $this->getTableMap();
+    $relationMap = $tableMap->getRelation('CollectionCategory');
+
+    // create a ModelJoin object for this join
+    $join = new ModelJoin();
+    $join->setJoinType($joinType);
+    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+    if ($previousJoin = $this->getPreviousJoin())
+    {
+      $join->setPreviousJoin($previousJoin);
+    }
+
+    // add the ModelJoin to the current object
+    if($relationAlias)
+    {
+      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+      $this->addJoinObject($join, $relationAlias);
+    }
+    else
+    {
+      $this->addJoinObject($join, 'CollectionCategory');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Use the CollectionCategory relation CollectionCategory object
+   *
+   * @see       useQuery()
+   *
+   * @param     string $relationAlias optional alias for the relation,
+   *                                   to be used as main alias in the secondary query
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    CollectionCategoryQuery A secondary query class using the current class as primary query
+   */
+  public function useCollectionCategoryQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    return $this
+      ->joinCollectionCategory($relationAlias, $joinType)
+      ->useQuery($relationAlias ? $relationAlias : 'CollectionCategory', 'CollectionCategoryQuery');
+  }
+
+  /**
+   * Filter the query by a related CustomField object
+   *
+   * @param     CustomField|PropelCollection $customField The related object(s) to use as filter
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    CollectionCategoryFieldQuery The current query, for fluid interface
+   */
+  public function filterByCustomField($customField, $comparison = null)
+  {
+    if ($customField instanceof CustomField)
+    {
+      return $this
+        ->addUsingAlias(CollectionCategoryFieldPeer::CUSTOM_FIELD_ID, $customField->getId(), $comparison);
+    }
+    elseif ($customField instanceof PropelCollection)
+    {
+      if (null === $comparison)
+      {
+        $comparison = Criteria::IN;
+      }
+      return $this
+        ->addUsingAlias(CollectionCategoryFieldPeer::CUSTOM_FIELD_ID, $customField->toKeyValue('PrimaryKey', 'Id'), $comparison);
+    }
+    else
+    {
+      throw new PropelException('filterByCustomField() only accepts arguments of type CustomField or PropelCollection');
+    }
+  }
+
+  /**
+   * Adds a JOIN clause to the query using the CustomField relation
+   *
+   * @param     string $relationAlias optional alias for the relation
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    CollectionCategoryFieldQuery The current query, for fluid interface
+   */
+  public function joinCustomField($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+  {
+    $tableMap = $this->getTableMap();
+    $relationMap = $tableMap->getRelation('CustomField');
+
+    // create a ModelJoin object for this join
+    $join = new ModelJoin();
+    $join->setJoinType($joinType);
+    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+    if ($previousJoin = $this->getPreviousJoin())
+    {
+      $join->setPreviousJoin($previousJoin);
+    }
+
+    // add the ModelJoin to the current object
+    if($relationAlias)
+    {
+      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+      $this->addJoinObject($join, $relationAlias);
+    }
+    else
+    {
+      $this->addJoinObject($join, 'CustomField');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Use the CustomField relation CustomField object
+   *
+   * @see       useQuery()
+   *
+   * @param     string $relationAlias optional alias for the relation,
+   *                                   to be used as main alias in the secondary query
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    CustomFieldQuery A secondary query class using the current class as primary query
+   */
+  public function useCustomFieldQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+  {
+    return $this
+      ->joinCustomField($relationAlias, $joinType)
+      ->useQuery($relationAlias ? $relationAlias : 'CustomField', 'CustomFieldQuery');
+  }
+
+  /**
+   * Exclude object from result
+   *
+   * @param     CollectionCategoryField $collectionCategoryField Object to remove from the list of results
+   *
+   * @return    CollectionCategoryFieldQuery The current query, for fluid interface
+   */
+  public function prune($collectionCategoryField = null)
+  {
+    if ($collectionCategoryField)
+    {
+      $this->addUsingAlias(CollectionCategoryFieldPeer::ID, $collectionCategoryField->getId(), Criteria::NOT_EQUAL);
+    }
+
+    return $this;
+  }
 
 }

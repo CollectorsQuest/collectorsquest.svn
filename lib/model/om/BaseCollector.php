@@ -25,6 +25,12 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -281,6 +287,90 @@ abstract class BaseCollector extends BaseObject  implements Persistent
 
   // archivable behavior
   protected $archiveOnDelete = true;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectionItemOffersScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectorProfilesScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectorEmailsScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectorIdentifiersScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectorInterviewsScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectorGeocachesScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectorFriendsRelatedByCollectorIdScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectorFriendsRelatedByFriendIdScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectionsScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectiblesScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectibleOffersScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $commentsScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $packageTransactionsScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $promotionTransactionsScheduledForDeletion = null;
 
   /**
    * Applies default values to this object.
@@ -1601,7 +1691,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1697,7 +1787,7 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1722,33 +1812,30 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     {
       $this->alreadyInSave = true;
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = CollectorPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(CollectorPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CollectorPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = CollectorPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
+        $affectedRows += 1;
+        $this->resetModified();
+      }
 
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+      if ($this->collectionItemOffersScheduledForDeletion !== null)
+      {
+        if (!$this->collectionItemOffersScheduledForDeletion->isEmpty())
+        {
+          CollectionItemOfferQuery::create()
+            ->filterByPrimaryKeys($this->collectionItemOffersScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectionItemOffersScheduledForDeletion = null;
+        }
       }
 
       if ($this->collCollectionItemOffers !== null)
@@ -1759,6 +1846,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
           {
             $affectedRows += $referrerFK->save($con);
           }
+        }
+      }
+
+      if ($this->collectorProfilesScheduledForDeletion !== null)
+      {
+        if (!$this->collectorProfilesScheduledForDeletion->isEmpty())
+        {
+          CollectorProfileQuery::create()
+            ->filterByPrimaryKeys($this->collectorProfilesScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectorProfilesScheduledForDeletion = null;
         }
       }
 
@@ -1773,6 +1871,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         }
       }
 
+      if ($this->collectorEmailsScheduledForDeletion !== null)
+      {
+        if (!$this->collectorEmailsScheduledForDeletion->isEmpty())
+        {
+          CollectorEmailQuery::create()
+            ->filterByPrimaryKeys($this->collectorEmailsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectorEmailsScheduledForDeletion = null;
+        }
+      }
+
       if ($this->collCollectorEmails !== null)
       {
         foreach ($this->collCollectorEmails as $referrerFK)
@@ -1781,6 +1890,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
           {
             $affectedRows += $referrerFK->save($con);
           }
+        }
+      }
+
+      if ($this->collectorIdentifiersScheduledForDeletion !== null)
+      {
+        if (!$this->collectorIdentifiersScheduledForDeletion->isEmpty())
+        {
+          CollectorIdentifierQuery::create()
+            ->filterByPrimaryKeys($this->collectorIdentifiersScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectorIdentifiersScheduledForDeletion = null;
         }
       }
 
@@ -1795,6 +1915,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         }
       }
 
+      if ($this->collectorInterviewsScheduledForDeletion !== null)
+      {
+        if (!$this->collectorInterviewsScheduledForDeletion->isEmpty())
+        {
+          CollectorInterviewQuery::create()
+            ->filterByPrimaryKeys($this->collectorInterviewsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectorInterviewsScheduledForDeletion = null;
+        }
+      }
+
       if ($this->collCollectorInterviews !== null)
       {
         foreach ($this->collCollectorInterviews as $referrerFK)
@@ -1803,6 +1934,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
           {
             $affectedRows += $referrerFK->save($con);
           }
+        }
+      }
+
+      if ($this->collectorGeocachesScheduledForDeletion !== null)
+      {
+        if (!$this->collectorGeocachesScheduledForDeletion->isEmpty())
+        {
+          CollectorGeocacheQuery::create()
+            ->filterByPrimaryKeys($this->collectorGeocachesScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectorGeocachesScheduledForDeletion = null;
         }
       }
 
@@ -1817,6 +1959,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         }
       }
 
+      if ($this->collectorFriendsRelatedByCollectorIdScheduledForDeletion !== null)
+      {
+        if (!$this->collectorFriendsRelatedByCollectorIdScheduledForDeletion->isEmpty())
+        {
+          CollectorFriendQuery::create()
+            ->filterByPrimaryKeys($this->collectorFriendsRelatedByCollectorIdScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectorFriendsRelatedByCollectorIdScheduledForDeletion = null;
+        }
+      }
+
       if ($this->collCollectorFriendsRelatedByCollectorId !== null)
       {
         foreach ($this->collCollectorFriendsRelatedByCollectorId as $referrerFK)
@@ -1825,6 +1978,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
           {
             $affectedRows += $referrerFK->save($con);
           }
+        }
+      }
+
+      if ($this->collectorFriendsRelatedByFriendIdScheduledForDeletion !== null)
+      {
+        if (!$this->collectorFriendsRelatedByFriendIdScheduledForDeletion->isEmpty())
+        {
+          CollectorFriendQuery::create()
+            ->filterByPrimaryKeys($this->collectorFriendsRelatedByFriendIdScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectorFriendsRelatedByFriendIdScheduledForDeletion = null;
         }
       }
 
@@ -1839,6 +2003,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         }
       }
 
+      if ($this->collectionsScheduledForDeletion !== null)
+      {
+        if (!$this->collectionsScheduledForDeletion->isEmpty())
+        {
+          CollectionQuery::create()
+            ->filterByPrimaryKeys($this->collectionsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectionsScheduledForDeletion = null;
+        }
+      }
+
       if ($this->collCollections !== null)
       {
         foreach ($this->collCollections as $referrerFK)
@@ -1847,6 +2022,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
           {
             $affectedRows += $referrerFK->save($con);
           }
+        }
+      }
+
+      if ($this->collectiblesScheduledForDeletion !== null)
+      {
+        if (!$this->collectiblesScheduledForDeletion->isEmpty())
+        {
+          CollectibleQuery::create()
+            ->filterByPrimaryKeys($this->collectiblesScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectiblesScheduledForDeletion = null;
         }
       }
 
@@ -1861,6 +2047,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         }
       }
 
+      if ($this->collectibleOffersScheduledForDeletion !== null)
+      {
+        if (!$this->collectibleOffersScheduledForDeletion->isEmpty())
+        {
+          CollectibleOfferQuery::create()
+            ->filterByPrimaryKeys($this->collectibleOffersScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectibleOffersScheduledForDeletion = null;
+        }
+      }
+
       if ($this->collCollectibleOffers !== null)
       {
         foreach ($this->collCollectibleOffers as $referrerFK)
@@ -1869,6 +2066,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
           {
             $affectedRows += $referrerFK->save($con);
           }
+        }
+      }
+
+      if ($this->commentsScheduledForDeletion !== null)
+      {
+        if (!$this->commentsScheduledForDeletion->isEmpty())
+        {
+          CommentQuery::create()
+            ->filterByPrimaryKeys($this->commentsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->commentsScheduledForDeletion = null;
         }
       }
 
@@ -1883,6 +2091,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         }
       }
 
+      if ($this->packageTransactionsScheduledForDeletion !== null)
+      {
+        if (!$this->packageTransactionsScheduledForDeletion->isEmpty())
+        {
+          PackageTransactionQuery::create()
+            ->filterByPrimaryKeys($this->packageTransactionsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->packageTransactionsScheduledForDeletion = null;
+        }
+      }
+
       if ($this->collPackageTransactions !== null)
       {
         foreach ($this->collPackageTransactions as $referrerFK)
@@ -1891,6 +2110,17 @@ abstract class BaseCollector extends BaseObject  implements Persistent
           {
             $affectedRows += $referrerFK->save($con);
           }
+        }
+      }
+
+      if ($this->promotionTransactionsScheduledForDeletion !== null)
+      {
+        if (!$this->promotionTransactionsScheduledForDeletion->isEmpty())
+        {
+          PromotionTransactionQuery::create()
+            ->filterByPrimaryKeys($this->promotionTransactionsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->promotionTransactionsScheduledForDeletion = null;
         }
       }
 
@@ -1909,6 +2139,266 @@ abstract class BaseCollector extends BaseObject  implements Persistent
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = CollectorPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . CollectorPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CollectorPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CollectorPeer::GRAPH_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`GRAPH_ID`';
+    }
+    if ($this->isColumnModified(CollectorPeer::FACEBOOK_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`FACEBOOK_ID`';
+    }
+    if ($this->isColumnModified(CollectorPeer::USERNAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`USERNAME`';
+    }
+    if ($this->isColumnModified(CollectorPeer::DISPLAY_NAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`DISPLAY_NAME`';
+    }
+    if ($this->isColumnModified(CollectorPeer::SLUG))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SLUG`';
+    }
+    if ($this->isColumnModified(CollectorPeer::SHA1_PASSWORD))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SHA1_PASSWORD`';
+    }
+    if ($this->isColumnModified(CollectorPeer::SALT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SALT`';
+    }
+    if ($this->isColumnModified(CollectorPeer::EMAIL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`EMAIL`';
+    }
+    if ($this->isColumnModified(CollectorPeer::USER_TYPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`USER_TYPE`';
+    }
+    if ($this->isColumnModified(CollectorPeer::ITEMS_ALLOWED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ITEMS_ALLOWED`';
+    }
+    if ($this->isColumnModified(CollectorPeer::WHAT_YOU_COLLECT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`WHAT_YOU_COLLECT`';
+    }
+    if ($this->isColumnModified(CollectorPeer::PURCHASES_PER_YEAR))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PURCHASES_PER_YEAR`';
+    }
+    if ($this->isColumnModified(CollectorPeer::WHAT_YOU_SELL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`WHAT_YOU_SELL`';
+    }
+    if ($this->isColumnModified(CollectorPeer::ANNUALLY_SPEND))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ANNUALLY_SPEND`';
+    }
+    if ($this->isColumnModified(CollectorPeer::MOST_EXPENSIVE_ITEM))
+    {
+      $modifiedColumns[':p' . $index++]  = '`MOST_EXPENSIVE_ITEM`';
+    }
+    if ($this->isColumnModified(CollectorPeer::COMPANY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COMPANY`';
+    }
+    if ($this->isColumnModified(CollectorPeer::LOCALE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`LOCALE`';
+    }
+    if ($this->isColumnModified(CollectorPeer::SCORE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SCORE`';
+    }
+    if ($this->isColumnModified(CollectorPeer::SPAM_SCORE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SPAM_SCORE`';
+    }
+    if ($this->isColumnModified(CollectorPeer::IS_SPAM))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_SPAM`';
+    }
+    if ($this->isColumnModified(CollectorPeer::IS_PUBLIC))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_PUBLIC`';
+    }
+    if ($this->isColumnModified(CollectorPeer::SESSION_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SESSION_ID`';
+    }
+    if ($this->isColumnModified(CollectorPeer::LAST_SEEN_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`LAST_SEEN_AT`';
+    }
+    if ($this->isColumnModified(CollectorPeer::EBLOB))
+    {
+      $modifiedColumns[':p' . $index++]  = '`EBLOB`';
+    }
+    if ($this->isColumnModified(CollectorPeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(CollectorPeer::UPDATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `collector` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`GRAPH_ID`':
+            $stmt->bindValue($identifier, $this->graph_id, PDO::PARAM_INT);
+            break;
+          case '`FACEBOOK_ID`':
+            $stmt->bindValue($identifier, $this->facebook_id, PDO::PARAM_STR);
+            break;
+          case '`USERNAME`':
+            $stmt->bindValue($identifier, $this->username, PDO::PARAM_STR);
+            break;
+          case '`DISPLAY_NAME`':
+            $stmt->bindValue($identifier, $this->display_name, PDO::PARAM_STR);
+            break;
+          case '`SLUG`':
+            $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
+            break;
+          case '`SHA1_PASSWORD`':
+            $stmt->bindValue($identifier, $this->sha1_password, PDO::PARAM_STR);
+            break;
+          case '`SALT`':
+            $stmt->bindValue($identifier, $this->salt, PDO::PARAM_STR);
+            break;
+          case '`EMAIL`':
+            $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
+            break;
+          case '`USER_TYPE`':
+            $stmt->bindValue($identifier, $this->user_type, PDO::PARAM_STR);
+            break;
+          case '`ITEMS_ALLOWED`':
+            $stmt->bindValue($identifier, $this->items_allowed, PDO::PARAM_INT);
+            break;
+          case '`WHAT_YOU_COLLECT`':
+            $stmt->bindValue($identifier, $this->what_you_collect, PDO::PARAM_STR);
+            break;
+          case '`PURCHASES_PER_YEAR`':
+            $stmt->bindValue($identifier, $this->purchases_per_year, PDO::PARAM_INT);
+            break;
+          case '`WHAT_YOU_SELL`':
+            $stmt->bindValue($identifier, $this->what_you_sell, PDO::PARAM_STR);
+            break;
+          case '`ANNUALLY_SPEND`':
+            $stmt->bindValue($identifier, $this->annually_spend, PDO::PARAM_STR);
+            break;
+          case '`MOST_EXPENSIVE_ITEM`':
+            $stmt->bindValue($identifier, $this->most_expensive_item, PDO::PARAM_STR);
+            break;
+          case '`COMPANY`':
+            $stmt->bindValue($identifier, $this->company, PDO::PARAM_STR);
+            break;
+          case '`LOCALE`':
+            $stmt->bindValue($identifier, $this->locale, PDO::PARAM_STR);
+            break;
+          case '`SCORE`':
+            $stmt->bindValue($identifier, $this->score, PDO::PARAM_INT);
+            break;
+          case '`SPAM_SCORE`':
+            $stmt->bindValue($identifier, $this->spam_score, PDO::PARAM_INT);
+            break;
+          case '`IS_SPAM`':
+            $stmt->bindValue($identifier, (int) $this->is_spam, PDO::PARAM_INT);
+            break;
+          case '`IS_PUBLIC`':
+            $stmt->bindValue($identifier, (int) $this->is_public, PDO::PARAM_INT);
+            break;
+          case '`SESSION_ID`':
+            $stmt->bindValue($identifier, $this->session_id, PDO::PARAM_STR);
+            break;
+          case '`LAST_SEEN_AT`':
+            $stmt->bindValue($identifier, $this->last_seen_at, PDO::PARAM_STR);
+            break;
+          case '`EBLOB`':
+            $stmt->bindValue($identifier, $this->eblob, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`UPDATED_AT`':
+            $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -2657,11 +3147,13 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
 
-    if ($deepCopy)
+    if ($deepCopy && !$this->startCopy)
     {
       // important: temporarily setNew(false) because this affects the behavior of
       // the getter/setter methods for fkey referrer objects.
       $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
 
       foreach ($this->getCollectionItemOffers() as $relObj)
       {
@@ -2761,6 +3253,8 @@ abstract class BaseCollector extends BaseObject  implements Persistent
         }
       }
 
+      //unflag object copy
+      $this->startCopy = false;
     }
 
     if ($makeNew)
@@ -2953,6 +3447,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectionItemOffer objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectionItemOffers A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectionItemOffers(PropelCollection $collectionItemOffers, PropelPDO $con = null)
+  {
+    $this->collectionItemOffersScheduledForDeletion = $this->getCollectionItemOffers(new Criteria(), $con)->diff($collectionItemOffers);
+
+    foreach ($collectionItemOffers as $collectionItemOffer)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectionItemOffer->isNew())
+      {
+        $collectionItemOffer->setCollector($this);
+      }
+      $this->addCollectionItemOffer($collectionItemOffer);
+    }
+
+    $this->collCollectionItemOffers = $collectionItemOffers;
+  }
+
+  /**
    * Returns the number of related CollectionItemOffer objects.
    *
    * @param      Criteria $criteria
@@ -3001,11 +3521,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initCollectionItemOffers();
     }
     if (!$this->collCollectionItemOffers->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectionItemOffers[]= $l;
-      $l->setCollector($this);
+      $this->doAddCollectionItemOffer($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectionItemOffer $collectionItemOffer The collectionItemOffer object to add.
+   */
+  protected function doAddCollectionItemOffer($collectionItemOffer)
+  {
+    $this->collCollectionItemOffers[]= $collectionItemOffer;
+    $collectionItemOffer->setCollector($this);
   }
 
 
@@ -3133,6 +3661,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectorProfile objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectorProfiles A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectorProfiles(PropelCollection $collectorProfiles, PropelPDO $con = null)
+  {
+    $this->collectorProfilesScheduledForDeletion = $this->getCollectorProfiles(new Criteria(), $con)->diff($collectorProfiles);
+
+    foreach ($collectorProfiles as $collectorProfile)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectorProfile->isNew())
+      {
+        $collectorProfile->setCollector($this);
+      }
+      $this->addCollectorProfile($collectorProfile);
+    }
+
+    $this->collCollectorProfiles = $collectorProfiles;
+  }
+
+  /**
    * Returns the number of related CollectorProfile objects.
    *
    * @param      Criteria $criteria
@@ -3181,11 +3735,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initCollectorProfiles();
     }
     if (!$this->collCollectorProfiles->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectorProfiles[]= $l;
-      $l->setCollector($this);
+      $this->doAddCollectorProfile($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectorProfile $collectorProfile The collectorProfile object to add.
+   */
+  protected function doAddCollectorProfile($collectorProfile)
+  {
+    $this->collCollectorProfiles[]= $collectorProfile;
+    $collectorProfile->setCollector($this);
   }
 
   /**
@@ -3263,6 +3825,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectorEmail objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectorEmails A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectorEmails(PropelCollection $collectorEmails, PropelPDO $con = null)
+  {
+    $this->collectorEmailsScheduledForDeletion = $this->getCollectorEmails(new Criteria(), $con)->diff($collectorEmails);
+
+    foreach ($collectorEmails as $collectorEmail)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectorEmail->isNew())
+      {
+        $collectorEmail->setCollector($this);
+      }
+      $this->addCollectorEmail($collectorEmail);
+    }
+
+    $this->collCollectorEmails = $collectorEmails;
+  }
+
+  /**
    * Returns the number of related CollectorEmail objects.
    *
    * @param      Criteria $criteria
@@ -3311,11 +3899,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initCollectorEmails();
     }
     if (!$this->collCollectorEmails->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectorEmails[]= $l;
-      $l->setCollector($this);
+      $this->doAddCollectorEmail($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectorEmail $collectorEmail The collectorEmail object to add.
+   */
+  protected function doAddCollectorEmail($collectorEmail)
+  {
+    $this->collCollectorEmails[]= $collectorEmail;
+    $collectorEmail->setCollector($this);
   }
 
   /**
@@ -3393,6 +3989,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectorIdentifier objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectorIdentifiers A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectorIdentifiers(PropelCollection $collectorIdentifiers, PropelPDO $con = null)
+  {
+    $this->collectorIdentifiersScheduledForDeletion = $this->getCollectorIdentifiers(new Criteria(), $con)->diff($collectorIdentifiers);
+
+    foreach ($collectorIdentifiers as $collectorIdentifier)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectorIdentifier->isNew())
+      {
+        $collectorIdentifier->setCollector($this);
+      }
+      $this->addCollectorIdentifier($collectorIdentifier);
+    }
+
+    $this->collCollectorIdentifiers = $collectorIdentifiers;
+  }
+
+  /**
    * Returns the number of related CollectorIdentifier objects.
    *
    * @param      Criteria $criteria
@@ -3441,11 +4063,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initCollectorIdentifiers();
     }
     if (!$this->collCollectorIdentifiers->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectorIdentifiers[]= $l;
-      $l->setCollector($this);
+      $this->doAddCollectorIdentifier($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectorIdentifier $collectorIdentifier The collectorIdentifier object to add.
+   */
+  protected function doAddCollectorIdentifier($collectorIdentifier)
+  {
+    $this->collCollectorIdentifiers[]= $collectorIdentifier;
+    $collectorIdentifier->setCollector($this);
   }
 
   /**
@@ -3523,6 +4153,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectorInterview objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectorInterviews A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectorInterviews(PropelCollection $collectorInterviews, PropelPDO $con = null)
+  {
+    $this->collectorInterviewsScheduledForDeletion = $this->getCollectorInterviews(new Criteria(), $con)->diff($collectorInterviews);
+
+    foreach ($collectorInterviews as $collectorInterview)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectorInterview->isNew())
+      {
+        $collectorInterview->setCollector($this);
+      }
+      $this->addCollectorInterview($collectorInterview);
+    }
+
+    $this->collCollectorInterviews = $collectorInterviews;
+  }
+
+  /**
    * Returns the number of related CollectorInterview objects.
    *
    * @param      Criteria $criteria
@@ -3571,11 +4227,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initCollectorInterviews();
     }
     if (!$this->collCollectorInterviews->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectorInterviews[]= $l;
-      $l->setCollector($this);
+      $this->doAddCollectorInterview($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectorInterview $collectorInterview The collectorInterview object to add.
+   */
+  protected function doAddCollectorInterview($collectorInterview)
+  {
+    $this->collCollectorInterviews[]= $collectorInterview;
+    $collectorInterview->setCollector($this);
   }
 
 
@@ -3703,6 +4367,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectorGeocache objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectorGeocaches A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectorGeocaches(PropelCollection $collectorGeocaches, PropelPDO $con = null)
+  {
+    $this->collectorGeocachesScheduledForDeletion = $this->getCollectorGeocaches(new Criteria(), $con)->diff($collectorGeocaches);
+
+    foreach ($collectorGeocaches as $collectorGeocache)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectorGeocache->isNew())
+      {
+        $collectorGeocache->setCollector($this);
+      }
+      $this->addCollectorGeocache($collectorGeocache);
+    }
+
+    $this->collCollectorGeocaches = $collectorGeocaches;
+  }
+
+  /**
    * Returns the number of related CollectorGeocache objects.
    *
    * @param      Criteria $criteria
@@ -3751,11 +4441,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initCollectorGeocaches();
     }
     if (!$this->collCollectorGeocaches->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectorGeocaches[]= $l;
-      $l->setCollector($this);
+      $this->doAddCollectorGeocache($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectorGeocache $collectorGeocache The collectorGeocache object to add.
+   */
+  protected function doAddCollectorGeocache($collectorGeocache)
+  {
+    $this->collCollectorGeocaches[]= $collectorGeocache;
+    $collectorGeocache->setCollector($this);
   }
 
   /**
@@ -3833,6 +4531,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectorFriendRelatedByCollectorId objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectorFriendsRelatedByCollectorId A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectorFriendsRelatedByCollectorId(PropelCollection $collectorFriendsRelatedByCollectorId, PropelPDO $con = null)
+  {
+    $this->collectorFriendsRelatedByCollectorIdScheduledForDeletion = $this->getCollectorFriendsRelatedByCollectorId(new Criteria(), $con)->diff($collectorFriendsRelatedByCollectorId);
+
+    foreach ($collectorFriendsRelatedByCollectorId as $collectorFriendRelatedByCollectorId)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectorFriendRelatedByCollectorId->isNew())
+      {
+        $collectorFriendRelatedByCollectorId->setCollectorRelatedByCollectorId($this);
+      }
+      $this->addCollectorFriendRelatedByCollectorId($collectorFriendRelatedByCollectorId);
+    }
+
+    $this->collCollectorFriendsRelatedByCollectorId = $collectorFriendsRelatedByCollectorId;
+  }
+
+  /**
    * Returns the number of related CollectorFriend objects.
    *
    * @param      Criteria $criteria
@@ -3881,11 +4605,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initCollectorFriendsRelatedByCollectorId();
     }
     if (!$this->collCollectorFriendsRelatedByCollectorId->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectorFriendsRelatedByCollectorId[]= $l;
-      $l->setCollectorRelatedByCollectorId($this);
+      $this->doAddCollectorFriendRelatedByCollectorId($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectorFriendRelatedByCollectorId $collectorFriendRelatedByCollectorId The collectorFriendRelatedByCollectorId object to add.
+   */
+  protected function doAddCollectorFriendRelatedByCollectorId($collectorFriendRelatedByCollectorId)
+  {
+    $this->collCollectorFriendsRelatedByCollectorId[]= $collectorFriendRelatedByCollectorId;
+    $collectorFriendRelatedByCollectorId->setCollectorRelatedByCollectorId($this);
   }
 
   /**
@@ -3963,6 +4695,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectorFriendRelatedByFriendId objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectorFriendsRelatedByFriendId A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectorFriendsRelatedByFriendId(PropelCollection $collectorFriendsRelatedByFriendId, PropelPDO $con = null)
+  {
+    $this->collectorFriendsRelatedByFriendIdScheduledForDeletion = $this->getCollectorFriendsRelatedByFriendId(new Criteria(), $con)->diff($collectorFriendsRelatedByFriendId);
+
+    foreach ($collectorFriendsRelatedByFriendId as $collectorFriendRelatedByFriendId)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectorFriendRelatedByFriendId->isNew())
+      {
+        $collectorFriendRelatedByFriendId->setCollectorRelatedByFriendId($this);
+      }
+      $this->addCollectorFriendRelatedByFriendId($collectorFriendRelatedByFriendId);
+    }
+
+    $this->collCollectorFriendsRelatedByFriendId = $collectorFriendsRelatedByFriendId;
+  }
+
+  /**
    * Returns the number of related CollectorFriend objects.
    *
    * @param      Criteria $criteria
@@ -4011,11 +4769,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initCollectorFriendsRelatedByFriendId();
     }
     if (!$this->collCollectorFriendsRelatedByFriendId->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectorFriendsRelatedByFriendId[]= $l;
-      $l->setCollectorRelatedByFriendId($this);
+      $this->doAddCollectorFriendRelatedByFriendId($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectorFriendRelatedByFriendId $collectorFriendRelatedByFriendId The collectorFriendRelatedByFriendId object to add.
+   */
+  protected function doAddCollectorFriendRelatedByFriendId($collectorFriendRelatedByFriendId)
+  {
+    $this->collCollectorFriendsRelatedByFriendId[]= $collectorFriendRelatedByFriendId;
+    $collectorFriendRelatedByFriendId->setCollectorRelatedByFriendId($this);
   }
 
   /**
@@ -4093,6 +4859,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of Collection objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collections A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollections(PropelCollection $collections, PropelPDO $con = null)
+  {
+    $this->collectionsScheduledForDeletion = $this->getCollections(new Criteria(), $con)->diff($collections);
+
+    foreach ($collections as $collection)
+    {
+      // Fix issue with collection modified by reference
+      if ($collection->isNew())
+      {
+        $collection->setCollector($this);
+      }
+      $this->addCollection($collection);
+    }
+
+    $this->collCollections = $collections;
+  }
+
+  /**
    * Returns the number of related Collection objects.
    *
    * @param      Criteria $criteria
@@ -4141,11 +4933,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initCollections();
     }
     if (!$this->collCollections->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollections[]= $l;
-      $l->setCollector($this);
+      $this->doAddCollection($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  Collection $collection The collection object to add.
+   */
+  protected function doAddCollection($collection)
+  {
+    $this->collCollections[]= $collection;
+    $collection->setCollector($this);
   }
 
 
@@ -4248,6 +5048,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of Collectible objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectibles A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectibles(PropelCollection $collectibles, PropelPDO $con = null)
+  {
+    $this->collectiblesScheduledForDeletion = $this->getCollectibles(new Criteria(), $con)->diff($collectibles);
+
+    foreach ($collectibles as $collectible)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectible->isNew())
+      {
+        $collectible->setCollector($this);
+      }
+      $this->addCollectible($collectible);
+    }
+
+    $this->collCollectibles = $collectibles;
+  }
+
+  /**
    * Returns the number of related Collectible objects.
    *
    * @param      Criteria $criteria
@@ -4296,11 +5122,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initCollectibles();
     }
     if (!$this->collCollectibles->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectibles[]= $l;
-      $l->setCollector($this);
+      $this->doAddCollectible($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  Collectible $collectible The collectible object to add.
+   */
+  protected function doAddCollectible($collectible)
+  {
+    $this->collCollectibles[]= $collectible;
+    $collectible->setCollector($this);
   }
 
 
@@ -4403,6 +5237,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectibleOffer objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectibleOffers A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectibleOffers(PropelCollection $collectibleOffers, PropelPDO $con = null)
+  {
+    $this->collectibleOffersScheduledForDeletion = $this->getCollectibleOffers(new Criteria(), $con)->diff($collectibleOffers);
+
+    foreach ($collectibleOffers as $collectibleOffer)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectibleOffer->isNew())
+      {
+        $collectibleOffer->setCollector($this);
+      }
+      $this->addCollectibleOffer($collectibleOffer);
+    }
+
+    $this->collCollectibleOffers = $collectibleOffers;
+  }
+
+  /**
    * Returns the number of related CollectibleOffer objects.
    *
    * @param      Criteria $criteria
@@ -4451,11 +5311,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initCollectibleOffers();
     }
     if (!$this->collCollectibleOffers->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectibleOffers[]= $l;
-      $l->setCollector($this);
+      $this->doAddCollectibleOffer($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectibleOffer $collectibleOffer The collectibleOffer object to add.
+   */
+  protected function doAddCollectibleOffer($collectibleOffer)
+  {
+    $this->collCollectibleOffers[]= $collectibleOffer;
+    $collectibleOffer->setCollector($this);
   }
 
 
@@ -4583,6 +5451,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of Comment objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $comments A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setComments(PropelCollection $comments, PropelPDO $con = null)
+  {
+    $this->commentsScheduledForDeletion = $this->getComments(new Criteria(), $con)->diff($comments);
+
+    foreach ($comments as $comment)
+    {
+      // Fix issue with collection modified by reference
+      if ($comment->isNew())
+      {
+        $comment->setCollector($this);
+      }
+      $this->addComment($comment);
+    }
+
+    $this->collComments = $comments;
+  }
+
+  /**
    * Returns the number of related Comment objects.
    *
    * @param      Criteria $criteria
@@ -4631,11 +5525,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initComments();
     }
     if (!$this->collComments->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collComments[]= $l;
-      $l->setCollector($this);
+      $this->doAddComment($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  Comment $comment The comment object to add.
+   */
+  protected function doAddComment($comment)
+  {
+    $this->collComments[]= $comment;
+    $comment->setCollector($this);
   }
 
 
@@ -4763,6 +5665,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of PackageTransaction objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $packageTransactions A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setPackageTransactions(PropelCollection $packageTransactions, PropelPDO $con = null)
+  {
+    $this->packageTransactionsScheduledForDeletion = $this->getPackageTransactions(new Criteria(), $con)->diff($packageTransactions);
+
+    foreach ($packageTransactions as $packageTransaction)
+    {
+      // Fix issue with collection modified by reference
+      if ($packageTransaction->isNew())
+      {
+        $packageTransaction->setCollector($this);
+      }
+      $this->addPackageTransaction($packageTransaction);
+    }
+
+    $this->collPackageTransactions = $packageTransactions;
+  }
+
+  /**
    * Returns the number of related PackageTransaction objects.
    *
    * @param      Criteria $criteria
@@ -4811,11 +5739,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initPackageTransactions();
     }
     if (!$this->collPackageTransactions->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collPackageTransactions[]= $l;
-      $l->setCollector($this);
+      $this->doAddPackageTransaction($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  PackageTransaction $packageTransaction The packageTransaction object to add.
+   */
+  protected function doAddPackageTransaction($packageTransaction)
+  {
+    $this->collPackageTransactions[]= $packageTransaction;
+    $packageTransaction->setCollector($this);
   }
 
 
@@ -4918,6 +5854,32 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of PromotionTransaction objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $promotionTransactions A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setPromotionTransactions(PropelCollection $promotionTransactions, PropelPDO $con = null)
+  {
+    $this->promotionTransactionsScheduledForDeletion = $this->getPromotionTransactions(new Criteria(), $con)->diff($promotionTransactions);
+
+    foreach ($promotionTransactions as $promotionTransaction)
+    {
+      // Fix issue with collection modified by reference
+      if ($promotionTransaction->isNew())
+      {
+        $promotionTransaction->setCollector($this);
+      }
+      $this->addPromotionTransaction($promotionTransaction);
+    }
+
+    $this->collPromotionTransactions = $promotionTransactions;
+  }
+
+  /**
    * Returns the number of related PromotionTransaction objects.
    *
    * @param      Criteria $criteria
@@ -4966,11 +5928,19 @@ abstract class BaseCollector extends BaseObject  implements Persistent
       $this->initPromotionTransactions();
     }
     if (!$this->collPromotionTransactions->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collPromotionTransactions[]= $l;
-      $l->setCollector($this);
+      $this->doAddPromotionTransaction($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  PromotionTransaction $promotionTransaction The promotionTransaction object to add.
+   */
+  protected function doAddPromotionTransaction($promotionTransaction)
+  {
+    $this->collPromotionTransactions[]= $promotionTransaction;
+    $promotionTransaction->setCollector($this);
   }
 
 
@@ -5254,7 +6224,6 @@ abstract class BaseCollector extends BaseObject  implements Persistent
   
     return $archive;
   }
-  
   /**
    * Copy the data of the current object into a $archiveTablePhpName archive object.
    * The archived object is then saved.
@@ -5272,12 +6241,12 @@ abstract class BaseCollector extends BaseObject  implements Persistent
     if ($this->isNew()) {
       throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
     }
-    if (!$archive = $this->getArchive($con)) {
+    if (!$archive = $this->getArchive()) {
       $archive = new CollectorArchive();
       $archive->setPrimaryKey($this->getPrimaryKey());
     }
     $this->copyInto($archive, $deepCopy = false, $makeNew = false);
-    $archive->save($con);
+    $archive->save();
   
     return $archive;
   }

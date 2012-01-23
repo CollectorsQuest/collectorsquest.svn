@@ -52,7 +52,7 @@ class PromotionTransactionTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('Promotion', 'Promotion', RelationMap::MANY_TO_ONE, array('promotion_id' => 'id', ), 'CASCADE', null);
+    $this->addRelation('Promotion', 'Promotion', RelationMap::MANY_TO_ONE, array('promotion_id' => 'id', ), 'RESTRICT', null);
     $this->addRelation('Collector', 'Collector', RelationMap::MANY_TO_ONE, array('collector_id' => 'id', ), 'CASCADE', null);
   }
 

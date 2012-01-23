@@ -25,6 +25,12 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -89,6 +95,30 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
    * @var        boolean
    */
   protected $alreadyInValidation = false;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectorInterviewsScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectionsScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectionCategoryFieldsScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $videoCollectionCategorysScheduledForDeletion = null;
 
   /**
    * Applies default values to this object.
@@ -463,7 +493,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -545,7 +575,7 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -570,33 +600,30 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
     {
       $this->alreadyInSave = true;
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = CollectionCategoryPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(CollectionCategoryPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CollectionCategoryPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = CollectionCategoryPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
+        $affectedRows += 1;
+        $this->resetModified();
+      }
 
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+      if ($this->collectorInterviewsScheduledForDeletion !== null)
+      {
+        if (!$this->collectorInterviewsScheduledForDeletion->isEmpty())
+        {
+          CollectorInterviewQuery::create()
+            ->filterByPrimaryKeys($this->collectorInterviewsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectorInterviewsScheduledForDeletion = null;
+        }
       }
 
       if ($this->collCollectorInterviews !== null)
@@ -607,6 +634,17 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
           {
             $affectedRows += $referrerFK->save($con);
           }
+        }
+      }
+
+      if ($this->collectionsScheduledForDeletion !== null)
+      {
+        if (!$this->collectionsScheduledForDeletion->isEmpty())
+        {
+          CollectionQuery::create()
+            ->filterByPrimaryKeys($this->collectionsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectionsScheduledForDeletion = null;
         }
       }
 
@@ -621,6 +659,17 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
         }
       }
 
+      if ($this->collectionCategoryFieldsScheduledForDeletion !== null)
+      {
+        if (!$this->collectionCategoryFieldsScheduledForDeletion->isEmpty())
+        {
+          CollectionCategoryFieldQuery::create()
+            ->filterByPrimaryKeys($this->collectionCategoryFieldsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectionCategoryFieldsScheduledForDeletion = null;
+        }
+      }
+
       if ($this->collCollectionCategoryFields !== null)
       {
         foreach ($this->collCollectionCategoryFields as $referrerFK)
@@ -629,6 +678,17 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
           {
             $affectedRows += $referrerFK->save($con);
           }
+        }
+      }
+
+      if ($this->videoCollectionCategorysScheduledForDeletion !== null)
+      {
+        if (!$this->videoCollectionCategorysScheduledForDeletion->isEmpty())
+        {
+          VideoCollectionCategoryQuery::create()
+            ->filterByPrimaryKeys($this->videoCollectionCategorysScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->videoCollectionCategorysScheduledForDeletion = null;
         }
       }
 
@@ -647,6 +707,112 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = CollectionCategoryPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . CollectionCategoryPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CollectionCategoryPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CollectionCategoryPeer::PARENT_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PARENT_ID`';
+    }
+    if ($this->isColumnModified(CollectionCategoryPeer::NAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`NAME`';
+    }
+    if ($this->isColumnModified(CollectionCategoryPeer::SLUG))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SLUG`';
+    }
+    if ($this->isColumnModified(CollectionCategoryPeer::SCORE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SCORE`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `collection_category` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`PARENT_ID`':
+            $stmt->bindValue($identifier, $this->parent_id, PDO::PARAM_INT);
+            break;
+          case '`NAME`':
+            $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+            break;
+          case '`SLUG`':
+            $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
+            break;
+          case '`SCORE`':
+            $stmt->bindValue($identifier, $this->score, PDO::PARAM_INT);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1025,11 +1191,13 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
     $copyObj->setSlug($this->getSlug());
     $copyObj->setScore($this->getScore());
 
-    if ($deepCopy)
+    if ($deepCopy && !$this->startCopy)
     {
       // important: temporarily setNew(false) because this affects the behavior of
       // the getter/setter methods for fkey referrer objects.
       $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
 
       foreach ($this->getCollectorInterviews() as $relObj)
       {
@@ -1059,6 +1227,8 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
         }
       }
 
+      //unflag object copy
+      $this->startCopy = false;
     }
 
     if ($makeNew)
@@ -1211,6 +1381,32 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectorInterview objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectorInterviews A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectorInterviews(PropelCollection $collectorInterviews, PropelPDO $con = null)
+  {
+    $this->collectorInterviewsScheduledForDeletion = $this->getCollectorInterviews(new Criteria(), $con)->diff($collectorInterviews);
+
+    foreach ($collectorInterviews as $collectorInterview)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectorInterview->isNew())
+      {
+        $collectorInterview->setCollectionCategory($this);
+      }
+      $this->addCollectorInterview($collectorInterview);
+    }
+
+    $this->collCollectorInterviews = $collectorInterviews;
+  }
+
+  /**
    * Returns the number of related CollectorInterview objects.
    *
    * @param      Criteria $criteria
@@ -1259,11 +1455,19 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $this->initCollectorInterviews();
     }
     if (!$this->collCollectorInterviews->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectorInterviews[]= $l;
-      $l->setCollectionCategory($this);
+      $this->doAddCollectorInterview($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectorInterview $collectorInterview The collectorInterview object to add.
+   */
+  protected function doAddCollectorInterview($collectorInterview)
+  {
+    $this->collCollectorInterviews[]= $collectorInterview;
+    $collectorInterview->setCollectionCategory($this);
   }
 
 
@@ -1391,6 +1595,32 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of Collection objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collections A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollections(PropelCollection $collections, PropelPDO $con = null)
+  {
+    $this->collectionsScheduledForDeletion = $this->getCollections(new Criteria(), $con)->diff($collections);
+
+    foreach ($collections as $collection)
+    {
+      // Fix issue with collection modified by reference
+      if ($collection->isNew())
+      {
+        $collection->setCollectionCategory($this);
+      }
+      $this->addCollection($collection);
+    }
+
+    $this->collCollections = $collections;
+  }
+
+  /**
    * Returns the number of related Collection objects.
    *
    * @param      Criteria $criteria
@@ -1439,11 +1669,19 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $this->initCollections();
     }
     if (!$this->collCollections->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollections[]= $l;
-      $l->setCollectionCategory($this);
+      $this->doAddCollection($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  Collection $collection The collection object to add.
+   */
+  protected function doAddCollection($collection)
+  {
+    $this->collCollections[]= $collection;
+    $collection->setCollectionCategory($this);
   }
 
 
@@ -1546,6 +1784,32 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectionCategoryField objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectionCategoryFields A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectionCategoryFields(PropelCollection $collectionCategoryFields, PropelPDO $con = null)
+  {
+    $this->collectionCategoryFieldsScheduledForDeletion = $this->getCollectionCategoryFields(new Criteria(), $con)->diff($collectionCategoryFields);
+
+    foreach ($collectionCategoryFields as $collectionCategoryField)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectionCategoryField->isNew())
+      {
+        $collectionCategoryField->setCollectionCategory($this);
+      }
+      $this->addCollectionCategoryField($collectionCategoryField);
+    }
+
+    $this->collCollectionCategoryFields = $collectionCategoryFields;
+  }
+
+  /**
    * Returns the number of related CollectionCategoryField objects.
    *
    * @param      Criteria $criteria
@@ -1594,11 +1858,19 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $this->initCollectionCategoryFields();
     }
     if (!$this->collCollectionCategoryFields->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectionCategoryFields[]= $l;
-      $l->setCollectionCategory($this);
+      $this->doAddCollectionCategoryField($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectionCategoryField $collectionCategoryField The collectionCategoryField object to add.
+   */
+  protected function doAddCollectionCategoryField($collectionCategoryField)
+  {
+    $this->collCollectionCategoryFields[]= $collectionCategoryField;
+    $collectionCategoryField->setCollectionCategory($this);
   }
 
 
@@ -1701,6 +1973,32 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of VideoCollectionCategory objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $videoCollectionCategorys A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setVideoCollectionCategorys(PropelCollection $videoCollectionCategorys, PropelPDO $con = null)
+  {
+    $this->videoCollectionCategorysScheduledForDeletion = $this->getVideoCollectionCategorys(new Criteria(), $con)->diff($videoCollectionCategorys);
+
+    foreach ($videoCollectionCategorys as $videoCollectionCategory)
+    {
+      // Fix issue with collection modified by reference
+      if ($videoCollectionCategory->isNew())
+      {
+        $videoCollectionCategory->setCollectionCategory($this);
+      }
+      $this->addVideoCollectionCategory($videoCollectionCategory);
+    }
+
+    $this->collVideoCollectionCategorys = $videoCollectionCategorys;
+  }
+
+  /**
    * Returns the number of related VideoCollectionCategory objects.
    *
    * @param      Criteria $criteria
@@ -1749,11 +2047,19 @@ abstract class BaseCollectionCategory extends BaseObject  implements Persistent
       $this->initVideoCollectionCategorys();
     }
     if (!$this->collVideoCollectionCategorys->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collVideoCollectionCategorys[]= $l;
-      $l->setCollectionCategory($this);
+      $this->doAddVideoCollectionCategory($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  VideoCollectionCategory $videoCollectionCategory The videoCollectionCategory object to add.
+   */
+  protected function doAddVideoCollectionCategory($videoCollectionCategory)
+  {
+    $this->collVideoCollectionCategorys[]= $videoCollectionCategory;
+    $videoCollectionCategory->setCollectionCategory($this);
   }
 
 

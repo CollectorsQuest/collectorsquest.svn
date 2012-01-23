@@ -38,11 +38,14 @@ abstract class BasePackageTransactionPeer
   /** the column name for the ID field */
   const ID = 'package_transaction.ID';
 
+  /** the column name for the PACKAGE_ID field */
+  const PACKAGE_ID = 'package_transaction.PACKAGE_ID';
+
   /** the column name for the COLLECTOR_ID field */
   const COLLECTOR_ID = 'package_transaction.COLLECTOR_ID';
 
-  /** the column name for the PACKAGE_ID field */
-  const PACKAGE_ID = 'package_transaction.PACKAGE_ID';
+  /** the column name for the PAYMENT_STATUS field */
+  const PAYMENT_STATUS = 'package_transaction.PAYMENT_STATUS';
 
   /** the column name for the MAX_ITEMS_FOR_SALE field */
   const MAX_ITEMS_FOR_SALE = 'package_transaction.MAX_ITEMS_FOR_SALE';
@@ -52,9 +55,6 @@ abstract class BasePackageTransactionPeer
 
   /** the column name for the EXPIRY_DATE field */
   const EXPIRY_DATE = 'package_transaction.EXPIRY_DATE';
-
-  /** the column name for the PAYMENT_STATUS field */
-  const PAYMENT_STATUS = 'package_transaction.PAYMENT_STATUS';
 
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'package_transaction.CREATED_AT';
@@ -78,11 +78,11 @@ abstract class BasePackageTransactionPeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectorId', 'PackageId', 'MaxItemsForSale', 'PackagePrice', 'ExpiryDate', 'PaymentStatus', 'CreatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectorId', 'packageId', 'maxItemsForSale', 'packagePrice', 'expiryDate', 'paymentStatus', 'createdAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTOR_ID, self::PACKAGE_ID, self::MAX_ITEMS_FOR_SALE, self::PACKAGE_PRICE, self::EXPIRY_DATE, self::PAYMENT_STATUS, self::CREATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTOR_ID', 'PACKAGE_ID', 'MAX_ITEMS_FOR_SALE', 'PACKAGE_PRICE', 'EXPIRY_DATE', 'PAYMENT_STATUS', 'CREATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'collector_id', 'package_id', 'max_items_for_sale', 'package_price', 'expiry_date', 'payment_status', 'created_at', ),
+    BasePeer::TYPE_PHPNAME => array ('Id', 'PackageId', 'CollectorId', 'PaymentStatus', 'MaxItemsForSale', 'PackagePrice', 'ExpiryDate', 'CreatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'packageId', 'collectorId', 'paymentStatus', 'maxItemsForSale', 'packagePrice', 'expiryDate', 'createdAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::PACKAGE_ID, self::COLLECTOR_ID, self::PAYMENT_STATUS, self::MAX_ITEMS_FOR_SALE, self::PACKAGE_PRICE, self::EXPIRY_DATE, self::CREATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'PACKAGE_ID', 'COLLECTOR_ID', 'PAYMENT_STATUS', 'MAX_ITEMS_FOR_SALE', 'PACKAGE_PRICE', 'EXPIRY_DATE', 'CREATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'package_id', 'collector_id', 'payment_status', 'max_items_for_sale', 'package_price', 'expiry_date', 'created_at', ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
   );
 
@@ -93,11 +93,11 @@ abstract class BasePackageTransactionPeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectorId' => 1, 'PackageId' => 2, 'MaxItemsForSale' => 3, 'PackagePrice' => 4, 'ExpiryDate' => 5, 'PaymentStatus' => 6, 'CreatedAt' => 7, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectorId' => 1, 'packageId' => 2, 'maxItemsForSale' => 3, 'packagePrice' => 4, 'expiryDate' => 5, 'paymentStatus' => 6, 'createdAt' => 7, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTOR_ID => 1, self::PACKAGE_ID => 2, self::MAX_ITEMS_FOR_SALE => 3, self::PACKAGE_PRICE => 4, self::EXPIRY_DATE => 5, self::PAYMENT_STATUS => 6, self::CREATED_AT => 7, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTOR_ID' => 1, 'PACKAGE_ID' => 2, 'MAX_ITEMS_FOR_SALE' => 3, 'PACKAGE_PRICE' => 4, 'EXPIRY_DATE' => 5, 'PAYMENT_STATUS' => 6, 'CREATED_AT' => 7, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collector_id' => 1, 'package_id' => 2, 'max_items_for_sale' => 3, 'package_price' => 4, 'expiry_date' => 5, 'payment_status' => 6, 'created_at' => 7, ),
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PackageId' => 1, 'CollectorId' => 2, 'PaymentStatus' => 3, 'MaxItemsForSale' => 4, 'PackagePrice' => 5, 'ExpiryDate' => 6, 'CreatedAt' => 7, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'packageId' => 1, 'collectorId' => 2, 'paymentStatus' => 3, 'maxItemsForSale' => 4, 'packagePrice' => 5, 'expiryDate' => 6, 'createdAt' => 7, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::PACKAGE_ID => 1, self::COLLECTOR_ID => 2, self::PAYMENT_STATUS => 3, self::MAX_ITEMS_FOR_SALE => 4, self::PACKAGE_PRICE => 5, self::EXPIRY_DATE => 6, self::CREATED_AT => 7, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'PACKAGE_ID' => 1, 'COLLECTOR_ID' => 2, 'PAYMENT_STATUS' => 3, 'MAX_ITEMS_FOR_SALE' => 4, 'PACKAGE_PRICE' => 5, 'EXPIRY_DATE' => 6, 'CREATED_AT' => 7, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'package_id' => 1, 'collector_id' => 2, 'payment_status' => 3, 'max_items_for_sale' => 4, 'package_price' => 5, 'expiry_date' => 6, 'created_at' => 7, ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
   );
 
@@ -174,23 +174,23 @@ abstract class BasePackageTransactionPeer
     if (null === $alias)
     {
       $criteria->addSelectColumn(PackageTransactionPeer::ID);
-      $criteria->addSelectColumn(PackageTransactionPeer::COLLECTOR_ID);
       $criteria->addSelectColumn(PackageTransactionPeer::PACKAGE_ID);
+      $criteria->addSelectColumn(PackageTransactionPeer::COLLECTOR_ID);
+      $criteria->addSelectColumn(PackageTransactionPeer::PAYMENT_STATUS);
       $criteria->addSelectColumn(PackageTransactionPeer::MAX_ITEMS_FOR_SALE);
       $criteria->addSelectColumn(PackageTransactionPeer::PACKAGE_PRICE);
       $criteria->addSelectColumn(PackageTransactionPeer::EXPIRY_DATE);
-      $criteria->addSelectColumn(PackageTransactionPeer::PAYMENT_STATUS);
       $criteria->addSelectColumn(PackageTransactionPeer::CREATED_AT);
     }
     else
     {
       $criteria->addSelectColumn($alias . '.ID');
-      $criteria->addSelectColumn($alias . '.COLLECTOR_ID');
       $criteria->addSelectColumn($alias . '.PACKAGE_ID');
+      $criteria->addSelectColumn($alias . '.COLLECTOR_ID');
+      $criteria->addSelectColumn($alias . '.PAYMENT_STATUS');
       $criteria->addSelectColumn($alias . '.MAX_ITEMS_FOR_SALE');
       $criteria->addSelectColumn($alias . '.PACKAGE_PRICE');
       $criteria->addSelectColumn($alias . '.EXPIRY_DATE');
-      $criteria->addSelectColumn($alias . '.PAYMENT_STATUS');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
     }
   }
@@ -518,68 +518,6 @@ abstract class BasePackageTransactionPeer
 
 
   /**
-   * Returns the number of rows matching criteria, joining the related Collector table
-   *
-   * @param      Criteria $criteria
-   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-   * @param      PropelPDO $con
-   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-   * @return     int Number of matching rows.
-   */
-  public static function doCountJoinCollector(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-  {
-    // we're going to modify criteria, so copy it first
-    $criteria = clone $criteria;
-
-    // We need to set the primary table name, since in the case that there are no WHERE columns
-    // it will be impossible for the BasePeer::createSelectSql() method to determine which
-    // tables go into the FROM clause.
-    $criteria->setPrimaryTableName(PackageTransactionPeer::TABLE_NAME);
-
-    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
-    {
-      $criteria->setDistinct();
-    }
-
-    if (!$criteria->hasSelectClause())
-    {
-      PackageTransactionPeer::addSelectColumns($criteria);
-    }
-
-    $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
-
-    // Set the correct dbName
-    $criteria->setDbName(self::DATABASE_NAME);
-
-    if ($con === null)
-    {
-      $con = Propel::getConnection(PackageTransactionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-    }
-
-    $criteria->addJoin(PackageTransactionPeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
-
-    // symfony_behaviors behavior
-    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
-    {
-      call_user_func($sf_hook, 'BasePackageTransactionPeer', $criteria, $con);
-    }
-
-    $stmt = BasePeer::doCount($criteria, $con);
-
-    if ($row = $stmt->fetch(PDO::FETCH_NUM))
-    {
-      $count = (int) $row[0];
-    }
-    else
-    {
-      $count = 0; // no rows returned; we infer that means 0 matches.
-    }
-    $stmt->closeCursor();
-    return $count;
-  }
-
-
-  /**
    * Returns the number of rows matching criteria, joining the related Package table
    *
    * @param      Criteria $criteria
@@ -642,27 +580,43 @@ abstract class BasePackageTransactionPeer
 
 
   /**
-   * Selects a collection of PackageTransaction objects pre-filled with their Collector objects.
-   * @param      Criteria  $criteria
+   * Returns the number of rows matching criteria, joining the related Collector table
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
    * @param      PropelPDO $con
    * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-   * @return     array Array of PackageTransaction objects.
-   * @throws     PropelException Any exceptions caught during processing will be
-   *     rethrown wrapped into a PropelException.
+   * @return     int Number of matching rows.
    */
-  public static function doSelectJoinCollector(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  public static function doCountJoinCollector(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
   {
+    // we're going to modify criteria, so copy it first
     $criteria = clone $criteria;
 
-    // Set the correct dbName if it has not been overridden
-    if ($criteria->getDbName() == Propel::getDefaultDB())
+    // We need to set the primary table name, since in the case that there are no WHERE columns
+    // it will be impossible for the BasePeer::createSelectSql() method to determine which
+    // tables go into the FROM clause.
+    $criteria->setPrimaryTableName(PackageTransactionPeer::TABLE_NAME);
+
+    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
     {
-      $criteria->setDbName(self::DATABASE_NAME);
+      $criteria->setDistinct();
     }
 
-    PackageTransactionPeer::addSelectColumns($criteria);
-    $startcol = PackageTransactionPeer::NUM_HYDRATE_COLUMNS;
-    CollectorPeer::addSelectColumns($criteria);
+    if (!$criteria->hasSelectClause())
+    {
+      PackageTransactionPeer::addSelectColumns($criteria);
+    }
+
+    $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+    // Set the correct dbName
+    $criteria->setDbName(self::DATABASE_NAME);
+
+    if ($con === null)
+    {
+      $con = Propel::getConnection(PackageTransactionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+    }
 
     $criteria->addJoin(PackageTransactionPeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
 
@@ -672,51 +626,18 @@ abstract class BasePackageTransactionPeer
       call_user_func($sf_hook, 'BasePackageTransactionPeer', $criteria, $con);
     }
 
-    $stmt = BasePeer::doSelect($criteria, $con);
-    $results = array();
+    $stmt = BasePeer::doCount($criteria, $con);
 
-    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
     {
-      $key1 = PackageTransactionPeer::getPrimaryKeyHashFromRow($row, 0);
-      if (null !== ($obj1 = PackageTransactionPeer::getInstanceFromPool($key1)))
-      {
-        // We no longer rehydrate the object, since this can cause data loss.
-        // See http://www.propelorm.org/ticket/509
-        // $obj1->hydrate($row, 0, true); // rehydrate
-      }
-      else
-      {
-
-        $cls = PackageTransactionPeer::getOMClass(false);
-
-        $obj1 = new $cls();
-        $obj1->hydrate($row);
-        PackageTransactionPeer::addInstanceToPool($obj1, $key1);
-      }
-
-      $key2 = CollectorPeer::getPrimaryKeyHashFromRow($row, $startcol);
-      if ($key2 !== null)
-      {
-        $obj2 = CollectorPeer::getInstanceFromPool($key2);
-        if (!$obj2)
-        {
-
-          $cls = CollectorPeer::getOMClass(false);
-
-          $obj2 = new $cls();
-          $obj2->hydrate($row, $startcol);
-          CollectorPeer::addInstanceToPool($obj2, $key2);
-        }
-
-        // Add the $obj1 (PackageTransaction) to $obj2 (Collector)
-        $obj2->addPackageTransaction($obj1);
-
-      }
-
-      $results[] = $obj1;
+      $count = (int) $row[0];
+    }
+    else
+    {
+      $count = 0; // no rows returned; we infer that means 0 matches.
     }
     $stmt->closeCursor();
-    return $results;
+    return $count;
   }
 
 
@@ -800,6 +721,85 @@ abstract class BasePackageTransactionPeer
 
 
   /**
+   * Selects a collection of PackageTransaction objects pre-filled with their Collector objects.
+   * @param      Criteria  $criteria
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     array Array of PackageTransaction objects.
+   * @throws     PropelException Any exceptions caught during processing will be
+   *     rethrown wrapped into a PropelException.
+   */
+  public static function doSelectJoinCollector(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $criteria = clone $criteria;
+
+    // Set the correct dbName if it has not been overridden
+    if ($criteria->getDbName() == Propel::getDefaultDB())
+    {
+      $criteria->setDbName(self::DATABASE_NAME);
+    }
+
+    PackageTransactionPeer::addSelectColumns($criteria);
+    $startcol = PackageTransactionPeer::NUM_HYDRATE_COLUMNS;
+    CollectorPeer::addSelectColumns($criteria);
+
+    $criteria->addJoin(PackageTransactionPeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasePackageTransactionPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doSelect($criteria, $con);
+    $results = array();
+
+    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $key1 = PackageTransactionPeer::getPrimaryKeyHashFromRow($row, 0);
+      if (null !== ($obj1 = PackageTransactionPeer::getInstanceFromPool($key1)))
+      {
+        // We no longer rehydrate the object, since this can cause data loss.
+        // See http://www.propelorm.org/ticket/509
+        // $obj1->hydrate($row, 0, true); // rehydrate
+      }
+      else
+      {
+
+        $cls = PackageTransactionPeer::getOMClass(false);
+
+        $obj1 = new $cls();
+        $obj1->hydrate($row);
+        PackageTransactionPeer::addInstanceToPool($obj1, $key1);
+      }
+
+      $key2 = CollectorPeer::getPrimaryKeyHashFromRow($row, $startcol);
+      if ($key2 !== null)
+      {
+        $obj2 = CollectorPeer::getInstanceFromPool($key2);
+        if (!$obj2)
+        {
+
+          $cls = CollectorPeer::getOMClass(false);
+
+          $obj2 = new $cls();
+          $obj2->hydrate($row, $startcol);
+          CollectorPeer::addInstanceToPool($obj2, $key2);
+        }
+
+        // Add the $obj1 (PackageTransaction) to $obj2 (Collector)
+        $obj2->addPackageTransaction($obj1);
+
+      }
+
+      $results[] = $obj1;
+    }
+    $stmt->closeCursor();
+    return $results;
+  }
+
+
+  /**
    * Returns the number of rows matching criteria, joining all related tables
    *
    * @param      Criteria $criteria
@@ -838,9 +838,9 @@ abstract class BasePackageTransactionPeer
       $con = Propel::getConnection(PackageTransactionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
     }
 
-    $criteria->addJoin(PackageTransactionPeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
-
     $criteria->addJoin(PackageTransactionPeer::PACKAGE_ID, PackagePeer::ID, $join_behavior);
+
+    $criteria->addJoin(PackageTransactionPeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
 
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
@@ -885,15 +885,15 @@ abstract class BasePackageTransactionPeer
     PackageTransactionPeer::addSelectColumns($criteria);
     $startcol2 = PackageTransactionPeer::NUM_HYDRATE_COLUMNS;
 
-    CollectorPeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + CollectorPeer::NUM_HYDRATE_COLUMNS;
-
     PackagePeer::addSelectColumns($criteria);
-    $startcol4 = $startcol3 + PackagePeer::NUM_HYDRATE_COLUMNS;
+    $startcol3 = $startcol2 + PackagePeer::NUM_HYDRATE_COLUMNS;
 
-    $criteria->addJoin(PackageTransactionPeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
+    CollectorPeer::addSelectColumns($criteria);
+    $startcol4 = $startcol3 + CollectorPeer::NUM_HYDRATE_COLUMNS;
 
     $criteria->addJoin(PackageTransactionPeer::PACKAGE_ID, PackagePeer::ID, $join_behavior);
+
+    $criteria->addJoin(PackageTransactionPeer::COLLECTOR_ID, CollectorPeer::ID, $join_behavior);
 
     // symfony_behaviors behavior
     foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
@@ -922,43 +922,43 @@ abstract class BasePackageTransactionPeer
         PackageTransactionPeer::addInstanceToPool($obj1, $key1);
       }
 
-      // Add objects for joined Collector rows
-
-      $key2 = CollectorPeer::getPrimaryKeyHashFromRow($row, $startcol2);
-      if ($key2 !== null)
-      {
-        $obj2 = CollectorPeer::getInstanceFromPool($key2);
-        if (!$obj2)
-        {
-
-          $cls = CollectorPeer::getOMClass(false);
-
-          $obj2 = new $cls();
-          $obj2->hydrate($row, $startcol2);
-          CollectorPeer::addInstanceToPool($obj2, $key2);
-        }
-
-        // Add the $obj1 (PackageTransaction) to the collection in $obj2 (Collector)
-        $obj2->addPackageTransaction($obj1);
-      }
-
       // Add objects for joined Package rows
 
-      $key3 = PackagePeer::getPrimaryKeyHashFromRow($row, $startcol3);
-      if ($key3 !== null)
+      $key2 = PackagePeer::getPrimaryKeyHashFromRow($row, $startcol2);
+      if ($key2 !== null)
       {
-        $obj3 = PackagePeer::getInstanceFromPool($key3);
-        if (!$obj3)
+        $obj2 = PackagePeer::getInstanceFromPool($key2);
+        if (!$obj2)
         {
 
           $cls = PackagePeer::getOMClass(false);
 
-          $obj3 = new $cls();
-          $obj3->hydrate($row, $startcol3);
-          PackagePeer::addInstanceToPool($obj3, $key3);
+          $obj2 = new $cls();
+          $obj2->hydrate($row, $startcol2);
+          PackagePeer::addInstanceToPool($obj2, $key2);
         }
 
-        // Add the $obj1 (PackageTransaction) to the collection in $obj3 (Package)
+        // Add the $obj1 (PackageTransaction) to the collection in $obj2 (Package)
+        $obj2->addPackageTransaction($obj1);
+      }
+
+      // Add objects for joined Collector rows
+
+      $key3 = CollectorPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+      if ($key3 !== null)
+      {
+        $obj3 = CollectorPeer::getInstanceFromPool($key3);
+        if (!$obj3)
+        {
+
+          $cls = CollectorPeer::getOMClass(false);
+
+          $obj3 = new $cls();
+          $obj3->hydrate($row, $startcol3);
+          CollectorPeer::addInstanceToPool($obj3, $key3);
+        }
+
+        // Add the $obj1 (PackageTransaction) to the collection in $obj3 (Collector)
         $obj3->addPackageTransaction($obj1);
       }
 
@@ -966,68 +966,6 @@ abstract class BasePackageTransactionPeer
     }
     $stmt->closeCursor();
     return $results;
-  }
-
-
-  /**
-   * Returns the number of rows matching criteria, joining the related Collector table
-   *
-   * @param      Criteria $criteria
-   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
-   * @param      PropelPDO $con
-   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-   * @return     int Number of matching rows.
-   */
-  public static function doCountJoinAllExceptCollector(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
-  {
-    // we're going to modify criteria, so copy it first
-    $criteria = clone $criteria;
-
-    // We need to set the primary table name, since in the case that there are no WHERE columns
-    // it will be impossible for the BasePeer::createSelectSql() method to determine which
-    // tables go into the FROM clause.
-    $criteria->setPrimaryTableName(PackageTransactionPeer::TABLE_NAME);
-
-    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
-    {
-      $criteria->setDistinct();
-    }
-
-    if (!$criteria->hasSelectClause())
-    {
-      PackageTransactionPeer::addSelectColumns($criteria);
-    }
-
-    $criteria->clearOrderByColumns(); // ORDER BY should not affect count
-
-    // Set the correct dbName
-    $criteria->setDbName(self::DATABASE_NAME);
-
-    if ($con === null)
-    {
-      $con = Propel::getConnection(PackageTransactionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
-    }
-  
-    $criteria->addJoin(PackageTransactionPeer::PACKAGE_ID, PackagePeer::ID, $join_behavior);
-
-    // symfony_behaviors behavior
-    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
-    {
-      call_user_func($sf_hook, 'BasePackageTransactionPeer', $criteria, $con);
-    }
-
-    $stmt = BasePeer::doCount($criteria, $con);
-
-    if ($row = $stmt->fetch(PDO::FETCH_NUM))
-    {
-      $count = (int) $row[0];
-    }
-    else
-    {
-      $count = 0; // no rows returned; we infer that means 0 matches.
-    }
-    $stmt->closeCursor();
-    return $count;
   }
 
 
@@ -1094,33 +1032,44 @@ abstract class BasePackageTransactionPeer
 
 
   /**
-   * Selects a collection of PackageTransaction objects pre-filled with all related objects except Collector.
+   * Returns the number of rows matching criteria, joining the related Collector table
    *
-   * @param      Criteria  $criteria
+   * @param      Criteria $criteria
+   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
    * @param      PropelPDO $con
    * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
-   * @return     array Array of PackageTransaction objects.
-   * @throws     PropelException Any exceptions caught during processing will be
-   *     rethrown wrapped into a PropelException.
+   * @return     int Number of matching rows.
    */
-  public static function doSelectJoinAllExceptCollector(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  public static function doCountJoinAllExceptCollector(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
   {
+    // we're going to modify criteria, so copy it first
     $criteria = clone $criteria;
 
-    // Set the correct dbName if it has not been overridden
-    // $criteria->getDbName() will return the same object if not set to another value
-    // so == check is okay and faster
-    if ($criteria->getDbName() == Propel::getDefaultDB())
+    // We need to set the primary table name, since in the case that there are no WHERE columns
+    // it will be impossible for the BasePeer::createSelectSql() method to determine which
+    // tables go into the FROM clause.
+    $criteria->setPrimaryTableName(PackageTransactionPeer::TABLE_NAME);
+
+    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
     {
-      $criteria->setDbName(self::DATABASE_NAME);
+      $criteria->setDistinct();
     }
 
-    PackageTransactionPeer::addSelectColumns($criteria);
-    $startcol2 = PackageTransactionPeer::NUM_HYDRATE_COLUMNS;
+    if (!$criteria->hasSelectClause())
+    {
+      PackageTransactionPeer::addSelectColumns($criteria);
+    }
 
-    PackagePeer::addSelectColumns($criteria);
-    $startcol3 = $startcol2 + PackagePeer::NUM_HYDRATE_COLUMNS;
+    $criteria->clearOrderByColumns(); // ORDER BY should not affect count
 
+    // Set the correct dbName
+    $criteria->setDbName(self::DATABASE_NAME);
+
+    if ($con === null)
+    {
+      $con = Propel::getConnection(PackageTransactionPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+    }
+  
     $criteria->addJoin(PackageTransactionPeer::PACKAGE_ID, PackagePeer::ID, $join_behavior);
 
     // symfony_behaviors behavior
@@ -1129,53 +1078,18 @@ abstract class BasePackageTransactionPeer
       call_user_func($sf_hook, 'BasePackageTransactionPeer', $criteria, $con);
     }
 
+    $stmt = BasePeer::doCount($criteria, $con);
 
-    $stmt = BasePeer::doSelect($criteria, $con);
-    $results = array();
-
-    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
     {
-      $key1 = PackageTransactionPeer::getPrimaryKeyHashFromRow($row, 0);
-      if (null !== ($obj1 = PackageTransactionPeer::getInstanceFromPool($key1)))
-      {
-        // We no longer rehydrate the object, since this can cause data loss.
-        // See http://www.propelorm.org/ticket/509
-        // $obj1->hydrate($row, 0, true); // rehydrate
-      }
-      else
-      {
-        $cls = PackageTransactionPeer::getOMClass(false);
-
-        $obj1 = new $cls();
-        $obj1->hydrate($row);
-        PackageTransactionPeer::addInstanceToPool($obj1, $key1);
-      }
-
-        // Add objects for joined Package rows
-
-        $key2 = PackagePeer::getPrimaryKeyHashFromRow($row, $startcol2);
-        if ($key2 !== null)
-        {
-          $obj2 = PackagePeer::getInstanceFromPool($key2);
-          if (!$obj2)
-          {
-  
-            $cls = PackagePeer::getOMClass(false);
-
-          $obj2 = new $cls();
-          $obj2->hydrate($row, $startcol2);
-          PackagePeer::addInstanceToPool($obj2, $key2);
-        }
-
-        // Add the $obj1 (PackageTransaction) to the collection in $obj2 (Package)
-        $obj2->addPackageTransaction($obj1);
-
-      }
-
-      $results[] = $obj1;
+      $count = (int) $row[0];
+    }
+    else
+    {
+      $count = 0; // no rows returned; we infer that means 0 matches.
     }
     $stmt->closeCursor();
-    return $results;
+    return $count;
   }
 
 
@@ -1254,6 +1168,92 @@ abstract class BasePackageTransactionPeer
         }
 
         // Add the $obj1 (PackageTransaction) to the collection in $obj2 (Collector)
+        $obj2->addPackageTransaction($obj1);
+
+      }
+
+      $results[] = $obj1;
+    }
+    $stmt->closeCursor();
+    return $results;
+  }
+
+
+  /**
+   * Selects a collection of PackageTransaction objects pre-filled with all related objects except Collector.
+   *
+   * @param      Criteria  $criteria
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     array Array of PackageTransaction objects.
+   * @throws     PropelException Any exceptions caught during processing will be
+   *     rethrown wrapped into a PropelException.
+   */
+  public static function doSelectJoinAllExceptCollector(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $criteria = clone $criteria;
+
+    // Set the correct dbName if it has not been overridden
+    // $criteria->getDbName() will return the same object if not set to another value
+    // so == check is okay and faster
+    if ($criteria->getDbName() == Propel::getDefaultDB())
+    {
+      $criteria->setDbName(self::DATABASE_NAME);
+    }
+
+    PackageTransactionPeer::addSelectColumns($criteria);
+    $startcol2 = PackageTransactionPeer::NUM_HYDRATE_COLUMNS;
+
+    PackagePeer::addSelectColumns($criteria);
+    $startcol3 = $startcol2 + PackagePeer::NUM_HYDRATE_COLUMNS;
+
+    $criteria->addJoin(PackageTransactionPeer::PACKAGE_ID, PackagePeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasePackageTransactionPeer', $criteria, $con);
+    }
+
+
+    $stmt = BasePeer::doSelect($criteria, $con);
+    $results = array();
+
+    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $key1 = PackageTransactionPeer::getPrimaryKeyHashFromRow($row, 0);
+      if (null !== ($obj1 = PackageTransactionPeer::getInstanceFromPool($key1)))
+      {
+        // We no longer rehydrate the object, since this can cause data loss.
+        // See http://www.propelorm.org/ticket/509
+        // $obj1->hydrate($row, 0, true); // rehydrate
+      }
+      else
+      {
+        $cls = PackageTransactionPeer::getOMClass(false);
+
+        $obj1 = new $cls();
+        $obj1->hydrate($row);
+        PackageTransactionPeer::addInstanceToPool($obj1, $key1);
+      }
+
+        // Add objects for joined Package rows
+
+        $key2 = PackagePeer::getPrimaryKeyHashFromRow($row, $startcol2);
+        if ($key2 !== null)
+        {
+          $obj2 = PackagePeer::getInstanceFromPool($key2);
+          if (!$obj2)
+          {
+  
+            $cls = PackagePeer::getOMClass(false);
+
+          $obj2 = new $cls();
+          $obj2->hydrate($row, $startcol2);
+          PackagePeer::addInstanceToPool($obj2, $key2);
+        }
+
+        // Add the $obj1 (PackageTransaction) to the collection in $obj2 (Package)
         $obj2->addPackageTransaction($obj1);
 
       }

@@ -25,10 +25,22 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
   protected $id;
+
+  /**
+   * The value for the package_id field.
+   * @var        int
+   */
+  protected $package_id;
 
   /**
    * The value for the collector_id field.
@@ -37,10 +49,11 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
   protected $collector_id;
 
   /**
-   * The value for the package_id field.
-   * @var        int
+   * The value for the payment_status field.
+   * Note: this column has a database default value of: 'pending'
+   * @var        string
    */
-  protected $package_id;
+  protected $payment_status;
 
   /**
    * The value for the max_items_for_sale field.
@@ -61,27 +74,20 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
   protected $expiry_date;
 
   /**
-   * The value for the payment_status field.
-   * Note: this column has a database default value of: 'pending'
-   * @var        string
-   */
-  protected $payment_status;
-
-  /**
    * The value for the created_at field.
    * @var        string
    */
   protected $created_at;
 
   /**
-   * @var        Collector
-   */
-  protected $aCollector;
-
-  /**
    * @var        Package
    */
   protected $aPackage;
+
+  /**
+   * @var        Collector
+   */
+  protected $aCollector;
 
   /**
    * Flag to prevent endless save loop, if this object is referenced
@@ -129,6 +135,16 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
   }
 
   /**
+   * Get the [package_id] column value.
+   * 
+   * @return     int
+   */
+  public function getPackageId()
+  {
+    return $this->package_id;
+  }
+
+  /**
    * Get the [collector_id] column value.
    * 
    * @return     int
@@ -139,13 +155,13 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
   }
 
   /**
-   * Get the [package_id] column value.
+   * Get the [payment_status] column value.
    * 
-   * @return     int
+   * @return     string
    */
-  public function getPackageId()
+  public function getPaymentStatus()
   {
-    return $this->package_id;
+    return $this->payment_status;
   }
 
   /**
@@ -216,16 +232,6 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
     {
       return $dt->format($format);
     }
-  }
-
-  /**
-   * Get the [payment_status] column value.
-   * 
-   * @return     string
-   */
-  public function getPaymentStatus()
-  {
-    return $this->payment_status;
   }
 
   /**
@@ -301,6 +307,33 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
   }
 
   /**
+   * Set the value of [package_id] column.
+   * 
+   * @param      int $v new value
+   * @return     PackageTransaction The current object (for fluent API support)
+   */
+  public function setPackageId($v)
+  {
+    if ($v !== null)
+    {
+      $v = (int) $v;
+    }
+
+    if ($this->package_id !== $v)
+    {
+      $this->package_id = $v;
+      $this->modifiedColumns[] = PackageTransactionPeer::PACKAGE_ID;
+    }
+
+    if ($this->aPackage !== null && $this->aPackage->getId() !== $v)
+    {
+      $this->aPackage = null;
+    }
+
+    return $this;
+  }
+
+  /**
    * Set the value of [collector_id] column.
    * 
    * @param      int $v new value
@@ -328,27 +361,22 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [package_id] column.
+   * Set the value of [payment_status] column.
    * 
-   * @param      int $v new value
+   * @param      string $v new value
    * @return     PackageTransaction The current object (for fluent API support)
    */
-  public function setPackageId($v)
+  public function setPaymentStatus($v)
   {
     if ($v !== null)
     {
-      $v = (int) $v;
+      $v = (string) $v;
     }
 
-    if ($this->package_id !== $v)
+    if ($this->payment_status !== $v)
     {
-      $this->package_id = $v;
-      $this->modifiedColumns[] = PackageTransactionPeer::PACKAGE_ID;
-    }
-
-    if ($this->aPackage !== null && $this->aPackage->getId() !== $v)
-    {
-      $this->aPackage = null;
+      $this->payment_status = $v;
+      $this->modifiedColumns[] = PackageTransactionPeer::PAYMENT_STATUS;
     }
 
     return $this;
@@ -423,28 +451,6 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [payment_status] column.
-   * 
-   * @param      string $v new value
-   * @return     PackageTransaction The current object (for fluent API support)
-   */
-  public function setPaymentStatus($v)
-  {
-    if ($v !== null)
-    {
-      $v = (string) $v;
-    }
-
-    if ($this->payment_status !== $v)
-    {
-      $this->payment_status = $v;
-      $this->modifiedColumns[] = PackageTransactionPeer::PAYMENT_STATUS;
-    }
-
-    return $this;
-  }
-
-  /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -507,12 +513,12 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
     {
 
       $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-      $this->collector_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
-      $this->package_id = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
-      $this->max_items_for_sale = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
-      $this->package_price = ($row[$startcol + 4] !== null) ? (double) $row[$startcol + 4] : null;
-      $this->expiry_date = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-      $this->payment_status = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+      $this->package_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+      $this->collector_id = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
+      $this->payment_status = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+      $this->max_items_for_sale = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
+      $this->package_price = ($row[$startcol + 5] !== null) ? (double) $row[$startcol + 5] : null;
+      $this->expiry_date = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
       $this->created_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
       $this->resetModified();
 
@@ -548,13 +554,13 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
   public function ensureConsistency()
   {
 
-    if ($this->aCollector !== null && $this->collector_id !== $this->aCollector->getId())
-    {
-      $this->aCollector = null;
-    }
     if ($this->aPackage !== null && $this->package_id !== $this->aPackage->getId())
     {
       $this->aPackage = null;
+    }
+    if ($this->aCollector !== null && $this->collector_id !== $this->aCollector->getId())
+    {
+      $this->aCollector = null;
     }
   }
 
@@ -599,8 +605,8 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
 
     if ($deep) {  // also de-associate any related objects?
 
-      $this->aCollector = null;
       $this->aPackage = null;
+      $this->aCollector = null;
     }
   }
 
@@ -659,7 +665,7 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -747,7 +753,7 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -777,15 +783,6 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
       // method.  This object relates to these object(s) by a
       // foreign key reference.
 
-      if ($this->aCollector !== null)
-      {
-        if ($this->aCollector->isModified() || $this->aCollector->isNew())
-        {
-          $affectedRows += $this->aCollector->save($con);
-        }
-        $this->setCollector($this->aCollector);
-      }
-
       if ($this->aPackage !== null)
       {
         if ($this->aPackage->isModified() || $this->aPackage->isNew())
@@ -795,39 +792,161 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
         $this->setPackage($this->aPackage);
       }
 
-      if ($this->isNew() )
+      if ($this->aCollector !== null)
       {
-        $this->modifiedColumns[] = PackageTransactionPeer::ID;
+        if ($this->aCollector->isModified() || $this->aCollector->isNew())
+        {
+          $affectedRows += $this->aCollector->save($con);
+        }
+        $this->setCollector($this->aCollector);
       }
 
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
+      if ($this->isNew() || $this->isModified())
       {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(PackageTransactionPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PackageTransactionPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows += 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows += PackageTransactionPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = PackageTransactionPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . PackageTransactionPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(PackageTransactionPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(PackageTransactionPeer::PACKAGE_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PACKAGE_ID`';
+    }
+    if ($this->isColumnModified(PackageTransactionPeer::COLLECTOR_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_ID`';
+    }
+    if ($this->isColumnModified(PackageTransactionPeer::PAYMENT_STATUS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PAYMENT_STATUS`';
+    }
+    if ($this->isColumnModified(PackageTransactionPeer::MAX_ITEMS_FOR_SALE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`MAX_ITEMS_FOR_SALE`';
+    }
+    if ($this->isColumnModified(PackageTransactionPeer::PACKAGE_PRICE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PACKAGE_PRICE`';
+    }
+    if ($this->isColumnModified(PackageTransactionPeer::EXPIRY_DATE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`EXPIRY_DATE`';
+    }
+    if ($this->isColumnModified(PackageTransactionPeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `package_transaction` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`PACKAGE_ID`':
+            $stmt->bindValue($identifier, $this->package_id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_ID`':
+            $stmt->bindValue($identifier, $this->collector_id, PDO::PARAM_INT);
+            break;
+          case '`PAYMENT_STATUS`':
+            $stmt->bindValue($identifier, $this->payment_status, PDO::PARAM_STR);
+            break;
+          case '`MAX_ITEMS_FOR_SALE`':
+            $stmt->bindValue($identifier, $this->max_items_for_sale, PDO::PARAM_INT);
+            break;
+          case '`PACKAGE_PRICE`':
+            $stmt->bindValue($identifier, $this->package_price, PDO::PARAM_STR);
+            break;
+          case '`EXPIRY_DATE`':
+            $stmt->bindValue($identifier, $this->expiry_date, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -899,19 +1018,19 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
       // method.  This object relates to these object(s) by a
       // foreign key reference.
 
-      if ($this->aCollector !== null)
-      {
-        if (!$this->aCollector->validate($columns))
-        {
-          $failureMap = array_merge($failureMap, $this->aCollector->getValidationFailures());
-        }
-      }
-
       if ($this->aPackage !== null)
       {
         if (!$this->aPackage->validate($columns))
         {
           $failureMap = array_merge($failureMap, $this->aPackage->getValidationFailures());
+        }
+      }
+
+      if ($this->aCollector !== null)
+      {
+        if (!$this->aCollector->validate($columns))
+        {
+          $failureMap = array_merge($failureMap, $this->aCollector->getValidationFailures());
         }
       }
 
@@ -960,22 +1079,22 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
         return $this->getId();
         break;
       case 1:
-        return $this->getCollectorId();
-        break;
-      case 2:
         return $this->getPackageId();
         break;
+      case 2:
+        return $this->getCollectorId();
+        break;
       case 3:
-        return $this->getMaxItemsForSale();
+        return $this->getPaymentStatus();
         break;
       case 4:
-        return $this->getPackagePrice();
+        return $this->getMaxItemsForSale();
         break;
       case 5:
-        return $this->getExpiryDate();
+        return $this->getPackagePrice();
         break;
       case 6:
-        return $this->getPaymentStatus();
+        return $this->getExpiryDate();
         break;
       case 7:
         return $this->getCreatedAt();
@@ -1011,23 +1130,23 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
     $keys = PackageTransactionPeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
-      $keys[1] => $this->getCollectorId(),
-      $keys[2] => $this->getPackageId(),
-      $keys[3] => $this->getMaxItemsForSale(),
-      $keys[4] => $this->getPackagePrice(),
-      $keys[5] => $this->getExpiryDate(),
-      $keys[6] => $this->getPaymentStatus(),
+      $keys[1] => $this->getPackageId(),
+      $keys[2] => $this->getCollectorId(),
+      $keys[3] => $this->getPaymentStatus(),
+      $keys[4] => $this->getMaxItemsForSale(),
+      $keys[5] => $this->getPackagePrice(),
+      $keys[6] => $this->getExpiryDate(),
       $keys[7] => $this->getCreatedAt(),
     );
     if ($includeForeignObjects)
     {
-      if (null !== $this->aCollector)
-      {
-        $result['Collector'] = $this->aCollector->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
-      }
       if (null !== $this->aPackage)
       {
         $result['Package'] = $this->aPackage->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+      }
+      if (null !== $this->aCollector)
+      {
+        $result['Collector'] = $this->aCollector->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
       }
     }
     return $result;
@@ -1065,22 +1184,22 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
         $this->setId($value);
         break;
       case 1:
-        $this->setCollectorId($value);
-        break;
-      case 2:
         $this->setPackageId($value);
         break;
+      case 2:
+        $this->setCollectorId($value);
+        break;
       case 3:
-        $this->setMaxItemsForSale($value);
+        $this->setPaymentStatus($value);
         break;
       case 4:
-        $this->setPackagePrice($value);
+        $this->setMaxItemsForSale($value);
         break;
       case 5:
-        $this->setExpiryDate($value);
+        $this->setPackagePrice($value);
         break;
       case 6:
-        $this->setPaymentStatus($value);
+        $this->setExpiryDate($value);
         break;
       case 7:
         $this->setCreatedAt($value);
@@ -1110,12 +1229,12 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
     $keys = PackageTransactionPeer::getFieldNames($keyType);
 
     if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-    if (array_key_exists($keys[1], $arr)) $this->setCollectorId($arr[$keys[1]]);
-    if (array_key_exists($keys[2], $arr)) $this->setPackageId($arr[$keys[2]]);
-    if (array_key_exists($keys[3], $arr)) $this->setMaxItemsForSale($arr[$keys[3]]);
-    if (array_key_exists($keys[4], $arr)) $this->setPackagePrice($arr[$keys[4]]);
-    if (array_key_exists($keys[5], $arr)) $this->setExpiryDate($arr[$keys[5]]);
-    if (array_key_exists($keys[6], $arr)) $this->setPaymentStatus($arr[$keys[6]]);
+    if (array_key_exists($keys[1], $arr)) $this->setPackageId($arr[$keys[1]]);
+    if (array_key_exists($keys[2], $arr)) $this->setCollectorId($arr[$keys[2]]);
+    if (array_key_exists($keys[3], $arr)) $this->setPaymentStatus($arr[$keys[3]]);
+    if (array_key_exists($keys[4], $arr)) $this->setMaxItemsForSale($arr[$keys[4]]);
+    if (array_key_exists($keys[5], $arr)) $this->setPackagePrice($arr[$keys[5]]);
+    if (array_key_exists($keys[6], $arr)) $this->setExpiryDate($arr[$keys[6]]);
     if (array_key_exists($keys[7], $arr)) $this->setCreatedAt($arr[$keys[7]]);
   }
 
@@ -1129,12 +1248,12 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
     $criteria = new Criteria(PackageTransactionPeer::DATABASE_NAME);
 
     if ($this->isColumnModified(PackageTransactionPeer::ID)) $criteria->add(PackageTransactionPeer::ID, $this->id);
-    if ($this->isColumnModified(PackageTransactionPeer::COLLECTOR_ID)) $criteria->add(PackageTransactionPeer::COLLECTOR_ID, $this->collector_id);
     if ($this->isColumnModified(PackageTransactionPeer::PACKAGE_ID)) $criteria->add(PackageTransactionPeer::PACKAGE_ID, $this->package_id);
+    if ($this->isColumnModified(PackageTransactionPeer::COLLECTOR_ID)) $criteria->add(PackageTransactionPeer::COLLECTOR_ID, $this->collector_id);
+    if ($this->isColumnModified(PackageTransactionPeer::PAYMENT_STATUS)) $criteria->add(PackageTransactionPeer::PAYMENT_STATUS, $this->payment_status);
     if ($this->isColumnModified(PackageTransactionPeer::MAX_ITEMS_FOR_SALE)) $criteria->add(PackageTransactionPeer::MAX_ITEMS_FOR_SALE, $this->max_items_for_sale);
     if ($this->isColumnModified(PackageTransactionPeer::PACKAGE_PRICE)) $criteria->add(PackageTransactionPeer::PACKAGE_PRICE, $this->package_price);
     if ($this->isColumnModified(PackageTransactionPeer::EXPIRY_DATE)) $criteria->add(PackageTransactionPeer::EXPIRY_DATE, $this->expiry_date);
-    if ($this->isColumnModified(PackageTransactionPeer::PAYMENT_STATUS)) $criteria->add(PackageTransactionPeer::PAYMENT_STATUS, $this->payment_status);
     if ($this->isColumnModified(PackageTransactionPeer::CREATED_AT)) $criteria->add(PackageTransactionPeer::CREATED_AT, $this->created_at);
 
     return $criteria;
@@ -1198,13 +1317,26 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
    */
   public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setCollectorId($this->getCollectorId());
     $copyObj->setPackageId($this->getPackageId());
+    $copyObj->setCollectorId($this->getCollectorId());
+    $copyObj->setPaymentStatus($this->getPaymentStatus());
     $copyObj->setMaxItemsForSale($this->getMaxItemsForSale());
     $copyObj->setPackagePrice($this->getPackagePrice());
     $copyObj->setExpiryDate($this->getExpiryDate());
-    $copyObj->setPaymentStatus($this->getPaymentStatus());
     $copyObj->setCreatedAt($this->getCreatedAt());
+
+    if ($deepCopy && !$this->startCopy)
+    {
+      // important: temporarily setNew(false) because this affects the behavior of
+      // the getter/setter methods for fkey referrer objects.
+      $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
+
+      //unflag object copy
+      $this->startCopy = false;
+    }
+
     if ($makeNew)
     {
       $copyObj->setNew(true);
@@ -1249,60 +1381,6 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
       self::$peer = new PackageTransactionPeer();
     }
     return self::$peer;
-  }
-
-  /**
-   * Declares an association between this object and a Collector object.
-   *
-   * @param      Collector $v
-   * @return     PackageTransaction The current object (for fluent API support)
-   * @throws     PropelException
-   */
-  public function setCollector(Collector $v = null)
-  {
-    if ($v === null)
-    {
-      $this->setCollectorId(NULL);
-    }
-    else
-    {
-      $this->setCollectorId($v->getId());
-    }
-
-    $this->aCollector = $v;
-
-    // Add binding for other direction of this n:n relationship.
-    // If this object has already been added to the Collector object, it will not be re-added.
-    if ($v !== null)
-    {
-      $v->addPackageTransaction($this);
-    }
-
-    return $this;
-  }
-
-
-  /**
-   * Get the associated Collector object
-   *
-   * @param      PropelPDO Optional Connection object.
-   * @return     Collector The associated Collector object.
-   * @throws     PropelException
-   */
-  public function getCollector(PropelPDO $con = null)
-  {
-    if ($this->aCollector === null && ($this->collector_id !== null))
-    {
-      $this->aCollector = CollectorQuery::create()->findPk($this->collector_id, $con);
-      /* The following can be used additionally to
-        guarantee the related object contains a reference
-        to this object.  This level of coupling may, however, be
-        undesirable since it could result in an only partially populated collection
-        in the referenced object.
-        $this->aCollector->addPackageTransactions($this);
-       */
-    }
-    return $this->aCollector;
   }
 
   /**
@@ -1360,17 +1438,71 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
   }
 
   /**
+   * Declares an association between this object and a Collector object.
+   *
+   * @param      Collector $v
+   * @return     PackageTransaction The current object (for fluent API support)
+   * @throws     PropelException
+   */
+  public function setCollector(Collector $v = null)
+  {
+    if ($v === null)
+    {
+      $this->setCollectorId(NULL);
+    }
+    else
+    {
+      $this->setCollectorId($v->getId());
+    }
+
+    $this->aCollector = $v;
+
+    // Add binding for other direction of this n:n relationship.
+    // If this object has already been added to the Collector object, it will not be re-added.
+    if ($v !== null)
+    {
+      $v->addPackageTransaction($this);
+    }
+
+    return $this;
+  }
+
+
+  /**
+   * Get the associated Collector object
+   *
+   * @param      PropelPDO Optional Connection object.
+   * @return     Collector The associated Collector object.
+   * @throws     PropelException
+   */
+  public function getCollector(PropelPDO $con = null)
+  {
+    if ($this->aCollector === null && ($this->collector_id !== null))
+    {
+      $this->aCollector = CollectorQuery::create()->findPk($this->collector_id, $con);
+      /* The following can be used additionally to
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->aCollector->addPackageTransactions($this);
+       */
+    }
+    return $this->aCollector;
+  }
+
+  /**
    * Clears the current object and sets all attributes to their default values
    */
   public function clear()
   {
     $this->id = null;
-    $this->collector_id = null;
     $this->package_id = null;
+    $this->collector_id = null;
+    $this->payment_status = null;
     $this->max_items_for_sale = null;
     $this->package_price = null;
     $this->expiry_date = null;
-    $this->payment_status = null;
     $this->created_at = null;
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;
@@ -1396,8 +1528,8 @@ abstract class BasePackageTransaction extends BaseObject  implements Persistent
     {
     }
 
-    $this->aCollector = null;
     $this->aPackage = null;
+    $this->aCollector = null;
   }
 
   /**

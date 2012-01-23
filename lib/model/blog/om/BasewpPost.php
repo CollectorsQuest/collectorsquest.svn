@@ -25,6 +25,12 @@ abstract class BasewpPost extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -191,6 +197,12 @@ abstract class BasewpPost extends BaseObject  implements Persistent
    * @var        boolean
    */
   protected $alreadyInValidation = false;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $wpPostMetasScheduledForDeletion = null;
 
   /**
    * Get the [id] column value.
@@ -1332,7 +1344,7 @@ abstract class BasewpPost extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1414,7 +1426,7 @@ abstract class BasewpPost extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1453,33 +1465,30 @@ abstract class BasewpPost extends BaseObject  implements Persistent
         $this->setwpUser($this->awpUser);
       }
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = wpPostPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(wpPostPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.wpPostPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows += 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows += wpPostPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
+        $affectedRows += 1;
+        $this->resetModified();
+      }
 
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+      if ($this->wpPostMetasScheduledForDeletion !== null)
+      {
+        if (!$this->wpPostMetasScheduledForDeletion->isEmpty())
+        {
+          wpPostMetaQuery::create()
+            ->filterByPrimaryKeys($this->wpPostMetasScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->wpPostMetasScheduledForDeletion = null;
+        }
       }
 
       if ($this->collwpPostMetas !== null)
@@ -1497,6 +1506,245 @@ abstract class BasewpPost extends BaseObject  implements Persistent
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = wpPostPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . wpPostPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(wpPostPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_AUTHOR))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_AUTHOR`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_DATE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_DATE`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_DATE_GMT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_DATE_GMT`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_CONTENT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_CONTENT`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_TITLE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_TITLE`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_EXCERPT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_EXCERPT`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_CATEGORY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_CATEGORY`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_STATUS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_STATUS`';
+    }
+    if ($this->isColumnModified(wpPostPeer::COMMENT_STATUS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COMMENT_STATUS`';
+    }
+    if ($this->isColumnModified(wpPostPeer::PING_STATUS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PING_STATUS`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_PASSWORD))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_PASSWORD`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_NAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_NAME`';
+    }
+    if ($this->isColumnModified(wpPostPeer::TO_PING))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TO_PING`';
+    }
+    if ($this->isColumnModified(wpPostPeer::PINGED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PINGED`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_MODIFIED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_MODIFIED`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_MODIFIED_GMT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_MODIFIED_GMT`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_CONTENT_FILTERED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_CONTENT_FILTERED`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_PARENT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_PARENT`';
+    }
+    if ($this->isColumnModified(wpPostPeer::GUID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`GUID`';
+    }
+    if ($this->isColumnModified(wpPostPeer::MENU_ORDER))
+    {
+      $modifiedColumns[':p' . $index++]  = '`MENU_ORDER`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_TYPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_TYPE`';
+    }
+    if ($this->isColumnModified(wpPostPeer::POST_MIME_TYPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POST_MIME_TYPE`';
+    }
+    if ($this->isColumnModified(wpPostPeer::COMMENT_COUNT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COMMENT_COUNT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `wp_posts` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`POST_AUTHOR`':
+            $stmt->bindValue($identifier, $this->post_author, PDO::PARAM_INT);
+            break;
+          case '`POST_DATE`':
+            $stmt->bindValue($identifier, $this->post_date, PDO::PARAM_STR);
+            break;
+          case '`POST_DATE_GMT`':
+            $stmt->bindValue($identifier, $this->post_date_gmt, PDO::PARAM_STR);
+            break;
+          case '`POST_CONTENT`':
+            $stmt->bindValue($identifier, $this->post_content, PDO::PARAM_STR);
+            break;
+          case '`POST_TITLE`':
+            $stmt->bindValue($identifier, $this->post_title, PDO::PARAM_STR);
+            break;
+          case '`POST_EXCERPT`':
+            $stmt->bindValue($identifier, $this->post_excerpt, PDO::PARAM_STR);
+            break;
+          case '`POST_CATEGORY`':
+            $stmt->bindValue($identifier, $this->post_category, PDO::PARAM_INT);
+            break;
+          case '`POST_STATUS`':
+            $stmt->bindValue($identifier, $this->post_status, PDO::PARAM_STR);
+            break;
+          case '`COMMENT_STATUS`':
+            $stmt->bindValue($identifier, $this->comment_status, PDO::PARAM_STR);
+            break;
+          case '`PING_STATUS`':
+            $stmt->bindValue($identifier, $this->ping_status, PDO::PARAM_STR);
+            break;
+          case '`POST_PASSWORD`':
+            $stmt->bindValue($identifier, $this->post_password, PDO::PARAM_STR);
+            break;
+          case '`POST_NAME`':
+            $stmt->bindValue($identifier, $this->post_name, PDO::PARAM_STR);
+            break;
+          case '`TO_PING`':
+            $stmt->bindValue($identifier, $this->to_ping, PDO::PARAM_STR);
+            break;
+          case '`PINGED`':
+            $stmt->bindValue($identifier, $this->pinged, PDO::PARAM_STR);
+            break;
+          case '`POST_MODIFIED`':
+            $stmt->bindValue($identifier, $this->post_modified, PDO::PARAM_STR);
+            break;
+          case '`POST_MODIFIED_GMT`':
+            $stmt->bindValue($identifier, $this->post_modified_gmt, PDO::PARAM_STR);
+            break;
+          case '`POST_CONTENT_FILTERED`':
+            $stmt->bindValue($identifier, $this->post_content_filtered, PDO::PARAM_STR);
+            break;
+          case '`POST_PARENT`':
+            $stmt->bindValue($identifier, $this->post_parent, PDO::PARAM_INT);
+            break;
+          case '`GUID`':
+            $stmt->bindValue($identifier, $this->guid, PDO::PARAM_STR);
+            break;
+          case '`MENU_ORDER`':
+            $stmt->bindValue($identifier, $this->menu_order, PDO::PARAM_INT);
+            break;
+          case '`POST_TYPE`':
+            $stmt->bindValue($identifier, $this->post_type, PDO::PARAM_STR);
+            break;
+          case '`POST_MIME_TYPE`':
+            $stmt->bindValue($identifier, $this->post_mime_type, PDO::PARAM_STR);
+            break;
+          case '`COMMENT_COUNT`':
+            $stmt->bindValue($identifier, $this->comment_count, PDO::PARAM_INT);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -2038,11 +2286,13 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     $copyObj->setPostMimeType($this->getPostMimeType());
     $copyObj->setCommentCount($this->getCommentCount());
 
-    if ($deepCopy)
+    if ($deepCopy && !$this->startCopy)
     {
       // important: temporarily setNew(false) because this affects the behavior of
       // the getter/setter methods for fkey referrer objects.
       $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
 
       foreach ($this->getwpPostMetas() as $relObj)
       {
@@ -2051,6 +2301,8 @@ abstract class BasewpPost extends BaseObject  implements Persistent
         }
       }
 
+      //unflag object copy
+      $this->startCopy = false;
     }
 
     if ($makeNew)
@@ -2245,6 +2497,32 @@ abstract class BasewpPost extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of wpPostMeta objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $wpPostMetas A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setwpPostMetas(PropelCollection $wpPostMetas, PropelPDO $con = null)
+  {
+    $this->wpPostMetasScheduledForDeletion = $this->getwpPostMetas(new Criteria(), $con)->diff($wpPostMetas);
+
+    foreach ($wpPostMetas as $wpPostMeta)
+    {
+      // Fix issue with collection modified by reference
+      if ($wpPostMeta->isNew())
+      {
+        $wpPostMeta->setwpPost($this);
+      }
+      $this->addwpPostMeta($wpPostMeta);
+    }
+
+    $this->collwpPostMetas = $wpPostMetas;
+  }
+
+  /**
    * Returns the number of related wpPostMeta objects.
    *
    * @param      Criteria $criteria
@@ -2293,11 +2571,19 @@ abstract class BasewpPost extends BaseObject  implements Persistent
       $this->initwpPostMetas();
     }
     if (!$this->collwpPostMetas->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collwpPostMetas[]= $l;
-      $l->setwpPost($this);
+      $this->doAddwpPostMeta($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  wpPostMeta $wpPostMeta The wpPostMeta object to add.
+   */
+  protected function doAddwpPostMeta($wpPostMeta)
+  {
+    $this->collwpPostMetas[]= $wpPostMeta;
+    $wpPostMeta->setwpPost($this);
   }
 
   /**

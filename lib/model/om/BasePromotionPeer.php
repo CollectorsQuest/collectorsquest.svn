@@ -38,14 +38,14 @@ abstract class BasePromotionPeer
   /** the column name for the ID field */
   const ID = 'promotion.ID';
 
+  /** the column name for the PROMOTION_CODE field */
+  const PROMOTION_CODE = 'promotion.PROMOTION_CODE';
+
   /** the column name for the PROMOTION_NAME field */
   const PROMOTION_NAME = 'promotion.PROMOTION_NAME';
 
   /** the column name for the PROMOTION_DESC field */
   const PROMOTION_DESC = 'promotion.PROMOTION_DESC';
-
-  /** the column name for the PROMOTION_CODE field */
-  const PROMOTION_CODE = 'promotion.PROMOTION_CODE';
 
   /** the column name for the AMOUNT field */
   const AMOUNT = 'promotion.AMOUNT';
@@ -59,11 +59,11 @@ abstract class BasePromotionPeer
   /** the column name for the EXPIRY_DATE field */
   const EXPIRY_DATE = 'promotion.EXPIRY_DATE';
 
-  /** the column name for the UPDATED_AT field */
-  const UPDATED_AT = 'promotion.UPDATED_AT';
-
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'promotion.CREATED_AT';
+
+  /** the column name for the UPDATED_AT field */
+  const UPDATED_AT = 'promotion.UPDATED_AT';
 
   /** The default string format for model objects of the related table **/
   const DEFAULT_STRING_FORMAT = 'YAML';
@@ -84,11 +84,11 @@ abstract class BasePromotionPeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'PromotionName', 'PromotionDesc', 'PromotionCode', 'Amount', 'AmountType', 'NoOfTimeUsed', 'ExpiryDate', 'UpdatedAt', 'CreatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'promotionName', 'promotionDesc', 'promotionCode', 'amount', 'amountType', 'noOfTimeUsed', 'expiryDate', 'updatedAt', 'createdAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::PROMOTION_NAME, self::PROMOTION_DESC, self::PROMOTION_CODE, self::AMOUNT, self::AMOUNT_TYPE, self::NO_OF_TIME_USED, self::EXPIRY_DATE, self::UPDATED_AT, self::CREATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'PROMOTION_NAME', 'PROMOTION_DESC', 'PROMOTION_CODE', 'AMOUNT', 'AMOUNT_TYPE', 'NO_OF_TIME_USED', 'EXPIRY_DATE', 'UPDATED_AT', 'CREATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'promotion_name', 'promotion_desc', 'promotion_code', 'amount', 'amount_type', 'no_of_time_used', 'expiry_date', 'updated_at', 'created_at', ),
+    BasePeer::TYPE_PHPNAME => array ('Id', 'PromotionCode', 'PromotionName', 'PromotionDesc', 'Amount', 'AmountType', 'NoOfTimeUsed', 'ExpiryDate', 'CreatedAt', 'UpdatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'promotionCode', 'promotionName', 'promotionDesc', 'amount', 'amountType', 'noOfTimeUsed', 'expiryDate', 'createdAt', 'updatedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::PROMOTION_CODE, self::PROMOTION_NAME, self::PROMOTION_DESC, self::AMOUNT, self::AMOUNT_TYPE, self::NO_OF_TIME_USED, self::EXPIRY_DATE, self::CREATED_AT, self::UPDATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'PROMOTION_CODE', 'PROMOTION_NAME', 'PROMOTION_DESC', 'AMOUNT', 'AMOUNT_TYPE', 'NO_OF_TIME_USED', 'EXPIRY_DATE', 'CREATED_AT', 'UPDATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'promotion_code', 'promotion_name', 'promotion_desc', 'amount', 'amount_type', 'no_of_time_used', 'expiry_date', 'created_at', 'updated_at', ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
   );
 
@@ -99,11 +99,11 @@ abstract class BasePromotionPeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PromotionName' => 1, 'PromotionDesc' => 2, 'PromotionCode' => 3, 'Amount' => 4, 'AmountType' => 5, 'NoOfTimeUsed' => 6, 'ExpiryDate' => 7, 'UpdatedAt' => 8, 'CreatedAt' => 9, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'promotionName' => 1, 'promotionDesc' => 2, 'promotionCode' => 3, 'amount' => 4, 'amountType' => 5, 'noOfTimeUsed' => 6, 'expiryDate' => 7, 'updatedAt' => 8, 'createdAt' => 9, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::PROMOTION_NAME => 1, self::PROMOTION_DESC => 2, self::PROMOTION_CODE => 3, self::AMOUNT => 4, self::AMOUNT_TYPE => 5, self::NO_OF_TIME_USED => 6, self::EXPIRY_DATE => 7, self::UPDATED_AT => 8, self::CREATED_AT => 9, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'PROMOTION_NAME' => 1, 'PROMOTION_DESC' => 2, 'PROMOTION_CODE' => 3, 'AMOUNT' => 4, 'AMOUNT_TYPE' => 5, 'NO_OF_TIME_USED' => 6, 'EXPIRY_DATE' => 7, 'UPDATED_AT' => 8, 'CREATED_AT' => 9, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'promotion_name' => 1, 'promotion_desc' => 2, 'promotion_code' => 3, 'amount' => 4, 'amount_type' => 5, 'no_of_time_used' => 6, 'expiry_date' => 7, 'updated_at' => 8, 'created_at' => 9, ),
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PromotionCode' => 1, 'PromotionName' => 2, 'PromotionDesc' => 3, 'Amount' => 4, 'AmountType' => 5, 'NoOfTimeUsed' => 6, 'ExpiryDate' => 7, 'CreatedAt' => 8, 'UpdatedAt' => 9, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'promotionCode' => 1, 'promotionName' => 2, 'promotionDesc' => 3, 'amount' => 4, 'amountType' => 5, 'noOfTimeUsed' => 6, 'expiryDate' => 7, 'createdAt' => 8, 'updatedAt' => 9, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::PROMOTION_CODE => 1, self::PROMOTION_NAME => 2, self::PROMOTION_DESC => 3, self::AMOUNT => 4, self::AMOUNT_TYPE => 5, self::NO_OF_TIME_USED => 6, self::EXPIRY_DATE => 7, self::CREATED_AT => 8, self::UPDATED_AT => 9, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'PROMOTION_CODE' => 1, 'PROMOTION_NAME' => 2, 'PROMOTION_DESC' => 3, 'AMOUNT' => 4, 'AMOUNT_TYPE' => 5, 'NO_OF_TIME_USED' => 6, 'EXPIRY_DATE' => 7, 'CREATED_AT' => 8, 'UPDATED_AT' => 9, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'promotion_code' => 1, 'promotion_name' => 2, 'promotion_desc' => 3, 'amount' => 4, 'amount_type' => 5, 'no_of_time_used' => 6, 'expiry_date' => 7, 'created_at' => 8, 'updated_at' => 9, ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, )
   );
 
@@ -180,28 +180,28 @@ abstract class BasePromotionPeer
     if (null === $alias)
     {
       $criteria->addSelectColumn(PromotionPeer::ID);
+      $criteria->addSelectColumn(PromotionPeer::PROMOTION_CODE);
       $criteria->addSelectColumn(PromotionPeer::PROMOTION_NAME);
       $criteria->addSelectColumn(PromotionPeer::PROMOTION_DESC);
-      $criteria->addSelectColumn(PromotionPeer::PROMOTION_CODE);
       $criteria->addSelectColumn(PromotionPeer::AMOUNT);
       $criteria->addSelectColumn(PromotionPeer::AMOUNT_TYPE);
       $criteria->addSelectColumn(PromotionPeer::NO_OF_TIME_USED);
       $criteria->addSelectColumn(PromotionPeer::EXPIRY_DATE);
-      $criteria->addSelectColumn(PromotionPeer::UPDATED_AT);
       $criteria->addSelectColumn(PromotionPeer::CREATED_AT);
+      $criteria->addSelectColumn(PromotionPeer::UPDATED_AT);
     }
     else
     {
       $criteria->addSelectColumn($alias . '.ID');
+      $criteria->addSelectColumn($alias . '.PROMOTION_CODE');
       $criteria->addSelectColumn($alias . '.PROMOTION_NAME');
       $criteria->addSelectColumn($alias . '.PROMOTION_DESC');
-      $criteria->addSelectColumn($alias . '.PROMOTION_CODE');
       $criteria->addSelectColumn($alias . '.AMOUNT');
       $criteria->addSelectColumn($alias . '.AMOUNT_TYPE');
       $criteria->addSelectColumn($alias . '.NO_OF_TIME_USED');
       $criteria->addSelectColumn($alias . '.EXPIRY_DATE');
-      $criteria->addSelectColumn($alias . '.UPDATED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
+      $criteria->addSelectColumn($alias . '.UPDATED_AT');
     }
   }
 
@@ -426,9 +426,6 @@ abstract class BasePromotionPeer
    */
   public static function clearRelatedInstancePool()
   {
-    // Invalidate objects in PromotionTransactionPeer instance pool,
-    // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-    PromotionTransactionPeer::clearInstancePool();
   }
 
   /**
@@ -682,7 +679,6 @@ abstract class BasePromotionPeer
       // use transaction because $criteria could contain info
       // for more than one table or we could emulating ON DELETE CASCADE, etc.
       $con->beginTransaction();
-      $affectedRows += PromotionPeer::doOnDeleteCascade(new Criteria(PromotionPeer::DATABASE_NAME), $con);
       $affectedRows += BasePeer::doDeleteAll(PromotionPeer::TABLE_NAME, $con, PromotionPeer::DATABASE_NAME);
       // Because this db requires some delete cascade/set null emulation, we have to
       // clear the cached instance *after* the emulation has happened (since
@@ -719,14 +715,25 @@ abstract class BasePromotionPeer
 
     if ($values instanceof Criteria)
     {
+      // invalidate the cache for all objects of this type, since we have no
+      // way of knowing (without running a query) what objects should be invalidated
+      // from the cache based on this Criteria.
+      PromotionPeer::clearInstancePool();
       // rename for clarity
       $criteria = clone $values;
     } elseif ($values instanceof Promotion) { // it's a model object
+      // invalidate the cache for this single object
+      PromotionPeer::removeInstanceFromPool($values);
       // create criteria based on pk values
       $criteria = $values->buildPkeyCriteria();
     } else { // it's a primary key, or an array of pks
       $criteria = new Criteria(self::DATABASE_NAME);
       $criteria->add(PromotionPeer::ID, (array) $values, Criteria::IN);
+      // invalidate the cache for this object(s)
+      foreach ((array) $values as $singleval)
+      {
+        PromotionPeer::removeInstanceFromPool($singleval);
+      }
     }
 
     // Set the correct dbName
@@ -740,25 +747,6 @@ abstract class BasePromotionPeer
       // for more than one table or we could emulating ON DELETE CASCADE, etc.
       $con->beginTransaction();
       
-      // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
-      $c = clone $criteria;
-      $affectedRows += PromotionPeer::doOnDeleteCascade($c, $con);
-      
-      // Because this db requires some delete cascade/set null emulation, we have to
-      // clear the cached instance *after* the emulation has happened (since
-      // instances get re-added by the select statement contained therein).
-      if ($values instanceof Criteria)
-      {
-        PromotionPeer::clearInstancePool();
-      } elseif ($values instanceof Promotion) { // it's a model object
-        PromotionPeer::removeInstanceFromPool($values);
-      } else { // it's a primary key, or an array of pks
-        foreach ((array) $values as $singleval)
-        {
-          PromotionPeer::removeInstanceFromPool($singleval);
-        }
-      }
-      
       $affectedRows += BasePeer::doDelete($criteria, $con);
       PromotionPeer::clearRelatedInstancePool();
       $con->commit();
@@ -769,39 +757,6 @@ abstract class BasePromotionPeer
       $con->rollBack();
       throw $e;
     }
-  }
-
-  /**
-   * This is a method for emulating ON DELETE CASCADE for DBs that don't support this
-   * feature (like MySQL or SQLite).
-   *
-   * This method is not very speedy because it must perform a query first to get
-   * the implicated records and then perform the deletes by calling those Peer classes.
-   *
-   * This method should be used within a transaction if possible.
-   *
-   * @param      Criteria $criteria
-   * @param      PropelPDO $con
-   * @return     int The number of affected rows (if supported by underlying database driver).
-   */
-  protected static function doOnDeleteCascade(Criteria $criteria, PropelPDO $con)
-  {
-    // initialize var to track total num of affected rows
-    $affectedRows = 0;
-
-    // first find the objects that are implicated by the $criteria
-    $objects = PromotionPeer::doSelect($criteria, $con);
-    foreach ($objects as $obj)
-    {
-
-
-      // delete related PromotionTransaction objects
-      $criteria = new Criteria(PromotionTransactionPeer::DATABASE_NAME);
-      
-      $criteria->add(PromotionTransactionPeer::PROMOTION_ID, $obj->getId());
-      $affectedRows += PromotionTransactionPeer::doDelete($criteria, $con);
-    }
-    return $affectedRows;
   }
 
   /**

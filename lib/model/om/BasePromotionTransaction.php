@@ -25,6 +25,12 @@ abstract class BasePromotionTransaction extends BaseObject  implements Persisten
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -539,7 +545,7 @@ abstract class BasePromotionTransaction extends BaseObject  implements Persisten
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -627,7 +633,7 @@ abstract class BasePromotionTransaction extends BaseObject  implements Persisten
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -675,39 +681,138 @@ abstract class BasePromotionTransaction extends BaseObject  implements Persisten
         $this->setCollector($this->aCollector);
       }
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = PromotionTransactionPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(PromotionTransactionPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PromotionTransactionPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows += 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows += PromotionTransactionPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = PromotionTransactionPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . PromotionTransactionPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(PromotionTransactionPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(PromotionTransactionPeer::PROMOTION_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PROMOTION_ID`';
+    }
+    if ($this->isColumnModified(PromotionTransactionPeer::COLLECTOR_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_ID`';
+    }
+    if ($this->isColumnModified(PromotionTransactionPeer::AMOUNT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`AMOUNT`';
+    }
+    if ($this->isColumnModified(PromotionTransactionPeer::AMOUNT_TYPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`AMOUNT_TYPE`';
+    }
+    if ($this->isColumnModified(PromotionTransactionPeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `promotion_transaction` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`PROMOTION_ID`':
+            $stmt->bindValue($identifier, $this->promotion_id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_ID`':
+            $stmt->bindValue($identifier, $this->collector_id, PDO::PARAM_INT);
+            break;
+          case '`AMOUNT`':
+            $stmt->bindValue($identifier, $this->amount, PDO::PARAM_STR);
+            break;
+          case '`AMOUNT_TYPE`':
+            $stmt->bindValue($identifier, $this->amount_type, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1065,6 +1170,19 @@ abstract class BasePromotionTransaction extends BaseObject  implements Persisten
     $copyObj->setAmount($this->getAmount());
     $copyObj->setAmountType($this->getAmountType());
     $copyObj->setCreatedAt($this->getCreatedAt());
+
+    if ($deepCopy && !$this->startCopy)
+    {
+      // important: temporarily setNew(false) because this affects the behavior of
+      // the getter/setter methods for fkey referrer objects.
+      $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
+
+      //unflag object copy
+      $this->startCopy = false;
+    }
+
     if ($makeNew)
     {
       $copyObj->setNew(true);

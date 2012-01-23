@@ -39,15 +39,15 @@ class PromotionTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
+    $this->addColumn('PROMOTION_CODE', 'PromotionCode', 'VARCHAR', true, 255, null);
     $this->addColumn('PROMOTION_NAME', 'PromotionName', 'VARCHAR', true, 255, null);
     $this->addColumn('PROMOTION_DESC', 'PromotionDesc', 'LONGVARCHAR', false, null, null);
-    $this->addColumn('PROMOTION_CODE', 'PromotionCode', 'VARCHAR', true, 255, null);
     $this->addColumn('AMOUNT', 'Amount', 'FLOAT', false, null, null);
     $this->addColumn('AMOUNT_TYPE', 'AmountType', 'CHAR', true, null, 'Fix');
     $this->addColumn('NO_OF_TIME_USED', 'NoOfTimeUsed', 'INTEGER', false, null, null);
     $this->addColumn('EXPIRY_DATE', 'ExpiryDate', 'TIMESTAMP', false, null, null);
-    $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
+    $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     // validators
   }
 
@@ -56,7 +56,7 @@ class PromotionTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('PromotionTransaction', 'PromotionTransaction', RelationMap::ONE_TO_MANY, array('id' => 'promotion_id', ), 'CASCADE', null, 'PromotionTransactions');
+    $this->addRelation('PromotionTransaction', 'PromotionTransaction', RelationMap::ONE_TO_MANY, array('id' => 'promotion_id', ), 'RESTRICT', null, 'PromotionTransactions');
   }
 
   /**
@@ -68,9 +68,9 @@ class PromotionTableMap extends TableMap
   public function getBehaviors()
   {
     return array(
+      'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
       'symfony' => array('form' => 'true', 'filter' => 'true', ),
       'symfony_behaviors' => array(),
-      'symfony_timestampable' => array('update_column' => 'updated_at', 'create_column' => 'created_at', ),
       'alternative_coding_standards' => array('brackets_newline' => 'true', 'remove_closing_comments' => 'true', 'use_whitespace' => 'true', 'tab_size' => '2', 'strip_comments' => 'false', ),
     );
   }

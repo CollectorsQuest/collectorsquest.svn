@@ -20,7 +20,9 @@ class ProjectConfiguration extends IceProjectConfiguration
     iconv_set_encoding('output_encoding', 'UTF-8');
     iconv_set_encoding('internal_encoding', 'UTF-8');
 
-    $this->enablePlugins('sfPropelORMPlugin', 'sfGuardPlugin', 'sfGravatarPlugin', 'sfTaskExtraPlugin');
+    $this->enablePlugins(
+      'sfPropelORMPlugin', 'sfGuardPlugin', 'sfGravatarPlugin'
+    );
     $this->enablePlugins(
       'iceAssetsPlugin', 'iceBehaviorsPlugin', 'iceLibsPlugin', 'iceTaggablePlugin',
       'iceBackendPlugin', 'iceJobQueuePlugin', 'iceCrontabPlugin', 'iceSpamControlPlugin'

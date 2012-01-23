@@ -74,8 +74,8 @@ CREATE TABLE `collector_profile`
 	`is_image_auto` TINYINT(1) DEFAULT 1,
 	`preferences` TEXT,
 	`notifications` TEXT,
-	`updated_at` DATETIME,
 	`created_at` DATETIME,
+	`updated_at` DATETIME,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `collector_profile_U_1` (`collector_id`),
 	CONSTRAINT `collector_profile_FK_1`
@@ -98,8 +98,8 @@ CREATE TABLE `collector_email`
 	`hash` VARCHAR(40) NOT NULL,
 	`salt` VARCHAR(32) NOT NULL,
 	`is_verified` TINYINT(1) DEFAULT 0,
-	`updated_at` DATETIME,
 	`created_at` DATETIME,
+	`updated_at` DATETIME,
 	PRIMARY KEY (`id`),
 	INDEX `collector_email_I_1` (`email`),
 	INDEX `collector_email_FI_1` (`collector_id`),
@@ -431,8 +431,8 @@ CREATE TABLE `multimedia`
 	`orientation` ENUM('landscape','portrait') DEFAULT 'landscape',
 	`source` VARCHAR(255),
 	`is_primary` TINYINT(1) DEFAULT 0,
-	`updated_at` DATETIME,
 	`created_at` DATETIME,
+	`updated_at` DATETIME,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `multimedia_U_1` (`model`, `model_id`, `md5`),
 	INDEX `multimedia_I_1` (`model`, `model_id`)
@@ -474,8 +474,8 @@ CREATE TABLE `private_message_template`
 	`subject` VARCHAR(255) NOT NULL,
 	`body` TEXT NOT NULL,
 	`description` VARCHAR(255),
-	`updated_at` DATETIME,
 	`created_at` DATETIME,
+	`updated_at` DATETIME,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
@@ -802,8 +802,8 @@ CREATE TABLE `score`
 	`views` INTEGER DEFAULT 0,
 	`ratings` INTEGER DEFAULT 0,
 	`score` INTEGER DEFAULT 0,
-	`updated_at` DATETIME,
 	`created_at` DATETIME,
+	`updated_at` DATETIME,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `score_U_1` (`day`, `model`, `model_id`)
 ) ENGINE=InnoDB;
@@ -840,13 +840,13 @@ DROP TABLE IF EXISTS `package`;
 CREATE TABLE `package`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`plan_type` ENUM('Casual','Power') NOT NULL,
 	`package_name` VARCHAR(255) NOT NULL,
 	`package_description` TEXT,
 	`max_items_for_sale` INTEGER,
 	`package_price` FLOAT,
-	`plan_type` ENUM('Casual','Power') NOT NULL,
-	`updated_at` DATETIME,
 	`created_at` DATETIME,
+	`updated_at` DATETIME,
 	PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
@@ -859,23 +859,23 @@ DROP TABLE IF EXISTS `package_transaction`;
 CREATE TABLE `package_transaction`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
-	`collector_id` INTEGER NOT NULL,
 	`package_id` INTEGER NOT NULL,
+	`collector_id` INTEGER NOT NULL,
+	`payment_status` VARCHAR(255) DEFAULT 'pending',
 	`max_items_for_sale` INTEGER,
 	`package_price` FLOAT,
 	`expiry_date` DATETIME,
-	`payment_status` VARCHAR(255) DEFAULT 'pending',
 	`created_at` DATETIME,
 	PRIMARY KEY (`id`),
-	INDEX `package_transaction_FI_1` (`collector_id`),
-	INDEX `package_transaction_FI_2` (`package_id`),
+	INDEX `package_transaction_FI_1` (`package_id`),
+	INDEX `package_transaction_FI_2` (`collector_id`),
 	CONSTRAINT `package_transaction_FK_1`
-		FOREIGN KEY (`collector_id`)
-		REFERENCES `collector` (`id`)
-		ON DELETE CASCADE,
-	CONSTRAINT `package_transaction_FK_2`
 		FOREIGN KEY (`package_id`)
 		REFERENCES `package` (`id`)
+		ON DELETE RESTRICT,
+	CONSTRAINT `package_transaction_FK_2`
+		FOREIGN KEY (`collector_id`)
+		REFERENCES `collector` (`id`)
 		ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
@@ -888,15 +888,15 @@ DROP TABLE IF EXISTS `promotion`;
 CREATE TABLE `promotion`
 (
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
+	`promotion_code` VARCHAR(255) NOT NULL,
 	`promotion_name` VARCHAR(255) NOT NULL,
 	`promotion_desc` TEXT,
-	`promotion_code` VARCHAR(255) NOT NULL,
 	`amount` FLOAT,
 	`amount_type` ENUM('Fix','Percentage') DEFAULT 'Fix' NOT NULL,
 	`no_of_time_used` INTEGER,
 	`expiry_date` DATETIME,
-	`updated_at` DATETIME,
 	`created_at` DATETIME,
+	`updated_at` DATETIME,
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `promotion_U_I` (`promotion_code`)
 ) ENGINE=InnoDB;
@@ -921,7 +921,7 @@ CREATE TABLE `promotion_transaction`
 	CONSTRAINT `promotion_transaction_FK_1`
 		FOREIGN KEY (`promotion_id`)
 		REFERENCES `promotion` (`id`)
-		ON DELETE CASCADE,
+		ON DELETE RESTRICT,
 	CONSTRAINT `promotion_transaction_FK_2`
 		FOREIGN KEY (`collector_id`)
 		REFERENCES `collector` (`id`)

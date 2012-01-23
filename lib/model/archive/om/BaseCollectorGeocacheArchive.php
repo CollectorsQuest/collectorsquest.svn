@@ -25,6 +25,12 @@ abstract class BaseCollectorGeocacheArchive extends BaseObject  implements Persi
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -674,7 +680,7 @@ abstract class BaseCollectorGeocacheArchive extends BaseObject  implements Persi
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -756,7 +762,7 @@ abstract class BaseCollectorGeocacheArchive extends BaseObject  implements Persi
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -781,29 +787,165 @@ abstract class BaseCollectorGeocacheArchive extends BaseObject  implements Persi
     {
       $this->alreadyInSave = true;
 
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
+      if ($this->isNew() || $this->isModified())
       {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = CollectorGeocacheArchivePeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CollectorGeocacheArchivePeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CollectorGeocacheArchivePeer::COLLECTOR_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_ID`';
+    }
+    if ($this->isColumnModified(CollectorGeocacheArchivePeer::COUNTRY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COUNTRY`';
+    }
+    if ($this->isColumnModified(CollectorGeocacheArchivePeer::COUNTRY_ISO3166))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COUNTRY_ISO3166`';
+    }
+    if ($this->isColumnModified(CollectorGeocacheArchivePeer::STATE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`STATE`';
+    }
+    if ($this->isColumnModified(CollectorGeocacheArchivePeer::COUNTY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COUNTY`';
+    }
+    if ($this->isColumnModified(CollectorGeocacheArchivePeer::CITY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CITY`';
+    }
+    if ($this->isColumnModified(CollectorGeocacheArchivePeer::ZIP_POSTAL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ZIP_POSTAL`';
+    }
+    if ($this->isColumnModified(CollectorGeocacheArchivePeer::ADDRESS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ADDRESS`';
+    }
+    if ($this->isColumnModified(CollectorGeocacheArchivePeer::LATITUDE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`LATITUDE`';
+    }
+    if ($this->isColumnModified(CollectorGeocacheArchivePeer::LONGITUDE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`LONGITUDE`';
+    }
+    if ($this->isColumnModified(CollectorGeocacheArchivePeer::TIMEZONE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TIMEZONE`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `collector_geocache_archive` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_ID`':
+            $stmt->bindValue($identifier, $this->collector_id, PDO::PARAM_INT);
+            break;
+          case '`COUNTRY`':
+            $stmt->bindValue($identifier, $this->country, PDO::PARAM_STR);
+            break;
+          case '`COUNTRY_ISO3166`':
+            $stmt->bindValue($identifier, $this->country_iso3166, PDO::PARAM_STR);
+            break;
+          case '`STATE`':
+            $stmt->bindValue($identifier, $this->state, PDO::PARAM_STR);
+            break;
+          case '`COUNTY`':
+            $stmt->bindValue($identifier, $this->county, PDO::PARAM_STR);
+            break;
+          case '`CITY`':
+            $stmt->bindValue($identifier, $this->city, PDO::PARAM_STR);
+            break;
+          case '`ZIP_POSTAL`':
+            $stmt->bindValue($identifier, $this->zip_postal, PDO::PARAM_STR);
+            break;
+          case '`ADDRESS`':
+            $stmt->bindValue($identifier, $this->address, PDO::PARAM_STR);
+            break;
+          case '`LATITUDE`':
+            $stmt->bindValue($identifier, $this->latitude, PDO::PARAM_STR);
+            break;
+          case '`LONGITUDE`':
+            $stmt->bindValue($identifier, $this->longitude, PDO::PARAM_STR);
+            break;
+          case '`TIMEZONE`':
+            $stmt->bindValue($identifier, $this->timezone, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1176,7 +1318,6 @@ abstract class BaseCollectorGeocacheArchive extends BaseObject  implements Persi
    */
   public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setId($this->getId());
     $copyObj->setCollectorId($this->getCollectorId());
     $copyObj->setCountry($this->getCountry());
     $copyObj->setCountryIso3166($this->getCountryIso3166());
@@ -1191,6 +1332,7 @@ abstract class BaseCollectorGeocacheArchive extends BaseObject  implements Persi
     if ($makeNew)
     {
       $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
     }
   }
 

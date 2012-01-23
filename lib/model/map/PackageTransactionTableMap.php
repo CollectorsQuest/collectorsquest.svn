@@ -39,12 +39,12 @@ class PackageTransactionTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-    $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
     $this->addForeignKey('PACKAGE_ID', 'PackageId', 'INTEGER', 'package', 'ID', true, null, null);
+    $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
+    $this->addColumn('PAYMENT_STATUS', 'PaymentStatus', 'VARCHAR', false, 255, 'pending');
     $this->addColumn('MAX_ITEMS_FOR_SALE', 'MaxItemsForSale', 'INTEGER', false, null, null);
     $this->addColumn('PACKAGE_PRICE', 'PackagePrice', 'FLOAT', false, null, null);
     $this->addColumn('EXPIRY_DATE', 'ExpiryDate', 'TIMESTAMP', false, null, null);
-    $this->addColumn('PAYMENT_STATUS', 'PaymentStatus', 'VARCHAR', false, 255, 'pending');
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
     // validators
   }
@@ -54,8 +54,8 @@ class PackageTransactionTableMap extends TableMap
    */
   public function buildRelations()
   {
+    $this->addRelation('Package', 'Package', RelationMap::MANY_TO_ONE, array('package_id' => 'id', ), 'RESTRICT', null);
     $this->addRelation('Collector', 'Collector', RelationMap::MANY_TO_ONE, array('collector_id' => 'id', ), 'CASCADE', null);
-    $this->addRelation('Package', 'Package', RelationMap::MANY_TO_ONE, array('package_id' => 'id', ), 'CASCADE', null);
   }
 
   /**

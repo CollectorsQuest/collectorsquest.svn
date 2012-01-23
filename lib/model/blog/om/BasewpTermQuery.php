@@ -37,246 +37,338 @@
  */
 abstract class BasewpTermQuery extends ModelCriteria
 {
-    
-    /**
-     * Initializes internal state of BasewpTermQuery object.
-     *
-     * @param     string $dbName The dabase name
-     * @param     string $modelName The phpName of a model, e.g. 'Book'
-     * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
-     */
-    public function __construct($dbName = 'blog', $modelName = 'wpTerm', $modelAlias = null)
+  
+  /**
+   * Initializes internal state of BasewpTermQuery object.
+   *
+   * @param     string $dbName The dabase name
+   * @param     string $modelName The phpName of a model, e.g. 'Book'
+   * @param     string $modelAlias The alias for the model in this query, e.g. 'b'
+   */
+  public function __construct($dbName = 'blog', $modelName = 'wpTerm', $modelAlias = null)
+  {
+    parent::__construct($dbName, $modelName, $modelAlias);
+  }
+
+  /**
+   * Returns a new wpTermQuery object.
+   *
+   * @param     string $modelAlias The alias of a model in the query
+   * @param     Criteria $criteria Optional Criteria to build the query from
+   *
+   * @return    wpTermQuery
+   */
+  public static function create($modelAlias = null, $criteria = null)
+  {
+    if ($criteria instanceof wpTermQuery)
     {
-        parent::__construct($dbName, $modelName, $modelAlias);
+      return $criteria;
     }
-
-    /**
-     * Returns a new wpTermQuery object.
-     *
-     * @param     string $modelAlias The alias of a model in the query
-     * @param     Criteria $criteria Optional Criteria to build the query from
-     *
-     * @return    wpTermQuery
-     */
-    public static function create($modelAlias = null, $criteria = null)
+    $query = new wpTermQuery();
+    if (null !== $modelAlias)
     {
-        if ($criteria instanceof wpTermQuery) {
-            return $criteria;
-        }
-        $query = new wpTermQuery();
-        if (null !== $modelAlias) {
-            $query->setModelAlias($modelAlias);
-        }
-        if ($criteria instanceof Criteria) {
-            $query->mergeWith($criteria);
-        }
-        return $query;
+      $query->setModelAlias($modelAlias);
     }
-
-    /**
-     * Find object by primary key
-     * Use instance pooling to avoid a database query if the object exists
-     * <code>
-     * $obj  = $c->findPk(12, $con);
-     * </code>
-     * @param     mixed $key Primary key to use for the query
-     * @param     PropelPDO $con an optional connection object
-     *
-     * @return    wpTerm|array|mixed the result, formatted by the current formatter
-     */
-    public function findPk($key, $con = null)
+    if ($criteria instanceof Criteria)
     {
-        if ((null !== ($obj = wpTermPeer::getInstanceFromPool((string) $key))) && $this->getFormatter()->isObjectFormatter()) {
-            // the object is alredy in the instance pool
-            return $obj;
-        } else {
-            // the object has not been requested yet, or the formatter is not an object formatter
-            $criteria = $this->isKeepQuery() ? clone $this : $this;
-            $stmt = $criteria
-                ->filterByPrimaryKey($key)
-                ->getSelectStatement($con);
-            return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
-        }
+      $query->mergeWith($criteria);
     }
+    return $query;
+  }
 
-    /**
-     * Find objects by primary key
-     * <code>
-     * $objs = $c->findPks(array(12, 56, 832), $con);
-     * </code>
-     * @param     array $keys Primary keys to use for the query
-     * @param     PropelPDO $con an optional connection object
-     *
-     * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
-     */
-    public function findPks($keys, $con = null)
+  /**
+   * Find object by primary key.
+   * Propel uses the instance pool to skip the database if the object exists.
+   * Go fast if the query is untouched.
+   *
+   * <code>
+   * $obj  = $c->findPk(12, $con);
+   * </code>
+   *
+   * @param     mixed $key Primary key to use for the query
+   * @param     PropelPDO $con an optional connection object
+   *
+   * @return    wpTerm|array|mixed the result, formatted by the current formatter
+   */
+  public function findPk($key, $con = null)
+  {
+    if ($key === null)
     {
-        $criteria = $this->isKeepQuery() ? clone $this : $this;
-        return $this
-            ->filterByPrimaryKeys($keys)
-            ->find($con);
+      return null;
     }
-
-    /**
-     * Filter the query by primary key
-     *
-     * @param     mixed $key Primary key to use for the query
-     *
-     * @return    wpTermQuery The current query, for fluid interface
-     */
-    public function filterByPrimaryKey($key)
+    if ((null !== ($obj = wpTermPeer::getInstanceFromPool((string) $key))) && !$this->formatter)
     {
-        return $this->addUsingAlias(wpTermPeer::TERM_ID, $key, Criteria::EQUAL);
+      // the object is alredy in the instance pool
+      return $obj;
     }
-
-    /**
-     * Filter the query by a list of primary keys
-     *
-     * @param     array $keys The list of primary key to use for the query
-     *
-     * @return    wpTermQuery The current query, for fluid interface
-     */
-    public function filterByPrimaryKeys($keys)
+    if ($con === null)
     {
-        return $this->addUsingAlias(wpTermPeer::TERM_ID, $keys, Criteria::IN);
+      $con = Propel::getConnection(wpTermPeer::DATABASE_NAME, Propel::CONNECTION_READ);
     }
-
-    /**
-     * Filter the query on the term_id column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByTermId(1234); // WHERE term_id = 1234
-     * $query->filterByTermId(array(12, 34)); // WHERE term_id IN (12, 34)
-     * $query->filterByTermId(array('min' => 12)); // WHERE term_id > 12
-     * </code>
-     *
-     * @param     mixed $termId The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    wpTermQuery The current query, for fluid interface
-     */
-    public function filterByTermId($termId = null, $comparison = null)
-    {
-        if (is_array($termId) && null === $comparison) {
-            $comparison = Criteria::IN;
-        }
-        return $this->addUsingAlias(wpTermPeer::TERM_ID, $termId, $comparison);
+    $this->basePreSelect($con);
+    if ($this->formatter || $this->modelAlias || $this->with || $this->select
+     || $this->selectColumns || $this->asColumns || $this->selectModifiers
+     || $this->map || $this->having || $this->joins) {
+      return $this->findPkComplex($key, $con);
     }
-
-    /**
-     * Filter the query on the name column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
-     * $query->filterByName('%fooValue%'); // WHERE name LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $name The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    wpTermQuery The current query, for fluid interface
-     */
-    public function filterByName($name = null, $comparison = null)
+    else
     {
-        if (null === $comparison) {
-            if (is_array($name)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $name)) {
-                $name = str_replace('*', '%', $name);
-                $comparison = Criteria::LIKE;
-            }
-        }
-        return $this->addUsingAlias(wpTermPeer::NAME, $name, $comparison);
+      return $this->findPkSimple($key, $con);
     }
+  }
 
-    /**
-     * Filter the query on the slug column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterBySlug('fooValue');   // WHERE slug = 'fooValue'
-     * $query->filterBySlug('%fooValue%'); // WHERE slug LIKE '%fooValue%'
-     * </code>
-     *
-     * @param     string $slug The value to use as filter.
-     *              Accepts wildcards (* and % trigger a LIKE)
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    wpTermQuery The current query, for fluid interface
-     */
-    public function filterBySlug($slug = null, $comparison = null)
+  /**
+   * Find object by primary key using raw SQL to go fast.
+   * Bypass doSelect() and the object formatter by using generated code.
+   *
+   * @param     mixed $key Primary key to use for the query
+   * @param     PropelPDO $con A connection object
+   *
+   * @return    wpTerm A model object, or null if the key is not found
+   */
+  protected function findPkSimple($key, $con)
+  {
+    $sql = 'SELECT `TERM_ID`, `NAME`, `SLUG`, `TERM_GROUP` FROM `wp_terms` WHERE `TERM_ID` = :p0';
+    try
     {
-        if (null === $comparison) {
-            if (is_array($slug)) {
-                $comparison = Criteria::IN;
-            } elseif (preg_match('/[\%\*]/', $slug)) {
-                $slug = str_replace('*', '%', $slug);
-                $comparison = Criteria::LIKE;
-            }
-        }
-        return $this->addUsingAlias(wpTermPeer::SLUG, $slug, $comparison);
+      $stmt = $con->prepare($sql);
+      $stmt->bindValue(':p0', $key, PDO::PARAM_INT);
+      $stmt->execute();
     }
-
-    /**
-     * Filter the query on the term_group column
-     *
-     * Example usage:
-     * <code>
-     * $query->filterByTermGroup(1234); // WHERE term_group = 1234
-     * $query->filterByTermGroup(array(12, 34)); // WHERE term_group IN (12, 34)
-     * $query->filterByTermGroup(array('min' => 12)); // WHERE term_group > 12
-     * </code>
-     *
-     * @param     mixed $termGroup The value to use as filter.
-     *              Use scalar values for equality.
-     *              Use array values for in_array() equivalent.
-     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-     * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-     *
-     * @return    wpTermQuery The current query, for fluid interface
-     */
-    public function filterByTermGroup($termGroup = null, $comparison = null)
+    catch (Exception $e)
     {
-        if (is_array($termGroup)) {
-            $useMinMax = false;
-            if (isset($termGroup['min'])) {
-                $this->addUsingAlias(wpTermPeer::TERM_GROUP, $termGroup['min'], Criteria::GREATER_EQUAL);
-                $useMinMax = true;
-            }
-            if (isset($termGroup['max'])) {
-                $this->addUsingAlias(wpTermPeer::TERM_GROUP, $termGroup['max'], Criteria::LESS_EQUAL);
-                $useMinMax = true;
-            }
-            if ($useMinMax) {
-                return $this;
-            }
-            if (null === $comparison) {
-                $comparison = Criteria::IN;
-            }
-        }
-        return $this->addUsingAlias(wpTermPeer::TERM_GROUP, $termGroup, $comparison);
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute SELECT statement [%s]', $sql), $e);
     }
-
-    /**
-     * Exclude object from result
-     *
-     * @param     wpTerm $wpTerm Object to remove from the list of results
-     *
-     * @return    wpTermQuery The current query, for fluid interface
-     */
-    public function prune($wpTerm = null)
+    $obj = null;
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
     {
-        if ($wpTerm) {
-            $this->addUsingAlias(wpTermPeer::TERM_ID, $wpTerm->getTermId(), Criteria::NOT_EQUAL);
-        }
+      $obj = new wpTerm();
+      $obj->hydrate($row);
+      wpTermPeer::addInstanceToPool($obj, (string) $row[0]);
+    }
+    $stmt->closeCursor();
 
+    return $obj;
+  }
+
+  /**
+   * Find object by primary key.
+   *
+   * @param     mixed $key Primary key to use for the query
+   * @param     PropelPDO $con A connection object
+   *
+   * @return    wpTerm|array|mixed the result, formatted by the current formatter
+   */
+  protected function findPkComplex($key, $con)
+  {
+    // As the query uses a PK condition, no limit(1) is necessary.
+    $criteria = $this->isKeepQuery() ? clone $this : $this;
+    $stmt = $criteria
+      ->filterByPrimaryKey($key)
+      ->doSelect($con);
+    return $criteria->getFormatter()->init($criteria)->formatOne($stmt);
+  }
+
+  /**
+   * Find objects by primary key
+   * <code>
+   * $objs = $c->findPks(array(12, 56, 832), $con);
+   * </code>
+   * @param     array $keys Primary keys to use for the query
+   * @param     PropelPDO $con an optional connection object
+   *
+   * @return    PropelObjectCollection|array|mixed the list of results, formatted by the current formatter
+   */
+  public function findPks($keys, $con = null)
+  {
+    if ($con === null)
+    {
+      $con = Propel::getConnection($this->getDbName(), Propel::CONNECTION_READ);
+    }
+    $this->basePreSelect($con);
+    $criteria = $this->isKeepQuery() ? clone $this : $this;
+    $stmt = $criteria
+      ->filterByPrimaryKeys($keys)
+      ->doSelect($con);
+    return $criteria->getFormatter()->init($criteria)->format($stmt);
+  }
+
+  /**
+   * Filter the query by primary key
+   *
+   * @param     mixed $key Primary key to use for the query
+   *
+   * @return    wpTermQuery The current query, for fluid interface
+   */
+  public function filterByPrimaryKey($key)
+  {
+    return $this->addUsingAlias(wpTermPeer::TERM_ID, $key, Criteria::EQUAL);
+  }
+
+  /**
+   * Filter the query by a list of primary keys
+   *
+   * @param     array $keys The list of primary key to use for the query
+   *
+   * @return    wpTermQuery The current query, for fluid interface
+   */
+  public function filterByPrimaryKeys($keys)
+  {
+    return $this->addUsingAlias(wpTermPeer::TERM_ID, $keys, Criteria::IN);
+  }
+
+  /**
+   * Filter the query on the term_id column
+   *
+   * Example usage:
+   * <code>
+   * $query->filterByTermId(1234); // WHERE term_id = 1234
+   * $query->filterByTermId(array(12, 34)); // WHERE term_id IN (12, 34)
+   * $query->filterByTermId(array('min' => 12)); // WHERE term_id > 12
+   * </code>
+   *
+   * @param     mixed $termId The value to use as filter.
+   *              Use scalar values for equality.
+   *              Use array values for in_array() equivalent.
+   *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpTermQuery The current query, for fluid interface
+   */
+  public function filterByTermId($termId = null, $comparison = null)
+  {
+    if (is_array($termId) && null === $comparison)
+    {
+      $comparison = Criteria::IN;
+    }
+    return $this->addUsingAlias(wpTermPeer::TERM_ID, $termId, $comparison);
+  }
+
+  /**
+   * Filter the query on the name column
+   *
+   * Example usage:
+   * <code>
+   * $query->filterByName('fooValue');   // WHERE name = 'fooValue'
+   * $query->filterByName('%fooValue%'); // WHERE name LIKE '%fooValue%'
+   * </code>
+   *
+   * @param     string $name The value to use as filter.
+   *              Accepts wildcards (* and % trigger a LIKE)
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpTermQuery The current query, for fluid interface
+   */
+  public function filterByName($name = null, $comparison = null)
+  {
+    if (null === $comparison)
+    {
+      if (is_array($name))
+      {
+        $comparison = Criteria::IN;
+      }
+      elseif (preg_match('/[\%\*]/', $name))
+      {
+        $name = str_replace('*', '%', $name);
+        $comparison = Criteria::LIKE;
+      }
+    }
+    return $this->addUsingAlias(wpTermPeer::NAME, $name, $comparison);
+  }
+
+  /**
+   * Filter the query on the slug column
+   *
+   * Example usage:
+   * <code>
+   * $query->filterBySlug('fooValue');   // WHERE slug = 'fooValue'
+   * $query->filterBySlug('%fooValue%'); // WHERE slug LIKE '%fooValue%'
+   * </code>
+   *
+   * @param     string $slug The value to use as filter.
+   *              Accepts wildcards (* and % trigger a LIKE)
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpTermQuery The current query, for fluid interface
+   */
+  public function filterBySlug($slug = null, $comparison = null)
+  {
+    if (null === $comparison)
+    {
+      if (is_array($slug))
+      {
+        $comparison = Criteria::IN;
+      }
+      elseif (preg_match('/[\%\*]/', $slug))
+      {
+        $slug = str_replace('*', '%', $slug);
+        $comparison = Criteria::LIKE;
+      }
+    }
+    return $this->addUsingAlias(wpTermPeer::SLUG, $slug, $comparison);
+  }
+
+  /**
+   * Filter the query on the term_group column
+   *
+   * Example usage:
+   * <code>
+   * $query->filterByTermGroup(1234); // WHERE term_group = 1234
+   * $query->filterByTermGroup(array(12, 34)); // WHERE term_group IN (12, 34)
+   * $query->filterByTermGroup(array('min' => 12)); // WHERE term_group > 12
+   * </code>
+   *
+   * @param     mixed $termGroup The value to use as filter.
+   *              Use scalar values for equality.
+   *              Use array values for in_array() equivalent.
+   *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpTermQuery The current query, for fluid interface
+   */
+  public function filterByTermGroup($termGroup = null, $comparison = null)
+  {
+    if (is_array($termGroup))
+    {
+      $useMinMax = false;
+      if (isset($termGroup['min']))
+      {
+        $this->addUsingAlias(wpTermPeer::TERM_GROUP, $termGroup['min'], Criteria::GREATER_EQUAL);
+        $useMinMax = true;
+      }
+      if (isset($termGroup['max']))
+      {
+        $this->addUsingAlias(wpTermPeer::TERM_GROUP, $termGroup['max'], Criteria::LESS_EQUAL);
+        $useMinMax = true;
+      }
+      if ($useMinMax)
+      {
         return $this;
+      }
+      if (null === $comparison)
+      {
+        $comparison = Criteria::IN;
+      }
     }
+    return $this->addUsingAlias(wpTermPeer::TERM_GROUP, $termGroup, $comparison);
+  }
+
+  /**
+   * Exclude object from result
+   *
+   * @param     wpTerm $wpTerm Object to remove from the list of results
+   *
+   * @return    wpTermQuery The current query, for fluid interface
+   */
+  public function prune($wpTerm = null)
+  {
+    if ($wpTerm)
+    {
+      $this->addUsingAlias(wpTermPeer::TERM_ID, $wpTerm->getTermId(), Criteria::NOT_EQUAL);
+    }
+
+    return $this;
+  }
 
 }

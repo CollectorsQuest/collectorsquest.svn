@@ -25,6 +25,12 @@ abstract class BaseCollectorGeocache extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -702,7 +708,7 @@ abstract class BaseCollectorGeocache extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -784,7 +790,7 @@ abstract class BaseCollectorGeocache extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -823,39 +829,180 @@ abstract class BaseCollectorGeocache extends BaseObject  implements Persistent
         $this->setCollector($this->aCollector);
       }
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = CollectorGeocachePeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(CollectorGeocachePeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CollectorGeocachePeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows += 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows += CollectorGeocachePeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = CollectorGeocachePeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . CollectorGeocachePeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CollectorGeocachePeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CollectorGeocachePeer::COLLECTOR_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_ID`';
+    }
+    if ($this->isColumnModified(CollectorGeocachePeer::COUNTRY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COUNTRY`';
+    }
+    if ($this->isColumnModified(CollectorGeocachePeer::COUNTRY_ISO3166))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COUNTRY_ISO3166`';
+    }
+    if ($this->isColumnModified(CollectorGeocachePeer::STATE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`STATE`';
+    }
+    if ($this->isColumnModified(CollectorGeocachePeer::COUNTY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COUNTY`';
+    }
+    if ($this->isColumnModified(CollectorGeocachePeer::CITY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CITY`';
+    }
+    if ($this->isColumnModified(CollectorGeocachePeer::ZIP_POSTAL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ZIP_POSTAL`';
+    }
+    if ($this->isColumnModified(CollectorGeocachePeer::ADDRESS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ADDRESS`';
+    }
+    if ($this->isColumnModified(CollectorGeocachePeer::LATITUDE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`LATITUDE`';
+    }
+    if ($this->isColumnModified(CollectorGeocachePeer::LONGITUDE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`LONGITUDE`';
+    }
+    if ($this->isColumnModified(CollectorGeocachePeer::TIMEZONE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TIMEZONE`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `collector_geocache` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_ID`':
+            $stmt->bindValue($identifier, $this->collector_id, PDO::PARAM_INT);
+            break;
+          case '`COUNTRY`':
+            $stmt->bindValue($identifier, $this->country, PDO::PARAM_STR);
+            break;
+          case '`COUNTRY_ISO3166`':
+            $stmt->bindValue($identifier, $this->country_iso3166, PDO::PARAM_STR);
+            break;
+          case '`STATE`':
+            $stmt->bindValue($identifier, $this->state, PDO::PARAM_STR);
+            break;
+          case '`COUNTY`':
+            $stmt->bindValue($identifier, $this->county, PDO::PARAM_STR);
+            break;
+          case '`CITY`':
+            $stmt->bindValue($identifier, $this->city, PDO::PARAM_STR);
+            break;
+          case '`ZIP_POSTAL`':
+            $stmt->bindValue($identifier, $this->zip_postal, PDO::PARAM_STR);
+            break;
+          case '`ADDRESS`':
+            $stmt->bindValue($identifier, $this->address, PDO::PARAM_STR);
+            break;
+          case '`LATITUDE`':
+            $stmt->bindValue($identifier, $this->latitude, PDO::PARAM_STR);
+            break;
+          case '`LONGITUDE`':
+            $stmt->bindValue($identifier, $this->longitude, PDO::PARAM_STR);
+            break;
+          case '`TIMEZONE`':
+            $stmt->bindValue($identifier, $this->timezone, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1261,6 +1408,19 @@ abstract class BaseCollectorGeocache extends BaseObject  implements Persistent
     $copyObj->setLatitude($this->getLatitude());
     $copyObj->setLongitude($this->getLongitude());
     $copyObj->setTimezone($this->getTimezone());
+
+    if ($deepCopy && !$this->startCopy)
+    {
+      // important: temporarily setNew(false) because this affects the behavior of
+      // the getter/setter methods for fkey referrer objects.
+      $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
+
+      //unflag object copy
+      $this->startCopy = false;
+    }
+
     if ($makeNew)
     {
       $copyObj->setNew(true);
@@ -1434,7 +1594,6 @@ abstract class BaseCollectorGeocache extends BaseObject  implements Persistent
   
     return $archive;
   }
-  
   /**
    * Copy the data of the current object into a $archiveTablePhpName archive object.
    * The archived object is then saved.
@@ -1452,12 +1611,12 @@ abstract class BaseCollectorGeocache extends BaseObject  implements Persistent
     if ($this->isNew()) {
       throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
     }
-    if (!$archive = $this->getArchive($con)) {
+    if (!$archive = $this->getArchive()) {
       $archive = new CollectorGeocacheArchive();
       $archive->setPrimaryKey($this->getPrimaryKey());
     }
     $this->copyInto($archive, $deepCopy = false, $makeNew = false);
-    $archive->save($con);
+    $archive->save();
   
     return $archive;
   }

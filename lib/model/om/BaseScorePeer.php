@@ -56,11 +56,11 @@ abstract class BaseScorePeer
   /** the column name for the SCORE field */
   const SCORE = 'score.SCORE';
 
-  /** the column name for the UPDATED_AT field */
-  const UPDATED_AT = 'score.UPDATED_AT';
-
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'score.CREATED_AT';
+
+  /** the column name for the UPDATED_AT field */
+  const UPDATED_AT = 'score.UPDATED_AT';
 
   /** The default string format for model objects of the related table **/
   const DEFAULT_STRING_FORMAT = 'YAML';
@@ -81,11 +81,11 @@ abstract class BaseScorePeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'Day', 'Model', 'ModelId', 'Views', 'Ratings', 'Score', 'UpdatedAt', 'CreatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'day', 'model', 'modelId', 'views', 'ratings', 'score', 'updatedAt', 'createdAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::DAY, self::MODEL, self::MODEL_ID, self::VIEWS, self::RATINGS, self::SCORE, self::UPDATED_AT, self::CREATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'DAY', 'MODEL', 'MODEL_ID', 'VIEWS', 'RATINGS', 'SCORE', 'UPDATED_AT', 'CREATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'day', 'model', 'model_id', 'views', 'ratings', 'score', 'updated_at', 'created_at', ),
+    BasePeer::TYPE_PHPNAME => array ('Id', 'Day', 'Model', 'ModelId', 'Views', 'Ratings', 'Score', 'CreatedAt', 'UpdatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'day', 'model', 'modelId', 'views', 'ratings', 'score', 'createdAt', 'updatedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::DAY, self::MODEL, self::MODEL_ID, self::VIEWS, self::RATINGS, self::SCORE, self::CREATED_AT, self::UPDATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'DAY', 'MODEL', 'MODEL_ID', 'VIEWS', 'RATINGS', 'SCORE', 'CREATED_AT', 'UPDATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'day', 'model', 'model_id', 'views', 'ratings', 'score', 'created_at', 'updated_at', ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
   );
 
@@ -96,11 +96,11 @@ abstract class BaseScorePeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Day' => 1, 'Model' => 2, 'ModelId' => 3, 'Views' => 4, 'Ratings' => 5, 'Score' => 6, 'UpdatedAt' => 7, 'CreatedAt' => 8, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'day' => 1, 'model' => 2, 'modelId' => 3, 'views' => 4, 'ratings' => 5, 'score' => 6, 'updatedAt' => 7, 'createdAt' => 8, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::DAY => 1, self::MODEL => 2, self::MODEL_ID => 3, self::VIEWS => 4, self::RATINGS => 5, self::SCORE => 6, self::UPDATED_AT => 7, self::CREATED_AT => 8, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'DAY' => 1, 'MODEL' => 2, 'MODEL_ID' => 3, 'VIEWS' => 4, 'RATINGS' => 5, 'SCORE' => 6, 'UPDATED_AT' => 7, 'CREATED_AT' => 8, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'day' => 1, 'model' => 2, 'model_id' => 3, 'views' => 4, 'ratings' => 5, 'score' => 6, 'updated_at' => 7, 'created_at' => 8, ),
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Day' => 1, 'Model' => 2, 'ModelId' => 3, 'Views' => 4, 'Ratings' => 5, 'Score' => 6, 'CreatedAt' => 7, 'UpdatedAt' => 8, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'day' => 1, 'model' => 2, 'modelId' => 3, 'views' => 4, 'ratings' => 5, 'score' => 6, 'createdAt' => 7, 'updatedAt' => 8, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::DAY => 1, self::MODEL => 2, self::MODEL_ID => 3, self::VIEWS => 4, self::RATINGS => 5, self::SCORE => 6, self::CREATED_AT => 7, self::UPDATED_AT => 8, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'DAY' => 1, 'MODEL' => 2, 'MODEL_ID' => 3, 'VIEWS' => 4, 'RATINGS' => 5, 'SCORE' => 6, 'CREATED_AT' => 7, 'UPDATED_AT' => 8, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'day' => 1, 'model' => 2, 'model_id' => 3, 'views' => 4, 'ratings' => 5, 'score' => 6, 'created_at' => 7, 'updated_at' => 8, ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, )
   );
 
@@ -183,8 +183,8 @@ abstract class BaseScorePeer
       $criteria->addSelectColumn(ScorePeer::VIEWS);
       $criteria->addSelectColumn(ScorePeer::RATINGS);
       $criteria->addSelectColumn(ScorePeer::SCORE);
-      $criteria->addSelectColumn(ScorePeer::UPDATED_AT);
       $criteria->addSelectColumn(ScorePeer::CREATED_AT);
+      $criteria->addSelectColumn(ScorePeer::UPDATED_AT);
     }
     else
     {
@@ -195,8 +195,8 @@ abstract class BaseScorePeer
       $criteria->addSelectColumn($alias . '.VIEWS');
       $criteria->addSelectColumn($alias . '.RATINGS');
       $criteria->addSelectColumn($alias . '.SCORE');
-      $criteria->addSelectColumn($alias . '.UPDATED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
+      $criteria->addSelectColumn($alias . '.UPDATED_AT');
     }
   }
 

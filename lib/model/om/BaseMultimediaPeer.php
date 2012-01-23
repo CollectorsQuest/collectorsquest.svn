@@ -65,11 +65,11 @@ abstract class BaseMultimediaPeer
   /** the column name for the IS_PRIMARY field */
   const IS_PRIMARY = 'multimedia.IS_PRIMARY';
 
-  /** the column name for the UPDATED_AT field */
-  const UPDATED_AT = 'multimedia.UPDATED_AT';
-
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'multimedia.CREATED_AT';
+
+  /** the column name for the UPDATED_AT field */
+  const UPDATED_AT = 'multimedia.UPDATED_AT';
 
   /** The default string format for model objects of the related table **/
   const DEFAULT_STRING_FORMAT = 'YAML';
@@ -90,11 +90,11 @@ abstract class BaseMultimediaPeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'Model', 'ModelId', 'Type', 'Name', 'Md5', 'Colors', 'Orientation', 'Source', 'IsPrimary', 'UpdatedAt', 'CreatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'model', 'modelId', 'type', 'name', 'md5', 'colors', 'orientation', 'source', 'isPrimary', 'updatedAt', 'createdAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::MODEL, self::MODEL_ID, self::TYPE, self::NAME, self::MD5, self::COLORS, self::ORIENTATION, self::SOURCE, self::IS_PRIMARY, self::UPDATED_AT, self::CREATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'MODEL', 'MODEL_ID', 'TYPE', 'NAME', 'MD5', 'COLORS', 'ORIENTATION', 'SOURCE', 'IS_PRIMARY', 'UPDATED_AT', 'CREATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'model', 'model_id', 'type', 'name', 'md5', 'colors', 'orientation', 'source', 'is_primary', 'updated_at', 'created_at', ),
+    BasePeer::TYPE_PHPNAME => array ('Id', 'Model', 'ModelId', 'Type', 'Name', 'Md5', 'Colors', 'Orientation', 'Source', 'IsPrimary', 'CreatedAt', 'UpdatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'model', 'modelId', 'type', 'name', 'md5', 'colors', 'orientation', 'source', 'isPrimary', 'createdAt', 'updatedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::MODEL, self::MODEL_ID, self::TYPE, self::NAME, self::MD5, self::COLORS, self::ORIENTATION, self::SOURCE, self::IS_PRIMARY, self::CREATED_AT, self::UPDATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'MODEL', 'MODEL_ID', 'TYPE', 'NAME', 'MD5', 'COLORS', 'ORIENTATION', 'SOURCE', 'IS_PRIMARY', 'CREATED_AT', 'UPDATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'model', 'model_id', 'type', 'name', 'md5', 'colors', 'orientation', 'source', 'is_primary', 'created_at', 'updated_at', ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
   );
 
@@ -105,11 +105,11 @@ abstract class BaseMultimediaPeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Model' => 1, 'ModelId' => 2, 'Type' => 3, 'Name' => 4, 'Md5' => 5, 'Colors' => 6, 'Orientation' => 7, 'Source' => 8, 'IsPrimary' => 9, 'UpdatedAt' => 10, 'CreatedAt' => 11, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'model' => 1, 'modelId' => 2, 'type' => 3, 'name' => 4, 'md5' => 5, 'colors' => 6, 'orientation' => 7, 'source' => 8, 'isPrimary' => 9, 'updatedAt' => 10, 'createdAt' => 11, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::MODEL => 1, self::MODEL_ID => 2, self::TYPE => 3, self::NAME => 4, self::MD5 => 5, self::COLORS => 6, self::ORIENTATION => 7, self::SOURCE => 8, self::IS_PRIMARY => 9, self::UPDATED_AT => 10, self::CREATED_AT => 11, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'MODEL' => 1, 'MODEL_ID' => 2, 'TYPE' => 3, 'NAME' => 4, 'MD5' => 5, 'COLORS' => 6, 'ORIENTATION' => 7, 'SOURCE' => 8, 'IS_PRIMARY' => 9, 'UPDATED_AT' => 10, 'CREATED_AT' => 11, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'model' => 1, 'model_id' => 2, 'type' => 3, 'name' => 4, 'md5' => 5, 'colors' => 6, 'orientation' => 7, 'source' => 8, 'is_primary' => 9, 'updated_at' => 10, 'created_at' => 11, ),
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'Model' => 1, 'ModelId' => 2, 'Type' => 3, 'Name' => 4, 'Md5' => 5, 'Colors' => 6, 'Orientation' => 7, 'Source' => 8, 'IsPrimary' => 9, 'CreatedAt' => 10, 'UpdatedAt' => 11, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'model' => 1, 'modelId' => 2, 'type' => 3, 'name' => 4, 'md5' => 5, 'colors' => 6, 'orientation' => 7, 'source' => 8, 'isPrimary' => 9, 'createdAt' => 10, 'updatedAt' => 11, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::MODEL => 1, self::MODEL_ID => 2, self::TYPE => 3, self::NAME => 4, self::MD5 => 5, self::COLORS => 6, self::ORIENTATION => 7, self::SOURCE => 8, self::IS_PRIMARY => 9, self::CREATED_AT => 10, self::UPDATED_AT => 11, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'MODEL' => 1, 'MODEL_ID' => 2, 'TYPE' => 3, 'NAME' => 4, 'MD5' => 5, 'COLORS' => 6, 'ORIENTATION' => 7, 'SOURCE' => 8, 'IS_PRIMARY' => 9, 'CREATED_AT' => 10, 'UPDATED_AT' => 11, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'model' => 1, 'model_id' => 2, 'type' => 3, 'name' => 4, 'md5' => 5, 'colors' => 6, 'orientation' => 7, 'source' => 8, 'is_primary' => 9, 'created_at' => 10, 'updated_at' => 11, ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, )
   );
 
@@ -195,8 +195,8 @@ abstract class BaseMultimediaPeer
       $criteria->addSelectColumn(MultimediaPeer::ORIENTATION);
       $criteria->addSelectColumn(MultimediaPeer::SOURCE);
       $criteria->addSelectColumn(MultimediaPeer::IS_PRIMARY);
-      $criteria->addSelectColumn(MultimediaPeer::UPDATED_AT);
       $criteria->addSelectColumn(MultimediaPeer::CREATED_AT);
+      $criteria->addSelectColumn(MultimediaPeer::UPDATED_AT);
     }
     else
     {
@@ -210,8 +210,8 @@ abstract class BaseMultimediaPeer
       $criteria->addSelectColumn($alias . '.ORIENTATION');
       $criteria->addSelectColumn($alias . '.SOURCE');
       $criteria->addSelectColumn($alias . '.IS_PRIMARY');
-      $criteria->addSelectColumn($alias . '.UPDATED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
+      $criteria->addSelectColumn($alias . '.UPDATED_AT');
     }
   }
 

@@ -42,8 +42,8 @@ class PrivateMessageTemplateTableMap extends TableMap
     $this->addColumn('SUBJECT', 'Subject', 'VARCHAR', true, 255, null);
     $this->addColumn('BODY', 'Body', 'LONGVARCHAR', true, null, null);
     $this->addColumn('DESCRIPTION', 'Description', 'VARCHAR', false, 255, null);
-    $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
+    $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     // validators
   }
 
@@ -63,9 +63,9 @@ class PrivateMessageTemplateTableMap extends TableMap
   public function getBehaviors()
   {
     return array(
+      'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
       'symfony' => array('form' => 'true', 'filter' => 'true', ),
       'symfony_behaviors' => array(),
-      'symfony_timestampable' => array('update_column' => 'updated_at', 'create_column' => 'created_at', ),
       'alternative_coding_standards' => array('brackets_newline' => 'true', 'remove_closing_comments' => 'true', 'use_whitespace' => 'true', 'tab_size' => '2', 'strip_comments' => 'false', ),
     );
   }

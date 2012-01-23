@@ -25,6 +25,12 @@ abstract class BaseVideo extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -125,6 +131,18 @@ abstract class BaseVideo extends BaseObject  implements Persistent
    * @var        boolean
    */
   protected $alreadyInValidation = false;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $videoPlaylistsScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $videoCollectionCategorysScheduledForDeletion = null;
 
   /**
    * Get the [id] column value.
@@ -864,7 +882,7 @@ abstract class BaseVideo extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -952,7 +970,7 @@ abstract class BaseVideo extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -977,33 +995,30 @@ abstract class BaseVideo extends BaseObject  implements Persistent
     {
       $this->alreadyInSave = true;
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = VideoPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(VideoPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.VideoPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = VideoPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
+        $affectedRows += 1;
+        $this->resetModified();
+      }
 
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+      if ($this->videoPlaylistsScheduledForDeletion !== null)
+      {
+        if (!$this->videoPlaylistsScheduledForDeletion->isEmpty())
+        {
+          VideoPlaylistQuery::create()
+            ->filterByPrimaryKeys($this->videoPlaylistsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->videoPlaylistsScheduledForDeletion = null;
+        }
       }
 
       if ($this->collVideoPlaylists !== null)
@@ -1014,6 +1029,17 @@ abstract class BaseVideo extends BaseObject  implements Persistent
           {
             $affectedRows += $referrerFK->save($con);
           }
+        }
+      }
+
+      if ($this->videoCollectionCategorysScheduledForDeletion !== null)
+      {
+        if (!$this->videoCollectionCategorysScheduledForDeletion->isEmpty())
+        {
+          VideoCollectionCategoryQuery::create()
+            ->filterByPrimaryKeys($this->videoCollectionCategorysScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->videoCollectionCategorysScheduledForDeletion = null;
         }
       }
 
@@ -1032,6 +1058,168 @@ abstract class BaseVideo extends BaseObject  implements Persistent
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = VideoPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . VideoPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(VideoPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(VideoPeer::TITLE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TITLE`';
+    }
+    if ($this->isColumnModified(VideoPeer::SLUG))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SLUG`';
+    }
+    if ($this->isColumnModified(VideoPeer::DESCRIPTION))
+    {
+      $modifiedColumns[':p' . $index++]  = '`DESCRIPTION`';
+    }
+    if ($this->isColumnModified(VideoPeer::TYPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TYPE`';
+    }
+    if ($this->isColumnModified(VideoPeer::LENGTH))
+    {
+      $modifiedColumns[':p' . $index++]  = '`LENGTH`';
+    }
+    if ($this->isColumnModified(VideoPeer::FILENAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`FILENAME`';
+    }
+    if ($this->isColumnModified(VideoPeer::THUMB_SMALL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`THUMB_SMALL`';
+    }
+    if ($this->isColumnModified(VideoPeer::THUMB_LARGE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`THUMB_LARGE`';
+    }
+    if ($this->isColumnModified(VideoPeer::IS_PUBLISHED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_PUBLISHED`';
+    }
+    if ($this->isColumnModified(VideoPeer::PUBLISHED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PUBLISHED_AT`';
+    }
+    if ($this->isColumnModified(VideoPeer::UPLOADED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`UPLOADED_AT`';
+    }
+    if ($this->isColumnModified(VideoPeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `video` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`TITLE`':
+            $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
+            break;
+          case '`SLUG`':
+            $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
+            break;
+          case '`DESCRIPTION`':
+            $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
+            break;
+          case '`TYPE`':
+            $stmt->bindValue($identifier, $this->type, PDO::PARAM_STR);
+            break;
+          case '`LENGTH`':
+            $stmt->bindValue($identifier, $this->length, PDO::PARAM_INT);
+            break;
+          case '`FILENAME`':
+            $stmt->bindValue($identifier, $this->filename, PDO::PARAM_STR);
+            break;
+          case '`THUMB_SMALL`':
+            $stmt->bindValue($identifier, $this->thumb_small, PDO::PARAM_STR);
+            break;
+          case '`THUMB_LARGE`':
+            $stmt->bindValue($identifier, $this->thumb_large, PDO::PARAM_STR);
+            break;
+          case '`IS_PUBLISHED`':
+            $stmt->bindValue($identifier, (int) $this->is_published, PDO::PARAM_INT);
+            break;
+          case '`PUBLISHED_AT`':
+            $stmt->bindValue($identifier, $this->published_at, PDO::PARAM_STR);
+            break;
+          case '`UPLOADED_AT`':
+            $stmt->bindValue($identifier, $this->uploaded_at, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1460,11 +1648,13 @@ abstract class BaseVideo extends BaseObject  implements Persistent
     $copyObj->setUploadedAt($this->getUploadedAt());
     $copyObj->setCreatedAt($this->getCreatedAt());
 
-    if ($deepCopy)
+    if ($deepCopy && !$this->startCopy)
     {
       // important: temporarily setNew(false) because this affects the behavior of
       // the getter/setter methods for fkey referrer objects.
       $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
 
       foreach ($this->getVideoPlaylists() as $relObj)
       {
@@ -1480,6 +1670,8 @@ abstract class BaseVideo extends BaseObject  implements Persistent
         }
       }
 
+      //unflag object copy
+      $this->startCopy = false;
     }
 
     if ($makeNew)
@@ -1624,6 +1816,32 @@ abstract class BaseVideo extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of VideoPlaylist objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $videoPlaylists A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setVideoPlaylists(PropelCollection $videoPlaylists, PropelPDO $con = null)
+  {
+    $this->videoPlaylistsScheduledForDeletion = $this->getVideoPlaylists(new Criteria(), $con)->diff($videoPlaylists);
+
+    foreach ($videoPlaylists as $videoPlaylist)
+    {
+      // Fix issue with collection modified by reference
+      if ($videoPlaylist->isNew())
+      {
+        $videoPlaylist->setVideo($this);
+      }
+      $this->addVideoPlaylist($videoPlaylist);
+    }
+
+    $this->collVideoPlaylists = $videoPlaylists;
+  }
+
+  /**
    * Returns the number of related VideoPlaylist objects.
    *
    * @param      Criteria $criteria
@@ -1672,11 +1890,19 @@ abstract class BaseVideo extends BaseObject  implements Persistent
       $this->initVideoPlaylists();
     }
     if (!$this->collVideoPlaylists->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collVideoPlaylists[]= $l;
-      $l->setVideo($this);
+      $this->doAddVideoPlaylist($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  VideoPlaylist $videoPlaylist The videoPlaylist object to add.
+   */
+  protected function doAddVideoPlaylist($videoPlaylist)
+  {
+    $this->collVideoPlaylists[]= $videoPlaylist;
+    $videoPlaylist->setVideo($this);
   }
 
 
@@ -1779,6 +2005,32 @@ abstract class BaseVideo extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of VideoCollectionCategory objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $videoCollectionCategorys A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setVideoCollectionCategorys(PropelCollection $videoCollectionCategorys, PropelPDO $con = null)
+  {
+    $this->videoCollectionCategorysScheduledForDeletion = $this->getVideoCollectionCategorys(new Criteria(), $con)->diff($videoCollectionCategorys);
+
+    foreach ($videoCollectionCategorys as $videoCollectionCategory)
+    {
+      // Fix issue with collection modified by reference
+      if ($videoCollectionCategory->isNew())
+      {
+        $videoCollectionCategory->setVideo($this);
+      }
+      $this->addVideoCollectionCategory($videoCollectionCategory);
+    }
+
+    $this->collVideoCollectionCategorys = $videoCollectionCategorys;
+  }
+
+  /**
    * Returns the number of related VideoCollectionCategory objects.
    *
    * @param      Criteria $criteria
@@ -1827,11 +2079,19 @@ abstract class BaseVideo extends BaseObject  implements Persistent
       $this->initVideoCollectionCategorys();
     }
     if (!$this->collVideoCollectionCategorys->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collVideoCollectionCategorys[]= $l;
-      $l->setVideo($this);
+      $this->doAddVideoCollectionCategory($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  VideoCollectionCategory $videoCollectionCategory The videoCollectionCategory object to add.
+   */
+  protected function doAddVideoCollectionCategory($videoCollectionCategory)
+  {
+    $this->collVideoCollectionCategorys[]= $videoCollectionCategory;
+    $videoCollectionCategory->setVideo($this);
   }
 
 

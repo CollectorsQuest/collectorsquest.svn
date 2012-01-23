@@ -38,6 +38,9 @@ abstract class BasePackagePeer
   /** the column name for the ID field */
   const ID = 'package.ID';
 
+  /** the column name for the PLAN_TYPE field */
+  const PLAN_TYPE = 'package.PLAN_TYPE';
+
   /** the column name for the PACKAGE_NAME field */
   const PACKAGE_NAME = 'package.PACKAGE_NAME';
 
@@ -50,14 +53,11 @@ abstract class BasePackagePeer
   /** the column name for the PACKAGE_PRICE field */
   const PACKAGE_PRICE = 'package.PACKAGE_PRICE';
 
-  /** the column name for the PLAN_TYPE field */
-  const PLAN_TYPE = 'package.PLAN_TYPE';
+  /** the column name for the CREATED_AT field */
+  const CREATED_AT = 'package.CREATED_AT';
 
   /** the column name for the UPDATED_AT field */
   const UPDATED_AT = 'package.UPDATED_AT';
-
-  /** the column name for the CREATED_AT field */
-  const CREATED_AT = 'package.CREATED_AT';
 
   /** The default string format for model objects of the related table **/
   const DEFAULT_STRING_FORMAT = 'YAML';
@@ -78,11 +78,11 @@ abstract class BasePackagePeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'PackageName', 'PackageDescription', 'MaxItemsForSale', 'PackagePrice', 'PlanType', 'UpdatedAt', 'CreatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'packageName', 'packageDescription', 'maxItemsForSale', 'packagePrice', 'planType', 'updatedAt', 'createdAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::PACKAGE_NAME, self::PACKAGE_DESCRIPTION, self::MAX_ITEMS_FOR_SALE, self::PACKAGE_PRICE, self::PLAN_TYPE, self::UPDATED_AT, self::CREATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'PACKAGE_NAME', 'PACKAGE_DESCRIPTION', 'MAX_ITEMS_FOR_SALE', 'PACKAGE_PRICE', 'PLAN_TYPE', 'UPDATED_AT', 'CREATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'package_name', 'package_description', 'max_items_for_sale', 'package_price', 'plan_type', 'updated_at', 'created_at', ),
+    BasePeer::TYPE_PHPNAME => array ('Id', 'PlanType', 'PackageName', 'PackageDescription', 'MaxItemsForSale', 'PackagePrice', 'CreatedAt', 'UpdatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'planType', 'packageName', 'packageDescription', 'maxItemsForSale', 'packagePrice', 'createdAt', 'updatedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::PLAN_TYPE, self::PACKAGE_NAME, self::PACKAGE_DESCRIPTION, self::MAX_ITEMS_FOR_SALE, self::PACKAGE_PRICE, self::CREATED_AT, self::UPDATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'PLAN_TYPE', 'PACKAGE_NAME', 'PACKAGE_DESCRIPTION', 'MAX_ITEMS_FOR_SALE', 'PACKAGE_PRICE', 'CREATED_AT', 'UPDATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'plan_type', 'package_name', 'package_description', 'max_items_for_sale', 'package_price', 'created_at', 'updated_at', ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
   );
 
@@ -93,11 +93,11 @@ abstract class BasePackagePeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PackageName' => 1, 'PackageDescription' => 2, 'MaxItemsForSale' => 3, 'PackagePrice' => 4, 'PlanType' => 5, 'UpdatedAt' => 6, 'CreatedAt' => 7, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'packageName' => 1, 'packageDescription' => 2, 'maxItemsForSale' => 3, 'packagePrice' => 4, 'planType' => 5, 'updatedAt' => 6, 'createdAt' => 7, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::PACKAGE_NAME => 1, self::PACKAGE_DESCRIPTION => 2, self::MAX_ITEMS_FOR_SALE => 3, self::PACKAGE_PRICE => 4, self::PLAN_TYPE => 5, self::UPDATED_AT => 6, self::CREATED_AT => 7, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'PACKAGE_NAME' => 1, 'PACKAGE_DESCRIPTION' => 2, 'MAX_ITEMS_FOR_SALE' => 3, 'PACKAGE_PRICE' => 4, 'PLAN_TYPE' => 5, 'UPDATED_AT' => 6, 'CREATED_AT' => 7, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'package_name' => 1, 'package_description' => 2, 'max_items_for_sale' => 3, 'package_price' => 4, 'plan_type' => 5, 'updated_at' => 6, 'created_at' => 7, ),
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PlanType' => 1, 'PackageName' => 2, 'PackageDescription' => 3, 'MaxItemsForSale' => 4, 'PackagePrice' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'planType' => 1, 'packageName' => 2, 'packageDescription' => 3, 'maxItemsForSale' => 4, 'packagePrice' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::PLAN_TYPE => 1, self::PACKAGE_NAME => 2, self::PACKAGE_DESCRIPTION => 3, self::MAX_ITEMS_FOR_SALE => 4, self::PACKAGE_PRICE => 5, self::CREATED_AT => 6, self::UPDATED_AT => 7, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'PLAN_TYPE' => 1, 'PACKAGE_NAME' => 2, 'PACKAGE_DESCRIPTION' => 3, 'MAX_ITEMS_FOR_SALE' => 4, 'PACKAGE_PRICE' => 5, 'CREATED_AT' => 6, 'UPDATED_AT' => 7, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'plan_type' => 1, 'package_name' => 2, 'package_description' => 3, 'max_items_for_sale' => 4, 'package_price' => 5, 'created_at' => 6, 'updated_at' => 7, ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
   );
 
@@ -174,24 +174,24 @@ abstract class BasePackagePeer
     if (null === $alias)
     {
       $criteria->addSelectColumn(PackagePeer::ID);
+      $criteria->addSelectColumn(PackagePeer::PLAN_TYPE);
       $criteria->addSelectColumn(PackagePeer::PACKAGE_NAME);
       $criteria->addSelectColumn(PackagePeer::PACKAGE_DESCRIPTION);
       $criteria->addSelectColumn(PackagePeer::MAX_ITEMS_FOR_SALE);
       $criteria->addSelectColumn(PackagePeer::PACKAGE_PRICE);
-      $criteria->addSelectColumn(PackagePeer::PLAN_TYPE);
-      $criteria->addSelectColumn(PackagePeer::UPDATED_AT);
       $criteria->addSelectColumn(PackagePeer::CREATED_AT);
+      $criteria->addSelectColumn(PackagePeer::UPDATED_AT);
     }
     else
     {
       $criteria->addSelectColumn($alias . '.ID');
+      $criteria->addSelectColumn($alias . '.PLAN_TYPE');
       $criteria->addSelectColumn($alias . '.PACKAGE_NAME');
       $criteria->addSelectColumn($alias . '.PACKAGE_DESCRIPTION');
       $criteria->addSelectColumn($alias . '.MAX_ITEMS_FOR_SALE');
       $criteria->addSelectColumn($alias . '.PACKAGE_PRICE');
-      $criteria->addSelectColumn($alias . '.PLAN_TYPE');
-      $criteria->addSelectColumn($alias . '.UPDATED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
+      $criteria->addSelectColumn($alias . '.UPDATED_AT');
     }
   }
 
@@ -416,9 +416,6 @@ abstract class BasePackagePeer
    */
   public static function clearRelatedInstancePool()
   {
-    // Invalidate objects in PackageTransactionPeer instance pool,
-    // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
-    PackageTransactionPeer::clearInstancePool();
   }
 
   /**
@@ -672,7 +669,6 @@ abstract class BasePackagePeer
       // use transaction because $criteria could contain info
       // for more than one table or we could emulating ON DELETE CASCADE, etc.
       $con->beginTransaction();
-      $affectedRows += PackagePeer::doOnDeleteCascade(new Criteria(PackagePeer::DATABASE_NAME), $con);
       $affectedRows += BasePeer::doDeleteAll(PackagePeer::TABLE_NAME, $con, PackagePeer::DATABASE_NAME);
       // Because this db requires some delete cascade/set null emulation, we have to
       // clear the cached instance *after* the emulation has happened (since
@@ -709,14 +705,25 @@ abstract class BasePackagePeer
 
     if ($values instanceof Criteria)
     {
+      // invalidate the cache for all objects of this type, since we have no
+      // way of knowing (without running a query) what objects should be invalidated
+      // from the cache based on this Criteria.
+      PackagePeer::clearInstancePool();
       // rename for clarity
       $criteria = clone $values;
     } elseif ($values instanceof Package) { // it's a model object
+      // invalidate the cache for this single object
+      PackagePeer::removeInstanceFromPool($values);
       // create criteria based on pk values
       $criteria = $values->buildPkeyCriteria();
     } else { // it's a primary key, or an array of pks
       $criteria = new Criteria(self::DATABASE_NAME);
       $criteria->add(PackagePeer::ID, (array) $values, Criteria::IN);
+      // invalidate the cache for this object(s)
+      foreach ((array) $values as $singleval)
+      {
+        PackagePeer::removeInstanceFromPool($singleval);
+      }
     }
 
     // Set the correct dbName
@@ -730,25 +737,6 @@ abstract class BasePackagePeer
       // for more than one table or we could emulating ON DELETE CASCADE, etc.
       $con->beginTransaction();
       
-      // cloning the Criteria in case it's modified by doSelect() or doSelectStmt()
-      $c = clone $criteria;
-      $affectedRows += PackagePeer::doOnDeleteCascade($c, $con);
-      
-      // Because this db requires some delete cascade/set null emulation, we have to
-      // clear the cached instance *after* the emulation has happened (since
-      // instances get re-added by the select statement contained therein).
-      if ($values instanceof Criteria)
-      {
-        PackagePeer::clearInstancePool();
-      } elseif ($values instanceof Package) { // it's a model object
-        PackagePeer::removeInstanceFromPool($values);
-      } else { // it's a primary key, or an array of pks
-        foreach ((array) $values as $singleval)
-        {
-          PackagePeer::removeInstanceFromPool($singleval);
-        }
-      }
-      
       $affectedRows += BasePeer::doDelete($criteria, $con);
       PackagePeer::clearRelatedInstancePool();
       $con->commit();
@@ -759,39 +747,6 @@ abstract class BasePackagePeer
       $con->rollBack();
       throw $e;
     }
-  }
-
-  /**
-   * This is a method for emulating ON DELETE CASCADE for DBs that don't support this
-   * feature (like MySQL or SQLite).
-   *
-   * This method is not very speedy because it must perform a query first to get
-   * the implicated records and then perform the deletes by calling those Peer classes.
-   *
-   * This method should be used within a transaction if possible.
-   *
-   * @param      Criteria $criteria
-   * @param      PropelPDO $con
-   * @return     int The number of affected rows (if supported by underlying database driver).
-   */
-  protected static function doOnDeleteCascade(Criteria $criteria, PropelPDO $con)
-  {
-    // initialize var to track total num of affected rows
-    $affectedRows = 0;
-
-    // first find the objects that are implicated by the $criteria
-    $objects = PackagePeer::doSelect($criteria, $con);
-    foreach ($objects as $obj)
-    {
-
-
-      // delete related PackageTransaction objects
-      $criteria = new Criteria(PackageTransactionPeer::DATABASE_NAME);
-      
-      $criteria->add(PackageTransactionPeer::PACKAGE_ID, $obj->getId());
-      $affectedRows += PackageTransactionPeer::doDelete($criteria, $con);
-    }
-    return $affectedRows;
   }
 
   /**

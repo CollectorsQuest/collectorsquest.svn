@@ -25,6 +25,12 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -140,6 +146,18 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
    * @var        boolean
    */
   protected $alreadyInValidation = false;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectionItemForSalesScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectionItemOffersScheduledForDeletion = null;
 
   /**
    * Applies default values to this object.
@@ -924,7 +942,7 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1017,7 +1035,7 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1056,33 +1074,30 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
         $this->setCollection($this->aCollection);
       }
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = CollectionItemPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(CollectionItemPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CollectionItemPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows += 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows += CollectionItemPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
+        $affectedRows += 1;
+        $this->resetModified();
+      }
 
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+      if ($this->collectionItemForSalesScheduledForDeletion !== null)
+      {
+        if (!$this->collectionItemForSalesScheduledForDeletion->isEmpty())
+        {
+          CollectionItemForSaleQuery::create()
+            ->filterByPrimaryKeys($this->collectionItemForSalesScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectionItemForSalesScheduledForDeletion = null;
+        }
       }
 
       if ($this->collCollectionItemForSales !== null)
@@ -1093,6 +1108,17 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
           {
             $affectedRows += $referrerFK->save($con);
           }
+        }
+      }
+
+      if ($this->collectionItemOffersScheduledForDeletion !== null)
+      {
+        if (!$this->collectionItemOffersScheduledForDeletion->isEmpty())
+        {
+          CollectionItemOfferQuery::create()
+            ->filterByPrimaryKeys($this->collectionItemOffersScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectionItemOffersScheduledForDeletion = null;
         }
       }
 
@@ -1111,6 +1137,175 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = CollectionItemPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . CollectionItemPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CollectionItemPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::COLLECTION_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTION_ID`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::NAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`NAME`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::SLUG))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SLUG`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::DESCRIPTION))
+    {
+      $modifiedColumns[':p' . $index++]  = '`DESCRIPTION`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::EST_VALUE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`EST_VALUE`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::PURCHASED_PRICE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PURCHASED_PRICE`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::CURRENCY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CURRENCY`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::PHOTO))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PHOTO`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::IS_FOR_SALE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_FOR_SALE`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::NUM_VIEWS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`NUM_VIEWS`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::POSITION))
+    {
+      $modifiedColumns[':p' . $index++]  = '`POSITION`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(CollectionItemPeer::UPDATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `collection_item` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTION_ID`':
+            $stmt->bindValue($identifier, $this->collection_id, PDO::PARAM_INT);
+            break;
+          case '`NAME`':
+            $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+            break;
+          case '`SLUG`':
+            $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
+            break;
+          case '`DESCRIPTION`':
+            $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
+            break;
+          case '`EST_VALUE`':
+            $stmt->bindValue($identifier, $this->est_value, PDO::PARAM_INT);
+            break;
+          case '`PURCHASED_PRICE`':
+            $stmt->bindValue($identifier, $this->purchased_price, PDO::PARAM_INT);
+            break;
+          case '`CURRENCY`':
+            $stmt->bindValue($identifier, $this->currency, PDO::PARAM_STR);
+            break;
+          case '`PHOTO`':
+            $stmt->bindValue($identifier, $this->photo, PDO::PARAM_STR);
+            break;
+          case '`IS_FOR_SALE`':
+            $stmt->bindValue($identifier, (int) $this->is_for_sale, PDO::PARAM_INT);
+            break;
+          case '`NUM_VIEWS`':
+            $stmt->bindValue($identifier, $this->num_views, PDO::PARAM_INT);
+            break;
+          case '`POSITION`':
+            $stmt->bindValue($identifier, $this->position, PDO::PARAM_INT);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`UPDATED_AT`':
+            $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1567,11 +1762,13 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
 
-    if ($deepCopy)
+    if ($deepCopy && !$this->startCopy)
     {
       // important: temporarily setNew(false) because this affects the behavior of
       // the getter/setter methods for fkey referrer objects.
       $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
 
       foreach ($this->getCollectionItemForSales() as $relObj)
       {
@@ -1587,6 +1784,8 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
         }
       }
 
+      //unflag object copy
+      $this->startCopy = false;
     }
 
     if ($makeNew)
@@ -1785,6 +1984,32 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectionItemForSale objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectionItemForSales A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectionItemForSales(PropelCollection $collectionItemForSales, PropelPDO $con = null)
+  {
+    $this->collectionItemForSalesScheduledForDeletion = $this->getCollectionItemForSales(new Criteria(), $con)->diff($collectionItemForSales);
+
+    foreach ($collectionItemForSales as $collectionItemForSale)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectionItemForSale->isNew())
+      {
+        $collectionItemForSale->setCollectionItem($this);
+      }
+      $this->addCollectionItemForSale($collectionItemForSale);
+    }
+
+    $this->collCollectionItemForSales = $collectionItemForSales;
+  }
+
+  /**
    * Returns the number of related CollectionItemForSale objects.
    *
    * @param      Criteria $criteria
@@ -1833,11 +2058,19 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
       $this->initCollectionItemForSales();
     }
     if (!$this->collCollectionItemForSales->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectionItemForSales[]= $l;
-      $l->setCollectionItem($this);
+      $this->doAddCollectionItemForSale($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectionItemForSale $collectionItemForSale The collectionItemForSale object to add.
+   */
+  protected function doAddCollectionItemForSale($collectionItemForSale)
+  {
+    $this->collCollectionItemForSales[]= $collectionItemForSale;
+    $collectionItemForSale->setCollectionItem($this);
   }
 
   /**
@@ -1915,6 +2148,32 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectionItemOffer objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectionItemOffers A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectionItemOffers(PropelCollection $collectionItemOffers, PropelPDO $con = null)
+  {
+    $this->collectionItemOffersScheduledForDeletion = $this->getCollectionItemOffers(new Criteria(), $con)->diff($collectionItemOffers);
+
+    foreach ($collectionItemOffers as $collectionItemOffer)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectionItemOffer->isNew())
+      {
+        $collectionItemOffer->setCollectionItem($this);
+      }
+      $this->addCollectionItemOffer($collectionItemOffer);
+    }
+
+    $this->collCollectionItemOffers = $collectionItemOffers;
+  }
+
+  /**
    * Returns the number of related CollectionItemOffer objects.
    *
    * @param      Criteria $criteria
@@ -1963,11 +2222,19 @@ abstract class BaseCollectionItem extends BaseObject  implements Persistent
       $this->initCollectionItemOffers();
     }
     if (!$this->collCollectionItemOffers->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectionItemOffers[]= $l;
-      $l->setCollectionItem($this);
+      $this->doAddCollectionItemOffer($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectionItemOffer $collectionItemOffer The collectionItemOffer object to add.
+   */
+  protected function doAddCollectionItemOffer($collectionItemOffer)
+  {
+    $this->collCollectionItemOffers[]= $collectionItemOffer;
+    $collectionItemOffer->setCollectionItem($this);
   }
 
 

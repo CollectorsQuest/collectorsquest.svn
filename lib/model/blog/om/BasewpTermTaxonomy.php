@@ -25,6 +25,12 @@ abstract class BasewpTermTaxonomy extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the term_taxonomy_id field.
    * @var        int
    */
@@ -440,7 +446,7 @@ abstract class BasewpTermTaxonomy extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -522,7 +528,7 @@ abstract class BasewpTermTaxonomy extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -547,39 +553,138 @@ abstract class BasewpTermTaxonomy extends BaseObject  implements Persistent
     {
       $this->alreadyInSave = true;
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = wpTermTaxonomyPeer::TERM_TAXONOMY_ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(wpTermTaxonomyPeer::TERM_TAXONOMY_ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.wpTermTaxonomyPeer::TERM_TAXONOMY_ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setTermTaxonomyId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = wpTermTaxonomyPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = wpTermTaxonomyPeer::TERM_TAXONOMY_ID;
+    if (null !== $this->term_taxonomy_id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . wpTermTaxonomyPeer::TERM_TAXONOMY_ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(wpTermTaxonomyPeer::TERM_TAXONOMY_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TERM_TAXONOMY_ID`';
+    }
+    if ($this->isColumnModified(wpTermTaxonomyPeer::TERM_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TERM_ID`';
+    }
+    if ($this->isColumnModified(wpTermTaxonomyPeer::TAXONOMY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TAXONOMY`';
+    }
+    if ($this->isColumnModified(wpTermTaxonomyPeer::DESCRIPTION))
+    {
+      $modifiedColumns[':p' . $index++]  = '`DESCRIPTION`';
+    }
+    if ($this->isColumnModified(wpTermTaxonomyPeer::PARENT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PARENT`';
+    }
+    if ($this->isColumnModified(wpTermTaxonomyPeer::COUNT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COUNT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `wp_term_taxonomy` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`TERM_TAXONOMY_ID`':
+            $stmt->bindValue($identifier, $this->term_taxonomy_id, PDO::PARAM_INT);
+            break;
+          case '`TERM_ID`':
+            $stmt->bindValue($identifier, $this->term_id, PDO::PARAM_INT);
+            break;
+          case '`TAXONOMY`':
+            $stmt->bindValue($identifier, $this->taxonomy, PDO::PARAM_STR);
+            break;
+          case '`DESCRIPTION`':
+            $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
+            break;
+          case '`PARENT`':
+            $stmt->bindValue($identifier, $this->parent, PDO::PARAM_INT);
+            break;
+          case '`COUNT`':
+            $stmt->bindValue($identifier, $this->count, PDO::PARAM_INT);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setTermTaxonomyId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**

@@ -57,15 +57,18 @@
         "propelorm/Propel": {
             "package": {
                 "name": "plugins/sfPropelORMPlugin/lib/vendor/propel",
-                "version": "1.6.3",
+                "version": "1.6.4",
                 "dist": {
-                    "url": "https://github.com/propelorm/Propel/zipball/1.6.3",
+                    "url": "https://github.com/propelorm/Propel/zipball/1.6.4",
                     "type": "zip"
                 },
                 "source": {
                     "url": "git://github.com/propelorm/Propel.git",
                     "type": "git",
-                    "reference": "af62e7f046"
+                    "reference": "f6ca7125cb"
+                },
+                "require": {
+                  "plugins/sfPropelORMPlugin": "1.3.0"
                 }
             }
         },
@@ -77,17 +80,9 @@
                     "url": "git://github.com/Xosofox/phing.git",
                     "type": "git",
                     "reference": "98cab9d"
-                }
-            }
-        },
-        "CollectorsQuest/sfTaskExtraPlugin": {
-            "package": {
-                "name": "plugins/sfTaskExtraPlugin",
-                "version": "1.3.3",
-                "source": {
-                    "url": "git://github.com/CollectorsQuest/sfTaskExtraPlugin.git",
-                    "type": "git",
-                    "reference": "6c9741978f"
+                },
+                "require": {
+                  "plugins/sfPropelORMPlugin": "1.3.0"
                 }
             }
         }
@@ -97,8 +92,7 @@
         "plugins/sfGravatarPlugin": "0.9.0",
         "plugins/sfGuardPlugin": "4.0.2",
         "plugins/sfPropelORMPlugin": "1.3.0",
-        "plugins/sfPropelORMPlugin/lib/vendor/propel": "1.6.3",
-        "plugins/sfPropelORMPlugin/lib/vendor/phing": "2.4.6",
-        "plugins/sfTaskExtraPlugin": "1.3.3"
+        "plugins/sfPropelORMPlugin/lib/vendor/propel": "1.6.4",
+        "plugins/sfPropelORMPlugin/lib/vendor/phing": "2.4.6"
     }
 }

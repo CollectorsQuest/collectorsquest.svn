@@ -16,8 +16,8 @@ end
 bash "Update /www permissions" do
   code <<-EOH
     chmod -R 777 /www/tmp
-    chown -R nobody:nobody /www/tmp
-    chown -R nobody:nobody /www/logs
-    chown -R nobody:nobody /www/vhosts/collectorsquest.com/shared
+    chown -R apache:apache /www/tmp
+    chown -R apache:apache /www/logs
+    chown -R apache:apache /www/vhosts/collectorsquest.com/shared
   EOH
 end

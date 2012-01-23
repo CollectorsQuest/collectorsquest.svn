@@ -25,6 +25,12 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -883,7 +889,7 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -971,7 +977,7 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -996,39 +1002,187 @@ abstract class BasePrivateMessage extends BaseObject  implements Persistent
     {
       $this->alreadyInSave = true;
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = PrivateMessagePeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(PrivateMessagePeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PrivateMessagePeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = PrivateMessagePeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = PrivateMessagePeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . PrivateMessagePeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(PrivateMessagePeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(PrivateMessagePeer::THREAD))
+    {
+      $modifiedColumns[':p' . $index++]  = '`THREAD`';
+    }
+    if ($this->isColumnModified(PrivateMessagePeer::SENDER))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SENDER`';
+    }
+    if ($this->isColumnModified(PrivateMessagePeer::RECEIVER))
+    {
+      $modifiedColumns[':p' . $index++]  = '`RECEIVER`';
+    }
+    if ($this->isColumnModified(PrivateMessagePeer::SUBJECT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SUBJECT`';
+    }
+    if ($this->isColumnModified(PrivateMessagePeer::BODY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`BODY`';
+    }
+    if ($this->isColumnModified(PrivateMessagePeer::IS_RICH))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_RICH`';
+    }
+    if ($this->isColumnModified(PrivateMessagePeer::IS_READ))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_READ`';
+    }
+    if ($this->isColumnModified(PrivateMessagePeer::IS_REPLIED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_REPLIED`';
+    }
+    if ($this->isColumnModified(PrivateMessagePeer::IS_FORWARDED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_FORWARDED`';
+    }
+    if ($this->isColumnModified(PrivateMessagePeer::IS_MARKED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_MARKED`';
+    }
+    if ($this->isColumnModified(PrivateMessagePeer::IS_DELETED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_DELETED`';
+    }
+    if ($this->isColumnModified(PrivateMessagePeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `private_message` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`THREAD`':
+            $stmt->bindValue($identifier, $this->thread, PDO::PARAM_STR);
+            break;
+          case '`SENDER`':
+            $stmt->bindValue($identifier, $this->sender, PDO::PARAM_INT);
+            break;
+          case '`RECEIVER`':
+            $stmt->bindValue($identifier, $this->receiver, PDO::PARAM_INT);
+            break;
+          case '`SUBJECT`':
+            $stmt->bindValue($identifier, $this->subject, PDO::PARAM_STR);
+            break;
+          case '`BODY`':
+            $stmt->bindValue($identifier, $this->body, PDO::PARAM_STR);
+            break;
+          case '`IS_RICH`':
+            $stmt->bindValue($identifier, (int) $this->is_rich, PDO::PARAM_INT);
+            break;
+          case '`IS_READ`':
+            $stmt->bindValue($identifier, (int) $this->is_read, PDO::PARAM_INT);
+            break;
+          case '`IS_REPLIED`':
+            $stmt->bindValue($identifier, (int) $this->is_replied, PDO::PARAM_INT);
+            break;
+          case '`IS_FORWARDED`':
+            $stmt->bindValue($identifier, (int) $this->is_forwarded, PDO::PARAM_INT);
+            break;
+          case '`IS_MARKED`':
+            $stmt->bindValue($identifier, (int) $this->is_marked, PDO::PARAM_INT);
+            break;
+          case '`IS_DELETED`':
+            $stmt->bindValue($identifier, (int) $this->is_deleted, PDO::PARAM_INT);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**

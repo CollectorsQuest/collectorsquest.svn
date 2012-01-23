@@ -25,6 +25,12 @@ abstract class BaseCollectorArchive extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -1571,7 +1577,7 @@ abstract class BaseCollectorArchive extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1664,7 +1670,7 @@ abstract class BaseCollectorArchive extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1689,29 +1695,277 @@ abstract class BaseCollectorArchive extends BaseObject  implements Persistent
     {
       $this->alreadyInSave = true;
 
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
+      if ($this->isNew() || $this->isModified())
       {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = CollectorArchivePeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CollectorArchivePeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::GRAPH_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`GRAPH_ID`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::FACEBOOK_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`FACEBOOK_ID`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::USERNAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`USERNAME`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::DISPLAY_NAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`DISPLAY_NAME`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::SLUG))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SLUG`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::SHA1_PASSWORD))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SHA1_PASSWORD`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::SALT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SALT`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::EMAIL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`EMAIL`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::USER_TYPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`USER_TYPE`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::ITEMS_ALLOWED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ITEMS_ALLOWED`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::WHAT_YOU_COLLECT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`WHAT_YOU_COLLECT`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::PURCHASES_PER_YEAR))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PURCHASES_PER_YEAR`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::WHAT_YOU_SELL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`WHAT_YOU_SELL`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::ANNUALLY_SPEND))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ANNUALLY_SPEND`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::MOST_EXPENSIVE_ITEM))
+    {
+      $modifiedColumns[':p' . $index++]  = '`MOST_EXPENSIVE_ITEM`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::COMPANY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COMPANY`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::LOCALE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`LOCALE`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::SCORE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SCORE`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::SPAM_SCORE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SPAM_SCORE`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::IS_SPAM))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_SPAM`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::IS_PUBLIC))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_PUBLIC`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::SESSION_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SESSION_ID`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::LAST_SEEN_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`LAST_SEEN_AT`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::EBLOB))
+    {
+      $modifiedColumns[':p' . $index++]  = '`EBLOB`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::UPDATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(CollectorArchivePeer::ARCHIVED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ARCHIVED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `collector_archive` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`GRAPH_ID`':
+            $stmt->bindValue($identifier, $this->graph_id, PDO::PARAM_INT);
+            break;
+          case '`FACEBOOK_ID`':
+            $stmt->bindValue($identifier, $this->facebook_id, PDO::PARAM_STR);
+            break;
+          case '`USERNAME`':
+            $stmt->bindValue($identifier, $this->username, PDO::PARAM_STR);
+            break;
+          case '`DISPLAY_NAME`':
+            $stmt->bindValue($identifier, $this->display_name, PDO::PARAM_STR);
+            break;
+          case '`SLUG`':
+            $stmt->bindValue($identifier, $this->slug, PDO::PARAM_STR);
+            break;
+          case '`SHA1_PASSWORD`':
+            $stmt->bindValue($identifier, $this->sha1_password, PDO::PARAM_STR);
+            break;
+          case '`SALT`':
+            $stmt->bindValue($identifier, $this->salt, PDO::PARAM_STR);
+            break;
+          case '`EMAIL`':
+            $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
+            break;
+          case '`USER_TYPE`':
+            $stmt->bindValue($identifier, $this->user_type, PDO::PARAM_STR);
+            break;
+          case '`ITEMS_ALLOWED`':
+            $stmt->bindValue($identifier, $this->items_allowed, PDO::PARAM_INT);
+            break;
+          case '`WHAT_YOU_COLLECT`':
+            $stmt->bindValue($identifier, $this->what_you_collect, PDO::PARAM_STR);
+            break;
+          case '`PURCHASES_PER_YEAR`':
+            $stmt->bindValue($identifier, $this->purchases_per_year, PDO::PARAM_INT);
+            break;
+          case '`WHAT_YOU_SELL`':
+            $stmt->bindValue($identifier, $this->what_you_sell, PDO::PARAM_STR);
+            break;
+          case '`ANNUALLY_SPEND`':
+            $stmt->bindValue($identifier, $this->annually_spend, PDO::PARAM_STR);
+            break;
+          case '`MOST_EXPENSIVE_ITEM`':
+            $stmt->bindValue($identifier, $this->most_expensive_item, PDO::PARAM_STR);
+            break;
+          case '`COMPANY`':
+            $stmt->bindValue($identifier, $this->company, PDO::PARAM_STR);
+            break;
+          case '`LOCALE`':
+            $stmt->bindValue($identifier, $this->locale, PDO::PARAM_STR);
+            break;
+          case '`SCORE`':
+            $stmt->bindValue($identifier, $this->score, PDO::PARAM_INT);
+            break;
+          case '`SPAM_SCORE`':
+            $stmt->bindValue($identifier, $this->spam_score, PDO::PARAM_INT);
+            break;
+          case '`IS_SPAM`':
+            $stmt->bindValue($identifier, (int) $this->is_spam, PDO::PARAM_INT);
+            break;
+          case '`IS_PUBLIC`':
+            $stmt->bindValue($identifier, (int) $this->is_public, PDO::PARAM_INT);
+            break;
+          case '`SESSION_ID`':
+            $stmt->bindValue($identifier, $this->session_id, PDO::PARAM_STR);
+            break;
+          case '`LAST_SEEN_AT`':
+            $stmt->bindValue($identifier, $this->last_seen_at, PDO::PARAM_STR);
+            break;
+          case '`EBLOB`':
+            $stmt->bindValue($identifier, $this->eblob, PDO::PARAM_STR);
+            break;
+          case '`UPDATED_AT`':
+            $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`ARCHIVED_AT`':
+            $stmt->bindValue($identifier, $this->archived_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -2228,7 +2482,6 @@ abstract class BaseCollectorArchive extends BaseObject  implements Persistent
    */
   public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setId($this->getId());
     $copyObj->setGraphId($this->getGraphId());
     $copyObj->setFacebookId($this->getFacebookId());
     $copyObj->setUsername($this->getUsername());
@@ -2259,6 +2512,7 @@ abstract class BaseCollectorArchive extends BaseObject  implements Persistent
     if ($makeNew)
     {
       $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
     }
   }
 

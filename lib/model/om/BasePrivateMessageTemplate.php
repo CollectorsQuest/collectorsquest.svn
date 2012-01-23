@@ -25,6 +25,12 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -49,16 +55,16 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
   protected $description;
 
   /**
-   * The value for the updated_at field.
-   * @var        string
-   */
-  protected $updated_at;
-
-  /**
    * The value for the created_at field.
    * @var        string
    */
   protected $created_at;
+
+  /**
+   * The value for the updated_at field.
+   * @var        string
+   */
+  protected $updated_at;
 
   /**
    * Flag to prevent endless save loop, if this object is referenced
@@ -115,56 +121,6 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
   }
 
   /**
-   * Get the [optionally formatted] temporal [updated_at] column value.
-   * 
-   *
-   * @param      string $format The date/time format string (either date()-style or strftime()-style).
-   *              If format is NULL, then the raw DateTime object will be returned.
-   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-   * @throws     PropelException - if unable to parse/validate the date/time value.
-   */
-  public function getUpdatedAt($format = 'Y-m-d H:i:s')
-  {
-    if ($this->updated_at === null)
-    {
-      return null;
-    }
-
-
-    if ($this->updated_at === '0000-00-00 00:00:00')
-    {
-      // while technically this is not a default value of NULL,
-      // this seems to be closest in meaning.
-      return null;
-    }
-    else
-    {
-      try
-      {
-        $dt = new DateTime($this->updated_at);
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->updated_at, true), $x);
-      }
-    }
-
-    if ($format === null)
-    {
-      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-      return $dt;
-    }
-    elseif (strpos($format, '%') !== false)
-    {
-      return strftime($format, $dt->format('U'));
-    }
-    else
-    {
-      return $dt->format($format);
-    }
-  }
-
-  /**
    * Get the [optionally formatted] temporal [created_at] column value.
    * 
    *
@@ -196,6 +152,56 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
       catch (Exception $x)
       {
         throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->created_at, true), $x);
+      }
+    }
+
+    if ($format === null)
+    {
+      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+      return $dt;
+    }
+    elseif (strpos($format, '%') !== false)
+    {
+      return strftime($format, $dt->format('U'));
+    }
+    else
+    {
+      return $dt->format($format);
+    }
+  }
+
+  /**
+   * Get the [optionally formatted] temporal [updated_at] column value.
+   * 
+   *
+   * @param      string $format The date/time format string (either date()-style or strftime()-style).
+   *              If format is NULL, then the raw DateTime object will be returned.
+   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+   * @throws     PropelException - if unable to parse/validate the date/time value.
+   */
+  public function getUpdatedAt($format = 'Y-m-d H:i:s')
+  {
+    if ($this->updated_at === null)
+    {
+      return null;
+    }
+
+
+    if ($this->updated_at === '0000-00-00 00:00:00')
+    {
+      // while technically this is not a default value of NULL,
+      // this seems to be closest in meaning.
+      return null;
+    }
+    else
+    {
+      try
+      {
+        $dt = new DateTime($this->updated_at);
+      }
+      catch (Exception $x)
+      {
+        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->updated_at, true), $x);
       }
     }
 
@@ -303,30 +309,6 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
   }
 
   /**
-   * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
-   * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.
-   *               Empty strings are treated as NULL.
-   * @return     PrivateMessageTemplate The current object (for fluent API support)
-   */
-  public function setUpdatedAt($v)
-  {
-    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-    if ($this->updated_at !== null || $dt !== null)
-    {
-      $currentDateAsString = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
-        $this->updated_at = $newDateAsString;
-        $this->modifiedColumns[] = PrivateMessageTemplatePeer::UPDATED_AT;
-      }
-    }
-
-    return $this;
-  }
-
-  /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -344,6 +326,30 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
       {
         $this->created_at = $newDateAsString;
         $this->modifiedColumns[] = PrivateMessageTemplatePeer::CREATED_AT;
+      }
+    }
+
+    return $this;
+  }
+
+  /**
+   * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
+   * 
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
+   * @return     PrivateMessageTemplate The current object (for fluent API support)
+   */
+  public function setUpdatedAt($v)
+  {
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->updated_at !== null || $dt !== null)
+    {
+      $currentDateAsString = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
+      {
+        $this->updated_at = $newDateAsString;
+        $this->modifiedColumns[] = PrivateMessageTemplatePeer::UPDATED_AT;
       }
     }
 
@@ -387,8 +393,8 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
       $this->subject = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
       $this->body = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
       $this->description = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
-      $this->updated_at = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
-      $this->created_at = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
+      $this->created_at = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
+      $this->updated_at = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -524,7 +530,7 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -571,24 +577,27 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
         }
       }
 
-      // symfony_timestampable behavior
-      if ($this->isModified() && !$this->isColumnModified(PrivateMessageTemplatePeer::UPDATED_AT))
-      {
-        $this->setUpdatedAt(time());
-      }
       if ($isInsert)
       {
         $ret = $ret && $this->preInsert($con);
-        // symfony_timestampable behavior
+        // timestampable behavior
         if (!$this->isColumnModified(PrivateMessageTemplatePeer::CREATED_AT))
         {
           $this->setCreatedAt(time());
         }
-
+        if (!$this->isColumnModified(PrivateMessageTemplatePeer::UPDATED_AT))
+        {
+          $this->setUpdatedAt(time());
+        }
       }
       else
       {
         $ret = $ret && $this->preUpdate($con);
+        // timestampable behavior
+        if ($this->isModified() && !$this->isColumnModified(PrivateMessageTemplatePeer::UPDATED_AT))
+        {
+          $this->setUpdatedAt(time());
+        }
       }
       if ($ret)
       {
@@ -617,7 +626,7 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -642,39 +651,138 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
     {
       $this->alreadyInSave = true;
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = PrivateMessageTemplatePeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(PrivateMessageTemplatePeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PrivateMessageTemplatePeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = PrivateMessageTemplatePeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = PrivateMessageTemplatePeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . PrivateMessageTemplatePeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(PrivateMessageTemplatePeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(PrivateMessageTemplatePeer::SUBJECT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SUBJECT`';
+    }
+    if ($this->isColumnModified(PrivateMessageTemplatePeer::BODY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`BODY`';
+    }
+    if ($this->isColumnModified(PrivateMessageTemplatePeer::DESCRIPTION))
+    {
+      $modifiedColumns[':p' . $index++]  = '`DESCRIPTION`';
+    }
+    if ($this->isColumnModified(PrivateMessageTemplatePeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(PrivateMessageTemplatePeer::UPDATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `private_message_template` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`SUBJECT`':
+            $stmt->bindValue($identifier, $this->subject, PDO::PARAM_STR);
+            break;
+          case '`BODY`':
+            $stmt->bindValue($identifier, $this->body, PDO::PARAM_STR);
+            break;
+          case '`DESCRIPTION`':
+            $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`UPDATED_AT`':
+            $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -794,10 +902,10 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
         return $this->getDescription();
         break;
       case 4:
-        return $this->getUpdatedAt();
+        return $this->getCreatedAt();
         break;
       case 5:
-        return $this->getCreatedAt();
+        return $this->getUpdatedAt();
         break;
       default:
         return null;
@@ -832,8 +940,8 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
       $keys[1] => $this->getSubject(),
       $keys[2] => $this->getBody(),
       $keys[3] => $this->getDescription(),
-      $keys[4] => $this->getUpdatedAt(),
-      $keys[5] => $this->getCreatedAt(),
+      $keys[4] => $this->getCreatedAt(),
+      $keys[5] => $this->getUpdatedAt(),
     );
     return $result;
   }
@@ -879,10 +987,10 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
         $this->setDescription($value);
         break;
       case 4:
-        $this->setUpdatedAt($value);
+        $this->setCreatedAt($value);
         break;
       case 5:
-        $this->setCreatedAt($value);
+        $this->setUpdatedAt($value);
         break;
     }
   }
@@ -912,8 +1020,8 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
     if (array_key_exists($keys[1], $arr)) $this->setSubject($arr[$keys[1]]);
     if (array_key_exists($keys[2], $arr)) $this->setBody($arr[$keys[2]]);
     if (array_key_exists($keys[3], $arr)) $this->setDescription($arr[$keys[3]]);
-    if (array_key_exists($keys[4], $arr)) $this->setUpdatedAt($arr[$keys[4]]);
-    if (array_key_exists($keys[5], $arr)) $this->setCreatedAt($arr[$keys[5]]);
+    if (array_key_exists($keys[4], $arr)) $this->setCreatedAt($arr[$keys[4]]);
+    if (array_key_exists($keys[5], $arr)) $this->setUpdatedAt($arr[$keys[5]]);
   }
 
   /**
@@ -929,8 +1037,8 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
     if ($this->isColumnModified(PrivateMessageTemplatePeer::SUBJECT)) $criteria->add(PrivateMessageTemplatePeer::SUBJECT, $this->subject);
     if ($this->isColumnModified(PrivateMessageTemplatePeer::BODY)) $criteria->add(PrivateMessageTemplatePeer::BODY, $this->body);
     if ($this->isColumnModified(PrivateMessageTemplatePeer::DESCRIPTION)) $criteria->add(PrivateMessageTemplatePeer::DESCRIPTION, $this->description);
-    if ($this->isColumnModified(PrivateMessageTemplatePeer::UPDATED_AT)) $criteria->add(PrivateMessageTemplatePeer::UPDATED_AT, $this->updated_at);
     if ($this->isColumnModified(PrivateMessageTemplatePeer::CREATED_AT)) $criteria->add(PrivateMessageTemplatePeer::CREATED_AT, $this->created_at);
+    if ($this->isColumnModified(PrivateMessageTemplatePeer::UPDATED_AT)) $criteria->add(PrivateMessageTemplatePeer::UPDATED_AT, $this->updated_at);
 
     return $criteria;
   }
@@ -996,8 +1104,8 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
     $copyObj->setSubject($this->getSubject());
     $copyObj->setBody($this->getBody());
     $copyObj->setDescription($this->getDescription());
-    $copyObj->setUpdatedAt($this->getUpdatedAt());
     $copyObj->setCreatedAt($this->getCreatedAt());
+    $copyObj->setUpdatedAt($this->getUpdatedAt());
     if ($makeNew)
     {
       $copyObj->setNew(true);
@@ -1053,8 +1161,8 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
     $this->subject = null;
     $this->body = null;
     $this->description = null;
-    $this->updated_at = null;
     $this->created_at = null;
+    $this->updated_at = null;
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;
     $this->clearAllReferences();
@@ -1088,6 +1196,19 @@ abstract class BasePrivateMessageTemplate extends BaseObject  implements Persist
   public function __toString()
   {
     return (string) $this->exportTo(PrivateMessageTemplatePeer::DEFAULT_STRING_FORMAT);
+  }
+
+  // timestampable behavior
+  
+  /**
+   * Mark the current object so that the update date doesn't get updated during next save
+   *
+   * @return     PrivateMessageTemplate The current object (for fluent API support)
+   */
+  public function keepUpdateDateUnchanged()
+  {
+    $this->modifiedColumns[] = PrivateMessageTemplatePeer::UPDATED_AT;
+    return $this;
   }
 
   /**

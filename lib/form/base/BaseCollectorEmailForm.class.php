@@ -20,8 +20,8 @@ abstract class BaseCollectorEmailForm extends BaseFormPropel
       'hash'         => new sfWidgetFormInputText(),
       'salt'         => new sfWidgetFormInputText(),
       'is_verified'  => new sfWidgetFormInputCheckbox(),
-      'updated_at'   => new sfWidgetFormDateTime(),
       'created_at'   => new sfWidgetFormDateTime(),
+      'updated_at'   => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
@@ -31,8 +31,8 @@ abstract class BaseCollectorEmailForm extends BaseFormPropel
       'hash'         => new sfValidatorString(array('max_length' => 40)),
       'salt'         => new sfValidatorString(array('max_length' => 32)),
       'is_verified'  => new sfValidatorBoolean(array('required' => false)),
-      'updated_at'   => new sfValidatorDateTime(array('required' => false)),
       'created_at'   => new sfValidatorDateTime(array('required' => false)),
+      'updated_at'   => new sfValidatorDateTime(array('required' => false)),
     ));
 
     $this->widgetSchema->setNameFormat('collector_email[%s]');

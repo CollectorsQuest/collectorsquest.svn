@@ -25,6 +25,12 @@ abstract class BaseComment extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -813,7 +819,7 @@ abstract class BaseComment extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -901,7 +907,7 @@ abstract class BaseComment extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -958,39 +964,187 @@ abstract class BaseComment extends BaseObject  implements Persistent
         $this->setCollector($this->aCollector);
       }
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = CommentPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(CommentPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CommentPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows += 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows += CommentPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = CommentPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . CommentPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CommentPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CommentPeer::DISQUS_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`DISQUS_ID`';
+    }
+    if ($this->isColumnModified(CommentPeer::PARENT_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PARENT_ID`';
+    }
+    if ($this->isColumnModified(CommentPeer::COLLECTION_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTION_ID`';
+    }
+    if ($this->isColumnModified(CommentPeer::COLLECTIBLE_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTIBLE_ID`';
+    }
+    if ($this->isColumnModified(CommentPeer::COLLECTOR_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_ID`';
+    }
+    if ($this->isColumnModified(CommentPeer::AUTHOR_NAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`AUTHOR_NAME`';
+    }
+    if ($this->isColumnModified(CommentPeer::AUTHOR_EMAIL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`AUTHOR_EMAIL`';
+    }
+    if ($this->isColumnModified(CommentPeer::AUTHOR_URL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`AUTHOR_URL`';
+    }
+    if ($this->isColumnModified(CommentPeer::SUBJECT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SUBJECT`';
+    }
+    if ($this->isColumnModified(CommentPeer::BODY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`BODY`';
+    }
+    if ($this->isColumnModified(CommentPeer::IP_ADDRESS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IP_ADDRESS`';
+    }
+    if ($this->isColumnModified(CommentPeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `comment` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`DISQUS_ID`':
+            $stmt->bindValue($identifier, $this->disqus_id, PDO::PARAM_STR);
+            break;
+          case '`PARENT_ID`':
+            $stmt->bindValue($identifier, $this->parent_id, PDO::PARAM_STR);
+            break;
+          case '`COLLECTION_ID`':
+            $stmt->bindValue($identifier, $this->collection_id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTIBLE_ID`':
+            $stmt->bindValue($identifier, $this->collectible_id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_ID`':
+            $stmt->bindValue($identifier, $this->collector_id, PDO::PARAM_INT);
+            break;
+          case '`AUTHOR_NAME`':
+            $stmt->bindValue($identifier, $this->author_name, PDO::PARAM_STR);
+            break;
+          case '`AUTHOR_EMAIL`':
+            $stmt->bindValue($identifier, $this->author_email, PDO::PARAM_STR);
+            break;
+          case '`AUTHOR_URL`':
+            $stmt->bindValue($identifier, $this->author_url, PDO::PARAM_STR);
+            break;
+          case '`SUBJECT`':
+            $stmt->bindValue($identifier, $this->subject, PDO::PARAM_STR);
+            break;
+          case '`BODY`':
+            $stmt->bindValue($identifier, $this->body, PDO::PARAM_STR);
+            break;
+          case '`IP_ADDRESS`':
+            $stmt->bindValue($identifier, $this->ip_address, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1430,6 +1584,19 @@ abstract class BaseComment extends BaseObject  implements Persistent
     $copyObj->setBody($this->getBody());
     $copyObj->setIpAddress($this->getIpAddress());
     $copyObj->setCreatedAt($this->getCreatedAt());
+
+    if ($deepCopy && !$this->startCopy)
+    {
+      // important: temporarily setNew(false) because this affects the behavior of
+      // the getter/setter methods for fkey referrer objects.
+      $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
+
+      //unflag object copy
+      $this->startCopy = false;
+    }
+
     if ($makeNew)
     {
       $copyObj->setNew(true);
@@ -1714,7 +1881,6 @@ abstract class BaseComment extends BaseObject  implements Persistent
   
     return $archive;
   }
-  
   /**
    * Copy the data of the current object into a $archiveTablePhpName archive object.
    * The archived object is then saved.
@@ -1732,12 +1898,12 @@ abstract class BaseComment extends BaseObject  implements Persistent
     if ($this->isNew()) {
       throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
     }
-    if (!$archive = $this->getArchive($con)) {
+    if (!$archive = $this->getArchive()) {
       $archive = new CommentArchive();
       $archive->setPrimaryKey($this->getPrimaryKey());
     }
     $this->copyInto($archive, $deepCopy = false, $makeNew = false);
-    $archive->save($con);
+    $archive->save();
   
     return $archive;
   }

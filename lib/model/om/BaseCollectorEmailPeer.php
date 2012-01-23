@@ -53,11 +53,11 @@ abstract class BaseCollectorEmailPeer
   /** the column name for the IS_VERIFIED field */
   const IS_VERIFIED = 'collector_email.IS_VERIFIED';
 
-  /** the column name for the UPDATED_AT field */
-  const UPDATED_AT = 'collector_email.UPDATED_AT';
-
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'collector_email.CREATED_AT';
+
+  /** the column name for the UPDATED_AT field */
+  const UPDATED_AT = 'collector_email.UPDATED_AT';
 
   /** The default string format for model objects of the related table **/
   const DEFAULT_STRING_FORMAT = 'YAML';
@@ -78,11 +78,11 @@ abstract class BaseCollectorEmailPeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectorId', 'Email', 'Hash', 'Salt', 'IsVerified', 'UpdatedAt', 'CreatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectorId', 'email', 'hash', 'salt', 'isVerified', 'updatedAt', 'createdAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTOR_ID, self::EMAIL, self::HASH, self::SALT, self::IS_VERIFIED, self::UPDATED_AT, self::CREATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTOR_ID', 'EMAIL', 'HASH', 'SALT', 'IS_VERIFIED', 'UPDATED_AT', 'CREATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'collector_id', 'email', 'hash', 'salt', 'is_verified', 'updated_at', 'created_at', ),
+    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectorId', 'Email', 'Hash', 'Salt', 'IsVerified', 'CreatedAt', 'UpdatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectorId', 'email', 'hash', 'salt', 'isVerified', 'createdAt', 'updatedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTOR_ID, self::EMAIL, self::HASH, self::SALT, self::IS_VERIFIED, self::CREATED_AT, self::UPDATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTOR_ID', 'EMAIL', 'HASH', 'SALT', 'IS_VERIFIED', 'CREATED_AT', 'UPDATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'collector_id', 'email', 'hash', 'salt', 'is_verified', 'created_at', 'updated_at', ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
   );
 
@@ -93,11 +93,11 @@ abstract class BaseCollectorEmailPeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectorId' => 1, 'Email' => 2, 'Hash' => 3, 'Salt' => 4, 'IsVerified' => 5, 'UpdatedAt' => 6, 'CreatedAt' => 7, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectorId' => 1, 'email' => 2, 'hash' => 3, 'salt' => 4, 'isVerified' => 5, 'updatedAt' => 6, 'createdAt' => 7, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTOR_ID => 1, self::EMAIL => 2, self::HASH => 3, self::SALT => 4, self::IS_VERIFIED => 5, self::UPDATED_AT => 6, self::CREATED_AT => 7, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTOR_ID' => 1, 'EMAIL' => 2, 'HASH' => 3, 'SALT' => 4, 'IS_VERIFIED' => 5, 'UPDATED_AT' => 6, 'CREATED_AT' => 7, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collector_id' => 1, 'email' => 2, 'hash' => 3, 'salt' => 4, 'is_verified' => 5, 'updated_at' => 6, 'created_at' => 7, ),
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectorId' => 1, 'Email' => 2, 'Hash' => 3, 'Salt' => 4, 'IsVerified' => 5, 'CreatedAt' => 6, 'UpdatedAt' => 7, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectorId' => 1, 'email' => 2, 'hash' => 3, 'salt' => 4, 'isVerified' => 5, 'createdAt' => 6, 'updatedAt' => 7, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTOR_ID => 1, self::EMAIL => 2, self::HASH => 3, self::SALT => 4, self::IS_VERIFIED => 5, self::CREATED_AT => 6, self::UPDATED_AT => 7, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTOR_ID' => 1, 'EMAIL' => 2, 'HASH' => 3, 'SALT' => 4, 'IS_VERIFIED' => 5, 'CREATED_AT' => 6, 'UPDATED_AT' => 7, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collector_id' => 1, 'email' => 2, 'hash' => 3, 'salt' => 4, 'is_verified' => 5, 'created_at' => 6, 'updated_at' => 7, ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, )
   );
 
@@ -179,8 +179,8 @@ abstract class BaseCollectorEmailPeer
       $criteria->addSelectColumn(CollectorEmailPeer::HASH);
       $criteria->addSelectColumn(CollectorEmailPeer::SALT);
       $criteria->addSelectColumn(CollectorEmailPeer::IS_VERIFIED);
-      $criteria->addSelectColumn(CollectorEmailPeer::UPDATED_AT);
       $criteria->addSelectColumn(CollectorEmailPeer::CREATED_AT);
+      $criteria->addSelectColumn(CollectorEmailPeer::UPDATED_AT);
     }
     else
     {
@@ -190,8 +190,8 @@ abstract class BaseCollectorEmailPeer
       $criteria->addSelectColumn($alias . '.HASH');
       $criteria->addSelectColumn($alias . '.SALT');
       $criteria->addSelectColumn($alias . '.IS_VERIFIED');
-      $criteria->addSelectColumn($alias . '.UPDATED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
+      $criteria->addSelectColumn($alias . '.UPDATED_AT');
     }
   }
 

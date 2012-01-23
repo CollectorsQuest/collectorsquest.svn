@@ -24,8 +24,8 @@ abstract class BaseMultimediaForm extends BaseFormPropel
       'orientation' => new sfWidgetFormInputText(),
       'source'      => new sfWidgetFormInputText(),
       'is_primary'  => new sfWidgetFormInputCheckbox(),
-      'updated_at'  => new sfWidgetFormDateTime(),
       'created_at'  => new sfWidgetFormDateTime(),
+      'updated_at'  => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
@@ -39,8 +39,8 @@ abstract class BaseMultimediaForm extends BaseFormPropel
       'orientation' => new sfValidatorString(array('required' => false)),
       'source'      => new sfValidatorString(array('max_length' => 255, 'required' => false)),
       'is_primary'  => new sfValidatorBoolean(array('required' => false)),
-      'updated_at'  => new sfValidatorDateTime(array('required' => false)),
       'created_at'  => new sfValidatorDateTime(array('required' => false)),
+      'updated_at'  => new sfValidatorDateTime(array('required' => false)),
     ));
 
     $this->validatorSchema->setPostValidator(

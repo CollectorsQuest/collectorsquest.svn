@@ -39,13 +39,13 @@ class PackageTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
+    $this->addColumn('PLAN_TYPE', 'PlanType', 'CHAR', true, null, null);
     $this->addColumn('PACKAGE_NAME', 'PackageName', 'VARCHAR', true, 255, null);
     $this->addColumn('PACKAGE_DESCRIPTION', 'PackageDescription', 'LONGVARCHAR', false, null, null);
     $this->addColumn('MAX_ITEMS_FOR_SALE', 'MaxItemsForSale', 'INTEGER', false, null, null);
     $this->addColumn('PACKAGE_PRICE', 'PackagePrice', 'FLOAT', false, null, null);
-    $this->addColumn('PLAN_TYPE', 'PlanType', 'CHAR', true, null, null);
-    $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     $this->addColumn('CREATED_AT', 'CreatedAt', 'TIMESTAMP', false, null, null);
+    $this->addColumn('UPDATED_AT', 'UpdatedAt', 'TIMESTAMP', false, null, null);
     // validators
   }
 
@@ -54,7 +54,7 @@ class PackageTableMap extends TableMap
    */
   public function buildRelations()
   {
-    $this->addRelation('PackageTransaction', 'PackageTransaction', RelationMap::ONE_TO_MANY, array('id' => 'package_id', ), 'CASCADE', null, 'PackageTransactions');
+    $this->addRelation('PackageTransaction', 'PackageTransaction', RelationMap::ONE_TO_MANY, array('id' => 'package_id', ), 'RESTRICT', null, 'PackageTransactions');
   }
 
   /**
@@ -66,9 +66,9 @@ class PackageTableMap extends TableMap
   public function getBehaviors()
   {
     return array(
+      'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
       'symfony' => array('form' => 'true', 'filter' => 'true', ),
       'symfony_behaviors' => array(),
-      'symfony_timestampable' => array('update_column' => 'updated_at', 'create_column' => 'created_at', ),
       'alternative_coding_standards' => array('brackets_newline' => 'true', 'remove_closing_comments' => 'true', 'use_whitespace' => 'true', 'tab_size' => '2', 'strip_comments' => 'false', ),
     );
   }

@@ -25,6 +25,12 @@ abstract class BaseCommentArchive extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -836,7 +842,7 @@ abstract class BaseCommentArchive extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -924,7 +930,7 @@ abstract class BaseCommentArchive extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -949,29 +955,179 @@ abstract class BaseCommentArchive extends BaseObject  implements Persistent
     {
       $this->alreadyInSave = true;
 
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
+      if ($this->isNew() || $this->isModified())
       {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = CommentArchivePeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CommentArchivePeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::DISQUS_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`DISQUS_ID`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::PARENT_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PARENT_ID`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::COLLECTION_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTION_ID`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::COLLECTIBLE_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTIBLE_ID`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::COLLECTOR_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_ID`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::AUTHOR_NAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`AUTHOR_NAME`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::AUTHOR_EMAIL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`AUTHOR_EMAIL`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::AUTHOR_URL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`AUTHOR_URL`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::SUBJECT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SUBJECT`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::BODY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`BODY`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::IP_ADDRESS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IP_ADDRESS`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(CommentArchivePeer::ARCHIVED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ARCHIVED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `comment_archive` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`DISQUS_ID`':
+            $stmt->bindValue($identifier, $this->disqus_id, PDO::PARAM_STR);
+            break;
+          case '`PARENT_ID`':
+            $stmt->bindValue($identifier, $this->parent_id, PDO::PARAM_STR);
+            break;
+          case '`COLLECTION_ID`':
+            $stmt->bindValue($identifier, $this->collection_id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTIBLE_ID`':
+            $stmt->bindValue($identifier, $this->collectible_id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_ID`':
+            $stmt->bindValue($identifier, $this->collector_id, PDO::PARAM_INT);
+            break;
+          case '`AUTHOR_NAME`':
+            $stmt->bindValue($identifier, $this->author_name, PDO::PARAM_STR);
+            break;
+          case '`AUTHOR_EMAIL`':
+            $stmt->bindValue($identifier, $this->author_email, PDO::PARAM_STR);
+            break;
+          case '`AUTHOR_URL`':
+            $stmt->bindValue($identifier, $this->author_url, PDO::PARAM_STR);
+            break;
+          case '`SUBJECT`':
+            $stmt->bindValue($identifier, $this->subject, PDO::PARAM_STR);
+            break;
+          case '`BODY`':
+            $stmt->bindValue($identifier, $this->body, PDO::PARAM_STR);
+            break;
+          case '`IP_ADDRESS`':
+            $stmt->bindValue($identifier, $this->ip_address, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`ARCHIVED_AT`':
+            $stmt->bindValue($identifier, $this->archived_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1362,7 +1518,6 @@ abstract class BaseCommentArchive extends BaseObject  implements Persistent
    */
   public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setId($this->getId());
     $copyObj->setDisqusId($this->getDisqusId());
     $copyObj->setParentId($this->getParentId());
     $copyObj->setCollectionId($this->getCollectionId());
@@ -1379,6 +1534,7 @@ abstract class BaseCommentArchive extends BaseObject  implements Persistent
     if ($makeNew)
     {
       $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
     }
   }
 

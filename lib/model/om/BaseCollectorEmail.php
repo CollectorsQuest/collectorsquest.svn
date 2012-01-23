@@ -25,6 +25,12 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -62,16 +68,16 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
   protected $is_verified;
 
   /**
-   * The value for the updated_at field.
-   * @var        string
-   */
-  protected $updated_at;
-
-  /**
    * The value for the created_at field.
    * @var        string
    */
   protected $created_at;
+
+  /**
+   * The value for the updated_at field.
+   * @var        string
+   */
+  protected $updated_at;
 
   /**
    * @var        Collector
@@ -174,56 +180,6 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
   }
 
   /**
-   * Get the [optionally formatted] temporal [updated_at] column value.
-   * 
-   *
-   * @param      string $format The date/time format string (either date()-style or strftime()-style).
-   *              If format is NULL, then the raw DateTime object will be returned.
-   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-   * @throws     PropelException - if unable to parse/validate the date/time value.
-   */
-  public function getUpdatedAt($format = 'Y-m-d H:i:s')
-  {
-    if ($this->updated_at === null)
-    {
-      return null;
-    }
-
-
-    if ($this->updated_at === '0000-00-00 00:00:00')
-    {
-      // while technically this is not a default value of NULL,
-      // this seems to be closest in meaning.
-      return null;
-    }
-    else
-    {
-      try
-      {
-        $dt = new DateTime($this->updated_at);
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->updated_at, true), $x);
-      }
-    }
-
-    if ($format === null)
-    {
-      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-      return $dt;
-    }
-    elseif (strpos($format, '%') !== false)
-    {
-      return strftime($format, $dt->format('U'));
-    }
-    else
-    {
-      return $dt->format($format);
-    }
-  }
-
-  /**
    * Get the [optionally formatted] temporal [created_at] column value.
    * 
    *
@@ -255,6 +211,56 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
       catch (Exception $x)
       {
         throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->created_at, true), $x);
+      }
+    }
+
+    if ($format === null)
+    {
+      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+      return $dt;
+    }
+    elseif (strpos($format, '%') !== false)
+    {
+      return strftime($format, $dt->format('U'));
+    }
+    else
+    {
+      return $dt->format($format);
+    }
+  }
+
+  /**
+   * Get the [optionally formatted] temporal [updated_at] column value.
+   * 
+   *
+   * @param      string $format The date/time format string (either date()-style or strftime()-style).
+   *              If format is NULL, then the raw DateTime object will be returned.
+   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+   * @throws     PropelException - if unable to parse/validate the date/time value.
+   */
+  public function getUpdatedAt($format = 'Y-m-d H:i:s')
+  {
+    if ($this->updated_at === null)
+    {
+      return null;
+    }
+
+
+    if ($this->updated_at === '0000-00-00 00:00:00')
+    {
+      // while technically this is not a default value of NULL,
+      // this seems to be closest in meaning.
+      return null;
+    }
+    else
+    {
+      try
+      {
+        $dt = new DateTime($this->updated_at);
+      }
+      catch (Exception $x)
+      {
+        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->updated_at, true), $x);
       }
     }
 
@@ -422,30 +428,6 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
   }
 
   /**
-   * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
-   * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.
-   *               Empty strings are treated as NULL.
-   * @return     CollectorEmail The current object (for fluent API support)
-   */
-  public function setUpdatedAt($v)
-  {
-    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-    if ($this->updated_at !== null || $dt !== null)
-    {
-      $currentDateAsString = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
-        $this->updated_at = $newDateAsString;
-        $this->modifiedColumns[] = CollectorEmailPeer::UPDATED_AT;
-      }
-    }
-
-    return $this;
-  }
-
-  /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -463,6 +445,30 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
       {
         $this->created_at = $newDateAsString;
         $this->modifiedColumns[] = CollectorEmailPeer::CREATED_AT;
+      }
+    }
+
+    return $this;
+  }
+
+  /**
+   * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
+   * 
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
+   * @return     CollectorEmail The current object (for fluent API support)
+   */
+  public function setUpdatedAt($v)
+  {
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->updated_at !== null || $dt !== null)
+    {
+      $currentDateAsString = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
+      {
+        $this->updated_at = $newDateAsString;
+        $this->modifiedColumns[] = CollectorEmailPeer::UPDATED_AT;
       }
     }
 
@@ -513,8 +519,8 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
       $this->hash = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
       $this->salt = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
       $this->is_verified = ($row[$startcol + 5] !== null) ? (boolean) $row[$startcol + 5] : null;
-      $this->updated_at = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-      $this->created_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+      $this->created_at = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+      $this->updated_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -655,7 +661,7 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -702,24 +708,27 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
         }
       }
 
-      // symfony_timestampable behavior
-      if ($this->isModified() && !$this->isColumnModified(CollectorEmailPeer::UPDATED_AT))
-      {
-        $this->setUpdatedAt(time());
-      }
       if ($isInsert)
       {
         $ret = $ret && $this->preInsert($con);
-        // symfony_timestampable behavior
+        // timestampable behavior
         if (!$this->isColumnModified(CollectorEmailPeer::CREATED_AT))
         {
           $this->setCreatedAt(time());
         }
-
+        if (!$this->isColumnModified(CollectorEmailPeer::UPDATED_AT))
+        {
+          $this->setUpdatedAt(time());
+        }
       }
       else
       {
         $ret = $ret && $this->preUpdate($con);
+        // timestampable behavior
+        if ($this->isModified() && !$this->isColumnModified(CollectorEmailPeer::UPDATED_AT))
+        {
+          $this->setUpdatedAt(time());
+        }
       }
       if ($ret)
       {
@@ -748,7 +757,7 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -787,39 +796,152 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
         $this->setCollector($this->aCollector);
       }
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = CollectorEmailPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(CollectorEmailPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CollectorEmailPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows += 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows += CollectorEmailPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = CollectorEmailPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . CollectorEmailPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CollectorEmailPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CollectorEmailPeer::COLLECTOR_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_ID`';
+    }
+    if ($this->isColumnModified(CollectorEmailPeer::EMAIL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`EMAIL`';
+    }
+    if ($this->isColumnModified(CollectorEmailPeer::HASH))
+    {
+      $modifiedColumns[':p' . $index++]  = '`HASH`';
+    }
+    if ($this->isColumnModified(CollectorEmailPeer::SALT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`SALT`';
+    }
+    if ($this->isColumnModified(CollectorEmailPeer::IS_VERIFIED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_VERIFIED`';
+    }
+    if ($this->isColumnModified(CollectorEmailPeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(CollectorEmailPeer::UPDATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `collector_email` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_ID`':
+            $stmt->bindValue($identifier, $this->collector_id, PDO::PARAM_INT);
+            break;
+          case '`EMAIL`':
+            $stmt->bindValue($identifier, $this->email, PDO::PARAM_STR);
+            break;
+          case '`HASH`':
+            $stmt->bindValue($identifier, $this->hash, PDO::PARAM_STR);
+            break;
+          case '`SALT`':
+            $stmt->bindValue($identifier, $this->salt, PDO::PARAM_STR);
+            break;
+          case '`IS_VERIFIED`':
+            $stmt->bindValue($identifier, (int) $this->is_verified, PDO::PARAM_INT);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`UPDATED_AT`':
+            $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -959,10 +1081,10 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
         return $this->getIsVerified();
         break;
       case 6:
-        return $this->getUpdatedAt();
+        return $this->getCreatedAt();
         break;
       case 7:
-        return $this->getCreatedAt();
+        return $this->getUpdatedAt();
         break;
       default:
         return null;
@@ -1000,8 +1122,8 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
       $keys[3] => $this->getHash(),
       $keys[4] => $this->getSalt(),
       $keys[5] => $this->getIsVerified(),
-      $keys[6] => $this->getUpdatedAt(),
-      $keys[7] => $this->getCreatedAt(),
+      $keys[6] => $this->getCreatedAt(),
+      $keys[7] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -1060,10 +1182,10 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
         $this->setIsVerified($value);
         break;
       case 6:
-        $this->setUpdatedAt($value);
+        $this->setCreatedAt($value);
         break;
       case 7:
-        $this->setCreatedAt($value);
+        $this->setUpdatedAt($value);
         break;
     }
   }
@@ -1095,8 +1217,8 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
     if (array_key_exists($keys[3], $arr)) $this->setHash($arr[$keys[3]]);
     if (array_key_exists($keys[4], $arr)) $this->setSalt($arr[$keys[4]]);
     if (array_key_exists($keys[5], $arr)) $this->setIsVerified($arr[$keys[5]]);
-    if (array_key_exists($keys[6], $arr)) $this->setUpdatedAt($arr[$keys[6]]);
-    if (array_key_exists($keys[7], $arr)) $this->setCreatedAt($arr[$keys[7]]);
+    if (array_key_exists($keys[6], $arr)) $this->setCreatedAt($arr[$keys[6]]);
+    if (array_key_exists($keys[7], $arr)) $this->setUpdatedAt($arr[$keys[7]]);
   }
 
   /**
@@ -1114,8 +1236,8 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectorEmailPeer::HASH)) $criteria->add(CollectorEmailPeer::HASH, $this->hash);
     if ($this->isColumnModified(CollectorEmailPeer::SALT)) $criteria->add(CollectorEmailPeer::SALT, $this->salt);
     if ($this->isColumnModified(CollectorEmailPeer::IS_VERIFIED)) $criteria->add(CollectorEmailPeer::IS_VERIFIED, $this->is_verified);
-    if ($this->isColumnModified(CollectorEmailPeer::UPDATED_AT)) $criteria->add(CollectorEmailPeer::UPDATED_AT, $this->updated_at);
     if ($this->isColumnModified(CollectorEmailPeer::CREATED_AT)) $criteria->add(CollectorEmailPeer::CREATED_AT, $this->created_at);
+    if ($this->isColumnModified(CollectorEmailPeer::UPDATED_AT)) $criteria->add(CollectorEmailPeer::UPDATED_AT, $this->updated_at);
 
     return $criteria;
   }
@@ -1183,8 +1305,21 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
     $copyObj->setHash($this->getHash());
     $copyObj->setSalt($this->getSalt());
     $copyObj->setIsVerified($this->getIsVerified());
-    $copyObj->setUpdatedAt($this->getUpdatedAt());
     $copyObj->setCreatedAt($this->getCreatedAt());
+    $copyObj->setUpdatedAt($this->getUpdatedAt());
+
+    if ($deepCopy && !$this->startCopy)
+    {
+      // important: temporarily setNew(false) because this affects the behavior of
+      // the getter/setter methods for fkey referrer objects.
+      $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
+
+      //unflag object copy
+      $this->startCopy = false;
+    }
+
     if ($makeNew)
     {
       $copyObj->setNew(true);
@@ -1296,8 +1431,8 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
     $this->hash = null;
     $this->salt = null;
     $this->is_verified = null;
-    $this->updated_at = null;
     $this->created_at = null;
+    $this->updated_at = null;
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;
     $this->clearAllReferences();
@@ -1333,6 +1468,19 @@ abstract class BaseCollectorEmail extends BaseObject  implements Persistent
   public function __toString()
   {
     return (string) $this->exportTo(CollectorEmailPeer::DEFAULT_STRING_FORMAT);
+  }
+
+  // timestampable behavior
+  
+  /**
+   * Mark the current object so that the update date doesn't get updated during next save
+   *
+   * @return     CollectorEmail The current object (for fluent API support)
+   */
+  public function keepUpdateDateUnchanged()
+  {
+    $this->modifiedColumns[] = CollectorEmailPeer::UPDATED_AT;
+    return $this;
   }
 
   /**

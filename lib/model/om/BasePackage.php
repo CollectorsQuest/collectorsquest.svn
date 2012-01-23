@@ -25,10 +25,22 @@ abstract class BasePackage extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
   protected $id;
+
+  /**
+   * The value for the plan_type field.
+   * @var        string
+   */
+  protected $plan_type;
 
   /**
    * The value for the package_name field.
@@ -55,22 +67,16 @@ abstract class BasePackage extends BaseObject  implements Persistent
   protected $package_price;
 
   /**
-   * The value for the plan_type field.
+   * The value for the created_at field.
    * @var        string
    */
-  protected $plan_type;
+  protected $created_at;
 
   /**
    * The value for the updated_at field.
    * @var        string
    */
   protected $updated_at;
-
-  /**
-   * The value for the created_at field.
-   * @var        string
-   */
-  protected $created_at;
 
   /**
    * @var        array PackageTransaction[] Collection to store aggregation of PackageTransaction objects.
@@ -92,6 +98,12 @@ abstract class BasePackage extends BaseObject  implements Persistent
   protected $alreadyInValidation = false;
 
   /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $packageTransactionsScheduledForDeletion = null;
+
+  /**
    * Get the [id] column value.
    * 
    * @return     int
@@ -99,6 +111,16 @@ abstract class BasePackage extends BaseObject  implements Persistent
   public function getId()
   {
     return $this->id;
+  }
+
+  /**
+   * Get the [plan_type] column value.
+   * 
+   * @return     string
+   */
+  public function getPlanType()
+  {
+    return $this->plan_type;
   }
 
   /**
@@ -139,66 +161,6 @@ abstract class BasePackage extends BaseObject  implements Persistent
   public function getPackagePrice()
   {
     return $this->package_price;
-  }
-
-  /**
-   * Get the [plan_type] column value.
-   * 
-   * @return     string
-   */
-  public function getPlanType()
-  {
-    return $this->plan_type;
-  }
-
-  /**
-   * Get the [optionally formatted] temporal [updated_at] column value.
-   * 
-   *
-   * @param      string $format The date/time format string (either date()-style or strftime()-style).
-   *              If format is NULL, then the raw DateTime object will be returned.
-   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-   * @throws     PropelException - if unable to parse/validate the date/time value.
-   */
-  public function getUpdatedAt($format = 'Y-m-d H:i:s')
-  {
-    if ($this->updated_at === null)
-    {
-      return null;
-    }
-
-
-    if ($this->updated_at === '0000-00-00 00:00:00')
-    {
-      // while technically this is not a default value of NULL,
-      // this seems to be closest in meaning.
-      return null;
-    }
-    else
-    {
-      try
-      {
-        $dt = new DateTime($this->updated_at);
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->updated_at, true), $x);
-      }
-    }
-
-    if ($format === null)
-    {
-      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-      return $dt;
-    }
-    elseif (strpos($format, '%') !== false)
-    {
-      return strftime($format, $dt->format('U'));
-    }
-    else
-    {
-      return $dt->format($format);
-    }
   }
 
   /**
@@ -252,6 +214,56 @@ abstract class BasePackage extends BaseObject  implements Persistent
   }
 
   /**
+   * Get the [optionally formatted] temporal [updated_at] column value.
+   * 
+   *
+   * @param      string $format The date/time format string (either date()-style or strftime()-style).
+   *              If format is NULL, then the raw DateTime object will be returned.
+   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+   * @throws     PropelException - if unable to parse/validate the date/time value.
+   */
+  public function getUpdatedAt($format = 'Y-m-d H:i:s')
+  {
+    if ($this->updated_at === null)
+    {
+      return null;
+    }
+
+
+    if ($this->updated_at === '0000-00-00 00:00:00')
+    {
+      // while technically this is not a default value of NULL,
+      // this seems to be closest in meaning.
+      return null;
+    }
+    else
+    {
+      try
+      {
+        $dt = new DateTime($this->updated_at);
+      }
+      catch (Exception $x)
+      {
+        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->updated_at, true), $x);
+      }
+    }
+
+    if ($format === null)
+    {
+      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+      return $dt;
+    }
+    elseif (strpos($format, '%') !== false)
+    {
+      return strftime($format, $dt->format('U'));
+    }
+    else
+    {
+      return $dt->format($format);
+    }
+  }
+
+  /**
    * Set the value of [id] column.
    * 
    * @param      int $v new value
@@ -268,6 +280,28 @@ abstract class BasePackage extends BaseObject  implements Persistent
     {
       $this->id = $v;
       $this->modifiedColumns[] = PackagePeer::ID;
+    }
+
+    return $this;
+  }
+
+  /**
+   * Set the value of [plan_type] column.
+   * 
+   * @param      string $v new value
+   * @return     Package The current object (for fluent API support)
+   */
+  public function setPlanType($v)
+  {
+    if ($v !== null)
+    {
+      $v = (string) $v;
+    }
+
+    if ($this->plan_type !== $v)
+    {
+      $this->plan_type = $v;
+      $this->modifiedColumns[] = PackagePeer::PLAN_TYPE;
     }
 
     return $this;
@@ -362,22 +396,24 @@ abstract class BasePackage extends BaseObject  implements Persistent
   }
 
   /**
-   * Set the value of [plan_type] column.
+   * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
-   * @param      string $v new value
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
    * @return     Package The current object (for fluent API support)
    */
-  public function setPlanType($v)
+  public function setCreatedAt($v)
   {
-    if ($v !== null)
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->created_at !== null || $dt !== null)
     {
-      $v = (string) $v;
-    }
-
-    if ($this->plan_type !== $v)
-    {
-      $this->plan_type = $v;
-      $this->modifiedColumns[] = PackagePeer::PLAN_TYPE;
+      $currentDateAsString = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
+      {
+        $this->created_at = $newDateAsString;
+        $this->modifiedColumns[] = PackagePeer::CREATED_AT;
+      }
     }
 
     return $this;
@@ -401,30 +437,6 @@ abstract class BasePackage extends BaseObject  implements Persistent
       {
         $this->updated_at = $newDateAsString;
         $this->modifiedColumns[] = PackagePeer::UPDATED_AT;
-      }
-    }
-
-    return $this;
-  }
-
-  /**
-   * Sets the value of [created_at] column to a normalized version of the date/time value specified.
-   * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.
-   *               Empty strings are treated as NULL.
-   * @return     Package The current object (for fluent API support)
-   */
-  public function setCreatedAt($v)
-  {
-    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-    if ($this->created_at !== null || $dt !== null)
-    {
-      $currentDateAsString = ($this->created_at !== null && $tmpDt = new DateTime($this->created_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
-        $this->created_at = $newDateAsString;
-        $this->modifiedColumns[] = PackagePeer::CREATED_AT;
       }
     }
 
@@ -465,13 +477,13 @@ abstract class BasePackage extends BaseObject  implements Persistent
     {
 
       $this->id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
-      $this->package_name = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
-      $this->package_description = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
-      $this->max_items_for_sale = ($row[$startcol + 3] !== null) ? (int) $row[$startcol + 3] : null;
-      $this->package_price = ($row[$startcol + 4] !== null) ? (double) $row[$startcol + 4] : null;
-      $this->plan_type = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
-      $this->updated_at = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-      $this->created_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+      $this->plan_type = ($row[$startcol + 1] !== null) ? (string) $row[$startcol + 1] : null;
+      $this->package_name = ($row[$startcol + 2] !== null) ? (string) $row[$startcol + 2] : null;
+      $this->package_description = ($row[$startcol + 3] !== null) ? (string) $row[$startcol + 3] : null;
+      $this->max_items_for_sale = ($row[$startcol + 4] !== null) ? (int) $row[$startcol + 4] : null;
+      $this->package_price = ($row[$startcol + 5] !== null) ? (double) $row[$startcol + 5] : null;
+      $this->created_at = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
+      $this->updated_at = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -609,7 +621,7 @@ abstract class BasePackage extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -656,24 +668,27 @@ abstract class BasePackage extends BaseObject  implements Persistent
         }
       }
 
-      // symfony_timestampable behavior
-      if ($this->isModified() && !$this->isColumnModified(PackagePeer::UPDATED_AT))
-      {
-        $this->setUpdatedAt(time());
-      }
       if ($isInsert)
       {
         $ret = $ret && $this->preInsert($con);
-        // symfony_timestampable behavior
+        // timestampable behavior
         if (!$this->isColumnModified(PackagePeer::CREATED_AT))
         {
           $this->setCreatedAt(time());
         }
-
+        if (!$this->isColumnModified(PackagePeer::UPDATED_AT))
+        {
+          $this->setUpdatedAt(time());
+        }
       }
       else
       {
         $ret = $ret && $this->preUpdate($con);
+        // timestampable behavior
+        if ($this->isModified() && !$this->isColumnModified(PackagePeer::UPDATED_AT))
+        {
+          $this->setUpdatedAt(time());
+        }
       }
       if ($ret)
       {
@@ -702,7 +717,7 @@ abstract class BasePackage extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -727,33 +742,30 @@ abstract class BasePackage extends BaseObject  implements Persistent
     {
       $this->alreadyInSave = true;
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = PackagePeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(PackagePeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.PackagePeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = PackagePeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
+        $affectedRows += 1;
+        $this->resetModified();
+      }
 
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+      if ($this->packageTransactionsScheduledForDeletion !== null)
+      {
+        if (!$this->packageTransactionsScheduledForDeletion->isEmpty())
+        {
+          PackageTransactionQuery::create()
+            ->filterByPrimaryKeys($this->packageTransactionsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->packageTransactionsScheduledForDeletion = null;
+        }
       }
 
       if ($this->collPackageTransactions !== null)
@@ -771,6 +783,133 @@ abstract class BasePackage extends BaseObject  implements Persistent
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = PackagePeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . PackagePeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(PackagePeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(PackagePeer::PLAN_TYPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PLAN_TYPE`';
+    }
+    if ($this->isColumnModified(PackagePeer::PACKAGE_NAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PACKAGE_NAME`';
+    }
+    if ($this->isColumnModified(PackagePeer::PACKAGE_DESCRIPTION))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PACKAGE_DESCRIPTION`';
+    }
+    if ($this->isColumnModified(PackagePeer::MAX_ITEMS_FOR_SALE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`MAX_ITEMS_FOR_SALE`';
+    }
+    if ($this->isColumnModified(PackagePeer::PACKAGE_PRICE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PACKAGE_PRICE`';
+    }
+    if ($this->isColumnModified(PackagePeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(PackagePeer::UPDATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `package` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`PLAN_TYPE`':
+            $stmt->bindValue($identifier, $this->plan_type, PDO::PARAM_STR);
+            break;
+          case '`PACKAGE_NAME`':
+            $stmt->bindValue($identifier, $this->package_name, PDO::PARAM_STR);
+            break;
+          case '`PACKAGE_DESCRIPTION`':
+            $stmt->bindValue($identifier, $this->package_description, PDO::PARAM_STR);
+            break;
+          case '`MAX_ITEMS_FOR_SALE`':
+            $stmt->bindValue($identifier, $this->max_items_for_sale, PDO::PARAM_INT);
+            break;
+          case '`PACKAGE_PRICE`':
+            $stmt->bindValue($identifier, $this->package_price, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`UPDATED_AT`':
+            $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -892,25 +1031,25 @@ abstract class BasePackage extends BaseObject  implements Persistent
         return $this->getId();
         break;
       case 1:
-        return $this->getPackageName();
-        break;
-      case 2:
-        return $this->getPackageDescription();
-        break;
-      case 3:
-        return $this->getMaxItemsForSale();
-        break;
-      case 4:
-        return $this->getPackagePrice();
-        break;
-      case 5:
         return $this->getPlanType();
         break;
+      case 2:
+        return $this->getPackageName();
+        break;
+      case 3:
+        return $this->getPackageDescription();
+        break;
+      case 4:
+        return $this->getMaxItemsForSale();
+        break;
+      case 5:
+        return $this->getPackagePrice();
+        break;
       case 6:
-        return $this->getUpdatedAt();
+        return $this->getCreatedAt();
         break;
       case 7:
-        return $this->getCreatedAt();
+        return $this->getUpdatedAt();
         break;
       default:
         return null;
@@ -943,13 +1082,13 @@ abstract class BasePackage extends BaseObject  implements Persistent
     $keys = PackagePeer::getFieldNames($keyType);
     $result = array(
       $keys[0] => $this->getId(),
-      $keys[1] => $this->getPackageName(),
-      $keys[2] => $this->getPackageDescription(),
-      $keys[3] => $this->getMaxItemsForSale(),
-      $keys[4] => $this->getPackagePrice(),
-      $keys[5] => $this->getPlanType(),
-      $keys[6] => $this->getUpdatedAt(),
-      $keys[7] => $this->getCreatedAt(),
+      $keys[1] => $this->getPlanType(),
+      $keys[2] => $this->getPackageName(),
+      $keys[3] => $this->getPackageDescription(),
+      $keys[4] => $this->getMaxItemsForSale(),
+      $keys[5] => $this->getPackagePrice(),
+      $keys[6] => $this->getCreatedAt(),
+      $keys[7] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -993,25 +1132,25 @@ abstract class BasePackage extends BaseObject  implements Persistent
         $this->setId($value);
         break;
       case 1:
-        $this->setPackageName($value);
-        break;
-      case 2:
-        $this->setPackageDescription($value);
-        break;
-      case 3:
-        $this->setMaxItemsForSale($value);
-        break;
-      case 4:
-        $this->setPackagePrice($value);
-        break;
-      case 5:
         $this->setPlanType($value);
         break;
+      case 2:
+        $this->setPackageName($value);
+        break;
+      case 3:
+        $this->setPackageDescription($value);
+        break;
+      case 4:
+        $this->setMaxItemsForSale($value);
+        break;
+      case 5:
+        $this->setPackagePrice($value);
+        break;
       case 6:
-        $this->setUpdatedAt($value);
+        $this->setCreatedAt($value);
         break;
       case 7:
-        $this->setCreatedAt($value);
+        $this->setUpdatedAt($value);
         break;
     }
   }
@@ -1038,13 +1177,13 @@ abstract class BasePackage extends BaseObject  implements Persistent
     $keys = PackagePeer::getFieldNames($keyType);
 
     if (array_key_exists($keys[0], $arr)) $this->setId($arr[$keys[0]]);
-    if (array_key_exists($keys[1], $arr)) $this->setPackageName($arr[$keys[1]]);
-    if (array_key_exists($keys[2], $arr)) $this->setPackageDescription($arr[$keys[2]]);
-    if (array_key_exists($keys[3], $arr)) $this->setMaxItemsForSale($arr[$keys[3]]);
-    if (array_key_exists($keys[4], $arr)) $this->setPackagePrice($arr[$keys[4]]);
-    if (array_key_exists($keys[5], $arr)) $this->setPlanType($arr[$keys[5]]);
-    if (array_key_exists($keys[6], $arr)) $this->setUpdatedAt($arr[$keys[6]]);
-    if (array_key_exists($keys[7], $arr)) $this->setCreatedAt($arr[$keys[7]]);
+    if (array_key_exists($keys[1], $arr)) $this->setPlanType($arr[$keys[1]]);
+    if (array_key_exists($keys[2], $arr)) $this->setPackageName($arr[$keys[2]]);
+    if (array_key_exists($keys[3], $arr)) $this->setPackageDescription($arr[$keys[3]]);
+    if (array_key_exists($keys[4], $arr)) $this->setMaxItemsForSale($arr[$keys[4]]);
+    if (array_key_exists($keys[5], $arr)) $this->setPackagePrice($arr[$keys[5]]);
+    if (array_key_exists($keys[6], $arr)) $this->setCreatedAt($arr[$keys[6]]);
+    if (array_key_exists($keys[7], $arr)) $this->setUpdatedAt($arr[$keys[7]]);
   }
 
   /**
@@ -1057,13 +1196,13 @@ abstract class BasePackage extends BaseObject  implements Persistent
     $criteria = new Criteria(PackagePeer::DATABASE_NAME);
 
     if ($this->isColumnModified(PackagePeer::ID)) $criteria->add(PackagePeer::ID, $this->id);
+    if ($this->isColumnModified(PackagePeer::PLAN_TYPE)) $criteria->add(PackagePeer::PLAN_TYPE, $this->plan_type);
     if ($this->isColumnModified(PackagePeer::PACKAGE_NAME)) $criteria->add(PackagePeer::PACKAGE_NAME, $this->package_name);
     if ($this->isColumnModified(PackagePeer::PACKAGE_DESCRIPTION)) $criteria->add(PackagePeer::PACKAGE_DESCRIPTION, $this->package_description);
     if ($this->isColumnModified(PackagePeer::MAX_ITEMS_FOR_SALE)) $criteria->add(PackagePeer::MAX_ITEMS_FOR_SALE, $this->max_items_for_sale);
     if ($this->isColumnModified(PackagePeer::PACKAGE_PRICE)) $criteria->add(PackagePeer::PACKAGE_PRICE, $this->package_price);
-    if ($this->isColumnModified(PackagePeer::PLAN_TYPE)) $criteria->add(PackagePeer::PLAN_TYPE, $this->plan_type);
-    if ($this->isColumnModified(PackagePeer::UPDATED_AT)) $criteria->add(PackagePeer::UPDATED_AT, $this->updated_at);
     if ($this->isColumnModified(PackagePeer::CREATED_AT)) $criteria->add(PackagePeer::CREATED_AT, $this->created_at);
+    if ($this->isColumnModified(PackagePeer::UPDATED_AT)) $criteria->add(PackagePeer::UPDATED_AT, $this->updated_at);
 
     return $criteria;
   }
@@ -1126,19 +1265,21 @@ abstract class BasePackage extends BaseObject  implements Persistent
    */
   public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
+    $copyObj->setPlanType($this->getPlanType());
     $copyObj->setPackageName($this->getPackageName());
     $copyObj->setPackageDescription($this->getPackageDescription());
     $copyObj->setMaxItemsForSale($this->getMaxItemsForSale());
     $copyObj->setPackagePrice($this->getPackagePrice());
-    $copyObj->setPlanType($this->getPlanType());
-    $copyObj->setUpdatedAt($this->getUpdatedAt());
     $copyObj->setCreatedAt($this->getCreatedAt());
+    $copyObj->setUpdatedAt($this->getUpdatedAt());
 
-    if ($deepCopy)
+    if ($deepCopy && !$this->startCopy)
     {
       // important: temporarily setNew(false) because this affects the behavior of
       // the getter/setter methods for fkey referrer objects.
       $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
 
       foreach ($this->getPackageTransactions() as $relObj)
       {
@@ -1147,6 +1288,8 @@ abstract class BasePackage extends BaseObject  implements Persistent
         }
       }
 
+      //unflag object copy
+      $this->startCopy = false;
     }
 
     if ($makeNew)
@@ -1287,6 +1430,32 @@ abstract class BasePackage extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of PackageTransaction objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $packageTransactions A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setPackageTransactions(PropelCollection $packageTransactions, PropelPDO $con = null)
+  {
+    $this->packageTransactionsScheduledForDeletion = $this->getPackageTransactions(new Criteria(), $con)->diff($packageTransactions);
+
+    foreach ($packageTransactions as $packageTransaction)
+    {
+      // Fix issue with collection modified by reference
+      if ($packageTransaction->isNew())
+      {
+        $packageTransaction->setPackage($this);
+      }
+      $this->addPackageTransaction($packageTransaction);
+    }
+
+    $this->collPackageTransactions = $packageTransactions;
+  }
+
+  /**
    * Returns the number of related PackageTransaction objects.
    *
    * @param      Criteria $criteria
@@ -1335,11 +1504,19 @@ abstract class BasePackage extends BaseObject  implements Persistent
       $this->initPackageTransactions();
     }
     if (!$this->collPackageTransactions->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collPackageTransactions[]= $l;
-      $l->setPackage($this);
+      $this->doAddPackageTransaction($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  PackageTransaction $packageTransaction The packageTransaction object to add.
+   */
+  protected function doAddPackageTransaction($packageTransaction)
+  {
+    $this->collPackageTransactions[]= $packageTransaction;
+    $packageTransaction->setPackage($this);
   }
 
 
@@ -1373,13 +1550,13 @@ abstract class BasePackage extends BaseObject  implements Persistent
   public function clear()
   {
     $this->id = null;
+    $this->plan_type = null;
     $this->package_name = null;
     $this->package_description = null;
     $this->max_items_for_sale = null;
     $this->package_price = null;
-    $this->plan_type = null;
-    $this->updated_at = null;
     $this->created_at = null;
+    $this->updated_at = null;
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;
     $this->clearAllReferences();
@@ -1425,6 +1602,19 @@ abstract class BasePackage extends BaseObject  implements Persistent
   public function __toString()
   {
     return (string) $this->exportTo(PackagePeer::DEFAULT_STRING_FORMAT);
+  }
+
+  // timestampable behavior
+  
+  /**
+   * Mark the current object so that the update date doesn't get updated during next save
+   *
+   * @return     Package The current object (for fluent API support)
+   */
+  public function keepUpdateDateUnchanged()
+  {
+    $this->modifiedColumns[] = PackagePeer::UPDATED_AT;
+    return $this;
   }
 
   /**

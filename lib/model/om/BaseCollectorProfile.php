@@ -25,6 +25,12 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -155,16 +161,16 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   protected $notifications;
 
   /**
-   * The value for the updated_at field.
-   * @var        string
-   */
-  protected $updated_at;
-
-  /**
    * The value for the created_at field.
    * @var        string
    */
   protected $created_at;
+
+  /**
+   * The value for the updated_at field.
+   * @var        string
+   */
+  protected $updated_at;
 
   /**
    * @var        Collector
@@ -463,56 +469,6 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   }
 
   /**
-   * Get the [optionally formatted] temporal [updated_at] column value.
-   * 
-   *
-   * @param      string $format The date/time format string (either date()-style or strftime()-style).
-   *              If format is NULL, then the raw DateTime object will be returned.
-   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
-   * @throws     PropelException - if unable to parse/validate the date/time value.
-   */
-  public function getUpdatedAt($format = 'Y-m-d H:i:s')
-  {
-    if ($this->updated_at === null)
-    {
-      return null;
-    }
-
-
-    if ($this->updated_at === '0000-00-00 00:00:00')
-    {
-      // while technically this is not a default value of NULL,
-      // this seems to be closest in meaning.
-      return null;
-    }
-    else
-    {
-      try
-      {
-        $dt = new DateTime($this->updated_at);
-      }
-      catch (Exception $x)
-      {
-        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->updated_at, true), $x);
-      }
-    }
-
-    if ($format === null)
-    {
-      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
-      return $dt;
-    }
-    elseif (strpos($format, '%') !== false)
-    {
-      return strftime($format, $dt->format('U'));
-    }
-    else
-    {
-      return $dt->format($format);
-    }
-  }
-
-  /**
    * Get the [optionally formatted] temporal [created_at] column value.
    * 
    *
@@ -544,6 +500,56 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
       catch (Exception $x)
       {
         throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->created_at, true), $x);
+      }
+    }
+
+    if ($format === null)
+    {
+      // Because propel.useDateTimeClass is TRUE, we return a DateTime object.
+      return $dt;
+    }
+    elseif (strpos($format, '%') !== false)
+    {
+      return strftime($format, $dt->format('U'));
+    }
+    else
+    {
+      return $dt->format($format);
+    }
+  }
+
+  /**
+   * Get the [optionally formatted] temporal [updated_at] column value.
+   * 
+   *
+   * @param      string $format The date/time format string (either date()-style or strftime()-style).
+   *              If format is NULL, then the raw DateTime object will be returned.
+   * @return     mixed Formatted date/time value as string or DateTime object (if format is NULL), NULL if column is NULL, and 0 if column value is 0000-00-00 00:00:00
+   * @throws     PropelException - if unable to parse/validate the date/time value.
+   */
+  public function getUpdatedAt($format = 'Y-m-d H:i:s')
+  {
+    if ($this->updated_at === null)
+    {
+      return null;
+    }
+
+
+    if ($this->updated_at === '0000-00-00 00:00:00')
+    {
+      // while technically this is not a default value of NULL,
+      // this seems to be closest in meaning.
+      return null;
+    }
+    else
+    {
+      try
+      {
+        $dt = new DateTime($this->updated_at);
+      }
+      catch (Exception $x)
+      {
+        throw new PropelException("Internally stored date/time/timestamp value could not be converted to DateTime: " . var_export($this->updated_at, true), $x);
       }
     }
 
@@ -1065,30 +1071,6 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   }
 
   /**
-   * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
-   * 
-   * @param      mixed $v string, integer (timestamp), or DateTime value.
-   *               Empty strings are treated as NULL.
-   * @return     CollectorProfile The current object (for fluent API support)
-   */
-  public function setUpdatedAt($v)
-  {
-    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
-    if ($this->updated_at !== null || $dt !== null)
-    {
-      $currentDateAsString = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
-      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
-        $this->updated_at = $newDateAsString;
-        $this->modifiedColumns[] = CollectorProfilePeer::UPDATED_AT;
-      }
-    }
-
-    return $this;
-  }
-
-  /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
    * 
    * @param      mixed $v string, integer (timestamp), or DateTime value.
@@ -1106,6 +1088,30 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
       {
         $this->created_at = $newDateAsString;
         $this->modifiedColumns[] = CollectorProfilePeer::CREATED_AT;
+      }
+    }
+
+    return $this;
+  }
+
+  /**
+   * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
+   * 
+   * @param      mixed $v string, integer (timestamp), or DateTime value.
+   *               Empty strings are treated as NULL.
+   * @return     CollectorProfile The current object (for fluent API support)
+   */
+  public function setUpdatedAt($v)
+  {
+    $dt = PropelDateTime::newInstance($v, null, 'DateTime');
+    if ($this->updated_at !== null || $dt !== null)
+    {
+      $currentDateAsString = ($this->updated_at !== null && $tmpDt = new DateTime($this->updated_at)) ? $tmpDt->format('Y-m-d H:i:s') : null;
+      $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
+      if ($currentDateAsString !== $newDateAsString)
+      {
+        $this->updated_at = $newDateAsString;
+        $this->modifiedColumns[] = CollectorProfilePeer::UPDATED_AT;
       }
     }
 
@@ -1186,8 +1192,8 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
       $this->is_image_auto = ($row[$startcol + 18] !== null) ? (boolean) $row[$startcol + 18] : null;
       $this->preferences = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
       $this->notifications = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
-      $this->updated_at = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
-      $this->created_at = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
+      $this->created_at = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
+      $this->updated_at = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -1338,7 +1344,7 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1385,24 +1391,27 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
         }
       }
 
-      // symfony_timestampable behavior
-      if ($this->isModified() && !$this->isColumnModified(CollectorProfilePeer::UPDATED_AT))
-      {
-        $this->setUpdatedAt(time());
-      }
       if ($isInsert)
       {
         $ret = $ret && $this->preInsert($con);
-        // symfony_timestampable behavior
+        // timestampable behavior
         if (!$this->isColumnModified(CollectorProfilePeer::CREATED_AT))
         {
           $this->setCreatedAt(time());
         }
-
+        if (!$this->isColumnModified(CollectorProfilePeer::UPDATED_AT))
+        {
+          $this->setUpdatedAt(time());
+        }
       }
       else
       {
         $ret = $ret && $this->preUpdate($con);
+        // timestampable behavior
+        if ($this->isModified() && !$this->isColumnModified(CollectorProfilePeer::UPDATED_AT))
+        {
+          $this->setUpdatedAt(time());
+        }
       }
       if ($ret)
       {
@@ -1431,7 +1440,7 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1470,39 +1479,257 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
         $this->setCollector($this->aCollector);
       }
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = CollectorProfilePeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(CollectorProfilePeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CollectorProfilePeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows += 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows += CollectorProfilePeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = CollectorProfilePeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . CollectorProfilePeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CollectorProfilePeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::COLLECTOR_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_ID`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::COLLECTOR_TYPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_TYPE`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::BIRTHDAY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`BIRTHDAY`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::GENDER))
+    {
+      $modifiedColumns[':p' . $index++]  = '`GENDER`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::ZIP_POSTAL))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ZIP_POSTAL`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::COUNTRY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COUNTRY`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::COUNTRY_ISO3166))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COUNTRY_ISO3166`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::WEBSITE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`WEBSITE`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::ABOUT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ABOUT`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::COLLECTIONS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTIONS`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::COLLECTING))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTING`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::MOST_SPENT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`MOST_SPENT`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::ANUALLY_SPENT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ANUALLY_SPENT`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::NEW_ITEM_EVERY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`NEW_ITEM_EVERY`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::INTERESTS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`INTERESTS`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::IS_FEATURED))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_FEATURED`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::IS_SELLER))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_SELLER`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::IS_IMAGE_AUTO))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_IMAGE_AUTO`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::PREFERENCES))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PREFERENCES`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::NOTIFICATIONS))
+    {
+      $modifiedColumns[':p' . $index++]  = '`NOTIFICATIONS`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(CollectorProfilePeer::UPDATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `collector_profile` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_ID`':
+            $stmt->bindValue($identifier, $this->collector_id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_TYPE`':
+            $stmt->bindValue($identifier, $this->collector_type, PDO::PARAM_STR);
+            break;
+          case '`BIRTHDAY`':
+            $stmt->bindValue($identifier, $this->birthday, PDO::PARAM_STR);
+            break;
+          case '`GENDER`':
+            $stmt->bindValue($identifier, $this->gender, PDO::PARAM_STR);
+            break;
+          case '`ZIP_POSTAL`':
+            $stmt->bindValue($identifier, $this->zip_postal, PDO::PARAM_STR);
+            break;
+          case '`COUNTRY`':
+            $stmt->bindValue($identifier, $this->country, PDO::PARAM_STR);
+            break;
+          case '`COUNTRY_ISO3166`':
+            $stmt->bindValue($identifier, $this->country_iso3166, PDO::PARAM_STR);
+            break;
+          case '`WEBSITE`':
+            $stmt->bindValue($identifier, $this->website, PDO::PARAM_STR);
+            break;
+          case '`ABOUT`':
+            $stmt->bindValue($identifier, $this->about, PDO::PARAM_STR);
+            break;
+          case '`COLLECTIONS`':
+            $stmt->bindValue($identifier, $this->collections, PDO::PARAM_STR);
+            break;
+          case '`COLLECTING`':
+            $stmt->bindValue($identifier, $this->collecting, PDO::PARAM_STR);
+            break;
+          case '`MOST_SPENT`':
+            $stmt->bindValue($identifier, $this->most_spent, PDO::PARAM_INT);
+            break;
+          case '`ANUALLY_SPENT`':
+            $stmt->bindValue($identifier, $this->anually_spent, PDO::PARAM_INT);
+            break;
+          case '`NEW_ITEM_EVERY`':
+            $stmt->bindValue($identifier, $this->new_item_every, PDO::PARAM_STR);
+            break;
+          case '`INTERESTS`':
+            $stmt->bindValue($identifier, $this->interests, PDO::PARAM_STR);
+            break;
+          case '`IS_FEATURED`':
+            $stmt->bindValue($identifier, (int) $this->is_featured, PDO::PARAM_INT);
+            break;
+          case '`IS_SELLER`':
+            $stmt->bindValue($identifier, (int) $this->is_seller, PDO::PARAM_INT);
+            break;
+          case '`IS_IMAGE_AUTO`':
+            $stmt->bindValue($identifier, (int) $this->is_image_auto, PDO::PARAM_INT);
+            break;
+          case '`PREFERENCES`':
+            $stmt->bindValue($identifier, $this->preferences, PDO::PARAM_STR);
+            break;
+          case '`NOTIFICATIONS`':
+            $stmt->bindValue($identifier, $this->notifications, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`UPDATED_AT`':
+            $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1687,10 +1914,10 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
         return $this->getNotifications();
         break;
       case 21:
-        return $this->getUpdatedAt();
+        return $this->getCreatedAt();
         break;
       case 22:
-        return $this->getCreatedAt();
+        return $this->getUpdatedAt();
         break;
       default:
         return null;
@@ -1743,8 +1970,8 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
       $keys[18] => $this->getIsImageAuto(),
       $keys[19] => $this->getPreferences(),
       $keys[20] => $this->getNotifications(),
-      $keys[21] => $this->getUpdatedAt(),
-      $keys[22] => $this->getCreatedAt(),
+      $keys[21] => $this->getCreatedAt(),
+      $keys[22] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -1848,10 +2075,10 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
         $this->setNotifications($value);
         break;
       case 21:
-        $this->setUpdatedAt($value);
+        $this->setCreatedAt($value);
         break;
       case 22:
-        $this->setCreatedAt($value);
+        $this->setUpdatedAt($value);
         break;
     }
   }
@@ -1898,8 +2125,8 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
     if (array_key_exists($keys[18], $arr)) $this->setIsImageAuto($arr[$keys[18]]);
     if (array_key_exists($keys[19], $arr)) $this->setPreferences($arr[$keys[19]]);
     if (array_key_exists($keys[20], $arr)) $this->setNotifications($arr[$keys[20]]);
-    if (array_key_exists($keys[21], $arr)) $this->setUpdatedAt($arr[$keys[21]]);
-    if (array_key_exists($keys[22], $arr)) $this->setCreatedAt($arr[$keys[22]]);
+    if (array_key_exists($keys[21], $arr)) $this->setCreatedAt($arr[$keys[21]]);
+    if (array_key_exists($keys[22], $arr)) $this->setUpdatedAt($arr[$keys[22]]);
   }
 
   /**
@@ -1932,8 +2159,8 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectorProfilePeer::IS_IMAGE_AUTO)) $criteria->add(CollectorProfilePeer::IS_IMAGE_AUTO, $this->is_image_auto);
     if ($this->isColumnModified(CollectorProfilePeer::PREFERENCES)) $criteria->add(CollectorProfilePeer::PREFERENCES, $this->preferences);
     if ($this->isColumnModified(CollectorProfilePeer::NOTIFICATIONS)) $criteria->add(CollectorProfilePeer::NOTIFICATIONS, $this->notifications);
-    if ($this->isColumnModified(CollectorProfilePeer::UPDATED_AT)) $criteria->add(CollectorProfilePeer::UPDATED_AT, $this->updated_at);
     if ($this->isColumnModified(CollectorProfilePeer::CREATED_AT)) $criteria->add(CollectorProfilePeer::CREATED_AT, $this->created_at);
+    if ($this->isColumnModified(CollectorProfilePeer::UPDATED_AT)) $criteria->add(CollectorProfilePeer::UPDATED_AT, $this->updated_at);
 
     return $criteria;
   }
@@ -2016,8 +2243,21 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
     $copyObj->setIsImageAuto($this->getIsImageAuto());
     $copyObj->setPreferences($this->getPreferences());
     $copyObj->setNotifications($this->getNotifications());
-    $copyObj->setUpdatedAt($this->getUpdatedAt());
     $copyObj->setCreatedAt($this->getCreatedAt());
+    $copyObj->setUpdatedAt($this->getUpdatedAt());
+
+    if ($deepCopy && !$this->startCopy)
+    {
+      // important: temporarily setNew(false) because this affects the behavior of
+      // the getter/setter methods for fkey referrer objects.
+      $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
+
+      //unflag object copy
+      $this->startCopy = false;
+    }
+
     if ($makeNew)
     {
       $copyObj->setNew(true);
@@ -2144,8 +2384,8 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
     $this->is_image_auto = null;
     $this->preferences = null;
     $this->notifications = null;
-    $this->updated_at = null;
     $this->created_at = null;
+    $this->updated_at = null;
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;
     $this->clearAllReferences();
@@ -2203,7 +2443,6 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   
     return $archive;
   }
-  
   /**
    * Copy the data of the current object into a $archiveTablePhpName archive object.
    * The archived object is then saved.
@@ -2221,12 +2460,12 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
     if ($this->isNew()) {
       throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
     }
-    if (!$archive = $this->getArchive($con)) {
+    if (!$archive = $this->getArchive()) {
       $archive = new CollectorProfileArchive();
       $archive->setPrimaryKey($this->getPrimaryKey());
     }
     $this->copyInto($archive, $deepCopy = false, $makeNew = false);
-    $archive->save($con);
+    $archive->save();
   
     return $archive;
   }
@@ -2286,8 +2525,8 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
     $this->setIsImageAuto($archive->getIsImageAuto());
     $this->setPreferences($archive->getPreferences());
     $this->setNotifications($archive->getNotifications());
-    $this->setUpdatedAt($archive->getUpdatedAt());
     $this->setCreatedAt($archive->getCreatedAt());
+    $this->setUpdatedAt($archive->getUpdatedAt());
   
     return $this;
   }
@@ -2303,6 +2542,19 @@ abstract class BaseCollectorProfile extends BaseObject  implements Persistent
   {
     $this->archiveOnDelete = false;
     return $this->delete($con);
+  }
+
+  // timestampable behavior
+  
+  /**
+   * Mark the current object so that the update date doesn't get updated during next save
+   *
+   * @return     CollectorProfile The current object (for fluent API support)
+   */
+  public function keepUpdateDateUnchanged()
+  {
+    $this->modifiedColumns[] = CollectorProfilePeer::UPDATED_AT;
+    return $this;
   }
 
   /**

@@ -98,11 +98,11 @@ abstract class BaseCollectorProfilePeer
   /** the column name for the NOTIFICATIONS field */
   const NOTIFICATIONS = 'collector_profile.NOTIFICATIONS';
 
-  /** the column name for the UPDATED_AT field */
-  const UPDATED_AT = 'collector_profile.UPDATED_AT';
-
   /** the column name for the CREATED_AT field */
   const CREATED_AT = 'collector_profile.CREATED_AT';
+
+  /** the column name for the UPDATED_AT field */
+  const UPDATED_AT = 'collector_profile.UPDATED_AT';
 
   /** The default string format for model objects of the related table **/
   const DEFAULT_STRING_FORMAT = 'YAML';
@@ -123,11 +123,11 @@ abstract class BaseCollectorProfilePeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectorId', 'CollectorType', 'Birthday', 'Gender', 'ZipPostal', 'Country', 'CountryIso3166', 'Website', 'About', 'Collections', 'Collecting', 'MostSpent', 'AnuallySpent', 'NewItemEvery', 'Interests', 'IsFeatured', 'IsSeller', 'IsImageAuto', 'Preferences', 'Notifications', 'UpdatedAt', 'CreatedAt', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectorId', 'collectorType', 'birthday', 'gender', 'zipPostal', 'country', 'countryIso3166', 'website', 'about', 'collections', 'collecting', 'mostSpent', 'anuallySpent', 'newItemEvery', 'interests', 'isFeatured', 'isSeller', 'isImageAuto', 'preferences', 'notifications', 'updatedAt', 'createdAt', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTOR_ID, self::COLLECTOR_TYPE, self::BIRTHDAY, self::GENDER, self::ZIP_POSTAL, self::COUNTRY, self::COUNTRY_ISO3166, self::WEBSITE, self::ABOUT, self::COLLECTIONS, self::COLLECTING, self::MOST_SPENT, self::ANUALLY_SPENT, self::NEW_ITEM_EVERY, self::INTERESTS, self::IS_FEATURED, self::IS_SELLER, self::IS_IMAGE_AUTO, self::PREFERENCES, self::NOTIFICATIONS, self::UPDATED_AT, self::CREATED_AT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTOR_ID', 'COLLECTOR_TYPE', 'BIRTHDAY', 'GENDER', 'ZIP_POSTAL', 'COUNTRY', 'COUNTRY_ISO3166', 'WEBSITE', 'ABOUT', 'COLLECTIONS', 'COLLECTING', 'MOST_SPENT', 'ANUALLY_SPENT', 'NEW_ITEM_EVERY', 'INTERESTS', 'IS_FEATURED', 'IS_SELLER', 'IS_IMAGE_AUTO', 'PREFERENCES', 'NOTIFICATIONS', 'UPDATED_AT', 'CREATED_AT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'collector_id', 'collector_type', 'birthday', 'gender', 'zip_postal', 'country', 'country_iso3166', 'website', 'about', 'collections', 'collecting', 'most_spent', 'anually_spent', 'new_item_every', 'interests', 'is_featured', 'is_seller', 'is_image_auto', 'preferences', 'notifications', 'updated_at', 'created_at', ),
+    BasePeer::TYPE_PHPNAME => array ('Id', 'CollectorId', 'CollectorType', 'Birthday', 'Gender', 'ZipPostal', 'Country', 'CountryIso3166', 'Website', 'About', 'Collections', 'Collecting', 'MostSpent', 'AnuallySpent', 'NewItemEvery', 'Interests', 'IsFeatured', 'IsSeller', 'IsImageAuto', 'Preferences', 'Notifications', 'CreatedAt', 'UpdatedAt', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'collectorId', 'collectorType', 'birthday', 'gender', 'zipPostal', 'country', 'countryIso3166', 'website', 'about', 'collections', 'collecting', 'mostSpent', 'anuallySpent', 'newItemEvery', 'interests', 'isFeatured', 'isSeller', 'isImageAuto', 'preferences', 'notifications', 'createdAt', 'updatedAt', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::COLLECTOR_ID, self::COLLECTOR_TYPE, self::BIRTHDAY, self::GENDER, self::ZIP_POSTAL, self::COUNTRY, self::COUNTRY_ISO3166, self::WEBSITE, self::ABOUT, self::COLLECTIONS, self::COLLECTING, self::MOST_SPENT, self::ANUALLY_SPENT, self::NEW_ITEM_EVERY, self::INTERESTS, self::IS_FEATURED, self::IS_SELLER, self::IS_IMAGE_AUTO, self::PREFERENCES, self::NOTIFICATIONS, self::CREATED_AT, self::UPDATED_AT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'COLLECTOR_ID', 'COLLECTOR_TYPE', 'BIRTHDAY', 'GENDER', 'ZIP_POSTAL', 'COUNTRY', 'COUNTRY_ISO3166', 'WEBSITE', 'ABOUT', 'COLLECTIONS', 'COLLECTING', 'MOST_SPENT', 'ANUALLY_SPENT', 'NEW_ITEM_EVERY', 'INTERESTS', 'IS_FEATURED', 'IS_SELLER', 'IS_IMAGE_AUTO', 'PREFERENCES', 'NOTIFICATIONS', 'CREATED_AT', 'UPDATED_AT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'collector_id', 'collector_type', 'birthday', 'gender', 'zip_postal', 'country', 'country_iso3166', 'website', 'about', 'collections', 'collecting', 'most_spent', 'anually_spent', 'new_item_every', 'interests', 'is_featured', 'is_seller', 'is_image_auto', 'preferences', 'notifications', 'created_at', 'updated_at', ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, )
   );
 
@@ -138,11 +138,11 @@ abstract class BaseCollectorProfilePeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectorId' => 1, 'CollectorType' => 2, 'Birthday' => 3, 'Gender' => 4, 'ZipPostal' => 5, 'Country' => 6, 'CountryIso3166' => 7, 'Website' => 8, 'About' => 9, 'Collections' => 10, 'Collecting' => 11, 'MostSpent' => 12, 'AnuallySpent' => 13, 'NewItemEvery' => 14, 'Interests' => 15, 'IsFeatured' => 16, 'IsSeller' => 17, 'IsImageAuto' => 18, 'Preferences' => 19, 'Notifications' => 20, 'UpdatedAt' => 21, 'CreatedAt' => 22, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectorId' => 1, 'collectorType' => 2, 'birthday' => 3, 'gender' => 4, 'zipPostal' => 5, 'country' => 6, 'countryIso3166' => 7, 'website' => 8, 'about' => 9, 'collections' => 10, 'collecting' => 11, 'mostSpent' => 12, 'anuallySpent' => 13, 'newItemEvery' => 14, 'interests' => 15, 'isFeatured' => 16, 'isSeller' => 17, 'isImageAuto' => 18, 'preferences' => 19, 'notifications' => 20, 'updatedAt' => 21, 'createdAt' => 22, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTOR_ID => 1, self::COLLECTOR_TYPE => 2, self::BIRTHDAY => 3, self::GENDER => 4, self::ZIP_POSTAL => 5, self::COUNTRY => 6, self::COUNTRY_ISO3166 => 7, self::WEBSITE => 8, self::ABOUT => 9, self::COLLECTIONS => 10, self::COLLECTING => 11, self::MOST_SPENT => 12, self::ANUALLY_SPENT => 13, self::NEW_ITEM_EVERY => 14, self::INTERESTS => 15, self::IS_FEATURED => 16, self::IS_SELLER => 17, self::IS_IMAGE_AUTO => 18, self::PREFERENCES => 19, self::NOTIFICATIONS => 20, self::UPDATED_AT => 21, self::CREATED_AT => 22, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTOR_ID' => 1, 'COLLECTOR_TYPE' => 2, 'BIRTHDAY' => 3, 'GENDER' => 4, 'ZIP_POSTAL' => 5, 'COUNTRY' => 6, 'COUNTRY_ISO3166' => 7, 'WEBSITE' => 8, 'ABOUT' => 9, 'COLLECTIONS' => 10, 'COLLECTING' => 11, 'MOST_SPENT' => 12, 'ANUALLY_SPENT' => 13, 'NEW_ITEM_EVERY' => 14, 'INTERESTS' => 15, 'IS_FEATURED' => 16, 'IS_SELLER' => 17, 'IS_IMAGE_AUTO' => 18, 'PREFERENCES' => 19, 'NOTIFICATIONS' => 20, 'UPDATED_AT' => 21, 'CREATED_AT' => 22, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collector_id' => 1, 'collector_type' => 2, 'birthday' => 3, 'gender' => 4, 'zip_postal' => 5, 'country' => 6, 'country_iso3166' => 7, 'website' => 8, 'about' => 9, 'collections' => 10, 'collecting' => 11, 'most_spent' => 12, 'anually_spent' => 13, 'new_item_every' => 14, 'interests' => 15, 'is_featured' => 16, 'is_seller' => 17, 'is_image_auto' => 18, 'preferences' => 19, 'notifications' => 20, 'updated_at' => 21, 'created_at' => 22, ),
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'CollectorId' => 1, 'CollectorType' => 2, 'Birthday' => 3, 'Gender' => 4, 'ZipPostal' => 5, 'Country' => 6, 'CountryIso3166' => 7, 'Website' => 8, 'About' => 9, 'Collections' => 10, 'Collecting' => 11, 'MostSpent' => 12, 'AnuallySpent' => 13, 'NewItemEvery' => 14, 'Interests' => 15, 'IsFeatured' => 16, 'IsSeller' => 17, 'IsImageAuto' => 18, 'Preferences' => 19, 'Notifications' => 20, 'CreatedAt' => 21, 'UpdatedAt' => 22, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'collectorId' => 1, 'collectorType' => 2, 'birthday' => 3, 'gender' => 4, 'zipPostal' => 5, 'country' => 6, 'countryIso3166' => 7, 'website' => 8, 'about' => 9, 'collections' => 10, 'collecting' => 11, 'mostSpent' => 12, 'anuallySpent' => 13, 'newItemEvery' => 14, 'interests' => 15, 'isFeatured' => 16, 'isSeller' => 17, 'isImageAuto' => 18, 'preferences' => 19, 'notifications' => 20, 'createdAt' => 21, 'updatedAt' => 22, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::COLLECTOR_ID => 1, self::COLLECTOR_TYPE => 2, self::BIRTHDAY => 3, self::GENDER => 4, self::ZIP_POSTAL => 5, self::COUNTRY => 6, self::COUNTRY_ISO3166 => 7, self::WEBSITE => 8, self::ABOUT => 9, self::COLLECTIONS => 10, self::COLLECTING => 11, self::MOST_SPENT => 12, self::ANUALLY_SPENT => 13, self::NEW_ITEM_EVERY => 14, self::INTERESTS => 15, self::IS_FEATURED => 16, self::IS_SELLER => 17, self::IS_IMAGE_AUTO => 18, self::PREFERENCES => 19, self::NOTIFICATIONS => 20, self::CREATED_AT => 21, self::UPDATED_AT => 22, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'COLLECTOR_ID' => 1, 'COLLECTOR_TYPE' => 2, 'BIRTHDAY' => 3, 'GENDER' => 4, 'ZIP_POSTAL' => 5, 'COUNTRY' => 6, 'COUNTRY_ISO3166' => 7, 'WEBSITE' => 8, 'ABOUT' => 9, 'COLLECTIONS' => 10, 'COLLECTING' => 11, 'MOST_SPENT' => 12, 'ANUALLY_SPENT' => 13, 'NEW_ITEM_EVERY' => 14, 'INTERESTS' => 15, 'IS_FEATURED' => 16, 'IS_SELLER' => 17, 'IS_IMAGE_AUTO' => 18, 'PREFERENCES' => 19, 'NOTIFICATIONS' => 20, 'CREATED_AT' => 21, 'UPDATED_AT' => 22, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'collector_id' => 1, 'collector_type' => 2, 'birthday' => 3, 'gender' => 4, 'zip_postal' => 5, 'country' => 6, 'country_iso3166' => 7, 'website' => 8, 'about' => 9, 'collections' => 10, 'collecting' => 11, 'most_spent' => 12, 'anually_spent' => 13, 'new_item_every' => 14, 'interests' => 15, 'is_featured' => 16, 'is_seller' => 17, 'is_image_auto' => 18, 'preferences' => 19, 'notifications' => 20, 'created_at' => 21, 'updated_at' => 22, ),
     BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, )
   );
 
@@ -239,8 +239,8 @@ abstract class BaseCollectorProfilePeer
       $criteria->addSelectColumn(CollectorProfilePeer::IS_IMAGE_AUTO);
       $criteria->addSelectColumn(CollectorProfilePeer::PREFERENCES);
       $criteria->addSelectColumn(CollectorProfilePeer::NOTIFICATIONS);
-      $criteria->addSelectColumn(CollectorProfilePeer::UPDATED_AT);
       $criteria->addSelectColumn(CollectorProfilePeer::CREATED_AT);
+      $criteria->addSelectColumn(CollectorProfilePeer::UPDATED_AT);
     }
     else
     {
@@ -265,8 +265,8 @@ abstract class BaseCollectorProfilePeer
       $criteria->addSelectColumn($alias . '.IS_IMAGE_AUTO');
       $criteria->addSelectColumn($alias . '.PREFERENCES');
       $criteria->addSelectColumn($alias . '.NOTIFICATIONS');
-      $criteria->addSelectColumn($alias . '.UPDATED_AT');
       $criteria->addSelectColumn($alias . '.CREATED_AT');
+      $criteria->addSelectColumn($alias . '.UPDATED_AT');
     }
   }
 

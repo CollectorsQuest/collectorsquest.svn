@@ -35,8 +35,8 @@ abstract class BaseCollectorProfileForm extends BaseFormPropel
       'is_image_auto'   => new sfWidgetFormInputCheckbox(),
       'preferences'     => new sfWidgetFormTextarea(),
       'notifications'   => new sfWidgetFormTextarea(),
-      'updated_at'      => new sfWidgetFormDateTime(),
       'created_at'      => new sfWidgetFormDateTime(),
+      'updated_at'      => new sfWidgetFormDateTime(),
     ));
 
     $this->setValidators(array(
@@ -61,8 +61,8 @@ abstract class BaseCollectorProfileForm extends BaseFormPropel
       'is_image_auto'   => new sfValidatorBoolean(array('required' => false)),
       'preferences'     => new sfValidatorString(array('required' => false)),
       'notifications'   => new sfValidatorString(array('required' => false)),
-      'updated_at'      => new sfValidatorDateTime(array('required' => false)),
       'created_at'      => new sfValidatorDateTime(array('required' => false)),
+      'updated_at'      => new sfValidatorDateTime(array('required' => false)),
     ));
 
     $this->validatorSchema->setPostValidator(

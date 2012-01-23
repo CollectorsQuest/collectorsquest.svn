@@ -25,6 +25,12 @@ abstract class BaseCustomField extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -72,6 +78,12 @@ abstract class BaseCustomField extends BaseObject  implements Persistent
    * @var        boolean
    */
   protected $alreadyInValidation = false;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectionCategoryFieldsScheduledForDeletion = null;
 
   /**
    * Get the [id] column value.
@@ -408,7 +420,7 @@ abstract class BaseCustomField extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -490,7 +502,7 @@ abstract class BaseCustomField extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -515,33 +527,30 @@ abstract class BaseCustomField extends BaseObject  implements Persistent
     {
       $this->alreadyInSave = true;
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = CustomFieldPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(CustomFieldPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CustomFieldPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = CustomFieldPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
+        $affectedRows += 1;
+        $this->resetModified();
+      }
 
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+      if ($this->collectionCategoryFieldsScheduledForDeletion !== null)
+      {
+        if (!$this->collectionCategoryFieldsScheduledForDeletion->isEmpty())
+        {
+          CollectionCategoryFieldQuery::create()
+            ->filterByPrimaryKeys($this->collectionCategoryFieldsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectionCategoryFieldsScheduledForDeletion = null;
+        }
       }
 
       if ($this->collCollectionCategoryFields !== null)
@@ -559,6 +568,112 @@ abstract class BaseCustomField extends BaseObject  implements Persistent
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = CustomFieldPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . CustomFieldPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CustomFieldPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CustomFieldPeer::NAME))
+    {
+      $modifiedColumns[':p' . $index++]  = '`NAME`';
+    }
+    if ($this->isColumnModified(CustomFieldPeer::TYPE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TYPE`';
+    }
+    if ($this->isColumnModified(CustomFieldPeer::OBJECT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`OBJECT`';
+    }
+    if ($this->isColumnModified(CustomFieldPeer::VALIDATION))
+    {
+      $modifiedColumns[':p' . $index++]  = '`VALIDATION`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `custom_field` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`NAME`':
+            $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
+            break;
+          case '`TYPE`':
+            $stmt->bindValue($identifier, $this->type, PDO::PARAM_INT);
+            break;
+          case '`OBJECT`':
+            $stmt->bindValue($identifier, $this->object, PDO::PARAM_STR);
+            break;
+          case '`VALIDATION`':
+            $stmt->bindValue($identifier, $this->validation, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -892,11 +1007,13 @@ abstract class BaseCustomField extends BaseObject  implements Persistent
     $copyObj->setObject($this->getObject());
     $copyObj->setValidation($this->getValidation());
 
-    if ($deepCopy)
+    if ($deepCopy && !$this->startCopy)
     {
       // important: temporarily setNew(false) because this affects the behavior of
       // the getter/setter methods for fkey referrer objects.
       $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
 
       foreach ($this->getCollectionCategoryFields() as $relObj)
       {
@@ -905,6 +1022,8 @@ abstract class BaseCustomField extends BaseObject  implements Persistent
         }
       }
 
+      //unflag object copy
+      $this->startCopy = false;
     }
 
     if ($makeNew)
@@ -1045,6 +1164,32 @@ abstract class BaseCustomField extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectionCategoryField objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectionCategoryFields A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectionCategoryFields(PropelCollection $collectionCategoryFields, PropelPDO $con = null)
+  {
+    $this->collectionCategoryFieldsScheduledForDeletion = $this->getCollectionCategoryFields(new Criteria(), $con)->diff($collectionCategoryFields);
+
+    foreach ($collectionCategoryFields as $collectionCategoryField)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectionCategoryField->isNew())
+      {
+        $collectionCategoryField->setCustomField($this);
+      }
+      $this->addCollectionCategoryField($collectionCategoryField);
+    }
+
+    $this->collCollectionCategoryFields = $collectionCategoryFields;
+  }
+
+  /**
    * Returns the number of related CollectionCategoryField objects.
    *
    * @param      Criteria $criteria
@@ -1093,11 +1238,19 @@ abstract class BaseCustomField extends BaseObject  implements Persistent
       $this->initCollectionCategoryFields();
     }
     if (!$this->collCollectionCategoryFields->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectionCategoryFields[]= $l;
-      $l->setCustomField($this);
+      $this->doAddCollectionCategoryField($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectionCategoryField $collectionCategoryField The collectionCategoryField object to add.
+   */
+  protected function doAddCollectionCategoryField($collectionCategoryField)
+  {
+    $this->collCollectionCategoryFields[]= $collectionCategoryField;
+    $collectionCategoryField->setCustomField($this);
   }
 
 

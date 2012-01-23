@@ -99,7 +99,7 @@ class CollectorTableMap extends TableMap
   public function getBehaviors()
   {
     return array(
-      'archivable' => array('archive_table' => '', 'archive_class' => 'CollectorArchive', 'log_archived_at' => 'true', 'archived_at_column' => 'archived_at', 'archive_on_insert' => 'false', 'archive_on_update' => 'false', 'archive_on_delete' => 'true', ),
+      'archivable' => array('archive_table' => '', 'archive_phpname' => '', 'archive_class' => 'CollectorArchive', 'log_archived_at' => 'true', 'archived_at_column' => 'archived_at', 'archive_on_insert' => 'false', 'archive_on_update' => 'false', 'archive_on_delete' => 'true', ),
       'timestampable' => array('create_column' => 'created_at', 'update_column' => 'updated_at', ),
       'symfony' => array('form' => 'true', 'filter' => 'true', ),
       'symfony_behaviors' => array(),

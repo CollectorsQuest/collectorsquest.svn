@@ -25,6 +25,12 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -899,7 +905,7 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -992,7 +998,7 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -1017,29 +1023,165 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
     {
       $this->alreadyInSave = true;
 
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
+      if ($this->isNew() || $this->isModified())
       {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows = 1;
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows = CollectibleForSaleArchivePeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CollectibleForSaleArchivePeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CollectibleForSaleArchivePeer::COLLECTIBLE_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTIBLE_ID`';
+    }
+    if ($this->isColumnModified(CollectibleForSaleArchivePeer::PRICE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PRICE`';
+    }
+    if ($this->isColumnModified(CollectibleForSaleArchivePeer::CONDITION))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CONDITION`';
+    }
+    if ($this->isColumnModified(CollectibleForSaleArchivePeer::IS_PRICE_NEGOTIABLE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_PRICE_NEGOTIABLE`';
+    }
+    if ($this->isColumnModified(CollectibleForSaleArchivePeer::IS_SHIPPING_FREE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_SHIPPING_FREE`';
+    }
+    if ($this->isColumnModified(CollectibleForSaleArchivePeer::IS_SOLD))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_SOLD`';
+    }
+    if ($this->isColumnModified(CollectibleForSaleArchivePeer::IS_READY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_READY`';
+    }
+    if ($this->isColumnModified(CollectibleForSaleArchivePeer::QUANTITY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`QUANTITY`';
+    }
+    if ($this->isColumnModified(CollectibleForSaleArchivePeer::UPDATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
+    }
+    if ($this->isColumnModified(CollectibleForSaleArchivePeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(CollectibleForSaleArchivePeer::ARCHIVED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ARCHIVED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `collectible_for_sale_archive` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTIBLE_ID`':
+            $stmt->bindValue($identifier, $this->collectible_id, PDO::PARAM_INT);
+            break;
+          case '`PRICE`':
+            $stmt->bindValue($identifier, $this->price, PDO::PARAM_STR);
+            break;
+          case '`CONDITION`':
+            $stmt->bindValue($identifier, $this->condition, PDO::PARAM_STR);
+            break;
+          case '`IS_PRICE_NEGOTIABLE`':
+            $stmt->bindValue($identifier, (int) $this->is_price_negotiable, PDO::PARAM_INT);
+            break;
+          case '`IS_SHIPPING_FREE`':
+            $stmt->bindValue($identifier, (int) $this->is_shipping_free, PDO::PARAM_INT);
+            break;
+          case '`IS_SOLD`':
+            $stmt->bindValue($identifier, (int) $this->is_sold, PDO::PARAM_INT);
+            break;
+          case '`IS_READY`':
+            $stmt->bindValue($identifier, (int) $this->is_ready, PDO::PARAM_INT);
+            break;
+          case '`QUANTITY`':
+            $stmt->bindValue($identifier, $this->quantity, PDO::PARAM_INT);
+            break;
+          case '`UPDATED_AT`':
+            $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`ARCHIVED_AT`':
+            $stmt->bindValue($identifier, $this->archived_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1412,7 +1554,6 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
    */
   public function copyInto($copyObj, $deepCopy = false, $makeNew = true)
   {
-    $copyObj->setId($this->getId());
     $copyObj->setCollectibleId($this->getCollectibleId());
     $copyObj->setPrice($this->getPrice());
     $copyObj->setCondition($this->getCondition());
@@ -1427,6 +1568,7 @@ abstract class BaseCollectibleForSaleArchive extends BaseObject  implements Pers
     if ($makeNew)
     {
       $copyObj->setNew(true);
+      $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
     }
   }
 

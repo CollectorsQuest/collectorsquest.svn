@@ -25,6 +25,12 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -121,6 +127,12 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
 
   // archivable behavior
   protected $archiveOnDelete = true;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $collectibleOffersScheduledForDeletion = null;
 
   /**
    * Applies default values to this object.
@@ -853,7 +865,7 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -949,7 +961,7 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -988,33 +1000,30 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
         $this->setCollectible($this->aCollectible);
       }
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = CollectibleForSalePeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(CollectibleForSalePeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.CollectibleForSalePeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows += 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows += CollectibleForSalePeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
+        $affectedRows += 1;
+        $this->resetModified();
+      }
 
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+      if ($this->collectibleOffersScheduledForDeletion !== null)
+      {
+        if (!$this->collectibleOffersScheduledForDeletion->isEmpty())
+        {
+          CollectibleOfferQuery::create()
+            ->filterByPrimaryKeys($this->collectibleOffersScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->collectibleOffersScheduledForDeletion = null;
+        }
       }
 
       if ($this->collCollectibleOffers !== null)
@@ -1032,6 +1041,154 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = CollectibleForSalePeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . CollectibleForSalePeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(CollectibleForSalePeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(CollectibleForSalePeer::COLLECTIBLE_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTIBLE_ID`';
+    }
+    if ($this->isColumnModified(CollectibleForSalePeer::PRICE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PRICE`';
+    }
+    if ($this->isColumnModified(CollectibleForSalePeer::CONDITION))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CONDITION`';
+    }
+    if ($this->isColumnModified(CollectibleForSalePeer::IS_PRICE_NEGOTIABLE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_PRICE_NEGOTIABLE`';
+    }
+    if ($this->isColumnModified(CollectibleForSalePeer::IS_SHIPPING_FREE))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_SHIPPING_FREE`';
+    }
+    if ($this->isColumnModified(CollectibleForSalePeer::IS_SOLD))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_SOLD`';
+    }
+    if ($this->isColumnModified(CollectibleForSalePeer::IS_READY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`IS_READY`';
+    }
+    if ($this->isColumnModified(CollectibleForSalePeer::QUANTITY))
+    {
+      $modifiedColumns[':p' . $index++]  = '`QUANTITY`';
+    }
+    if ($this->isColumnModified(CollectibleForSalePeer::CREATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`CREATED_AT`';
+    }
+    if ($this->isColumnModified(CollectibleForSalePeer::UPDATED_AT))
+    {
+      $modifiedColumns[':p' . $index++]  = '`UPDATED_AT`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `collectible_for_sale` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTIBLE_ID`':
+            $stmt->bindValue($identifier, $this->collectible_id, PDO::PARAM_INT);
+            break;
+          case '`PRICE`':
+            $stmt->bindValue($identifier, $this->price, PDO::PARAM_STR);
+            break;
+          case '`CONDITION`':
+            $stmt->bindValue($identifier, $this->condition, PDO::PARAM_STR);
+            break;
+          case '`IS_PRICE_NEGOTIABLE`':
+            $stmt->bindValue($identifier, (int) $this->is_price_negotiable, PDO::PARAM_INT);
+            break;
+          case '`IS_SHIPPING_FREE`':
+            $stmt->bindValue($identifier, (int) $this->is_shipping_free, PDO::PARAM_INT);
+            break;
+          case '`IS_SOLD`':
+            $stmt->bindValue($identifier, (int) $this->is_sold, PDO::PARAM_INT);
+            break;
+          case '`IS_READY`':
+            $stmt->bindValue($identifier, (int) $this->is_ready, PDO::PARAM_INT);
+            break;
+          case '`QUANTITY`':
+            $stmt->bindValue($identifier, $this->quantity, PDO::PARAM_INT);
+            break;
+          case '`CREATED_AT`':
+            $stmt->bindValue($identifier, $this->created_at, PDO::PARAM_STR);
+            break;
+          case '`UPDATED_AT`':
+            $stmt->bindValue($identifier, $this->updated_at, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -1443,11 +1600,13 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
     $copyObj->setCreatedAt($this->getCreatedAt());
     $copyObj->setUpdatedAt($this->getUpdatedAt());
 
-    if ($deepCopy)
+    if ($deepCopy && !$this->startCopy)
     {
       // important: temporarily setNew(false) because this affects the behavior of
       // the getter/setter methods for fkey referrer objects.
       $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
 
       foreach ($this->getCollectibleOffers() as $relObj)
       {
@@ -1456,6 +1615,8 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
         }
       }
 
+      //unflag object copy
+      $this->startCopy = false;
     }
 
     if ($makeNew)
@@ -1650,6 +1811,32 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
   }
 
   /**
+   * Sets a collection of CollectibleOffer objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $collectibleOffers A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setCollectibleOffers(PropelCollection $collectibleOffers, PropelPDO $con = null)
+  {
+    $this->collectibleOffersScheduledForDeletion = $this->getCollectibleOffers(new Criteria(), $con)->diff($collectibleOffers);
+
+    foreach ($collectibleOffers as $collectibleOffer)
+    {
+      // Fix issue with collection modified by reference
+      if ($collectibleOffer->isNew())
+      {
+        $collectibleOffer->setCollectibleForSale($this);
+      }
+      $this->addCollectibleOffer($collectibleOffer);
+    }
+
+    $this->collCollectibleOffers = $collectibleOffers;
+  }
+
+  /**
    * Returns the number of related CollectibleOffer objects.
    *
    * @param      Criteria $criteria
@@ -1698,11 +1885,19 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
       $this->initCollectibleOffers();
     }
     if (!$this->collCollectibleOffers->contains($l)) { // only add it if the **same** object is not already associated
-      $this->collCollectibleOffers[]= $l;
-      $l->setCollectibleForSale($this);
+      $this->doAddCollectibleOffer($l);
     }
 
     return $this;
+  }
+
+  /**
+   * @param  CollectibleOffer $collectibleOffer The collectibleOffer object to add.
+   */
+  protected function doAddCollectibleOffer($collectibleOffer)
+  {
+    $this->collCollectibleOffers[]= $collectibleOffer;
+    $collectibleOffer->setCollectibleForSale($this);
   }
 
 
@@ -1840,7 +2035,6 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
   
     return $archive;
   }
-  
   /**
    * Copy the data of the current object into a $archiveTablePhpName archive object.
    * The archived object is then saved.
@@ -1858,12 +2052,12 @@ abstract class BaseCollectibleForSale extends BaseObject  implements Persistent
     if ($this->isNew()) {
       throw new PropelException('New objects cannot be archived. You must save the current object before calling archive().');
     }
-    if (!$archive = $this->getArchive($con)) {
+    if (!$archive = $this->getArchive()) {
       $archive = new CollectibleForSaleArchive();
       $archive->setPrimaryKey($this->getPrimaryKey());
     }
     $this->copyInto($archive, $deepCopy = false, $makeNew = false);
-    $archive->save($con);
+    $archive->save();
   
     return $archive;
   }

@@ -25,6 +25,12 @@ abstract class BaseInterviewQuestion extends BaseObject  implements Persistent
   protected static $peer;
 
   /**
+   * The flag var to prevent infinit loop in deep copy
+   * @var       boolean
+   */
+  protected $startCopy = false;
+
+  /**
    * The value for the id field.
    * @var        int
    */
@@ -416,7 +422,7 @@ abstract class BaseInterviewQuestion extends BaseObject  implements Persistent
         $con->commit();
       }
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -498,7 +504,7 @@ abstract class BaseInterviewQuestion extends BaseObject  implements Persistent
       $con->commit();
       return $affectedRows;
     }
-    catch (PropelException $e)
+    catch (Exception $e)
     {
       $con->rollBack();
       throw $e;
@@ -537,39 +543,131 @@ abstract class BaseInterviewQuestion extends BaseObject  implements Persistent
         $this->setCollectorInterview($this->aCollectorInterview);
       }
 
-      if ($this->isNew() )
+      if ($this->isNew() || $this->isModified())
       {
-        $this->modifiedColumns[] = InterviewQuestionPeer::ID;
-      }
-
-      // If this object has been modified, then save it to the database.
-      if ($this->isModified())
-      {
+        // persist changes
         if ($this->isNew())
         {
-          $criteria = $this->buildCriteria();
-          if ($criteria->keyContainsValue(InterviewQuestionPeer::ID) )
-          {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.InterviewQuestionPeer::ID.')');
-          }
-
-          $pk = BasePeer::doInsert($criteria, $con);
-          $affectedRows += 1;
-          $this->setId($pk);  //[IMV] update autoincrement primary key
-          $this->setNew(false);
+          $this->doInsert($con);
         }
         else
         {
-          $affectedRows += InterviewQuestionPeer::doUpdate($this, $con);
+          $this->doUpdate($con);
         }
-
-        $this->resetModified(); // [HL] After being saved an object is no longer 'modified'
+        $affectedRows += 1;
+        $this->resetModified();
       }
 
       $this->alreadyInSave = false;
 
     }
     return $affectedRows;
+  }
+
+  /**
+   * Insert the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @throws     PropelException
+   * @see        doSave()
+   */
+  protected function doInsert(PropelPDO $con)
+  {
+    $modifiedColumns = array();
+    $index = 0;
+
+    $this->modifiedColumns[] = InterviewQuestionPeer::ID;
+    if (null !== $this->id)
+    {
+      throw new PropelException('Cannot insert a value for auto-increment primary key (' . InterviewQuestionPeer::ID . ')');
+    }
+
+     // check the columns in natural order for more readable SQL queries
+    if ($this->isColumnModified(InterviewQuestionPeer::ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ID`';
+    }
+    if ($this->isColumnModified(InterviewQuestionPeer::COLLECTOR_INTERVIEW_ID))
+    {
+      $modifiedColumns[':p' . $index++]  = '`COLLECTOR_INTERVIEW_ID`';
+    }
+    if ($this->isColumnModified(InterviewQuestionPeer::QUESTION))
+    {
+      $modifiedColumns[':p' . $index++]  = '`QUESTION`';
+    }
+    if ($this->isColumnModified(InterviewQuestionPeer::ANSWER))
+    {
+      $modifiedColumns[':p' . $index++]  = '`ANSWER`';
+    }
+    if ($this->isColumnModified(InterviewQuestionPeer::PHOTO))
+    {
+      $modifiedColumns[':p' . $index++]  = '`PHOTO`';
+    }
+
+    $sql = sprintf(
+      'INSERT INTO `interview_question` (%s) VALUES (%s)',
+      implode(', ', $modifiedColumns),
+      implode(', ', array_keys($modifiedColumns))
+    );
+
+    try
+    {
+      $stmt = $con->prepare($sql);
+      foreach ($modifiedColumns as $identifier => $columnName)
+      {
+        switch ($columnName)
+        {
+          case '`ID`':
+            $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
+            break;
+          case '`COLLECTOR_INTERVIEW_ID`':
+            $stmt->bindValue($identifier, $this->collector_interview_id, PDO::PARAM_INT);
+            break;
+          case '`QUESTION`':
+            $stmt->bindValue($identifier, $this->question, PDO::PARAM_STR);
+            break;
+          case '`ANSWER`':
+            $stmt->bindValue($identifier, $this->answer, PDO::PARAM_STR);
+            break;
+          case '`PHOTO`':
+            $stmt->bindValue($identifier, $this->photo, PDO::PARAM_STR);
+            break;
+        }
+      }
+      $stmt->execute();
+    }
+    catch (Exception $e)
+    {
+      Propel::log($e->getMessage(), Propel::LOG_ERR);
+      throw new PropelException(sprintf('Unable to execute INSERT statement [%s]', $sql), $e);
+    }
+
+    try
+    {
+      $pk = $con->lastInsertId();
+    }
+    catch (Exception $e)
+    {
+      throw new PropelException('Unable to get autoincrement id.', $e);
+    }
+    $this->setId($pk);
+
+    $this->setNew(false);
+  }
+
+  /**
+   * Update the row in the database.
+   *
+   * @param      PropelPDO $con
+   *
+   * @see        doSave()
+   */
+  protected function doUpdate(PropelPDO $con)
+  {
+    $selectCriteria = $this->buildPkeyCriteria();
+    $valuesCriteria = $this->buildCriteria();
+    BasePeer::doUpdate($selectCriteria, $valuesCriteria, $con);
   }
 
   /**
@@ -905,6 +1003,19 @@ abstract class BaseInterviewQuestion extends BaseObject  implements Persistent
     $copyObj->setQuestion($this->getQuestion());
     $copyObj->setAnswer($this->getAnswer());
     $copyObj->setPhoto($this->getPhoto());
+
+    if ($deepCopy && !$this->startCopy)
+    {
+      // important: temporarily setNew(false) because this affects the behavior of
+      // the getter/setter methods for fkey referrer objects.
+      $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
+
+      //unflag object copy
+      $this->startCopy = false;
+    }
+
     if ($makeNew)
     {
       $copyObj->setNew(true);
