@@ -1,7 +1,0 @@
-all:  
-  gravatar:
-    default_size:   100
-    default_rating: G
-    default_image:  gravatar_default.png
-    cache_dir_name: g_cache
-    cache_expiration: 3 days
