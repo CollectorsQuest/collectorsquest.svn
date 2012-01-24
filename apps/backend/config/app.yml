@@ -1,6 +1,7 @@
 all:
   ice_backend:
     site: "CollectorsQuest.com"
+    google_apps_domain: collectorsquest.com
     logo: /images/backend/logo.png
 
     categories:
