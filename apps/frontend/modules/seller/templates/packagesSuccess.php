@@ -312,9 +312,8 @@
     </td>
   </tr>
 </table>
+<form action="<?= sfConfig::get("app_paypal_url"); ?>" name="frmpaypal" id="frmpaypal" method="post">
 <?php
-  echo form_tag(sfConfig::get("app_paypal_url"), array('name' => 'frmpaypal', 'id' => 'frmpaypal', 'method' => 'post'));
-
   // Paypal Details
   echo input_hidden_tag('item_number');
   echo input_hidden_tag('item_name');

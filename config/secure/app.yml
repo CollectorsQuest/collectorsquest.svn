@@ -23,6 +23,16 @@ prod:
     api_password: "7XDP2KD5WPTZMRLX"
     api_signature: "AFcWxV21C7fd0v3bYYYRCpSSRl31A6NhuD4EARHUuWnwb9OPdCGC8x8U"
 
+    api_url: "https://api-3t.paypal.com/nvp"
+    is_online: true
+
+    payment_action: "Sale"
+    currency_code: "USD"
+    payment_method: "doDirectPayment"
+
+    url: "https://www.paypal.com/cgi-bin/webscr"
+    merchant_account: "custserv@collectorsquest.com"
+
   credentials:
     amazon: "0Q4JCH5ZFJ3WBVP7N9R2"
     yahoo: "hbaTeUTV34GucRooge4L.uEQiK_wcbb2eMx6yUWAEUoQrdOPCIdj_2yTAbvt1QVryEc8WFUbu00X4hyEbUKLwg--"
@@ -46,9 +56,3 @@ prod:
     facebook:
       application_id: "12734695313"
       application_secret: "6f6c7cc89ddb21461821a84aa48f2b01"
-
-stg:
-  paypal:
-    api_username: "vijay._1222841690_biz_api1.gmail.com"
-    api_password: "1222841695"
-    api_signature: "ACOYGdaFOWqBq16ZAlxyTYaGj3ajAh4eB7hNcAWzNU6tuGf6Qe2Hd08C"

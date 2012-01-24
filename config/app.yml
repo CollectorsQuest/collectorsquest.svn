@@ -34,9 +34,9 @@ all:
       application_secret: "21b6fb4368bbe3bf4157afe83e6945d4"
 
   paypal:
-    api_username: ""
-    api_password: ""
-    api_signature: ""
+    api_username: "kangov_1327417143_biz_api1.collectorsquest.com"
+    api_password: "1327417177"
+    api_signature: "A..-CRlw0YpkY2B3ut0vv.OPym-eAT-VZrXVgkU8OKXkg-3ddWsYS50Q"
     api_url: "https://api-3t.sandbox.paypal.com/nvp"
     is_online: false
 
@@ -45,7 +45,7 @@ all:
     payment_method: "doDirectPayment"
 
     url: "https://www.sandbox.paypal.com/cgi-bin/webscr"
-    merchant_account: ""
+    merchant_account: "kangov_1327417143_biz@collectorsquest.com"
 
 dev:
   domain_name: "collectorsquest.dev"
