@@ -13,7 +13,7 @@
                 "source": {
                     "url": "git://github.com/CollectorsQuest/sfFormExtraPlugin.git",
                     "type": "git",
-                    "reference": "116c64ed8a"
+                    "reference": "116c64ed8adbaa0474c2c50ec71d2538f89b3da5"
                 }
             }
         },
@@ -24,7 +24,7 @@
                 "source": {
                     "url": "git://github.com/CollectorsQuest/sfGravatarPlugin.git",
                     "type": "git",
-                    "reference": "13875a44c4"
+                    "reference": "13875a44c453f3b34860dc12df0e7831dbd6157a"
                 }
             }
         },
@@ -35,7 +35,7 @@
                 "source": {
                     "url": "git://github.com/CollectorsQuest/sfGuardPlugin.git",
                     "type": "git",
-                    "reference": "6c9741978f"
+                    "reference": "6c9741978f25e290a8437ee82bc33813ae162a56"
                 }
             }
         },
@@ -50,7 +50,7 @@
                 "source": {
                     "url": "git://github.com/propelorm/sfPropelORMPlugin.git",
                     "type": "git",
-                    "reference": "2abce1997a"
+                    "reference": "2abce1997a285fe0666bf8c62ae9dcd72eb27257"
                 }
             }
         },
@@ -65,7 +65,7 @@
                 "source": {
                     "url": "git://github.com/propelorm/Propel.git",
                     "type": "git",
-                    "reference": "f6ca7125cb"
+                    "reference": "f6ca7125cbe0d5cd91f6cd62b70b34858e6860c5"
                 },
                 "require": {
                     "plugins/sfPropelORMPlugin": "1.3.0"
@@ -75,11 +75,11 @@
         "Xosofox/Phing": {
             "package": {
                 "name": "plugins/sfPropelORMPlugin/lib/vendor/phing",
-                "version": "2.4.6",
+                "version": "2.3.3",
                 "source": {
                     "url": "git://github.com/Xosofox/phing.git",
                     "type": "git",
-                    "reference": "98cab9d"
+                    "reference": "98cab9de5845065447b9c0e97e2454f5b571ddab"
                 },
                 "require": {
                     "plugins/sfPropelORMPlugin": "1.3.0"
@@ -93,6 +93,6 @@
         "plugins/sfGuardPlugin": "4.0.2",
         "plugins/sfPropelORMPlugin": "1.3.0",
         "plugins/sfPropelORMPlugin/lib/vendor/propel": "1.6.4",
-        "plugins/sfPropelORMPlugin/lib/vendor/phing": "2.4.6"
+        "plugins/sfPropelORMPlugin/lib/vendor/phing": "2.3.3"
     }
 }

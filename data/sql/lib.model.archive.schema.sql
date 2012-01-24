@@ -45,7 +45,7 @@ CREATE TABLE `collector_archive`
 	INDEX `collector_archive_I_3` (`facebook_id`),
 	INDEX `collector_archive_I_4` (`slug`),
 	INDEX `collector_archive_I_5` (`email`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
 -- collector_profile_archive
@@ -82,7 +82,7 @@ CREATE TABLE `collector_profile_archive`
 	PRIMARY KEY (`id`),
 	INDEX `collector_profile_archive_I_1` (`id`),
 	INDEX `collector_profile_archive_I_2` (`collector_id`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
 -- collector_identifier_archive
@@ -101,7 +101,7 @@ CREATE TABLE `collector_identifier_archive`
 	INDEX `collector_identifier_archive_I_1` (`id`),
 	INDEX `collector_identifier_archive_I_2` (`collector_id`),
 	INDEX `collector_identifier_archive_I_3` (`identifier`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
 -- collector_geocache_archive
@@ -126,7 +126,7 @@ CREATE TABLE `collector_geocache_archive`
 	PRIMARY KEY (`id`),
 	INDEX `collector_geocache_archive_I_1` (`id`),
 	INDEX `collector_geocache_archive_I_2` (`collector_id`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
 -- collection_archive
@@ -161,7 +161,7 @@ CREATE TABLE `collection_archive`
 	INDEX `collection_archive_I_2` (`graph_id`),
 	INDEX `collection_archive_I_3` (`collection_category_id`),
 	INDEX `collection_archive_I_4` (`collector_id`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
 -- collectible_archive
@@ -192,7 +192,7 @@ CREATE TABLE `collectible_archive`
 	INDEX `collectible_archive_I_3` (`collector_id`),
 	INDEX `collectible_archive_I_4` (`collection_id`),
 	INDEX `collectible_archive_I_5` (`slug`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
 -- collectible_for_sale_archive
@@ -217,7 +217,7 @@ CREATE TABLE `collectible_for_sale_archive`
 	PRIMARY KEY (`id`),
 	INDEX `collectible_for_sale_archive_I_1` (`id`),
 	INDEX `collectible_for_sale_archive_I_2` (`collectible_id`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
 -- collectible_offer_archive
@@ -239,7 +239,7 @@ CREATE TABLE `collectible_offer_archive`
 	PRIMARY KEY (`id`),
 	INDEX `collectible_offer_archive_I_1` (`id`),
 	INDEX `collectible_offer_archive_I_2` (`collectible_id`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
 -- comment_archive
@@ -268,7 +268,7 @@ CREATE TABLE `comment_archive`
 	INDEX `comment_archive_I_2` (`collection_id`),
 	INDEX `comment_archive_I_3` (`collectible_id`),
 	INDEX `comment_archive_I_4` (`collector_id`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------
 -- multimedia_archive
@@ -294,7 +294,7 @@ CREATE TABLE `multimedia_archive`
 	PRIMARY KEY (`id`),
 	INDEX `multimedia_archive_I_1` (`id`),
 	INDEX `multimedia_I_1` (`model`, `model_id`)
-) ENGINE=MyISAM;
+) ENGINE=InnoDB;
 
 # This restores the fkey checks, after having unset them earlier
 SET FOREIGN_KEY_CHECKS = 1;
