@@ -1,25 +1,21 @@
 {
-    "hash": "ba80230b125ebebaa532badcc8442999",
+    "hash": "872766d197e30dce41171463750673dd",
     "packages": [
         {
-            "package": "plugins\/sfFormExtraPlugin",
-            "version": "1.1.3"
-        },
-        {
-            "package": "plugins\/sfGravatarPlugin",
-            "version": "0.9.0"
+            "package": "plugins\/sfPropelORMPlugin",
+            "version": "1.3.0"
         },
         {
             "package": "plugins\/sfGuardPlugin",
             "version": "4.0.2"
         },
         {
-            "package": "plugins\/sfPropelORMPlugin",
-            "version": "1.3.0"
+            "package": "plugins\/sfGravatarPlugin",
+            "version": "0.9.0"
         },
         {
-            "package": "plugins\/sfTaskExtraPlugin",
-            "version": "1.3.3"
+            "package": "plugins\/sfFormExtraPlugin",
+            "version": "1.1.3"
         },
         {
             "package": "plugins\/sfPropelORMPlugin\/lib\/vendor\/phing",

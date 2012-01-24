@@ -27,10 +27,10 @@ EOF;
 
   protected function execute($arguments = array(), $options = array())
   {
-    // We need to run this task with root or www-data users
-    if (!in_array(get_current_user(), array('', 'root', 'www-data', 'vagrant')))
+    // We need to run this task with root or sphinx users
+    if (!in_array(get_current_user(), array('', 'root', 'sphinx', 'vagrant')))
     {
-      $this->logBlock('You must run this task with root or www-data priviliges!', 'error');
+      $this->logBlock('You must run this task with root or sphinx priviliges!', 'error');
       return false;
     }
 
@@ -74,12 +74,12 @@ EOF;
 
       // Add the main configuration file
       file_put_contents($conf, file_get_contents('/www/etc/sphinx/sphinx.conf'), FILE_APPEND);
-      $cmd = sprintf('/opt/sphinx/bin/indexer --rotate --config %s %s', $conf, implode(' ', $indexes));
+      $cmd = sprintf('/usr/bin/indexer --rotate --config %s %s', $conf, implode(' ', $indexes));
 
       if (!get_current_user() || get_current_user() == 'root' || get_current_user() == 'vagrant')
       {
-        chown($conf, 'www-data');
-        $cmd = 'sudo -u www-data '. $cmd;
+        chown($conf, 'sphinx');
+        $cmd = 'sudo -u sphinx '. $cmd;
       }
 
       // Run the command

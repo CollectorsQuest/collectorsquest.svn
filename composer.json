@@ -68,7 +68,7 @@
                     "reference": "f6ca7125cb"
                 },
                 "require": {
-                  "plugins/sfPropelORMPlugin": "1.3.0"
+                    "plugins/sfPropelORMPlugin": "1.3.0"
                 }
             }
         },
@@ -82,7 +82,7 @@
                     "reference": "98cab9d"
                 },
                 "require": {
-                  "plugins/sfPropelORMPlugin": "1.3.0"
+                    "plugins/sfPropelORMPlugin": "1.3.0"
                 }
             }
         }
