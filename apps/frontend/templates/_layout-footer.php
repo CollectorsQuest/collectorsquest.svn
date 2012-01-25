@@ -10,7 +10,7 @@
         <li>•</li>
         <li><?= link_to('rss', '@page?slug=rss-feeds'); ?></li>
         <li>•</li>
-        <li><?= link_to('report an error', '@feedback', array('id' => 'report-error', 'style' => 'color: red;')); ?></li>
+        <li><?= link_to('report an error', '@feedback', array('target' => '_blank', 'style' => 'color: red;')); ?></li>
       </ul>
     </div>
 
