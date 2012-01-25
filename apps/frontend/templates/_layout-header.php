@@ -18,8 +18,7 @@
 
   <link rel="stylesheet" href="/css/screen.css" type="text/css" media="screen, projection">
   <link rel="stylesheet" href="/css/print.css" type="text/css" media="print">
-  <!--[if lt IE 8]>
-  <link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen, projection"><![endif]-->
+  <!--[if lt IE 8]><link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen, projection"><![endif]-->
   <link href="/css/frontend/jquery.css" rel="stylesheet" type="text/css" media="screen, projection"/>
 
   <?php
@@ -37,8 +36,7 @@
     }
   ?>
 
-  <!--[if lt IE 8]>
-  <link rel="stylesheet" href="/css/frontend/ie.css" type="text/css" media="screen, projection"><![endif]-->
+  <!--[if lt IE 8]><link rel="stylesheet" href="/css/frontend/ie.css" type="text/css" media="screen, projection"><![endif]-->
 
   <?php
     // TODO: We are stuck at jquery version 1.5 because of jquery.beutytips.js

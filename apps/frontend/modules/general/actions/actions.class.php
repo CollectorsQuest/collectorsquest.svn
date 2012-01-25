@@ -268,6 +268,55 @@ class generalActions extends cqActions
     return sfView::ERROR;
   }
 
+  public function executeFeedback(sfWebRequest $request)
+  {
+    $this->form = new FeedbackForm();
+    $this->form->setDefault('page', $request->getParameter('page', $request->getReferer()));
+
+    if ($request->isMethod('post'))
+    {
+      $this->form->bind($request->getParameter('feedback'));
+      if ($this->form->isValid())
+      {
+        $values = $this->form->getValues();
+
+        $body = $this->getPartial('emails/feedback', array(
+          'fullname' => $values['fullname'],
+          'email' => $values['email'],
+          'message' => nl2br($values['message']),
+          'page' => urldecode($values['page']),
+
+          "f_ip_address" => cqStatic::getUserIpAddress(),
+          "f_javascript_enabled" => $values['f_javascript_enabled'],
+          "f_browser_type" => $values['f_browser_type'],
+          "f_browser_version" => $values['f_browser_version'],
+          "f_browser_color_depth" => $values['f_browser_color_depth'],
+          "f_resolution" => $values['f_resolution'],
+          "f_browser_size" => $values['f_browser_size']
+        ));
+
+        try
+        {
+          $bc = cqStatic::getBasecampClient();
+          $response = $bc->createTodoItemForList(17144329, 'Feedback from '. $values['fullname'], 'person', 8866041, false);
+          $bc->createCommentForTodoItem($response['id'], $body);
+        }
+        catch (Exception $e)
+        {
+          $this->getMailer()->composeAndSend('no-reply@collectorsquest.com', 'info@collectorsquest.com', '[Website Feedback] '. $values['fullname'], $body);
+        }
+
+        $this->getUser()->setFlash('success', $this->__('Thank you for the feedback. If needed, we will get in touch with you within the next business day.', array(), 'flash'));
+      }
+      else
+      {
+        $this->getUser()->setFlash('error', $this->__('There are errors in the fields or some are left empty.', array(), 'flash'));
+      }
+    }
+
+    return sfView::SUCCESS;
+  }
+
   public function executeComingSoon()
   {
     // Building the breadcrumbs and page title

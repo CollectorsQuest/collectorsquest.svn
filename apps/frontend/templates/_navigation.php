@@ -1,7 +1,14 @@
 <div id="navigation" class="span-13 rounded-bottom">
   <div style="float: left;">
     <?php
-      if (sfConfig::get('sf_environment') === 'stg')
+      if (sfConfig::get('sf_environment') === 'dev')
+      {
+        echo link_to(
+          image_tag('frontend/logo-development.png', array('align' => 'left', 'style' => 'margin: -54px -35px 0 10px;')),
+          '@homepage'
+        );
+      }
+      else if (sfConfig::get('sf_environment') === 'stg')
       {
         echo link_to(
           image_tag('frontend/logo-staging.png', array('align' => 'left', 'style' => 'margin: -54px -35px 0 10px;')),

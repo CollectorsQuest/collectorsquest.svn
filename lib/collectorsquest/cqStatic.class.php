@@ -55,9 +55,12 @@ class cqStatic extends IceStatic
    */
   static public function getBasecampClient()
   {
-    include dirname(__FILE__).'/../vendor/Basecamp.class.php';
+    $client = parent::getBasecampClient();
+    $client->setBaseurl('https://collectorsquest.basecamphq.com');
+    $client->setUsername('api-access');
+    $client->setPassword('sYD59BhdQCZcTT');
 
-    return new Basecamp('http://collectorsquest.basecamphq.com/', 'api-access', '2sRqqP7HElFCjM');
+    return $client;
   }
 
   /**

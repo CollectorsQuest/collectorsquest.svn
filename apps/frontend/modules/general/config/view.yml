@@ -11,3 +11,7 @@ loginSuccess:
 
 landingSuccess:
   stylesheets: [frontend/aetn.css]
+
+feedbackSuccess:
+  stylesheets: [frontend/forms.css]
+  layout: layout-minimal

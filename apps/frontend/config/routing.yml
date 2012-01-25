@@ -499,6 +499,10 @@ rpx_token:
   url:   /rpx-token
   param: { module: general, action: RPXToken }
 
+feedback:
+  url:   /feedback
+  param: { module: general, action: feedback }
+
 homepage:
   url:   /
   param: { module: general, action: index }

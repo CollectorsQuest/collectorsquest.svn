@@ -207,8 +207,6 @@ class collectorActions extends cqActions
 
     $form->setDefaults(array_merge($amStep1Data, $amStep2Data, $amStep3Data));
 
-    $this->rpxnow = sfConfig::get('app_credentials_rpxnow');
-
     $this->amStep1Data = $amStep1Data;
     $this->amStep2Data = $amStep2Data;
     $this->amStep3Data = $amStep3Data;

@@ -1,4 +1,6 @@
 <?php
+  $rpxnow = sfConfig::get('app_credentials_rpxnow');
+
   include_partial(
     'global/wizard_bar',
     array('steps' => array(1 => __('Account Information'), __('Collector Information'), __('Personal Information')), 'active' => 3)
