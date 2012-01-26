@@ -224,18 +224,26 @@ $(function()
 
       switch ($tabs[ui.index])
       {
+        <?php if ($pagers['collections']->haveToPaginate()): ?>
         case 'collectibles':
           $('#collectibles').infinitescroll(opts[0]);
         break;
+        <?php endif; ?>
+        <?php if ($pagers['collections']->haveToPaginate()): ?>
         case 'collections':
           $('#collections').infinitescroll(opts[1]);
         break;
+        <?php endif; ?>
+        <?php if ($pagers['collectors']->haveToPaginate()): ?>
         case 'collectors':
           $('#collectors').infinitescroll(opts[2]);
         break;
+        <?php endif; ?>
+        <?php if ($pagers['blog']->haveToPaginate()): ?>
         case 'blog':
           $('#blog').infinitescroll(opts[3]);
         break;
+        <?php endif; ?>
       }
 
       current_tab = ui.index;
