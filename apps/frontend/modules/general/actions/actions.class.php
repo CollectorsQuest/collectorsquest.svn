@@ -92,6 +92,7 @@ class generalActions extends cqActions
 
     // We want to show 100 tags on the bottom of the homepage, mainly for SEO
     $this->collection_tags = CollectionPeer::getPopularTags(100);
+    uksort($this->collection_tags, "strcasecmp");
 
     return sfView::SUCCESS;
   }

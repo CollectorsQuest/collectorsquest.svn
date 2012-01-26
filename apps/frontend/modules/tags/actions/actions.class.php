@@ -20,7 +20,7 @@ class tagsActions extends cqActions
   {
     $this->tags = CollectiblePeer::getPopularTags(100);
     $this->tags = array_merge(CollectionPeer::getPopularTags(100), $this->tags);
-    ksort($this->tags, SORT_STRING);
+    uksort($this->tags, "strcasecmp");
 
     $this->addBreadcrumb('Tag Cloud');
     $this->prependTitle('Tag Cloud');
@@ -63,6 +63,9 @@ class tagsActions extends cqActions
         $this->redirect404();
         break;
     }
+
+    // Sort by name
+    uksort($this->tags, "strcasecmp");
 
     $this->addBreadcrumb('Tag Clouds', '@tags_index');
     $this->addBreadcrumb(ucwords($which));

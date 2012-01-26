@@ -26,6 +26,7 @@ class collectionsComponents extends sfComponents
     );
 
     $this->tags = CollectionPeer::getPopularTags(90);
+    uksort($this->tags, "strcasecmp");
 
     return sfView::SUCCESS;
   }
