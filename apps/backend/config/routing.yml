@@ -158,20 +158,20 @@ item_offers:
   url:   /item/offers
   param: { module: collectibleForSale, action: itemOffers }
 
+
 # default rules
+
 ga:
   url:   /ga
-  param: { module: general, action: godAuth }
-
-logout:
-  url:   /logout
-  param: { module: general, action: logout }
+  param: { module: iceBackendModule, action: godAuth }
 
 homepage:
   url:   /
   param: { module: iceBackendModule, action: dashboard }
 
+
 # generic rules
+
 default_index:
   url:   /:module
   param: { action: index }

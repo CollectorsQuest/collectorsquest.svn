@@ -1,4 +1,4 @@
-<h1>Report an Error to CollectorsQuest.com</h1>
+<h1>Feedback for CollectorsQuest.com</h1>
 
 <?php if ($sf_user->hasFlash('error')): ?>
   <h2 id="message">

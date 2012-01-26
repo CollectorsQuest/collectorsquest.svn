@@ -7,9 +7,10 @@ all:
       sender: 'no-reply@collectorsquest.com'
       notify: 'developers@collectorsquest.com'
 
-  god_auth:
-    secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
-    timeout:  3600
+  ice_backend:
+    god_auth:
+      secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
+      timeout:  3600
 
   credentials:
     akismet: "8fd3f2fddbaa"

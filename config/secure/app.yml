@@ -14,9 +14,10 @@ prod:
   ice_assets:
     domain: "cqcdns.com"
 
-  god_auth:
-    secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
-    timeout:  3600
+  ice_backend:
+    god_auth:
+      secret: "s6nr1ea16fo1br0wn5a31wnzhhazerr8"
+      timeout:  3600
 
   paypal:
     api_username: "dvds_api1.collectorsquest.com"
