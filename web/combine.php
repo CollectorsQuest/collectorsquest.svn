@@ -94,6 +94,7 @@ else
 
     // Check for buggy versions of Internet Explorer
     if (
+      isset($_SERVER['HTTP_USER_AGENT']) &&
       !strstr($_SERVER['HTTP_USER_AGENT'], 'Opera') &&
       preg_match('/^Mozilla\/4\.0 \(compatible; MSIE ([0-9]\.[0-9])/i', $_SERVER['HTTP_USER_AGENT'], $matches)
     )
