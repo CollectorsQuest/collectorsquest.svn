@@ -327,7 +327,7 @@ CREATE TABLE `collectible`
 	`id` INTEGER NOT NULL AUTO_INCREMENT,
 	`graph_id` INTEGER,
 	`collector_id` INTEGER NOT NULL,
-	`collection_id` INTEGER NOT NULL,
+	`collection_id` INTEGER,
 	`name` VARCHAR(255) NOT NULL,
 	`slug` VARCHAR(128),
 	`description` TEXT NOT NULL,
@@ -350,7 +350,7 @@ CREATE TABLE `collectible`
 	CONSTRAINT `collectible_FK_2`
 		FOREIGN KEY (`collection_id`)
 		REFERENCES `collection` (`id`)
-		ON DELETE CASCADE
+		ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------

@@ -1602,12 +1602,6 @@ abstract class BaseCollectionPeer
     {
 
 
-      // delete related Collectible objects
-      $criteria = new Criteria(CollectiblePeer::DATABASE_NAME);
-      
-      $criteria->add(CollectiblePeer::COLLECTION_ID, $obj->getId());
-      $affectedRows += CollectiblePeer::doDelete($criteria, $con);
-
       // delete related Comment objects
       $criteria = new Criteria(CommentPeer::DATABASE_NAME);
       
@@ -1649,6 +1643,14 @@ abstract class BaseCollectionPeer
       $updateValues = new Criteria(CollectionPeer::DATABASE_NAME);
       $selectCriteria->add(CollectorInterviewPeer::COLLECTION_ID, $obj->getId());
       $updateValues->add(CollectorInterviewPeer::COLLECTION_ID, null);
+
+      BasePeer::doUpdate($selectCriteria, $updateValues, $con); // use BasePeer because generated Peer doUpdate() methods only update using pkey
+
+      // set fkey col in related Collectible rows to NULL
+      $selectCriteria = new Criteria(CollectionPeer::DATABASE_NAME);
+      $updateValues = new Criteria(CollectionPeer::DATABASE_NAME);
+      $selectCriteria->add(CollectiblePeer::COLLECTION_ID, $obj->getId());
+      $updateValues->add(CollectiblePeer::COLLECTION_ID, null);
 
       BasePeer::doUpdate($selectCriteria, $updateValues, $con); // use BasePeer because generated Peer doUpdate() methods only update using pkey
 

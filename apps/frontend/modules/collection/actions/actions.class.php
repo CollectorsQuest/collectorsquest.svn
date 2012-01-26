@@ -193,12 +193,15 @@ class collectionActions extends cqActions
     {
       case 1:
       default:
-        $c = new Criteria();
-        $c->add(CollectionCategoryPeer::PARENT_ID, 0);
-        $c->add(CollectionCategoryPeer::NAME, 'Other', Criteria::NOT_EQUAL);
-        $c->add(CollectionCategoryPeer::NAME, 'None', Criteria::NOT_EQUAL);
-        $c->addAscendingOrderByColumn(CollectionCategoryPeer::NAME);
-        $this->categories = CollectionCategoryPeer::doSelect($c);
+
+        $q = CollectionCategoryQuery::create()
+           ->filterByParentId(0)
+           ->filterByName(array('None', 'Other'), Criteria::NOT_IN)
+           ->orderBy('Name');
+        $categories = $q->find();
+        $categories[] = CollectionCategoryQuery::create()->findOneById(35);
+
+        $this->categories = IceFunctions::array_vertical_sort($categories, 3);
 
         return 'Step1';
         break;
@@ -209,7 +212,9 @@ class collectionActions extends cqActions
         $form = new CollectionCreateForm();
         if ($request->isMethod('post'))
         {
-          $form->bind($request->getParameter('collection'), $request->getFiles('collection'));
+          $taintedValues = $request->getParameter('collection');
+          $form->bind($taintedValues, $request->getFiles('collection'));
+
           if ($form->isValid())
           {
             $collection = new Collection();
@@ -225,11 +230,12 @@ class collectionActions extends cqActions
 
               // Set the collection thumbnail from the uploaded file, after we save the collection above
               $collection->setThumbnail($form->getValue('thumbnail')->getTempName());
-              
+
               $collector = $this->getUser()->getCollector();
-              if ($collector->getProfile()->getIsImageAuto()) {
+              if ($collector->getProfile()->getIsImageAuto())
+              {
                 $collector->setPhoto($collection->getThumbnail()->getSource());
-                
+
                 $profile = $collector->getProfile();
                 $profile->setIsImageAuto(false);
                 $profile->save();
@@ -244,6 +250,7 @@ class collectionActions extends cqActions
           }
           else
           {
+            $this->defaults = $taintedValues;
             $this->getUser()->setFlash('error', 'There were some problems, please take a look below.');
           }
         }
@@ -266,14 +273,14 @@ class collectionActions extends cqActions
     /* @var $collectible Collectible */
     $collectible = $this->getRoute()->getObject();
     $this->forward404Unless($collectible);
-    
+
     $collectibleForSale = $collectible->getForSaleInformation();
     $this->forward404Unless($collectibleForSale);
 
     $collectibleForSale->delete();
-    
+
     $this->getUser()->setFlash('notice', 'Collectibe removed from market');
-    
+
 		$this->redirect('@manage_marketplace');
 	}
 

@@ -28,8 +28,8 @@
     <div class="required"><?php echo __('(required)'); ?></div>
   </div>
   <div class="prepend-1 span-13 last">
-    <?php echo $form['description']->renderError() ?>
     <?php echo cq_textarea_tag($form, 'description', array('width' => 500, 'height' => 200, 'rich' => true)); ?>
+    <?php echo $form['description']->renderError() ?>
   </div>
   <div class="clear append-bottom">&nbsp;</div>
 
@@ -38,8 +38,7 @@
     <div class="required"><?php echo __('(required)'); ?></div>
   </div>
   <div class="prepend-1 span-13 last">
-    <?php echo $form['tags']->renderError() ?>
-    <?php $tags = ($sf_params->get('collectible[tags]')) ? $sf_params->get('collectible[tags]') : $collectible->getTags(); ?>
+    <?php $tags = isset($defaults['tags']) ? $defaults['tags'] : $collectible->getTags(); ?>
     <div style="background: #E9E9E9; vertical-align: middle; width: 400px; padding: 5px;">
       <select id="collectible_tags" name="collectible[tags][]">
         <?php foreach ($tags as $tag): ?>
@@ -47,6 +46,7 @@
         <?php endforeach; ?>
       </select>
     </div>
+    <?php echo $form['tags']->renderError() ?>
   </div>
   <div class="clear append-bottom">&nbsp;</div>
   <?php if ($bIsSeller): ?>
@@ -81,14 +81,6 @@
         <?php echo $omItemForSaleForm['condition']->renderError(); ?>
       </div>
       <div class="clear append-bottom">&nbsp;</div>
-      <?php /*
-        <div class="span-4" style="text-align: right;">&nbsp;
-        </div>
-        <div class="prepend-1 span-13 last">
-        <?php echo  $omItemForSaleForm['is_price_negotiable']; ?><label for='is_price_negotiable'> Allow buyers to make me an offer</label>
-        <?php echo  $omItemForSaleForm['is_price_negotiable']->renderError(); ?>
-        </div>
-       */ ?>
 
       <div class="span-4" style="text-align: right;">&nbsp;
       </div>
@@ -111,12 +103,7 @@
     <?php cq_button_submit(__('Save Changes'), null, 'float: right;'); ?>
   </div>
 
-  <?php
-    echo input_hidden_tag('collectible[id]', $collectible->getId());
-    echo input_hidden_tag('collectible[collection_id]', $collectible->getCollectionId());
-    echo input_hidden_tag('collectible[collector_id]', $sf_user->getId());
-    echo $form['_csrf_token'];
-  ?>
+  <?php echo $form['_csrf_token']; ?>
 </form>
 
 <script src="/js/jquery/tags.js" type="text/javascript"></script>

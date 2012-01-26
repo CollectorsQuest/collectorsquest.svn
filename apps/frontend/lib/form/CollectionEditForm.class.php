@@ -7,6 +7,8 @@ class CollectionEditForm extends BaseCollectionForm
     $collection = $this->getObject();
 
     $this->getWidgetSchema()->setFormFormatterName('frontend');
+
+    $this->validatorSchema['collector_id'] = new sfValidatorPass();
     $this->validatorSchema['slug'] = new sfValidatorPass();
 
     $this->widgetSchema['collection_category_id'] = new sfWidgetFormInputHidden();
@@ -16,5 +18,8 @@ class CollectionEditForm extends BaseCollectionForm
 
     $this->widgetSchema['tags'] = new sfWidgetFormInput();
     $this->validatorSchema['tags'] = new sfValidatorPass();
+
+    unset($this->widgetSchema['graph_id']);
+    unset($this->validatorSchema['graph_id']);
   }
 }

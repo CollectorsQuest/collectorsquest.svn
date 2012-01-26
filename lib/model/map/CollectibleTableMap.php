@@ -41,7 +41,7 @@ class CollectibleTableMap extends TableMap
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
     $this->addColumn('GRAPH_ID', 'GraphId', 'INTEGER', false, null, null);
     $this->addForeignKey('COLLECTOR_ID', 'CollectorId', 'INTEGER', 'collector', 'ID', true, null, null);
-    $this->addForeignKey('COLLECTION_ID', 'CollectionId', 'INTEGER', 'collection', 'ID', true, null, null);
+    $this->addForeignKey('COLLECTION_ID', 'CollectionId', 'INTEGER', 'collection', 'ID', false, null, null);
     $this->addColumn('NAME', 'Name', 'VARCHAR', true, 255, null);
     $this->getColumn('NAME', false)->setPrimaryString(true);
     $this->addColumn('SLUG', 'Slug', 'VARCHAR', false, 128, null);
@@ -62,7 +62,7 @@ class CollectibleTableMap extends TableMap
   public function buildRelations()
   {
     $this->addRelation('Collector', 'Collector', RelationMap::MANY_TO_ONE, array('collector_id' => 'id', ), 'CASCADE', null);
-    $this->addRelation('Collection', 'Collection', RelationMap::MANY_TO_ONE, array('collection_id' => 'id', ), 'CASCADE', null);
+    $this->addRelation('Collection', 'Collection', RelationMap::MANY_TO_ONE, array('collection_id' => 'id', ), 'SET NULL', null);
     $this->addRelation('CollectibleForSale', 'CollectibleForSale', RelationMap::ONE_TO_MANY, array('id' => 'collectible_id', ), 'CASCADE', null, 'CollectibleForSales');
     $this->addRelation('CollectibleOffer', 'CollectibleOffer', RelationMap::ONE_TO_MANY, array('id' => 'collectible_id', ), 'CASCADE', null, 'CollectibleOffers');
     $this->addRelation('Comment', 'Comment', RelationMap::ONE_TO_MANY, array('id' => 'collectible_id', ), 'SET NULL', null, 'Comments');

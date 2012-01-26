@@ -45,7 +45,7 @@
     <div class="required"><?= __('(required)'); ?></div>
   </div>
   <div class="prepend-1 span-13 last">
-    <?php $tags = ($sf_params->get('collection[tags]')) ? $sf_params->get('collection[tags]') : $collection->getTags(); ?>
+    <?php $tags = !empty($defaults['tags']) ? $defaults['tags'] : $collection->getTags(); ?>
     <div style="background: #E9E9E9; vertical-align: middle; width: 400px; padding: 5px;">
     <select id="collection_tags" name="collection[tags][]">
       <?php foreach ($tags as $tag): ?>
@@ -59,9 +59,6 @@
   <div class="span-18" style="text-align: right;">
     <?php cq_button_submit(__('Save Changes'), null, 'float: right;'); ?>
   </div>
-
-  <input type="hidden" name="collection[id]" value="<?= $collection->getId(); ?>">
-  <input type="hidden" name="collection[collector_id]" value="<?= $sf_user->getId(); ?>">
 
   <?= $form['_csrf_token']; ?>
 </form>

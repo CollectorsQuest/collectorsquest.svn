@@ -70,7 +70,7 @@ class CollectionTableMap extends TableMap
     $this->addRelation('Collector', 'Collector', RelationMap::MANY_TO_ONE, array('collector_id' => 'id', ), 'CASCADE', null);
     $this->addRelation('CollectionItem', 'CollectionItem', RelationMap::ONE_TO_MANY, array('id' => 'collection_id', ), null, null, 'CollectionItems');
     $this->addRelation('CollectorInterview', 'CollectorInterview', RelationMap::ONE_TO_MANY, array('id' => 'collection_id', ), 'SET NULL', null, 'CollectorInterviews');
-    $this->addRelation('Collectible', 'Collectible', RelationMap::ONE_TO_MANY, array('id' => 'collection_id', ), 'CASCADE', null, 'Collectibles');
+    $this->addRelation('Collectible', 'Collectible', RelationMap::ONE_TO_MANY, array('id' => 'collection_id', ), 'SET NULL', null, 'Collectibles');
     $this->addRelation('Comment', 'Comment', RelationMap::ONE_TO_MANY, array('id' => 'collection_id', ), 'CASCADE', null, 'Comments');
     $this->addRelation('CustomValue', 'CustomValue', RelationMap::ONE_TO_MANY, array('id' => 'collection_id', ), 'CASCADE', null, 'CustomValues');
   }

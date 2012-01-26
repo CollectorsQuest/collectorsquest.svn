@@ -1,4 +1,9 @@
 <?php
+  /**
+   * @var  CollectionCreateForm  $form
+   * @var  CollectionCategory    $collection_category
+   */
+
   include_partial(
     'global/wizard_bar',
     array('steps' => array(1 => __('Choose Category'), __('Describe Collection'), __('Add Collectibles')), 'active' => 2)
@@ -76,7 +81,7 @@
     <div style="color: #ccc; font-style: italic;"><?= __('(recommended)'); ?></div>
   </div>
   <div class="prepend-1 span-13 last">
-    <?php $tags = ($sf_params->get('collection[tags]')) ? $sf_params->get('collection[tags]') : $form->getObject()->getTags(); ?>
+    <?php $tags = !empty($defaults['tags']) ? $defaults['tags'] : $form->getObject()->getTags(); ?>
     <div style="background: #E9E9E9; vertical-align: middle; width: 400px; padding: 5px;">
     <select id="collection_tags" name="collection[tags][]">
       <?php foreach ($tags as $tag): ?>
@@ -91,7 +96,6 @@
     <?php cq_button_submit(__('Save & Go to the Next Step'), null, 'float: right;'); ?>
   </div>
 
-  <input type="hidden" name="collection[collector_id]" value="<?= $sf_user->getId(); ?>">
   <?= $form['_csrf_token']; ?>
 </form>
 

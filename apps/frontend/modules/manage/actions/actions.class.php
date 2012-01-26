@@ -151,7 +151,8 @@ class manageActions extends cqActions
 
     if ($request->isMethod('post'))
     {
-      $form->bind($request->getParameter('collection'), $request->getFiles('collection'));
+      $taintedValues = $request->getParameter('collection');
+      $form->bind($taintedValues, $request->getFiles('collection'));
 
       if ($form->isValid())
       {
@@ -175,11 +176,12 @@ class manageActions extends cqActions
         }
         catch (PropelException $e)
         {
-          $this->getUser()->setFlash("error", $this->__('There was a problem saving the information you provided!'));
+          $this->getUser()->setFlash("error", $this->__('There was a problem while saving the information you provided!'));
         }
       }
       else
       {
+        $this->defaults = $taintedValues;
         $this->getUser()->setFlash('error', $this->__('There were some problems, please take a look below.'));
       }
     }
@@ -248,7 +250,8 @@ class manageActions extends cqActions
 
     if ($request->isMethod('post'))
     {
-      $form->bind($request->getParameter('collectible'), $request->getFiles('collectible'));
+      $taintedValues = $request->getParameter('collectible');
+      $form->bind($taintedValues, $request->getFiles('collectible'));
 
       if ($this->bIsSeller && isset($omItemForSaleForm))
       {
@@ -280,12 +283,13 @@ class manageActions extends cqActions
         }
         else
         {
-          $message = $this->__('Changes were saved!');
+          $this->getUser()->setFlash('success', $this->__('Changes were saved!'));
         }
       }
       else
       {
-        $this->getUser()->setFlash('error', $this->__('Error occured while trying to save'));
+        $this->defaults = $taintedValues;
+        $this->getUser()->setFlash("error", $this->__('There was a problem while saving the information you provided!'));
       }
     }
 

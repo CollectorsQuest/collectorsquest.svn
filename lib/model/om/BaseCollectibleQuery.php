@@ -957,7 +957,7 @@ abstract class BaseCollectibleQuery extends ModelCriteria
    *
    * @return    CollectibleQuery The current query, for fluid interface
    */
-  public function joinCollection($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  public function joinCollection($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
   {
     $tableMap = $this->getTableMap();
     $relationMap = $tableMap->getRelation('Collection');
@@ -996,7 +996,7 @@ abstract class BaseCollectibleQuery extends ModelCriteria
    *
    * @return    CollectionQuery A secondary query class using the current class as primary query
    */
-  public function useCollectionQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  public function useCollectionQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
   {
     return $this
       ->joinCollection($relationAlias, $joinType)
