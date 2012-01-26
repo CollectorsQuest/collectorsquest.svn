@@ -7,7 +7,7 @@ require_once __DIR__.'/../plugins/iceLibsPlugin/lib/autoload/SplClassLoader.clas
 IceCoreAutoload::register();
 
 /** Load the namespace for Neo4j client library */
-$classLoader = new SplClassLoader('Everyman', __DIR__ . '/../lib/vendor');
+$classLoader = new SplClassLoader('Everyman', __DIR__ . '/../lib/vendor/neo4jphp/lib');
 $classLoader->register();
 
 class ProjectConfiguration extends IceProjectConfiguration
