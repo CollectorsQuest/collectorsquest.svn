@@ -1,5 +1,5 @@
 @import url(/css/screen.css);
-@import url(/css/frontend/main.css);
+@import url(/css/legacy/main.css);
 
 html, body {
   margin: 0;

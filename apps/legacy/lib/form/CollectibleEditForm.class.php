@@ -9,7 +9,7 @@ class CollectibleEditForm extends BaseCollectibleForm
     $this->validatorSchema->setOption('allow_extra_fields', true);
     $this->validatorSchema->setOption('filter_extra_fields', true);
 
-    $this->getWidgetSchema()->setFormFormatterName('frontend');
+    $this->getWidgetSchema()->setFormFormatterName('legacy');
 
     $this->validatorSchema->setPostValidator(new sfValidatorPass());
 

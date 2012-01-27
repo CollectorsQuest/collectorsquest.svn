@@ -1,9 +1,9 @@
 all:
-  stylesheets: [frontend/collectors.css, frontend/collections.css]
+  stylesheets: [legacy/collectors.css, legacy/collections.css]
 
 signupSuccess:
   javascripts: [jquery/pstrength.js]
-  stylesheets: [frontend/forms.css]
+  stylesheets: [legacy/forms.css]
   components:
     sidebar: [general, sidebar]
 

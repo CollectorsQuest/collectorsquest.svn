@@ -4,7 +4,7 @@ html, body {
 }
 
 body {
-  background: #E4E4E4 url(/images/frontend/bkg.png) repeat-x scroll 0 0;
+  background: #E4E4E4 url(/images/legacy/bkg.png) repeat-x scroll 0 0;
   margin-top: 20px;
 }
 
@@ -22,7 +22,7 @@ a.action:hover {
 }
 
 blockquote {
-  background: transparent url(/images/frontend/blockquote.gif) no-repeat scroll 0 2px;
+  background: transparent url(/images/legacy/blockquote.gif) no-repeat scroll 0 2px;
   margin: 20px 0 20px 20px;
   padding-left: 23px;
 }
@@ -46,7 +46,7 @@ hr {
 }
 
 hr.image {
-  background: transparent url(/images/frontend/hr.gif) no-repeat scroll center center;
+  background: transparent url(/images/legacy/hr.gif) no-repeat scroll center center;
   height: 15px;
   width: 76px;
   margin: 10px auto;
@@ -56,7 +56,7 @@ h2.section-title {
   font-size: 18px;
   padding-left: 25px;
   margin-left: 20px;
-  background: url(/images/frontend/black-arrow-down.png) 0 12px no-repeat;
+  background: url(/images/legacy/black-arrow-down.png) 0 12px no-repeat;
 }
 
 fieldset {
@@ -74,12 +74,12 @@ legend {
 
 input[type="text"], textarea {
   padding: 5px 0 1px 5px;
-  background: #fff url(/images/frontend/input-shadow.gif) top left repeat-x;
+  background: #fff url(/images/legacy/input-shadow.gif) top left repeat-x;
   border: 1px solid #A7A7A7;
 }
 
 input[type="text"].required, textarea.required {
-  background: #fff url(/images/frontend/input-shadow-required.gif) top left repeat-x;
+  background: #fff url(/images/legacy/input-shadow-required.gif) top left repeat-x;
 }
 
 input.maininput {
@@ -116,7 +116,7 @@ input.maininput {
 #header-search .header-search-submit {
   float: right;
   height: 26px;
-  background: #FFF url(/images/frontend/buttons/bg_button.png) repeat-x 0 2px;
+  background: #FFF url(/images/legacy/buttons/bg_button.png) repeat-x 0 2px;
   border-top: 1px solid #CCC;
   border-right: 1px solid #CCC;
   border-left: 1px solid #CCC;
@@ -130,7 +130,7 @@ input.maininput {
   padding: 4px 2px 2px 4px;
 }
 #header-search .header-search-submit .style_activator {
-  background: transparent url(/images/frontend/search_arrow.png) no-repeat 4px 52%;
+  background: transparent url(/images/legacy/search_arrow.png) no-repeat 4px 52%;
   width: 14px;
   height: 26px;
   display: block;
@@ -177,7 +177,7 @@ input.maininput {
   width: 50px;
   height: 50px;
   margin: auto;
-  background: transparent url(/images/frontend/header-icons-grey.png) no-repeat;
+  background: transparent url(/images/legacy/header-icons-grey.png) no-repeat;
 }
 
 #header-actions .profile {
@@ -243,15 +243,15 @@ input.maininput {
   color: #fff;
   font-weight: bold;
   font-size: 13px;
-  background: transparent url(/images/frontend/icon-notification.png) no-repeat 2px -25px;
+  background: transparent url(/images/legacy/icon-notification.png) no-repeat 2px -25px;
 }
 
 #header-actions div.active .icon {
-  background-image: url(/images/frontend/header-icons-active.png);
+  background-image: url(/images/legacy/header-icons-active.png);
 }
 
 #header-actions .icon.active {
-  background-image: url(/images/frontend/header-icons-active.png);
+  background-image: url(/images/legacy/header-icons-active.png);
 }
 
 #page {
@@ -263,11 +263,11 @@ input.maininput {
 }
 
 #page.with-sidebar {
-  background: #fff url(/images/frontend/sidebar-bgr.png) repeat-y right;
+  background: #fff url(/images/legacy/sidebar-bgr.png) repeat-y right;
 }
 
 #page.with-right-ads {
-  background: #fff url(/images/frontend/right-ads-bgr.png) repeat-y right;
+  background: #fff url(/images/legacy/right-ads-bgr.png) repeat-y right;
 }
 
 #navigation {
@@ -288,7 +288,7 @@ input.maininput {
 
 #breadcrumbs h1 {
   padding: 5px 15px;
-  background: url(/images/frontend/black-arrow.png) 2px 8px no-repeat;
+  background: url(/images/legacy/black-arrow.png) 2px 8px no-repeat;
   font-size:1.5em;
   line-height:1;
   margin-bottom: 0;
@@ -358,7 +358,7 @@ input.maininput {
 }
 
 .wizard_separator {
-  background: url('/images/frontend/wizard_separator.png') no-repeat;
+  background: url('/images/legacy/wizard_separator.png') no-repeat;
   background-position: center;
   float: left;
   width: 40px;
@@ -424,20 +424,20 @@ input.maininput {
 }
 
 .grid_item {
-  width: 160px; 
-  margin-left: 25px; 
-  margin-right: 15px; 
+  width: 160px;
+  margin-left: 25px;
+  margin-right: 15px;
   margin-bottom: 30px;
   display: inline-block;
 }
 
 .buynow {
-  background: #BBDC71; 
-  color: #fff; 
-  font-size: 20px; 
-  padding: 5px; 
-  text-align: center; 
-  margin-left: 10px; 
+  background: #BBDC71;
+  color: #fff;
+  font-size: 20px;
+  padding: 5px;
+  text-align: center;
+  margin-left: 10px;
   margin-right: 10px;
 }
 
@@ -451,9 +451,9 @@ input.maininput {
 }
 
 .category_item {
-  background: #FCFDDE; 
-  border-bottom: 1px solid #B6CCC0; 
-  padding: 5px; 
+  background: #FCFDDE;
+  border-bottom: 1px solid #B6CCC0;
+  padding: 5px;
   padding-left: 10px;
 }
 
@@ -463,28 +463,28 @@ input.maininput {
 
 .category_item.current span {
   font-weight: bold;
-  
+
 }
 
 .grid_item_price {
-  width: 60px; 
-  text-align: center; 
-  background: #AFD85D; 
-  padding: 3px; 
-  color: #fff; 
-  margin-top: 2px; 
+  width: 60px;
+  text-align: center;
+  background: #AFD85D;
+  padding: 3px;
+  color: #fff;
+  margin-top: 2px;
   float: left;
   font-size: 90%;
 }
 
 .grid_item_date {
-  width: 85px; 
-  text-align: center; 
-  background: #F2F8D5; 
-  padding: 3px; 
-  margin-top: 2px; 
-  float: left; 
-  line-height: 22px; 
+  width: 85px;
+  text-align: center;
+  background: #F2F8D5;
+  padding: 3px;
+  margin-top: 2px;
+  float: left;
+  line-height: 22px;
   font-size: 80%;
 }
 

@@ -135,7 +135,7 @@
                     <td colspan="2">
                       <input type="radio" name="payment_type" id="payment_paypal" value="paypal" />
                       <label for="payment_paypal">
-                        <?php echo image_tag('frontend/payment/paypal.gif', array('style' => 'height: 24px;')) ?>
+                        <?php echo image_tag('legacy/payment/paypal.gif', array('style' => 'height: 24px;')) ?>
                       </label>
                     </td>
                   </tr>
@@ -143,7 +143,7 @@
                     <td colspan="2" style="vertical-align: middle!important;">
                       <input type="radio" name="payment_type" id="payment_cc" value="package" checked="checked" />
                       <label for="payment_cc">
-                        <?php echo image_tag('frontend/payment/cc.gif', array('style' => 'height: 24px;')) ?>
+                        <?php echo image_tag('legacy/payment/cc.gif', array('style' => 'height: 24px;')) ?>
                       </label>
                     </td>
                   </tr>
@@ -270,7 +270,7 @@
                     </tr>
                     <tr>
                     <td>
-                    <div style="float: left;"><?php echo image_tag('frontend/btn_xpressCheckout.gif', array('onclick' => "getpayment('paypal');return false;", 'style' => 'cursor:pointer;float:right;')); ?></div>
+                    <div style="float: left;"><?php echo image_tag('legacy/btn_xpressCheckout.gif', array('onclick' => "getpayment('paypal');return false;", 'style' => 'cursor:pointer;float:right;')); ?></div>
                     </td>
                     </tr>
                    */ ?>

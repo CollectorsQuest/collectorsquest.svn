@@ -1,6 +1,6 @@
 <?php
 
-class sfWidgetFormSchemaFormatterFrontend extends sfWidgetFormSchemaFormatter
+class sfWidgetFormSchemaFormatterLegacy extends sfWidgetFormSchemaFormatter
 {
   protected
     $rowFormat                 = '<div class="span-4" style="text-align: right;">%label%</div><div class="prepend-1 span-13 last">%error%%field%%help%%hidden_fields%</div><div class="clear append-bottom"></div>',

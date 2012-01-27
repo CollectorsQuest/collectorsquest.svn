@@ -1,6 +1,6 @@
 <div class="span-25 rounded-top last" style="width: 980px; background: #F7FAE4; height: 50px; margin-top: -5px; margin-bottom: -40px; padding: 0 5px;">&nbsp;</div>
 <div class="span-7">
-  <div style="margin-left: 10px; padding: 7px 7px 10px; background: transparent url(/images/frontend/profile-photo-bgr.png) no-repeat scroll 0% 0%; width: 250px; height: 320px;">
+  <div style="margin-left: 10px; padding: 7px 7px 10px; background: transparent url(/images/legacy/profile-photo-bgr.png) no-repeat scroll 0% 0%; width: 250px; height: 320px;">
     <?php echo image_tag_collector($collector, '235x315'); ?>
   </div>
   <ul class="buttons" style="width: 246px; margin-left: 11px; margin-top: 5px;">

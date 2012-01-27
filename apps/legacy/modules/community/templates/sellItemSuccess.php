@@ -1,6 +1,6 @@
 <?php
 if($bSeller):
-	use_stylesheet('frontend/forms.css');
+	use_stylesheet('legacy/forms.css');
 	use_helper('Form','Javascript','Object');
 	if($sf_params->get('thankyou') == true):?>
 		<ul class="error_list"><li>Thank you for select/upgrade a package. please check mail to show details about your selected package!</li></ul>
@@ -175,7 +175,7 @@ if($bSeller):
 		  $('#collection_description').tinymce(
 		  {
 			script_url: '<?php echo sfConfig::get('app_static_domain_name')?>js/tiny_mce/tiny_mce.js',
-			content_css : "<?php echo sfConfig::get('app_static_domain_name')?>css/frontend/tinymce.css",
+			content_css : "<?php echo sfConfig::get('app_static_domain_name')?>css/legacy/tinymce.css",
 
 			theme: "advanced",
 			theme_advanced_buttons1: "formatselect,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo",

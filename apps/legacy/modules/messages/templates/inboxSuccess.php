@@ -2,7 +2,7 @@
 <table id="messages-inbox" class="span-18 messages">
   <thead>
    <tr>
-     <td colspan="2"><img src="/images/frontend/arrow_lbr.png" alt=""></td>
+     <td colspan="2"><img src="/images/legacy/arrow_lbr.png" alt=""></td>
      <td colspan="2">
        <div style="float: right; padding-top: 2px;">
          <div class="fg-buttonset fg-buttonset-single" style="float: right; margin-top: -2px;">
@@ -59,7 +59,7 @@
  <tfoot>
    <tr><td colspan="4" style="height: 15px;"></td></tr>
    <tr>
-     <td colspan="2"><img src="/images/frontend/arrow_ltr.png" alt=""></td>
+     <td colspan="2"><img src="/images/legacy/arrow_ltr.png" alt=""></td>
      <td colspan="2">
        <div class="fg-buttonset fg-buttonset-single cmd-buttons">
          <button type="submit" name="cmd[read]" class="fg-button ui-state-default ui-state-disabled ui-priority-primary ui-corner-left"><?= __('Mark as Read'); ?></button>

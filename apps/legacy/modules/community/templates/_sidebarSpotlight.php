@@ -1,7 +1,7 @@
 <h2><?= __('Your 15 Minutes of Fame'); ?></h2>
 <?php
   echo link_to(
-    image_tag('frontend/15-minutes-of-fame.jpg', array('style' => 'margin-top: -7px; margin-bottom: -4px;')),
+    image_tag('legacy/15-minutes-of-fame.jpg', array('style' => 'margin-top: -7px; margin-bottom: -4px;')),
     '@15_minutes_of_fame'
   );
 ?>

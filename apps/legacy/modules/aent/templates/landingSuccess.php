@@ -10,7 +10,7 @@
   <tr>
     <td style="text-align: center;" colspan="5">
       <a href="http://www.history.com?cmpid=Partner_CollectorsQuest" target="_blank">
-        <?= image_tag('frontend/aetn/aetn_header.jpg'); ?>
+        <?= image_tag('legacy/aetn/aetn_header.jpg'); ?>
       </a>
     </td>
   </tr>
@@ -18,12 +18,12 @@
   <tr>
     <td style="padding-left: 10px;">
       <a href="http://www.history.com/pawnstars?cmpid=Partner_CollectorsQuest" target="_blank">
-        <?= image_tag('frontend/aetn/pawn_stars.jpg'); ?>
+        <?= image_tag('legacy/aetn/pawn_stars.jpg'); ?>
       </a>
     </td>
     <td>
       <div style="color: #090779; margin-bottom: 5px; text-align: center;"">Farewell to Arms</div>
-      <div class="stack" style="background: url(/images/frontend/stack_small.png); width: 143px; height: 144px; margin: auto; padding: 5px 0 0 14px;">
+      <div class="stack" style="background: url(/images/legacy/stack_small.png); width: 143px; height: 144px; margin: auto; padding: 5px 0 0 14px;">
         <?= link_to_collectible($collectible[1], 'image', array('style' => 'width: 135px; height: 135px;')); ?>
       </div>
       <div style="text-align: center">
@@ -40,7 +40,7 @@
     </td>
     <td>
       <div style="color: #090779; margin-bottom: 5px; text-align: center;"">Lights, Cameras, Action!</div>
-      <div class="stack" style="background: url(/images/frontend/stack_small.png); width: 143px; height: 144px; margin: auto; padding: 5px 0 0 14px;">
+      <div class="stack" style="background: url(/images/legacy/stack_small.png); width: 143px; height: 144px; margin: auto; padding: 5px 0 0 14px;">
         <?= link_to_collectible($collectible[2], 'image', array('style' => 'width: 135px; height: 135px;')); ?>
       </div>
       <div style="text-align: center">
@@ -57,7 +57,7 @@
     </td>
     <td>
       <div style="color: #090779; margin-bottom: 5px; text-align: center;">Living in the Past</div>
-      <div class="stack" style="background: url(/images/frontend/stack_small.png); width: 143px; height: 144px; margin: auto; padding: 5px 0 0 14px;">
+      <div class="stack" style="background: url(/images/legacy/stack_small.png); width: 143px; height: 144px; margin: auto; padding: 5px 0 0 14px;">
         <?= link_to_collectible($collectible[3], 'image', array('style' => 'width: 135px; height: 135px;')); ?>
       </div>
       <div style="text-align: center">
@@ -73,8 +73,8 @@
       </ul>
     </td>
     <td style="width: 135px; vertical-align: top; padding-top: 30px;">
-      <?= link_to(image_tag('frontend/aetn/btn_start_collection.png'), '@collector_signup'); ?><br/><br/>
-      <?= link_to(image_tag('frontend/aetn/btn_browse_marketplace.png'), '@marketplace'); ?>
+      <?= link_to(image_tag('legacy/aetn/btn_start_collection.png'), '@collector_signup'); ?><br/><br/>
+      <?= link_to(image_tag('legacy/aetn/btn_browse_marketplace.png'), '@marketplace'); ?>
     </td>
   </tr>
   <tr>
@@ -84,12 +84,12 @@
   <tr>
     <td style="padding-left: 10px;">
       <a href="http://www.history.com/pickers?cmpid=Partner_CollectorsQuest" target="_blank">
-        <?= image_tag('frontend/aetn/american_pickers.jpg'); ?>
+        <?= image_tag('legacy/aetn/american_pickers.jpg'); ?>
       </a>
     </td>
     <td style="vertical-align: top;">
       <div style="color: #090779; margin-bottom: 5px; text-align: center;"">See Me, Hear Me</div>
-      <div class="stack" style="background: url(/images/frontend/stack_small.png); width: 143px; height: 144px; margin: auto; padding: 5px 0 0 14px;">
+      <div class="stack" style="background: url(/images/legacy/stack_small.png); width: 143px; height: 144px; margin: auto; padding: 5px 0 0 14px;">
         <?= link_to_collectible($collectible[4], 'image', array('style' => 'width: 135px; height: 135px;')); ?>
       </div>
       <div style="text-align: center">
@@ -106,7 +106,7 @@
     </td>
     <td style="vertical-align: top;">
       <div style="color: #090779; margin-bottom: 5px; text-align: center;"">Cool and Collected</div>
-      <div class="stack" style="background: url(/images/frontend/stack_small.png); width: 143px; height: 144px; margin: auto; padding: 5px 0 0 14px;">
+      <div class="stack" style="background: url(/images/legacy/stack_small.png); width: 143px; height: 144px; margin: auto; padding: 5px 0 0 14px;">
         <?= link_to_collectible($collectible[5], 'image', array('style' => 'width: 135px; height: 135px;')); ?>
       </div>
       <div style="text-align: center">
@@ -123,7 +123,7 @@
     </td>
     <td style="vertical-align: top;">
       <div style="color: #090779; margin-bottom: 5px; text-align: center;"">On the Road Again</div>
-      <div class="stack" style="background: url(/images/frontend/stack_small.png); width: 143px; height: 144px; margin: auto; padding: 5px 0 0 14px;">
+      <div class="stack" style="background: url(/images/legacy/stack_small.png); width: 143px; height: 144px; margin: auto; padding: 5px 0 0 14px;">
         <?= link_to_collectible($collectible[6], 'image', array('style' => 'width: 135px; height: 135px;')); ?>
       </div>
       <div style="text-align: center">
@@ -139,15 +139,15 @@
       </ul>
     </td>
     <td style="vertical-align: top; padding-top: 30px;">
-      <?= link_to(image_tag('frontend/aetn/btn_start_collection.png'), '@collector_signup'); ?><br/><br/>
-      <?= link_to(image_tag('frontend/aetn/btn_browse_marketplace.png'), '@marketplace'); ?>
+      <?= link_to(image_tag('legacy/aetn/btn_start_collection.png'), '@collector_signup'); ?><br/><br/>
+      <?= link_to(image_tag('legacy/aetn/btn_browse_marketplace.png'), '@marketplace'); ?>
     </td>
   </tr>
   <tr>
     <td colspan="5">
       <div style="background-color: #f5f8dd; padding: 5px;">
         <div class="box">
-          <h2 style="font-size: 18px; font-weight: bold; padding-left: 15px; background: white url('/images/frontend/black-arrow.png') 0 6px no-repeat;">
+          <h2 style="font-size: 18px; font-weight: bold; padding-left: 15px; background: white url('/images/legacy/black-arrow.png') 0 6px no-repeat;">
             Top Collections from Collectors’ Quest
           </h2>
           <br clear="all">

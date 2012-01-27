@@ -9,17 +9,17 @@
     <td style="width: 521px; height: 65px; margin: 0; padding: 0;">
       <?php
         echo link_to(
-          image_tag('frontend/aetn/'. str_replace(' ', '_', strtolower($collection->getName())) .'_header.png'),
+          image_tag('legacy/aetn/'. str_replace(' ', '_', strtolower($collection->getName())) .'_header.png'),
           '@aent_landing'
         );
       ?>
     </td>
-    <td style="background: url(/images/frontend/aetn/collectible_title.png) no-repeat 0 1px; height: 65px;  margin: 0; padding: 0">
+    <td style="background: url(/images/legacy/aetn/collectible_title.png) no-repeat 0 1px; height: 65px;  margin: 0; padding: 0">
       <h3 style="color: #fff; font-weight: bold; padding-top: 7px; margin-left: 20px"><?= $title ?></h3>
     </td>
   </tr>
   <tr>
-    <td style="height: 500px; padding-left: 23px; background: url(/images/frontend/aetn/blue_gradient.png) 10px bottom no-repeat; vertical-align: top;">
+    <td style="height: 500px; padding-left: 23px; background: url(/images/legacy/aetn/blue_gradient.png) 10px bottom no-repeat; vertical-align: top;">
       <div style="position: relative;">
         <?php
           echo link_to_if(
@@ -75,7 +75,7 @@
     <td style="vertical-align: top; padding-left: 25px;">
       <?php foreach ($collectibles_for_sale as $i => $collectible_for_sale): ?>
         <div class="span-5" style="margin-right: 20px;">
-          <div class="stack" style="background: url(/images/frontend/aetn/stack_yellow.png); width: 143px; height: 144px; padding: 5px 0 0 14px;">
+          <div class="stack" style="background: url(/images/legacy/aetn/stack_yellow.png); width: 143px; height: 144px; padding: 5px 0 0 14px;">
             <?= link_to_collectible($collectible_for_sale->getCollectible(), 'image', array('style' => 'width: 135px; height: 135px;')); ?>
           </div>
           <div style="margin-top: 10px;">
@@ -94,7 +94,7 @@
     <td colspan="2" style="background: #fff; padding:  10px;">
       <div style="background-color: #f5f8dd; padding: 5px;">
         <div class="box">
-          <h2 style="font-size: 18px; font-weight: bold; padding-left: 15px; background: white url('/images/frontend/black-arrow.png') 0 6px no-repeat;">
+          <h2 style="font-size: 18px; font-weight: bold; padding-left: 15px; background: white url('/images/legacy/black-arrow.png') 0 6px no-repeat;">
             Related Items from Collectors’ Quest
           </h2>
           <br clear="all">
@@ -137,7 +137,7 @@
           file: '<?= src_tag_multimedia($video, 'original'); ?>',
           autostart: true,
           width: 848, height: 480,
-          skin: "/images/frontend/glow.zip",
+          skin: "/images/legacy/glow.zip",
           'plugins': 'fbit-1,tweetit-1,gapro-2',
           'gapro.accountid': 'UA-669177-1',
           'fbit.link': 'false',

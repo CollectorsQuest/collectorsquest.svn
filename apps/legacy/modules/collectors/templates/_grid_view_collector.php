@@ -1,6 +1,6 @@
 <?php
-  use_stylesheet('frontend/collections.css');
-  use_stylesheet('frontend/collectors.css');
+  use_stylesheet('legacy/collections.css');
+  use_stylesheet('legacy/collectors.css');
 /* @var $collector Collector */
 ?>
 

@@ -14,7 +14,7 @@ if (!empty($buttons))
     if (isset($button['active']) && $button['active'] == true)
     {
       echo image_tag(
-        'frontend/sidebar-button-arrow.png',
+        'legacy/sidebar-button-arrow.png',
         array('style' => 'float: left; margin-left: -26px; margin-top: -4px;')
       );
       echo (substr($button['route'], 0, 1) == '@') ?

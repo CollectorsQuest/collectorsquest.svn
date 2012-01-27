@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="/css/screen.css" type="text/css" media="screen, projection">
   <link rel="stylesheet" href="/css/print.css" type="text/css" media="print">
   <!--[if lt IE 8]><link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen, projection"><![endif]-->
-  <link href="/css/frontend/jquery.css" rel="stylesheet" type="text/css" media="screen, projection"/>
+  <link href="/css/legacy/jquery.css" rel="stylesheet" type="text/css" media="screen, projection"/>
 
   <?php
     sfConfig::set('symfony.asset.stylesheets_included', true);

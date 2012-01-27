@@ -25,7 +25,7 @@ all:
   storage:
     class: cqSessionStorage
     param:
-      session_name: frontend
+      session_name: legacy
 
   mailer:
     class: cqMailer

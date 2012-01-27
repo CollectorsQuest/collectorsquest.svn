@@ -1,10 +1,10 @@
 <div id="header" class="span-21 prepend-4 rounded-top last">
   <form class="span-8 last" action="<?php echo url_for('@search'); ?>" id="header-search" method="get">
     <div class="header-search-submit">
-      <input alt="Search" class="search_submit" src="/images/frontend/search_icon.png" title="Search" type="image" />
+      <input alt="Search" class="search_submit" src="/images/legacy/search_icon.png" title="Search" type="image" />
       <a class="style_activator" href="#" title="Select search type" id="flat"></a>
       <div class="hidden">
-        <?= image_tag('frontend/black-arrow-down.png'); ?>&nbsp;<strong>Search Only:</strong>
+        <?= image_tag('legacy/black-arrow-down.png'); ?>&nbsp;<strong>Search Only:</strong>
         <ul style="margin-left: 10px;">
           <li><a href="javascript:search('collectibles');"><?= __('Collectibles'); ?></a></li>
           <li><a href="javascript:search('collections');"><?= __('Collections'); ?></a></li>

@@ -4,21 +4,21 @@
       if (sfConfig::get('sf_environment') === 'dev')
       {
         echo link_to(
-          image_tag('frontend/logo-development.png', array('align' => 'left', 'style' => 'margin: -54px -35px 0 10px;')),
+          image_tag('legacy/logo-development.png', array('align' => 'left', 'style' => 'margin: -54px -35px 0 10px;')),
           '@homepage'
         );
       }
       else if (sfConfig::get('sf_environment') === 'stg')
       {
         echo link_to(
-          image_tag('frontend/logo-staging.png', array('align' => 'left', 'style' => 'margin: -54px -35px 0 10px;')),
+          image_tag('legacy/logo-staging.png', array('align' => 'left', 'style' => 'margin: -54px -35px 0 10px;')),
           '@homepage'
         );
       }
       else
       {
         echo link_to(
-          image_tag('frontend/logo.png', array('id' => 'header-logo', 'align' => 'left', 'style' => 'margin: -54px -35px 0 10px;')),
+          image_tag('legacy/logo.png', array('id' => 'header-logo', 'align' => 'left', 'style' => 'margin: -54px -35px 0 10px;')),
           '@homepage'
         );
       }

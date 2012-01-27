@@ -6,7 +6,7 @@ class CollectionEditForm extends BaseCollectionForm
   {
     $collection = $this->getObject();
 
-    $this->getWidgetSchema()->setFormFormatterName('frontend');
+    $this->getWidgetSchema()->setFormFormatterName('legacy');
 
     $this->validatorSchema['collector_id'] = new sfValidatorPass();
     $this->validatorSchema['slug'] = new sfValidatorPass();

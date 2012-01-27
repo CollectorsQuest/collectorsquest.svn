@@ -1,4 +1,4 @@
 all:
-  stylesheets: [frontend/forms.css]
+  stylesheets: [legacy/forms.css]
   components:
     sidebar: [community, sidebar]

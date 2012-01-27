@@ -1,8 +1,8 @@
 all:
   components:
     sidebar: [_calendar, sidebar]
-  stylesheets: [frontend/calendar.css]
+  stylesheets: [legacy/calendar.css]
   javascripts:
-    - frontend/calendar/DateSelect.js
-    - frontend/calendar/Dates.js
-    - frontend/calendar/Checkboxes.js
+    - legacy/calendar/DateSelect.js
+    - legacy/calendar/Dates.js
+    - legacy/calendar/Checkboxes.js

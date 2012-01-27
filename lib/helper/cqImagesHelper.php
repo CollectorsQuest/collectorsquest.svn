@@ -1,6 +1,6 @@
 <?php
 
-/** @var sfApplicationConfiguration $configuration */
+/** @var cqApplicationConfiguration $configuration */
 $configuration = sfProjectConfiguration::getActive();
 $configuration->loadHelpers(array('Asset', 'Tag'));
 
@@ -19,7 +19,7 @@ function image_tag_collector($collector, $which = '100x100', $options = array())
 {
   if (!($collector instanceof Collector))
   {
-    return image_tag('frontend/multimedia/Collector/'. $which .'.png', $options);
+    return image_tag('legacy/multimedia/Collector/'. $which .'.png', $options);
   }
 
   $options = array_merge(
@@ -32,7 +32,7 @@ function image_tag_collector($collector, $which = '100x100', $options = array())
 
   if (empty($image_tag))
   {
-    $image_tag = image_tag('frontend/multimedia/Collector/'. $which .'.png', $options);
+    $image_tag = image_tag('legacy/multimedia/Collector/'. $which .'.png', $options);
   }
 
   return $image_tag;
@@ -41,12 +41,12 @@ function image_tag_collector($collector, $which = '100x100', $options = array())
 /**
  * @param Collector $collector
  * @param string $which
- * 
+ *
  * @return null|string
  */
 function src_tag_collector($collector, $which = '100x100')
 {
-  $default = '/images/frontend/multimedia/Collector/'. $which .'.png';
+  $default = '/images/legacy/multimedia/Collector/'. $which .'.png';
 
   if (!($collector instanceof Collector))
   {
@@ -79,7 +79,7 @@ function image_tag_collection($collection, $which = '150x150', $options = array(
 {
   if (is_null($collection) || !($collection instanceof Collection))
   {
-    return image_tag('frontend/multimedia/Collection/'. $which .'.png');
+    return image_tag('legacy/multimedia/Collection/'. $which .'.png');
   }
 
   $options = array_merge(
@@ -92,7 +92,7 @@ function image_tag_collection($collection, $which = '150x150', $options = array(
 
   if (empty($image_tag))
   {
-    $image_tag = image_tag('frontend/multimedia/Collection/'. $which .'.png', $options);
+    $image_tag = image_tag('legacy/multimedia/Collection/'. $which .'.png', $options);
   }
 
   return $image_tag;
@@ -113,7 +113,7 @@ function image_tag_collectible($collectible, $which = '150x150', $options = arra
 {
   if (!$collectible instanceof Collectible)
   {
-    return image_tag('frontend/multimedia/Collectible/'. $which .'.png', $options);
+    return image_tag('legacy/multimedia/Collectible/'. $which .'.png', $options);
   }
 
   $options = array_merge(
@@ -133,7 +133,7 @@ function image_tag_collectible($collectible, $which = '150x150', $options = arra
 
   if (empty($image_tag))
   {
-    $image_tag = image_tag('frontend/multimedia/Collectible/'. $which .'.png', $options);
+    $image_tag = image_tag('legacy/multimedia/Collectible/'. $which .'.png', $options);
   }
 
   return $image_tag;
@@ -142,7 +142,7 @@ function image_tag_collectible($collectible, $which = '150x150', $options = arra
 /**
  * @param  Collectible  $collectible
  * @param  string       $which
- * 
+ *
  * @return null|string
  */
 function src_tag_collectible($collectible, $which = '150x150')
@@ -152,7 +152,7 @@ function src_tag_collectible($collectible, $which = '150x150')
 
   if (empty($src_tag))
   {
-    $src_tag = '/images/frontend/multimedia/Collectible/'. $which .'.png';
+    $src_tag = '/images/legacy/multimedia/Collectible/'. $which .'.png';
   }
 
   return $src_tag;
@@ -166,7 +166,7 @@ function src_tag_collectible($collectible, $which = '150x150')
  * @param  array       $options     Options for the <img> HTML element
  *
  * @see image_tag()
- * 
+ *
  * @return string
  */
 function image_tag_multimedia($multimedia, $which, $options = array())
@@ -202,7 +202,7 @@ function image_tag_multimedia($multimedia, $which, $options = array())
   }
 
   $src = src_tag_multimedia($multimedia, $which, $options);
-  
+
   // Unsetting all options which should not make it to the html <img/> tag
   unset($options['max_width'], $options['max_height'], $options['slug']);
 
@@ -213,7 +213,7 @@ function image_tag_multimedia($multimedia, $which, $options = array())
  * @param  Multimedia  $multimedia
  * @param  string      $which
  * @param  array       $options
- * 
+ *
  * @return null|string
  */
 function src_tag_multimedia($multimedia, $which, $options = array())
@@ -225,7 +225,7 @@ function src_tag_multimedia($multimedia, $which, $options = array())
 
   if (!$multimedia->fileExists($which))
   {
-    $src = 'frontend/multimedia/'. $multimedia->getModel() .'/'. $which .'.png';
+    $src = 'legacy/multimedia/'. $multimedia->getModel() .'/'. $which .'.png';
   }
   else
   {

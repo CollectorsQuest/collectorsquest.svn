@@ -36,10 +36,10 @@ $(document).ready(function()
     dropShadows: false
   });
 
-  $('<img>').attr('src', '/images/frontend/logo-highlighted.png');
+  $('<img>').attr('src', '/images/legacy/logo-highlighted.png');
   $('img#header-logo')
-    .mouseover(function() { $(this).attr('src', '/images/frontend/logo-highlighted.png'); })
-    .mouseout(function() { $(this).attr('src', '/images/frontend/logo.png'); });
+    .mouseover(function() { $(this).attr('src', '/images/legacy/logo-highlighted.png'); })
+    .mouseout(function() { $(this).attr('src', '/images/legacy/logo.png'); });
 
   // all hover and click logic for buttons
   $(".fg-button")

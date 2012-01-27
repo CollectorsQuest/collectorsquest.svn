@@ -49,7 +49,7 @@ include_javascripts_for_form($form);
     jQuery('textarea').tinymce(
     {
       script_url: '/js/tiny_mce/tiny_mce.js',
-      content_css : "/css/frontend/tinyMCE.css",
+      content_css : "/css/legacy/tinyMCE.css",
 
       theme: "advanced",
       theme_advanced_buttons1: "formatselect,bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo",

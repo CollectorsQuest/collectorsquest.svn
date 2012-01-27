@@ -8,7 +8,7 @@ table {
 
 fieldset {
   border: 1px solid #cccccc !important;
-  background: #f8fbe5 url(/images/frontend/intro.png) no-repeat top right !important;
+  background: #f8fbe5 url(/images/legacy/intro.png) no-repeat top right !important;
   z-index: 100000 !important;
   position: relative !important;
   border: 1px solid #000000 !important;

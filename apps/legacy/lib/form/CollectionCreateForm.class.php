@@ -4,7 +4,7 @@ class CollectionCreateForm extends BaseCollectionForm
 {
   public function configure()
   {
-    $this->getWidgetSchema()->setFormFormatterName('frontend');
+    $this->getWidgetSchema()->setFormFormatterName('legacy');
 
     $this->validatorSchema['collector_id'] = new sfValidatorPass();
     $this->validatorSchema['slug'] = new sfValidatorPass();

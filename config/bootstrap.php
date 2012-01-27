@@ -16,7 +16,7 @@ if (!defined('SVN_REVISION'))
 
 if ($_SERVER['SERVER_NAME'] == 'www.collectorsquest.dev' || $_SERVER['SERVER_NAME'] == 'collectorsquest.dev')
 {
-  define('SF_APP', 'frontend');
+  define('SF_APP', 'legacy');
   define('SF_ENV', 'dev');
   define('SF_DEBUG', true);
 }
@@ -34,13 +34,13 @@ else if ($_SERVER['SERVER_NAME'] == 'backend.collectorsquest.com')
 }
 else if ($_SERVER['SERVER_NAME'] == 'www.collectorsquest.stg')
 {
-  define('SF_APP', 'frontend');
+  define('SF_APP', 'legacy');
   define('SF_ENV', 'stg');
   define('SF_DEBUG', true);
 }
 else
 {
-  define('SF_APP', 'frontend');
+  define('SF_APP', 'legacy');
   define('SF_ENV', 'prod');
   define('SF_DEBUG', false);
 }

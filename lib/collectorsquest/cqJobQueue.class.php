@@ -13,6 +13,10 @@ class cqJobQueue extends Zend_Queue
       {
         self::$_databases = sfYaml::load(file_get_contents(sfConfig::get('sf_config_dir').'/databases.yml'));
       }
+      if (empty(self::$_databases['dev']))
+      {
+        self::$_databases['dev']  = self::$_databases['all'];
+      }
 
       $env = sfConfig::get('sf_environment') == 'prod' ? 'all' : sfConfig::get('sf_environment');
 

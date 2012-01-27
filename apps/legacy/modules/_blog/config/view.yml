@@ -1,4 +1,4 @@
 all:
   components:
     sidebar: [_blog, sidebar]
-  stylesheets: [frontend/blog.css]
+  stylesheets: [legacy/blog.css]

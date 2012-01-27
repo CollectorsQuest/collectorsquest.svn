@@ -1,6 +1,6 @@
 <?php
 
-/** @var sfApplicationConfiguration $configuration */
+/** @var cqApplicationConfiguration $configuration */
 $configuration = sfProjectConfiguration::getActive();
 $configuration->loadHelpers(array('Asset', 'Text', 'Url', 'cqGeneral', 'cqImages'));
 
@@ -64,7 +64,7 @@ function link_to_collector($object, $type = 'text', $options = array())
     case 'stack':
       $options = array_merge($options, array('width' => 64, 'height' => 64));
       $link = sprintf(
-        '<div style="width: 80px; height: 80px; background: transparent url(/images/frontend/avatar-bgr.png) no-repeat; padding: 13px 0 0 13px;">%s</div>',
+        '<div style="width: 80px; height: 80px; background: transparent url(/images/legacy/avatar-bgr.png) no-repeat; padding: 13px 0 0 13px;">%s</div>',
         link_to(image_tag_collector($collector, '100x100', $options), $url, $options)
       );
       break;

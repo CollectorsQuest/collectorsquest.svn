@@ -13,7 +13,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'margin: 3px;')
         );
       }
@@ -29,7 +29,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'margin: 3px;')
         );
       }
@@ -45,7 +45,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'margin: 3px;')
         );
       }
@@ -61,7 +61,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/230x150.png',
+          'legacy/multimedia/Collectible/230x150.png',
           array('width' => 230, 'height' => 150, 'style' => 'margin: 1px 3px; border: 2px solid transparent')
         );
       }
@@ -79,7 +79,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'margin: 3px 3px 1px 3px;')
         );
       }
@@ -95,7 +95,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'margin: 3px;')
         );
       }
@@ -111,7 +111,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'margin: 3px;')
         );
       }
@@ -129,7 +129,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/170x230.png',
+          'legacy/multimedia/Collectible/170x230.png',
           array('width' => 170, 'height' => 230, 'style' => 'margin: 3px 5px 3px 2px;')
         );
       }
@@ -147,7 +147,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collection/150x150.png',
+          'legacy/multimedia/Collection/150x150.png',
           array('width' => 150, 'height' => 150, 'style' => 'float: left; margin: 3px 4px 3px 3px;')
         );
       }
@@ -163,7 +163,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collection/150x150.png',
+          'legacy/multimedia/Collection/150x150.png',
           array('style' => 'float: left; margin: 3px 4px 3px 3px;')
         );
       }
@@ -179,7 +179,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'float: left; margin: 4px;')
         );
       }
@@ -195,7 +195,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'float: left; margin: 4px;')
         );
       }
@@ -211,7 +211,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'float: left; margin: 4px;')
         );
       }
@@ -227,7 +227,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'float: left; margin: 4px;')
         );
       }
@@ -244,7 +244,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'float: left; margin: 5px 5px 3px 4px;')
         );
       }
@@ -260,7 +260,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'float: left; margin: 5px 4px 3px 3px;')
         );
       }
@@ -276,7 +276,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'float: left; margin: 5px 4px 3px 3px;')
         );
       }
@@ -292,7 +292,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'float: left; margin: 5px 3px 3px 5px;')
         );
       }
@@ -308,7 +308,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'float: left; margin: 5px 4px 4px 4px;')
         );
       }
@@ -324,7 +324,7 @@
       else
       {
         echo image_tag(
-          'frontend/multimedia/Collectible/75x75.png',
+          'legacy/multimedia/Collectible/75x75.png',
           array('width' => 70, 'height' => 70, 'style' => 'float: left; margin: 5px 4px 4px 4px;')
         );
       }

@@ -67,7 +67,7 @@ if (in_array($type, array('image', 'video')))
       }
       else
       {
-        $path  = '/images/frontend/multimedia/'. $row['model'] .'/'. $size .'.png';
+        $path  = '/images/legacy/multimedia/'. $row['model'] .'/'. $size .'.png';
 
         // Send Content-Type and the X-SendFile header
         header("Content-Type: image/png");

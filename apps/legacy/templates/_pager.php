@@ -1,5 +1,5 @@
 <?php
-  use_stylesheet('frontend/pagination.css', 'last');
+  use_stylesheet('legacy/pagination.css', 'last');
 
   $options['title'] = (!empty($options['title']) && stripos($options['title'], '%d')) ? $options['title'] : __('Page %d');
 

@@ -274,7 +274,7 @@ blockquote p, pre p {
   padding: 3px 0 5px 15px;
   color: #FFFFFF;
   height: 28px;
-  background: url(./images/frontend/sidebar-section-bgr.png) no-repeat;
+  background: url(./images/legacy/sidebar-section-bgr.png) no-repeat;
 }
 
 #widget-blog-categories li a {

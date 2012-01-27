@@ -43,7 +43,7 @@ if ($collectible_for_sale)
           <a class="zoom" href="<?php echo src_tag_multimedia($m, '1024x768'); ?>" title="<?php echo $m->getName(); ?>" onClick="return false;">
             <?php echo image_tag_multimedia($m, '150x150', array('width' => 100, 'title' => $m->getName())); ?>
           </a>
-          <?php echo image_tag('frontend/zoom.png', array('class' => 'zoom-overlay')); ?>
+          <?php echo image_tag('legacy/zoom.png', array('class' => 'zoom-overlay')); ?>
         </div>
       <?php endforeach; ?>
     </div>

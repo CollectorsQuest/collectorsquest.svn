@@ -19,12 +19,12 @@
   <link rel="stylesheet" href="/css/screen.css" type="text/css" media="screen, projection">
   <link rel="stylesheet" href="/css/print.css" type="text/css" media="print">
   <!--[if lt IE 8]><link rel="stylesheet" href="/css/ie.css" type="text/css" media="screen, projection"><![endif]-->
-  <link href="/css/frontend/jquery.css" rel="stylesheet" type="text/css" media="screen, projection"/>
+  <link href="/css/legacy/jquery.css" rel="stylesheet" type="text/css" media="screen, projection"/>
 
   <?php
     if (has_component_slot('sidebar'))
     {
-      use_stylesheet('frontend/sidebar.css');
+      use_stylesheet('legacy/sidebar.css');
     }
 
     sfConfig::set('symfony.asset.stylesheets_included', true);
@@ -36,7 +36,7 @@
     }
   ?>
 
-  <!--[if lt IE 8]><link rel="stylesheet" href="/css/frontend/ie.css" type="text/css" media="screen, projection"><![endif]-->
+  <!--[if lt IE 8]><link rel="stylesheet" href="/css/legacy/ie.css" type="text/css" media="screen, projection"><![endif]-->
 
   <?php
     // TODO: We are stuck at jquery version 1.5 because of jquery.beutytips.js
@@ -54,7 +54,7 @@
   <!--[if IE 6]>
   <script type="text/javascript">
     var IE6UPDATE_OPTIONS = {
-      icons_path: "/images/frontend/ie6update/",
+      icons_path: "/images/legacy/ie6update/",
       message: "<?= __('Internet Explorer is missing updates required to view this site. Click here to update...'); ?>",
       url: "http://www.google.com/chromeframe"
     }

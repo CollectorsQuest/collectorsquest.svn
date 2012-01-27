@@ -1,5 +1,5 @@
 all:
-  stylesheets: [frontend/messages.css]
+  stylesheets: [legacy/messages.css]
   components:
     sidebar: [messages, sidebar]
 

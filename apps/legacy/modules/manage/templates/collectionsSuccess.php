@@ -1,7 +1,7 @@
 <?php if (count($collections) == 0): ?>
   <br clear="all" />
   <center>
-    <?php echo image_tag('frontend/mockups/manage_collections_empty.jpg'); ?>
+    <?php echo image_tag('legacy/mockups/manage_collections_empty.jpg'); ?>
   </center>
 <?php
   else:
