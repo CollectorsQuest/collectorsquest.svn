@@ -12,5 +12,9 @@ class CollectionForm extends BaseCollectionForm
 {
   public function configure()
   {
+    $this->widgetSchema['collection_category_id'] = new sfWidgetFormPropelChoice(array(
+      'model' => 'CollectionCategory', 'add_empty' => true,
+      'order_by' => array('Name', 'Asc'), 'method' => 'getNameWithParent'
+    ));
   }
 }
