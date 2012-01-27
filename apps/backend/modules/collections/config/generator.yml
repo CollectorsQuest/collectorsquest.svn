@@ -34,6 +34,8 @@ generator:
       filter:
         display: [name, collection_category_id]
 
-      form:    ~
+      form:
+        display: [name, collection_category_id]
+
       edit:    ~
       new:     ~

@@ -7,6 +7,18 @@ class CollectionCategory extends BaseCollectionCategory
     return $this->getName();
   }
 
+  public function getNameWithParent()
+  {
+    $name = $this->getName();
+
+    if ($this->getParentId())
+    {
+      $name .= ' ('. $this->getParent()->getName() .')';
+    }
+
+    return $name;
+  }
+
   public function getParent()
   {
     return CollectionCategoryQuery::create()->findOneById($this->getParentId());
