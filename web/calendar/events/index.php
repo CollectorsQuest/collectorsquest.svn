@@ -60,7 +60,7 @@ else
 $com = isset($_GET['com']) ? $_GET['com'] : null;
 $url = sprintf(
   "http://www.collectorsquest.local/_calendar/index?_session_id=%s&key=%s&com=%s&env=%s",
-  $_COOKIE['frontend'], $key, $com, SF_ENV
+  $_COOKIE['legacy'], $key, $com, SF_ENV
 );
 
 $layout = file_get_contents($url);

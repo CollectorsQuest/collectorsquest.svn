@@ -123,7 +123,7 @@
   }
 
   $layout = file_get_contents(
-    "http://www.collectorsquest.com/_blog/index?_session_id=". $_COOKIE['frontend'] ."&key=". $key .'&env='. SF_ENV
+    "http://www.collectorsquest.com/_blog/index?_session_id=". $_COOKIE['legacy'] ."&key=". $key .'&env='. SF_ENV
   );
 
   echo str_replace(
