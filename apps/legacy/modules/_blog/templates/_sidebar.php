@@ -52,15 +52,6 @@
   <li id="widget-bloggers" class="widget">
     <h2 class="widget-title">Our Bloggers</h2>
     <ul>
-      <li class="collin-david">
-        <a href="/blog/people/collin-david" title="Bio of blogger Collin David">
-          <img src="/images/blog/avatar-collin-david.png" align="left" style="height: 40px; margin-right: 10px; border: 1px solid #BDB7BD;">
-        </a>
-        <b style="font-size: 14px;">Collin David</b><br>
-        <a href="/blog/people/collin-david" title="Bio of blogger Collin David">[bio]</a> &nbsp;
-        <a href="/blog/index.php?author=7" title="Collin David's articles on collecting...">[articles]</a>
-        <br clear="all">
-      </li>
       <li class="brian-rubin">
         <a href="/blog/people/brian-rubin">
           <img src="/images/blog/avatar-brian-rubin.png" align="left" style="height: 40px; margin-right: 10px; border: 1px solid #BDB7BD;">
@@ -68,6 +59,15 @@
         <b style="font-size: 14px;">Brian Rubin</b><br>
         <a href="/blog/people/brian-rubin" title="Bio of blogger Brian Rubin">[bio]</a> &nbsp;
         <a href="/blog/index.php?author=14" title="Brian Rubin's articles on collecting...">[articles]</a>
+        <br clear="all">
+      </li>
+      <li class="collin-david">
+        <a href="/blog/people/collin-david" title="Bio of blogger Collin David">
+          <img src="/images/blog/avatar-collin-david.png" align="left" style="height: 40px; margin-right: 10px; border: 1px solid #BDB7BD;">
+        </a>
+        <b style="font-size: 14px;">Collin David</b><br>
+        <a href="/blog/people/collin-david" title="Bio of blogger Collin David">[bio]</a> &nbsp;
+        <a href="/blog/index.php?author=7" title="Collin David's articles on collecting...">[articles]</a>
         <br clear="all">
       </li>
       <li class="dean-ferber">
@@ -95,6 +95,15 @@
         <b style="font-size: 14px;">Derek Dahlsad</b><br>
         <a href="/blog/people/derek-dahlsad">[bio]</a> &nbsp;
         <a href="/blog/index.php?author=4">[articles]</a>
+        <br clear="all">
+      </li>
+      <li class="tom-peeling">
+        <a href="/blog/people/tom-peeling">
+          <img src="/images/blog/avatar-tom-peeling.png" align="left" style="height: 40px; margin-right: 10px; border: 1px solid #BDB7BD;">
+        </a>
+        <b style="font-size: 14px;">Tom Peeling</b><br>
+        <a href="/blog/people/tom-peeling" title="Bio of blogger Tom Peeling">[bio]</a> &nbsp;
+        <a href="/blog/index.php?author=15" title="Tom Peeling's articles on collecting...">[articles]</a>
         <br clear="all">
       </li>
       <li class="val-ubell">
