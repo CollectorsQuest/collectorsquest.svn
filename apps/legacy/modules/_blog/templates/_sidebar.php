@@ -44,6 +44,9 @@
       <li class="fyi">
         <a href="/blog/category/collecting-fyi/">collecting fyi</a>
       </li>
+      <li class="nandn">
+        <a href="/blog/category/news-and-nuggets/">news and nuggets</a>
+      </li>
       <li class="event">
         <a href="/blog/category/events/">events</a>
       </li>
