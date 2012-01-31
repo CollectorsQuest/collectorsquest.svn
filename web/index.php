@@ -33,7 +33,7 @@ $spiders = array(
 
 foreach ($spiders as $name => $pattern)
 {
-  if (stristr($_SERVER['HTTP_USER_AGENT'], $name))
+  if (isset($_SERVER['HTTP_USER_AGENT']) && stristr($_SERVER['HTTP_USER_AGENT'], $name))
   {
     $ip = cqStatic::getUserIpAddress();
     $hostname = gethostbyaddr($ip);

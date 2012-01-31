@@ -122,8 +122,22 @@
     zend_shm_cache_store($key, $data, 10);
   }
 
+  switch (SF_ENV)
+  {
+    case 'dev':
+      $domain = 'collectorsquest.dev';
+      break;
+    case 'stg':
+      $domain = 'collectorsquest.stg';
+      break;
+    case 'prod':
+    default:
+      $domain = 'collectorsquest.com';
+      break;
+  }
+
   $layout = file_get_contents(
-    "http://www.collectorsquest.com/_blog/index?_session_id=". $_COOKIE['legacy'] ."&key=". $key .'&env='. SF_ENV
+    "http://www.". $domain ."/_blog/index?_session_id=". $_COOKIE['legacy'] ."&key=". $key .'&env='. SF_ENV
   );
 
   echo str_replace(
