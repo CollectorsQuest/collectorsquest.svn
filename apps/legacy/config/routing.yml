@@ -100,6 +100,10 @@ collector_by_id:
   param: { module: collector, action: index }
   requirements: { id: '\d+', slug: '[\-\w\.]+' }
 
+collector_dropbox:
+  url:  /collector/dropbox
+  param: { module: collector, action: dropbox }
+
 collector_me:
   url:  /collector/me
   class: sfPropelRoute
@@ -365,6 +369,10 @@ manage_preferences:
   url:   /manage/preferences
   param: { module: manage, action: preferences }
 
+manage_dropbox:
+  url:   /manage/dropbox
+  param: { module: manage, action: dropbox }
+
 manage_collections:
   url:   /manage/collections
   param: { module: manage, action: collections }
@@ -390,6 +398,11 @@ manage_collectibles_by_slug:
     id: \d+
     slug: '[\-\w\.]+'
     sf_method: [get, post]
+
+manage_collectibles:
+  url:  /manage/collectibles
+  params: { module: manage, action: collectibles }
+  requirements: { sf_method: [get, post] }
 
 manage_collectible_by_slug:
   url:  /manage/collectible/:id/:slug

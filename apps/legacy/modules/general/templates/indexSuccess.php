@@ -1,3 +1,19 @@
+<?php
+/**
+ * @var  wpPost[]    $blog_posts
+ * @var  wpPost      $blog_post
+ * @var  string      $blog_content
+ * @var  Multimedia  $blog_image
+ *
+ * @var  Video[]  $latest_videos
+ * @var  Video    $featured_video
+ *
+ * @var  Featured      $featured_week
+ * @var  Collectible   $featured_collectible
+ * @var  Collection[]  $latest_collections
+ */
+?>
+
 <?php include_component('general', 'indexTheme'); ?>
 
 <div class="clear">&nbsp;</div>
@@ -8,7 +24,7 @@
     <div style="height: 60px;">
       <h3><?= truncate_text(trim($blog_post->getPostTitle()), 80, '...', true); ?></h3>
       <span style="color: #466A48;">
-        <?= sprintf(__('by %s'), link_to($blog_post->getwpUser()->getDisplayName(), '@homepage', array('style' => 'color: #466A48;'))); ?>
+        <?= sprintf(__('by %s'), link_to($blog_post->getwpUser()->getDisplayName(), '/blog/author/'. $blog_post->getwpUser()->getUserLogin().'/', array('style' => 'color: #466A48;'))); ?>
       </span>
     </div>
 
@@ -45,7 +61,7 @@
       <h3><?= truncate_text(trim($featured_video->getTitle()), 80, '...', true); ?></h3>
       <span style="color: #466A48;"><?= sprintf(__('%s Coverage'), $featured_video->getType()); ?></span>
     </div>
-    
+
     <?= link_to_video($featured_video, 'image', array('width' => 300, 'height' => 225, 'style' => 'margin: 10px 0;')); ?>
     <p style="height: 50px;">
       <?= truncate_text($featured_video->getDescription(), 140, '...', true); ?>

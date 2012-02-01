@@ -1,7 +1,20 @@
-<?php use_helper('Form'); ?>
+<?php
+/**
+ * @var  Collectible          $collectible
+ * @var  CollectibleEditForm  $form
+ */
+?>
 <br class="clear" />
 
 <form action="<?php echo url_for('@manage_collectible?id='. $collectible->getId()); ?>" method="post" enctype="multipart/form-data">
+  <div class="span-4" style="text-align: right;">
+    Collection:
+  </div>
+  <div class="prepend-1 span-13 last">
+    <?= $collectible->getCollection(); ?> &nbsp;
+    <?= link_to_function('(change?)', 'fancybox_collectible_choose_collection()'); ?>
+  </div>
+  <div class="clear append-bottom">&nbsp;</div>
   <div class="span-4" style="text-align: right;">
     <?php echo cq_label_for($form, 'name', __('Name:')); ?>
     <div class="required"><?php echo __('(required)'); ?></div>

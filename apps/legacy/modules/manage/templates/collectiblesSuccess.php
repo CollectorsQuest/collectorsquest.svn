@@ -1,12 +1,9 @@
 <?php
 
-include_stylesheets_for_form($form);
-include_javascripts_for_form($form);
-
 /**
- * @var $collectible Collectible
- * @var $collection Collection
- * @var $form ManageCollectiblesForm
+ * @var Collectible  $collectible
+ * @var Collection  $collection
+ * @var ManageCollectiblesForm  $form
  */
 ?>
 

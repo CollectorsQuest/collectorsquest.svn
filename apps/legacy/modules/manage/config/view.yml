@@ -33,3 +33,12 @@ collectiblesSuccess:
 marketplaceEmpty:
   components:
     sidebar: [manage, sidebarMarketplaceEmpty]
+
+dropboxSuccess:
+  stylesheets: [legacy/collections.css]
+  components:
+    sidebar: [manage, sidebarDropbox]
+
+dropboxNoCollectibles:
+  components:
+    sidebar: [manage, sidebarDropbox]

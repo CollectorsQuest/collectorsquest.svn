@@ -8,6 +8,8 @@ class collectionActions extends cqActions
    */
   public function executeIndex(sfWebRequest $request)
   {
+    $this->forward404Unless($this->getRoute() instanceof sfPropelRoute);
+
     /** @var $collection Collection */
     $collection = $this->getRoute()->getObject();
 
@@ -149,13 +151,11 @@ class collectionActions extends cqActions
     $c->addAscendingOrderByColumn(CollectiblePeer::CREATED_AT);
     $this->collectibles = $collection->getCollectibles($c);
 
+    $this->loadHelpers('cqLinks');
+
     // Building the breadcrumbs
     $this->addBreadcrumb($this->__('Collections'), '@collections');
-    $this->addBreadcrumb(
-      $collection->getName(),
-      sprintf('@collection_by_slug?id=%s&slug=%s', $collection->getId(), $collection->getSlug()),
-      array('limit' => 38)
-    );
+    $this->addBreadcrumb( $collection->getName(), route_for_collection($collection), array('limit' => 38));
     $this->addBreadcrumb(
       $collectible->getName(), null,
       array(

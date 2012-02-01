@@ -9,5 +9,11 @@
  */
 class cqComponents extends sfComponents
 {
-
+  /**
+   * @return Collector
+   */
+  protected function getCollector()
+  {
+    return $this->getUser()->getCollector();
+  }
 }

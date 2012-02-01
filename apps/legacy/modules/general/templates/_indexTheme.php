@@ -142,7 +142,7 @@
         echo link_to(image_tag_collection(
           $collections[0], '150x150',
           array('width' => 150, 'height' => 150, 'style' => 'float: left; margin: 3px 4px 3px 3px;')
-        ), '@collection_by_slug?id='. $collections[0]->getId() .'&slug='. $collections[0]->getSlug());
+        ), route_for_collection($collections[0]));
       }
       else
       {
@@ -158,7 +158,7 @@
         echo link_to(image_tag_collection(
           $collections[1], '150x150',
           array('width' => 150, 'height' => 150, 'style' => 'float: left; margin: 3px 4px 3px 3px;')
-        ), '@collection_by_slug?id='. $collections[1]->getId() .'&slug='. $collections[1]->getSlug());
+        ), route_for_collection($collections[1]));
       }
       else
       {

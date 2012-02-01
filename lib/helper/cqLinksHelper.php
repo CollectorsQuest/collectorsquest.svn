@@ -36,7 +36,7 @@ function link_to_collector($object, $type = 'text', $options = array())
     unset($options['truncate']);
   }
 
-  $url = '@collector_by_id?id='. $collector->getId() .'&slug='. $collector->getSlug();
+  $url = route_for_collector($collector);
   switch ($type)
   {
     case "collection_image":
@@ -56,7 +56,7 @@ function link_to_collector($object, $type = 'text', $options = array())
         $collection = array_shift($collections);
         if ($collection instanceof Collection)
         {
-          $url = '@collection_by_slug?id='.$collection->getId().'&slug='.$collection->getSlug();
+          $url = route_for_collection($collection);
           $link = link_to_if(!$collector->isFacebookOnly(), image_tag_collection($collection, '100x100', array_merge(array('width' => 100, 'height' => 100), $options)), $url, $options);
         }
       }
@@ -82,7 +82,14 @@ function link_to_collector($object, $type = 'text', $options = array())
 
 function url_for_collector(Collector $collector = null, $absolute = false)
 {
-  return ($collector) ? url_for('@collector_by_id?id='. $collector->getId() .'&slug='.$collector->getSlug(), $absolute) : null;
+  return ($collector) ? url_for(route_for_collector($collector), $absolute) : null;
+}
+
+function route_for_collector(Collector $collector = null)
+{
+  return ($collector) ?
+      '@collector_by_id?id='. $collector->getId() .'&slug='. $collector->getSlug() :
+      null;
 }
 
 function link_to_collection($object, $type = 'text', $options = array())
@@ -105,7 +112,7 @@ function link_to_collection($object, $type = 'text', $options = array())
   $title = trim($collection->getName());
   $options = array_merge(
     array(
-      'route' => '@collection_by_slug?id='. $collection->getId() .'&slug='. $collection->getSlug(),
+      'route' => route_for_collection($collection),
       'width' => 150, 'height' => 150, 'alt' => $title, 'title' => $title
     ),
     $options
@@ -136,7 +143,25 @@ function link_to_collection($object, $type = 'text', $options = array())
 
 function url_for_collection(Collection $collection = null, $absolute = false)
 {
-  return ($collection) ? url_for('@collection_by_slug?id='. $collection->getId() .'&slug='. $collection->getSlug(), $absolute) : null;
+  return ($collection) ?
+      url_for(route_for_collection($collection), $absolute) :
+      null;
+}
+
+function route_for_collection(Collection $collection = null)
+{
+  $route = null;
+
+  if ($collection instanceof CollectionDropbox)
+  {
+    $route = '@manage_dropbox';
+  }
+  else if ($collection instanceof Collection)
+  {
+    $route = '@collection_by_slug?id='. $collection->getId() .'&slug='. $collection->getSlug();
+  }
+
+  return $route;
 }
 
 function link_to_collectible(Collectible $collectible, $type = 'text', $options = array())
@@ -152,16 +177,16 @@ function link_to_collectible(Collectible $collectible, $type = 'text', $options 
     unset($options['height']);
   }
 
-  $url = '@collectible_by_slug?id='. $collectible->getId() .'&slug='. $collectible->getSlug();
+  $route = route_for_collectible($collectible);
   switch ($type)
   {
     case 'image':
       $which = (isset($options['width']) && isset($options['height'])) ? $options['width'].'x'.$options['height'] : '150x150';
-      $link = link_to(image_tag_collectible($collectible, $which, $options), $url, $options);
+      $link = link_to(image_tag_collectible($collectible, $which, $options), $route, $options);
       break;
     case 'text':
     default:
-      $link = link_to($collectible->getName(), $url, $options);
+      $link = link_to($collectible->getName(), $route, $options);
       break;
   }
 
@@ -170,7 +195,16 @@ function link_to_collectible(Collectible $collectible, $type = 'text', $options 
 
 function url_for_collectible(Collectible $collectible = null, $absolute = false)
 {
-  return ($collectible) ? url_for('@collectible_by_slug?id='. $collectible->getId() .'&slug='. $collectible->getSlug(), $absolute) : null;
+  return ($collectible) ?
+      url_for(route_for_collectible($collectible), $absolute) :
+      null;
+}
+
+function route_for_collectible(Collectible $collectible = null)
+{
+  return ($collectible) ?
+      '@collectible_by_slug?id='. $collectible->getId() .'&slug='. $collectible->getSlug() :
+      null;
 }
 
 function link_to_video(Video $video, $type = 'text', $options = array())

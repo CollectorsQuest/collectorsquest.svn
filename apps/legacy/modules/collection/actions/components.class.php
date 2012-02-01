@@ -68,7 +68,7 @@ class collectionComponents extends sfComponents
       0 => array(
         'text' => 'Back to Collection',
         'icon' => 'arrowreturnthick-1-w',
-        'route' => sprintf('@collection_by_slug?id=%d&slug=%s', $collection->getId(), $collection->getSlug())
+        'route' => route_for_collection($collection)
       )
     );
 

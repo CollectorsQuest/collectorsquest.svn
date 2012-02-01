@@ -4,7 +4,7 @@ Plugin Name: Smart Youtube PRO
 Plugin URI: http://www.prelovac.com/vladimir/wordpress-plugins/smart-youtube
 Description: Insert YouTube videos in posts, comments and RSS feeds with ease and full customization.
 Author: Vladimir Prelovac
-Version: 4.0.3
+Version: 4.1.4
 Author URI: http://www.prelovac.com/vladimir/
 
 
@@ -88,9 +88,8 @@ class SmartYouTube_PRO {
 	function __construct() {
 		$this->local_version = '1.0'; // TODO: Change this number???
 		
-		$this->plugin_url = defined( 'WP_PLUGIN_URL' ) ? 
-							trailingslashit( WP_PLUGIN_URL . '/' . dirname( plugin_basename( __FILE__ ) ) ) : 
-							trailingslashit( get_bloginfo( 'wpurl' ) ) . PLUGINDIR . '/' . dirname( plugin_basename( __FILE__ ) );
+		$this->plugin_url = trailingslashit(plugins_url(null,__FILE__));
+	
 		
 		$this->key = 'smart_youtube_pro';
 		$this->first_post_on_archive = false;
@@ -359,7 +358,7 @@ class SmartYouTube_PRO {
 					<p><?php _e( 'Vimeo Example: httpv://vimeo.com/27287078', 'smart-youtube' ); ?></p>
 					<p><?php _e( 'Metacafe Example: httpvh://vww.metacafe.com/watch/7815470/harry_potter_and_the_deathly_hallows_dvd_interview/', 'smart-youtube' ); ?></p>
 					<p><?php _e( 'Live Leak Example: httpv://www.liveleak.com/view?i=cad_1322822486', 'smart-youtube' ); ?></p>
-					<p><?php _e( 'To embed playlists use httpvp:// (eg. httpvp://www.youtube.com/view_play_list?p=528026B4F7B34094)', 'smart-youtube' ); ?></p>
+					<p><?php _e( 'To embed playlists use httpvp:// (eg. httpvp://www.youtube.com/playlist?list=PL050E43A49BC5E5E5)', 'smart-youtube' ); ?></p>
 					<p><?php _e( 'Smart Youtube also supports migrated blogs from Wordpress.com using [youtube=youtubeadresss]', 'smart-youtube' ); ?></p>
 					<ul>
 						<li><?php _e( 'httpv:// - regular video', 'smart-youtube' ); ?></li>
@@ -527,7 +526,7 @@ class SmartYouTube_PRO {
 					<label for="tag"><?php _e( 'Custom code', 'smart-youtube' ); ?></label>
 					 
 					<h3><?php _e( 'WiziApp support', 'smart-youtube' ); ?></h3>
-					<p><?php _e( 'WiziApp helps you to publish your blog as an iPhone app. This will integrate your video seamlessly. <a href="http://wiziapp.com">Learn more about WiziApp</a>.', 'smart-youtube' ); ?></p>
+					<p><?php _e( 'WiziApp helps you to publish your blog as an iPhone app. This will integrate your video seamlessly. <a href="http://www.wiziapp.com/?a_aid=smartyoutube">Learn more about WiziApp</a>.', 'smart-youtube' ); ?></p>
 					<input id="wiziapp" type="checkbox" name="wiziapp" <?php echo $wiziapp; ?> />
 					<label for="wiziapp"><?php _e( 'Enable WiziApp support', 'smart-youtube' ); ?></label>
 					<h3><?php _e( 'xHTML validation', 'smart-youtube' ); ?></h3>
@@ -667,7 +666,7 @@ class SmartYouTube_PRO {
 		
 		$context = $side ? 'side' : 'post';
 		
-		preg_match_all( "/((http(v|vh|vhd)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?youtube\.com\/watch(\?v\=|\/v\/|#!v=)([a-zA-Z0-9\-\_]{11})([^<\s]*))|((http(v|vh|vhd)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?youtu\.be\/([a-zA-Z0-9\-\_]{11}))|((http(v|vh|vhd)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?metacafe\.com\/watch\/([a-zA-Z0-9\-\_]{7})\/([^<^\/\s]*)([\/])?)|((http(v|vh|vhd)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?vimeo\.com\/([a-zA-Z0-9\-\_]{8})([\/])?)|((http(v|vh|vhd)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?liveleak\.com\/view(\?i\=)([a-zA-Z0-9\-\_]*))|((http(v|vh|vhd)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?facebook\.com\/video\/video.php\?v\=([a-zA-Z0-9\-\_]*))|((http(vp|vhp)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?youtube\.com\/(view_play_list|playlist)(\?p\=|\/v\/|#!v=)([a-zA-Z0-9\-\_])([^<\s]*))/", $the_content, $matches, PREG_SET_ORDER );
+		preg_match_all( "/((http(v|vh|vhd)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?youtube\.com\/watch(\?v\=|\/v\/|#!v=)([a-zA-Z0-9\-\_]{11})([^<\s]*))|((http(v|vh|vhd)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?youtu\.be\/([a-zA-Z0-9\-\_]{11}))|((http(v|vh|vhd)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?metacafe\.com\/watch\/([a-zA-Z0-9\-\_]{7})\/([^<^\/\s]*)([\/])?)|((http(v|vh|vhd)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?vimeo\.com\/([a-zA-Z0-9\-\_]{8})([\/])?)|((http(v|vh|vhd)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?liveleak\.com\/view(\?i\=)([a-zA-Z0-9\-\_]*))|((http(v|vh|vhd)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?facebook\.com\/video\/video.php\?v\=([a-zA-Z0-9\-\_]*))|((http(vp|vhp)?:\/\/)?([a-zA-Z0-9\-\_]+\.|)?youtube\.com\/(view_play_list\?p\=|playlist\?list\=)([a-zA-Z0-9\-\_]{18})([^<\s]*))/", $the_content, $matches, PREG_SET_ORDER );
 		
 		foreach ( $matches as $match ) {
 			if ( $match[1] != '' ) {
@@ -749,17 +748,18 @@ class SmartYouTube_PRO {
 					$the_content = str_replace( $match[32], $this->tag_facebook( $context, $match[36], $match[34] ), $the_content );
 				}
 			} elseif ( $match[37] != '' ) {
+				
 				if ( 'on' == $this->options['wiziapp'] ) {
 					$videos = array();
-					$video_info['src'] = "http://www.youtube.com/playlist?p={$match[43]}";
+					$video_info['src'] = "http://www.youtube.com/playlist?list={$match[42]}";
 					array_push( $videos, $video_info );
 					$replace_text = '';
 					$replace_text = apply_filters( 'wiziapp_3rd_party_plugin', $replace_text, 'video', $videos );
 					$the_content = str_replace( $match[1], $replace_text, $the_content );
 				} else if ( ( $match[38] == 'http://' && $this->options['http'] == 'on' ) || ( $match[38] == '' && $this->options['www'] == 'on' ) ) {
-					$the_content = str_replace( $match[37], $this->tag_youtube( $context, $match[43], 'vp', $match[44] ), $the_content );
+					$the_content = str_replace( $match[37], $this->tag_youtube( $context, $match[42], 'vp', $match[43] ), $the_content );
 				} else if ( $match[39] == 'vp' || $match[39] == 'vhp' ) {
-					$the_content = str_replace( $match[37], $this->tag_youtube( $context, $match[43], $match[39], $match[44] ), $the_content );
+					$the_content = str_replace( $match[37], $this->tag_youtube( $context, $match[42], $match[39], $match[43] ), $the_content );
 				}
 			}
 		}
@@ -1003,7 +1003,7 @@ EOT;
 			}
 		}
 		
-		if ( $logoless = 'on' ) {
+		if ( $logoless == 'on' ) {
 			$ll = '&modestbranding=1';
 			$disp_info = '';
 		} else {
@@ -1036,11 +1036,11 @@ EOT;
 			}
 		} else {
 			if ( $this->options['iframe'] == 'on' )
-				$video_url = htmlspecialchars( "$root_url/embed/$file?fs=1&hl=en$ap$ll&loop=$loop{$disp_info}$disp_ann&showsearch=$disp_search&rel=$disp_rel&theme=$theme", ENT_QUOTES ) . $high . $time;
+				$video_url = htmlspecialchars( "$root_url/embed/$file?wmode=transparent&fs=1&hl=en$ap$ll&loop=$loop{$disp_info}$disp_ann&showsearch=$disp_search&rel=$disp_rel&theme=$theme", ENT_QUOTES ) . $high . $time;
 			else
-				$video_url = htmlspecialchars( "$root_url/v/$file?fs=1&hl=en&$ap$ll&loop=$loop{$disp_info}$disp_ann&showsearch=$disp_search&rel=$disp_rel&theme=$theme", ENT_QUOTES ) . $high . $time;
+				$video_url = htmlspecialchars( "$root_url/v/$file?wmode=transparent&fs=1&hl=en&$ap$ll&loop=$loop{$disp_info}$disp_ann&showsearch=$disp_search&rel=$disp_rel&theme=$theme", ENT_QUOTES ) . $high . $time;
 			
-			if ( $playlist ) {
+			if ( $playlist ) {				
 				$video_url = htmlspecialchars( "$root_url/embed/videoseries?list=$file&fs=1&hl=en$ap$ll&loop=$loop{$disp_info}$disp_ann&showsearch=$disp_search&rel=$disp_rel&theme=$theme", ENT_QUOTES ) . $high . $time;
 				$yte_tag = <<<EOT
 <span class="youtube"><iframe class="youtube-player" src="$video_url" width="$width" height="$height" frameborder="0" allowfullscreen></iframe></span>
@@ -1084,21 +1084,21 @@ EOT;
 				$high = '&fmt=18';
 			}
 			if ( $playlist )
-				$url = 'http://www.youtube.com/view_play_list?p=';
+				$url = 'http://www.youtube.com/playlist?list=';
 			else
 				$url = 'http://www.youtube.com/watch?v=';
 				
 			$yte_tag = '';
 			if ( $this->options['link'] == 'on' ) {
-				$yte_tag .= '<p><a href="' . $url . $file . $high . '">www.youtube.com/watch?v=' . $file . '</a></p>';
+				$yte_tag .= '<p><a href="' . $url . $file . $high . '">'.$url. $file . '</a></p>';
 			}
 			
 			if ( $this->options['img'] == 'on' ) {
 				$yte_tag .= '<p><a href="' . $url . $file . $high. '"><img src="http://img.youtube.com/vi/' . $file . '/default.jpg" width="130" height="97" border=0></a></p>';
 			}
 			
-			// if ($this->options['link'] == 'off' && $this->options['img'] == 'off')
-			// $yte_tag='http://www.youtube.com/watch?v='.$file;
+			 if ($this->options['link'] == 'off' && $this->options['img'] == 'off')
+			 $yte_tag=$url.$file;
 		}
 		
 		return str_replace( '{video}', $yte_tag, html_entity_decode( $template ) ); 

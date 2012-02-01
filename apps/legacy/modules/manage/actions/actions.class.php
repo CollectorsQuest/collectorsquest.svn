@@ -73,7 +73,6 @@ class manageActions extends cqActions
 
     // Get the collections of the current collector
     $c = new Criteria();
-//    $c->setDistinct();
     $c->add(CollectionPeer::COLLECTOR_ID, $this->getUser()->getId());
     $c->addDescendingOrderByColumn(CollectionPeer::CREATED_AT);
 
@@ -90,6 +89,7 @@ class manageActions extends cqActions
 
     $this->pager = $pager;
     $this->collections = $pager->getResults();
+    $this->dropbox = new CollectionDropbox($this->getCollector()->getId());
 
     $this->bIsSeller = false;
     $ssTitle = $this->__('Your Collections');
@@ -225,11 +225,15 @@ class manageActions extends cqActions
       switch ($request->getParameter('cmd'))
       {
         case 'delete':
+
           $collectible_name = $collectible->getName();
           $collectible->delete();
           $this->getUser()->setFlash('success', sprintf($this->__('Collectible "%s" was deleted!'), $collectible_name));
 
-          return $this->redirect('@collection_by_slug?id=' . $collection->getId() . '&slug=' . $collection->getSlug());
+          $this->loadHelpers('cqLinks');
+
+          return $this->redirect(route_for_collection($collection));
+
           break;
       }
     }
@@ -299,8 +303,11 @@ class manageActions extends cqActions
     $this->form = $form;
     $this->omItemForSaleForm = isset($omItemForSaleForm) ? $omItemForSaleForm : null;
 
+    $this->loadHelpers('cqLinks');
+
     $this->addBreadcrumb($this->__('Your Collections'), '@manage_collections');
-    $this->addBreadcrumb($collection->getName(), '@collection_by_slug?id=' . $collection->getId() . '&slug=' . $collection->getSlug());
+
+    $this->addBreadcrumb($collection->getName(), route_for_collection($collection));
     $this->addBreadcrumb($collectible->getName());
 
     $this->prependTitle($collectible->getName());
@@ -375,12 +382,31 @@ class manageActions extends cqActions
    */
   public function executeCollectibles(sfWebRequest $request)
   {
+    $collector = $this->getCollector();
+    $this->forward404Unless($collector instanceof Collector);
+
     /* @var $collection Collection */
-    $collection = $this->getRoute()->getObject();
-    $this->forward404Unless($this->getCollector()->isOwnerOf($collection));
+    if ($this->getRoute() instanceof sfPropelRoute)
+    {
+      $collection = $this->getRoute()->getObject();
+      $this->forward404Unless($collector->isOwnerOf($collection));
+    }
+    else
+    {
+      $collection = new CollectionDropbox($collector->getId());
+    }
 
     $criteria = new Criteria();
-    $criteria->add(CollectiblePeer::COLLECTION_ID, $collection->getId(), Criteria::EQUAL);
+
+    if ($collection->getId())
+    {
+      $criteria->add(CollectiblePeer::COLLECTION_ID, $collection->getId(), Criteria::EQUAL);
+    }
+    else
+    {
+      $criteria->add(CollectiblePeer::COLLECTOR_ID, $collector->getId(), Criteria::EQUAL);
+      $criteria->add(CollectiblePeer::COLLECTION_ID, null, Criteria::ISNULL);
+    }
 
     $pager = new sfPropelPager('Collectible', sfConfig::get('app_collectibles_edit_per_page', 5));
     $pager->setPage($request->getParameter('page', 1));
@@ -485,5 +511,36 @@ class manageActions extends cqActions
     $this->prependTitle($collection->getName());
 
     return sfView::SUCCESS;
+  }
+
+  public function executeDropbox(sfWebRequest $request)
+  {
+    $collector = $this->getCollector();
+
+    $c = new Criteria();
+    $c->add(CollectiblePeer::COLLECTOR_ID, $collector->getId());
+    $c->add(CollectiblePeer::COLLECTION_ID, null, Criteria::ISNULL);
+    $c->addOr(CollectiblePeer::COLLECTION_ID, '');
+    $c->addAscendingOrderByColumn(CollectiblePeer::POSITION);
+    $c->addAscendingOrderByColumn(CollectiblePeer::CREATED_AT);
+
+    $per_page = ($request->getParameter('show') == 'all') ? 999 : sfConfig::get('app_pager_list_collectibles_max', 16);
+
+    $pager = new sfPropelPager('Collectible', $per_page);
+    $pager->setCriteria($c);
+    $pager->setPage($this->getRequestParameter('page', 1));
+    $pager->init();
+
+    $this->pager    = $pager;
+    $this->display  = $this->getUser()->getAttribute('display', 'grid', 'collectibles');
+
+    // Building the breadcrumbs
+    $this->addBreadcrumb('Your Collections', '@manage_collections');
+    $this->addBreadcrumb('Dropbox', '@manage_dropbox');
+
+    // Building the title
+    $this->prependTitle('Dropbox');
+
+    return ($pager->getNbResults() == 0) ? 'NoCollectibles' : sfView::SUCCESS;
   }
 }

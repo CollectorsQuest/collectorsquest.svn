@@ -4,7 +4,7 @@
 /**
  * Base class that represents a row from the 'collection' table.
  *
- * 
+ *
  *
  * @package    propel.generator.lib.model.om
  */
@@ -266,7 +266,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [id] column value.
-   * 
+   *
    * @return     int
    */
   public function getId()
@@ -276,7 +276,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [graph_id] column value.
-   * 
+   *
    * @return     int
    */
   public function getGraphId()
@@ -286,7 +286,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [collection_category_id] column value.
-   * 
+   *
    * @return     int
    */
   public function getCollectionCategoryId()
@@ -296,7 +296,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [collector_id] column value.
-   * 
+   *
    * @return     int
    */
   public function getCollectorId()
@@ -306,7 +306,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [name] column value.
-   * 
+   *
    * @return     string
    */
   public function getName()
@@ -316,7 +316,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [slug] column value.
-   * 
+   *
    * @return     string
    */
   public function getSlug()
@@ -326,7 +326,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [description] column value.
-   * 
+   *
    * @return     string
    */
   public function getDescription()
@@ -336,7 +336,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [num_items] column value.
-   * 
+   *
    * @return     int
    */
   public function getNumItems()
@@ -346,7 +346,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [num_views] column value.
-   * 
+   *
    * @return     int
    */
   public function getNumViews()
@@ -356,7 +356,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [num_comments] column value.
-   * 
+   *
    * @return     int
    */
   public function getNumComments()
@@ -366,7 +366,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [num_ratings] column value.
-   * 
+   *
    * @return     int
    */
   public function getNumRatings()
@@ -376,7 +376,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [score] column value.
-   * 
+   *
    * @return     int
    */
   public function getScore()
@@ -386,7 +386,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [is_public] column value.
-   * 
+   *
    * @return     boolean
    */
   public function getIsPublic()
@@ -396,7 +396,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [is_featured] column value.
-   * 
+   *
    * @return     boolean
    */
   public function getIsFeatured()
@@ -406,7 +406,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [comments_on] column value.
-   * 
+   *
    * @return     boolean
    */
   public function getCommentsOn()
@@ -416,7 +416,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [rating_on] column value.
-   * 
+   *
    * @return     boolean
    */
   public function getRatingOn()
@@ -426,7 +426,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [eblob] column value.
-   * 
+   *
    * @return     string
    */
   public function getEblob()
@@ -436,7 +436,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [optionally formatted] temporal [created_at] column value.
-   * 
+   *
    *
    * @param      string $format The date/time format string (either date()-style or strftime()-style).
    *              If format is NULL, then the raw DateTime object will be returned.
@@ -486,7 +486,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Get the [optionally formatted] temporal [updated_at] column value.
-   * 
+   *
    *
    * @param      string $format The date/time format string (either date()-style or strftime()-style).
    *              If format is NULL, then the raw DateTime object will be returned.
@@ -536,7 +536,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [id] column.
-   * 
+   *
    * @param      int $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -558,7 +558,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [graph_id] column.
-   * 
+   *
    * @param      int $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -580,7 +580,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [collection_category_id] column.
-   * 
+   *
    * @param      int $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -607,7 +607,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [collector_id] column.
-   * 
+   *
    * @param      int $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -634,7 +634,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [name] column.
-   * 
+   *
    * @param      string $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -656,7 +656,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [slug] column.
-   * 
+   *
    * @param      string $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -678,7 +678,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [description] column.
-   * 
+   *
    * @param      string $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -700,7 +700,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [num_items] column.
-   * 
+   *
    * @param      int $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -722,7 +722,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [num_views] column.
-   * 
+   *
    * @param      int $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -744,7 +744,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [num_comments] column.
-   * 
+   *
    * @param      int $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -766,7 +766,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [num_ratings] column.
-   * 
+   *
    * @param      int $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -788,7 +788,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [score] column.
-   * 
+   *
    * @param      int $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -814,7 +814,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
    *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
    * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-   * 
+   *
    * @param      boolean|integer|string $v The new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -847,7 +847,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
    *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
    * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-   * 
+   *
    * @param      boolean|integer|string $v The new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -880,7 +880,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
    *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
    * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-   * 
+   *
    * @param      boolean|integer|string $v The new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -913,7 +913,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    *   * 1, '1', 'true',  'on',  and 'yes' are converted to boolean true
    *   * 0, '0', 'false', 'off', and 'no'  are converted to boolean false
    * Check on string values is case insensitive (so 'FaLsE' is seen as 'false').
-   * 
+   *
    * @param      boolean|integer|string $v The new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -942,7 +942,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Set the value of [eblob] column.
-   * 
+   *
    * @param      string $v new value
    * @return     Collection The current object (for fluent API support)
    */
@@ -964,7 +964,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Sets the value of [created_at] column to a normalized version of the date/time value specified.
-   * 
+   *
    * @param      mixed $v string, integer (timestamp), or DateTime value.
    *               Empty strings are treated as NULL.
    * @return     Collection The current object (for fluent API support)
@@ -988,7 +988,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
 
   /**
    * Sets the value of [updated_at] column to a normalized version of the date/time value specified.
-   * 
+   *
    * @param      mixed $v string, integer (timestamp), or DateTime value.
    *               Empty strings are treated as NULL.
    * @return     Collection The current object (for fluent API support)
@@ -3037,21 +3037,14 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   {
     if(null === $this->collCollectibles || null !== $criteria)
     {
-      if ($this->isNew() && null === $this->collCollectibles)
+      $query = CollectibleQuery::create(null, $criteria);
+      if($distinct)
       {
-        return 0;
+        $query->distinct();
       }
-      else
-      {
-        $query = CollectibleQuery::create(null, $criteria);
-        if($distinct)
-        {
-          $query->distinct();
-        }
-        return $query
-          ->filterByCollection($this)
-          ->count($con);
-      }
+      return $query
+        ->filterByCollection($this)
+        ->count($con);
     }
     else
     {
@@ -3639,7 +3632,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   }
 
   // archivable behavior
-  
+
   /**
    * Get an archived version of the current object.
    *
@@ -3655,7 +3648,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     $archive = CollectionArchiveQuery::create()
       ->filterByPrimaryKey($this->getPrimaryKey())
       ->findOne($con);
-  
+
     return $archive;
   }
   /**
@@ -3681,10 +3674,10 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     }
     $this->copyInto($archive, $deepCopy = false, $makeNew = false);
     $archive->save();
-  
+
     return $archive;
   }
-  
+
   /**
    * Revert the the current object to the state it had when it was last archived.
    * The object must be saved afterwards if the changes must persist.
@@ -3701,15 +3694,15 @@ abstract class BaseCollection extends BaseObject  implements Persistent
       throw new PropelException('The current object has never been archived and cannot be restored');
     }
     $this->populateFromArchive($archive);
-  
+
     return $this;
   }
-  
+
   /**
    * Populates the the current object based on a $archiveTablePhpName archive object.
    *
    * @param      CollectionArchive $archive An archived object based on the same class
-    * @param      Boolean $populateAutoIncrementPrimaryKeys 
+    * @param      Boolean $populateAutoIncrementPrimaryKeys
    *               If true, autoincrement columns are copied from the archive object.
    *               If false, autoincrement columns are left intact.
     *
@@ -3738,10 +3731,10 @@ abstract class BaseCollection extends BaseObject  implements Persistent
     $this->setEblob($archive->getEblob());
     $this->setCreatedAt($archive->getCreatedAt());
     $this->setUpdatedAt($archive->getUpdatedAt());
-  
+
     return $this;
   }
-  
+
   /**
    * Removes the object from the database without archiving it.
    *
@@ -3756,7 +3749,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
   }
 
   // timestampable behavior
-  
+
   /**
    * Mark the current object so that the update date doesn't get updated during next save
    *
@@ -3773,7 +3766,7 @@ abstract class BaseCollection extends BaseObject  implements Persistent
    */
   public function __call($name, $params)
   {
-    
+
     // symfony_behaviors behavior
     if ($callable = sfMixer::getCallable('BaseCollection:' . $name))
     {

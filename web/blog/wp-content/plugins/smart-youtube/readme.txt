@@ -40,6 +40,22 @@ Plugin by Vladimir Prelovac. Also check out <a href="http://managewp.com">Manage
 
 == Changelog ==
 
+= 4.1.4 =
+* Support for HTTPS in the dashboard (thanks to Mile Rosu)
+
+= 4.1.3 =
+* Fixed support for videos in RSS feed
+
+= 4.1.2 =
+* Playlists fixed, make sure to use the new format for playlist embed ie. httpvp://www.youtube.com/playlist?list=PL050E43A49BC5E5E5
+
+= 4.1.1 =
+* Logo-less mode fix
+
+= 4.1.0 =
+* Added wmode=transparent as default paramater
+* Added support for new Playlist format
+
 = 4.0.3 =
 * More bug fixes
 	

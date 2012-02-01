@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * @method cqUser getUser()
+ *
+ * @method sfWebRequest getRequest()
+ * @method sfWebResponse getResponse()
+ */
 abstract class cqAjaxAction extends sfAction
 {
   protected function json($data)

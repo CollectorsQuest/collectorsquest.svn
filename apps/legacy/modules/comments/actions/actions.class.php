@@ -91,14 +91,22 @@ class commentsActions extends cqActions
   {
     /** @var $comment Comment */
     $comment = $this->getRoute()->getObject();
+    $route = null;
+
+    // Get access to route_for_* functions
+    $this->loadHelpers('cqLinks');
 
     if ($collectible = $comment->getCollectible())
     {
-      $route = '@collectible_by_slug?id='. $collectible->getId() .'&slug='. $collectible->getSlug();
+      $route = route_for_collectible($collectible);
     }
     else if ($collection = $comment->getCollection())
     {
-      $route = '@collection_by_slug?id='. $collection->getId() .'&slug='. $collection->getSlug();
+      $route = route_for_collection($collection);
+    }
+    else
+    {
+      $this->forward404();
     }
 
     $this->redirect($route .'#comment_'. $comment->getId());

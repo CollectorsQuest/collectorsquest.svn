@@ -15,7 +15,7 @@
   <?php
     echo cq_button(
       __('Done re-ordering collectibles...'),
-      sprintf('@collection_by_slug?id=%d&slug=%s', $collection->getId(), $collection->getSlug()),
+      route_for_collection($collection),
       array('class' => 'submit')
     );
   ?>

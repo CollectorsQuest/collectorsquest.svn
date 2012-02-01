@@ -162,7 +162,7 @@ function src_tag_collectible($collectible, $which = '150x150')
  * Returns an HTML image tag of the multimedia object
  *
  * @param  Multimedia  $multimedia  The multimedia object
- * @param  enum        $which       ['thumbnail', 'original', 'WIDTHxHEIGHT']
+ * @param  string      $which       ['thumbnail', 'original', 'WIDTHxHEIGHT']
  * @param  array       $options     Options for the <img> HTML element
  *
  * @see image_tag()

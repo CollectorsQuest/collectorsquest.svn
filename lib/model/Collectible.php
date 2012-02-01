@@ -153,6 +153,16 @@ class Collectible extends BaseCollectible
     return $collections;
   }
 
+  public function getCollection(PropelPDO $con = null)
+  {
+    if (!$collection = parent::getCollection($con))
+    {
+      $collection = new CollectionDropbox($this->getCollectorId());
+    }
+
+    return $collection;
+  }
+
   public function getCollectionTags()
   {
     return $this->getCollection()->getTags();

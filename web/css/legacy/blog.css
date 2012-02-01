@@ -285,8 +285,8 @@ blockquote p, pre p {
 }
 
 #widget-blog-categories li {
-  background-position:0 50%;
-  background-repeat:no-repeat;
+  background-position: 0 50%;
+  background-repeat: no-repeat;
   border-bottom:1px solid #62A0B2;
 }
 

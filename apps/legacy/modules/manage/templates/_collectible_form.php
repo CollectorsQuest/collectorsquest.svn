@@ -1,11 +1,12 @@
 <?php /* @var $form sfFormFieldSchema */ ?>
 <?php echo $form->renderHiddenFields() ?>
+
 <div class="span-4" style="text-align: right;">
-  <?php echo $form['name']->renderLabel(); ?>
+  <?php echo cq_label_for($form, 'name', __('Name:')); ?>
   <div class="required"><?php echo __('(required)'); ?></div>
 </div>
 <div class="prepend-1 span-13 last">
-  <?php echo $form['name']->render(array('width' => 400)); ?>
+  <?php echo cq_input_tag($form, 'name', array('width' => 400)); ?>
   <?php echo $form['name']->renderError(); ?>
 </div>
 <div class="clear append-bottom">&nbsp;</div>
@@ -22,12 +23,12 @@
 <div class="clear append-bottom">&nbsp;</div>
 
 <div class="span-4" style="text-align: right;">
-  <?php echo $form['description']->renderLabel(); ?>
+  <?php echo cq_label_for($form, 'description', __('Description:')); ?>
   <div class="required"><?php echo __('(required)'); ?></div>
 </div>
 <div class="prepend-1 span-13 last">
+  <?php echo cq_textarea_tag($form, 'description', array('width' => 500, 'height' => 200, 'rich' => true)); ?>
   <?php echo $form['description']->renderError() ?>
-  <?php echo $form['description']->render(array('width' => 500, 'height' => 200)); ?>
 </div>
 <div class="clear append-bottom">&nbsp;</div>
 

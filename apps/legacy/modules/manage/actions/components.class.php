@@ -1,6 +1,6 @@
 <?php
 
-class manageComponents extends sfComponents
+class manageComponents extends cqComponents
 {
   public function executeSidebarProfile()
   {
@@ -35,6 +35,11 @@ class manageComponents extends sfComponents
         'text' => 'Create a Collection',
         'icon' => 'plus',
         'route' => '@collection_create'
+      ),
+      1 => array(
+        'text' => 'Upload Collectibles',
+        'icon' => 'arrowthick-1-n',
+        'route' => 'fancybox_collection_add_collectibles(0)'
       )
     );
 
@@ -63,7 +68,7 @@ class manageComponents extends sfComponents
       $this->buttons[] = array(
         'text' => 'View Collectibles',
         'icon' => 'image',
-        'route' => '@collection_by_slug?id='. $collection->getId() .'&slug='. $collection->getSlug()
+        'route' => route_for_collection($collection)
       );
     }
 
@@ -82,12 +87,12 @@ class manageComponents extends sfComponents
         0 => array(
           'text' => 'Back to Collection',
           'icon' => 'arrowreturnthick-1-w',
-          'route' => '@collection_by_slug?id='. $collection->getId() .'&slug='. $collection->getSlug()
+          'route' => route_for_collection($collection)
         ),
         1 => array(
           'text' => 'View Collectible',
           'icon' => 'image',
-          'route' => '@collectible_by_slug?id='. $collectible->getId() .'&slug='. $collectible->getSlug()
+          'route' => route_for_collectible($collectible)
         ),
         2 => array(
           'text' => 'Delete Collectible',
@@ -102,7 +107,14 @@ class manageComponents extends sfComponents
 
   public function executeSidebarCollectibles()
   {
-    $collection = CollectionPeer::retrieveByPK($this->getRequestParameter('id'));
+    // Get the currently logged in Collector
+    $collector = $this->getCollector();
+
+    // Either get the collection by ID, or get the Dropbox
+    if (!$collection = CollectionPeer::retrieveByPK($this->getRequestParameter('id')))
+    {
+      $collection = new CollectionDropbox($collector->getId());
+    }
 
     if ($collection instanceof Collection)
     {
@@ -110,7 +122,7 @@ class manageComponents extends sfComponents
         0 => array(
           'text' => 'Back to Collection',
           'icon' => 'arrowreturnthick-1-w',
-          'route' => '@collection_by_slug?id='. $collection->getId() .'&slug='. $collection->getSlug()
+          'route' => route_for_collection($collection)
         ),
         array(
           'text' => 'Add Collectibles',
@@ -120,7 +132,7 @@ class manageComponents extends sfComponents
         array(
           'text' => 'View Collectibles',
           'icon' => 'image',
-          'route' => '@collection_by_slug?id='. $collection->getId() .'&slug='. $collection->getSlug()
+          'route' => route_for_collection($collection)
         )
       );
     }
@@ -163,6 +175,29 @@ class manageComponents extends sfComponents
         )
       );
     }
+
+    return sfView::SUCCESS;
+  }
+
+  public function executeSidebarDropbox()
+  {
+    $this->buttons = array(
+      array(
+        'text' => 'Add Collectibles',
+        'icon' => 'plus',
+        'route' => 'fancybox_collection_add_collectibles(0)'
+      ),
+      array(
+        'text' => 'Edit Collectibles',
+        'icon' => 'pencil',
+        'route' => '@manage_collectibles'
+      ),
+      array(
+        'text' => 'View Collectibles',
+        'icon' => 'image',
+        'route' => '@collector_dropbox'
+      )
+    );
 
     return sfView::SUCCESS;
   }

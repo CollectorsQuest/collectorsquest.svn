@@ -2,7 +2,7 @@
 
 $_time_start = microtime(true);
 
-if (extension_loaded('xhprof') && ((isset($_GET['_profile']) && $_GET['_profile'] == '1') || mt_rand(1, 100) == 1))
+if (extension_loaded('xhprof') && ((isset($_GET['_profile']) && $_GET['_profile'] == '1') || mt_rand(1, 1000) == 1))
 {
   xhprof_enable(
     XHPROF_FLAGS_CPU | XHPROF_FLAGS_NO_BUILTINS | XHPROF_FLAGS_MEMORY,
@@ -16,6 +16,9 @@ else
   $_xhprof_on = false;
 }
 
+/**
+ * @var cqApplicationConfiguration $configuration
+ */
 require dirname(__FILE__) .'/../config/bootstrap.php';
 sfContext::createInstance($configuration)->dispatch();
 

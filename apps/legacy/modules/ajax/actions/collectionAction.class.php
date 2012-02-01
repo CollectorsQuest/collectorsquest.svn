@@ -2,8 +2,14 @@
 
 class collectionAction extends cqAjaxAction
 {
+  /**
+   * @param  sfWebREquest  $request
+   * @return sfView
+   */
   public function execute($request)
   {
+    /** @var $collection collection */
+
     if ($pk = $request->getParameter('id'))
     {
       $collection = CollectionPeer::retrieveByPK($pk);
@@ -18,7 +24,7 @@ class collectionAction extends cqAjaxAction
     }
     else
     {
-      $collection = new Collection();
+      $collection = null;
     }
 
     $section = $request->getParameter('section');
@@ -49,10 +55,12 @@ class collectionAction extends cqAjaxAction
    */
   protected function executeUploadCollectibles(sfWebRequest $request)
   {
-    $this->forward404if(!$this->collection || $this->collection->isNew());
-
     $collector = $this->getUser()->getCollector();
-    $this->forward404Unless($collector && $collector->isOwnerOf($this->collection));
+
+    if ($this->collection instanceof Collection)
+    {
+      $this->forward404Unless($collector && $collector->isOwnerOf($this->collection));
+    }
 
     if ($request->isMethod('post'))
     {
@@ -69,8 +77,7 @@ class collectionAction extends cqAjaxAction
         $collectible->save();
 
         // Add the image
-        $multimedia = $collectible->addMultimedia($file['tmp_name'], true, true);
-        if ($multimedia)
+        if ($multimedia = $collectible->addMultimedia($file['tmp_name'], true, true))
         {
           $multimedia->setName($name);
           $multimedia->save();
@@ -85,6 +92,9 @@ class collectionAction extends cqAjaxAction
     {
       return $this->forward404();
     }
+
+    // We do not want the web debug bar on these requests
+    sfConfig::set('sf_web_debug', false);
 
     $this->renderText('An old version of the Flash plugin was detected. <strong><a href="http://www.macromedia.com/go/getflash/">Please upgrade your Flash plugin.</a></strong>');
     return sfView::NONE;
@@ -113,7 +123,9 @@ class collectionAction extends cqAjaxAction
       $q = new CollectibleQuery();
       $q->filterByPrimaryKeys($pks);
 
+      /** @var $collectibles Collectible[] */
       $collectibles = $q->find();
+
       foreach ($collectibles as $collectible)
       {
         foreach ($order[$key] as $position => $pk)
