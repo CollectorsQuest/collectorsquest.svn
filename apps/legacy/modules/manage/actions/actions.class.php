@@ -397,6 +397,7 @@ class manageActions extends cqActions
     }
 
     $criteria = new Criteria();
+    $criteria->addAscendingOrderByColumn(CollectiblePeer::POSITION);
 
     if ($collection->getId())
     {
@@ -489,9 +490,9 @@ class manageActions extends cqActions
         {
           $this->redirect(
             'manage_collectibles_by_slug', array(
-            'id' => $collection->getId(),
-            'slug' => $collection->getSlug(),
-            'page' => $pager->getNextPage()
+              'id' => $collection->getId(),
+              'slug' => $collection->getSlug(),
+              'page' => $pager->getNextPage()
             )
           );
         }

@@ -18,6 +18,7 @@ bash "Update /www permissions" do
     chmod -R 777 /www/tmp
     chown -R apache:apache /www/tmp
     chown -R apache:apache /www/logs
+    chown -R sphinx:sphinx /www/logs/sphinx
     chown -R apache:apache /www/vhosts/collectorsquest.com/shared
   EOH
 end
