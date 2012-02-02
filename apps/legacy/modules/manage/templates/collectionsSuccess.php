@@ -1,7 +1,10 @@
 <?php
-
 /**
- * @var sfPropelPager $pager
+ * @var  cqUser  $sf_user
+ *
+ * @var  sfPropelPager      $pager
+ * @var  Collection[]       $collections
+ * @var  CollectionDropbox  $dropbox
  */
 
 if ($pager->getPage() == 1)
@@ -14,13 +17,13 @@ if ($pager->getPage() == 1)
   cq_button_set(
     array(
       array(
-        'value' => __('Add More Collectibles'), 'route' => 'fancybox_collection_add_collectibles(0)',
+        'value' => __('Add Collectibles to Your Dropbox'), 'route' => 'fancybox_collection_add_collectibles(0)',
         'options' => array('class' => 'create yellow')
       ),
       array(
         'value' => $sf_user->hasCredential('seller') ? __('Edit/Sell Collectibles') : __('Edit Collectibles'),
         'route' => '@manage_collectibles',
-        'options' => array('class' => 'edit yellow')
+        'options' => array('class' => 'edit yellow', 'style' => 'float: right; margin-right: 5px;')
       )
     ),
     array('class' => 'span-17 prepend-1 rounded')

@@ -279,6 +279,11 @@ class Collector extends BaseCollector
     return CollectorPeer::doSelect($c);
   }
 
+  public function getCollectionDropbox()
+  {
+    return !$this->isNew() ? new CollectionDropbox($this->getId()) : null;
+  }
+
   public function hasFacebook()
   {
     $uid = $this->getFacebookId();

@@ -73,9 +73,18 @@ class CollectorPeer extends BaseCollectorPeer
   {
     $collector = null;
 
-    if (isset($parameters['id']))
+    if (isset($parameters['collector_id']))
+    {
+      $collector = self::retrieveByPk($parameters['collector_id']);
+    }
+    else if (isset($parameters['id']))
     {
       $collector = self::retrieveByPk($parameters['id']);
+    }
+    else if (isset($parameters['collector_slug']))
+    {
+      $parameters['slug'] = str_replace(array('.html', '.htm'), '', $parameters['slug']);
+      $collector = self::retrieveBySlug($parameters['collector_slug']);
     }
     else if (isset($parameters['slug']))
     {

@@ -107,16 +107,18 @@ class collectionAction extends cqAjaxAction
    */
   protected function executeReorderCollectibles(sfWebRequest $request)
   {
-    $this->forward404if(!$this->collection || $this->collection->isNew());
-
     $collector = $this->getUser()->getCollector();
-    $this->forward404Unless($collector && $collector->isOwnerOf($this->collection));
+
+    if ($this->collection instanceof Collection)
+    {
+      $this->forward404Unless($collector && $collector->isOwnerOf($this->collection));
+    }
 
     $items = $request->getParameter('items');
     $key   = $request->getParameter('key');
     parse_str($items, $order);
 
-    if (is_array($order[$key]))
+    if (isset($order[$key]) && is_array($order[$key]))
     {
       $pks = array_values($order[$key]);
 
@@ -141,6 +143,9 @@ class collectionAction extends cqAjaxAction
       }
     }
 
+    // We do not want the web debug bar on these requests
+    sfConfig::set('sf_web_debug', false);
+
     return sfView::NONE;
   }
 
@@ -151,6 +156,9 @@ class collectionAction extends cqAjaxAction
     // Do the rotate
     $this->collectible->rotateMultimedia(true, true);
 
+    // We do not want the web debug bar on these requests
+    sfConfig::set('sf_web_debug', false);
+
     return sfView::NONE;
   }
 
@@ -160,6 +168,9 @@ class collectionAction extends cqAjaxAction
 
     // Do the delete
     $this->collectible->delete();
+
+    // We do not want the web debug bar on these requests
+    sfConfig::set('sf_web_debug', false);
 
     return sfView::NONE;
   }

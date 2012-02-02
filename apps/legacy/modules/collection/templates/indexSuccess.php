@@ -35,6 +35,9 @@
 <?php endif; ?>
 
 <?php
-  include_component('comments', 'commentList', array('object' => $collection));
-  include_component('comments', 'commentForm', array('object' => $collection));
+  if ($collection->getId() > 0)
+  {
+    include_component('comments', 'commentList', array('object' => $collection));
+    include_component('comments', 'commentForm', array('object' => $collection));
+  }
 ?>

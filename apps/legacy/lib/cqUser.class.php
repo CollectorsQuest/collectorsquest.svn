@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @method  boolean  isOwnerOf($something)
+ */
 class cqUser extends IceSecurityUser
 {
   /** @var Collector */

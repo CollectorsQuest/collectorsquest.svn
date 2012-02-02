@@ -13,7 +13,7 @@
 </div>
 <div class="clear">&nbsp;</div>
 
-<?php if (isset($collection) && $collection instanceof Collection): ?>
+<?php if (isset($collection) && $collection->getId() > 0): ?>
 <h2><?php echo  __('Collection Information'); ?></h2>
 <div style="margin-top: -8px; padding: 10px; padding-bottom: 15px; background: #C5E67E;">
   <table>
@@ -50,6 +50,6 @@
 <?php
   if ($collection->countCollectibles() > 4)
   {
-    include_component('_sidebar', 'widgetRelatedCollections', array('collection' => $collection));
+    include_component('_sidebar', 'widgetRelatedCollections', array('collection' => $collection, 'limit' => 5));
   }
 ?>

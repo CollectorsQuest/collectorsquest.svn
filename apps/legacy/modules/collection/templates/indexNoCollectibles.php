@@ -1,3 +1,10 @@
+<?php
+/**
+ * @var cqUser      $sf_user
+ * @var Collection  $collection
+ */
+?>
+
 <div class="clear" style="height: 20px;">&nbsp;</div>
 <div class="span-17 append-bottom last">
   <div style="float: left; font-size: 32px; margin-left: 20px; margin-top: -7px; margin-right: 10px; color: #DF912F;">(!)</div>
@@ -17,7 +24,7 @@
 
 <br clear="all"><br>
 <?php if (!empty($collections)): ?>
-<?php cq_section_title(__('Here are some collections from the same category:')); ?>
+<?php cq_section_title(__('Here are some more interesting collections:')); ?>
 <br>
 <?php
   foreach ($collections as $i => $collection)

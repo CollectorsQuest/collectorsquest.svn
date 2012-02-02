@@ -60,7 +60,18 @@ class collectorActions extends cqActions
 
     $this->related_collections = $collector->getRelatedCollections(10, $this->rnd_flag);
     $this->count_collections = $collector->countCollections();
-    $this->collections = $collector->getRecentCollections(3);
+
+    // Get the dropbox of the collector
+    $dropbox = $collector->getCollectionDropbox();
+
+    if ($dropbox && $dropbox->getCountCollectibles() > 0)
+    {
+      $this->collections = array_merge(array($dropbox), $collector->getRecentCollections(2));
+    }
+    else
+    {
+      $this->collections = $collector->getRecentCollections(3);
+    }
 
     // Building the title
     $this->prependTitle($collector->getDisplayName());

@@ -9,7 +9,7 @@ $configuration->loadHelpers(array('JavascriptBase'));
  *
  * @param  string   $slot     Which ad slot to load
  * @param  integer  $width    The width of the ad slot
- * @param  integet  $height   The height of the ad slot
+ * @param  integer  $height   The height of the ad slot
  * @param  boolean  $delayed  Whether to delay the loading of the ad until page load.
  *                            Delayed loading does not work with ajax calls so set to false in those cases.
  *

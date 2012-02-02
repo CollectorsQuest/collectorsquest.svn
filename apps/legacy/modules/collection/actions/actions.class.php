@@ -10,11 +10,25 @@ class collectionActions extends cqActions
   {
     $this->forward404Unless($this->getRoute() instanceof sfPropelRoute);
 
-    /** @var $collection Collection */
-    $collection = $this->getRoute()->getObject();
+    /** @var $object BaseObject */
+    $object = $this->getRoute()->getObject();
 
-    /** @var $collector Collector */
-    $collector  = $collection->getCollector();
+    if ($object instanceof Collector)
+    {
+      /** @var $collector Collector */
+      $collector = $object;
+
+      /** @var $collection CollectionDropbox */
+      $collection = $collector->getCollectionDropbox();
+    }
+    else
+    {
+      /** @var $collection Collection */
+      $collection = $object;
+
+      /** @var $collector Collector */
+      $collector  = $collection->getCollector();
+    }
 
     // Is the current Collector the owner of the collection?
     $editable = $this->getCollector()->isOwnerOf($collection);
@@ -25,8 +39,18 @@ class collectionActions extends cqActions
       $collection->save();
     }
 
-    $c = new Criteria();
-    $c->add(CollectiblePeer::COLLECTION_ID, $collection->getId());
+    if ($collection instanceof CollectionDropbox)
+    {
+      $c = new Criteria();
+      $c->add(CollectiblePeer::COLLECTOR_ID, $collector->getId(), Criteria::EQUAL);
+      $c->add(CollectiblePeer::COLLECTION_ID, null, Criteria::ISNULL);
+    }
+    else
+    {
+      $c = new Criteria();
+      $c->add(CollectiblePeer::COLLECTION_ID, $collection->getId());
+    }
+
     $c->addAscendingOrderByColumn(CollectiblePeer::POSITION);
     $c->addAscendingOrderByColumn(CollectiblePeer::CREATED_AT);
 
@@ -49,13 +73,28 @@ class collectionActions extends cqActions
       '@collections_by_collector?collector='. $collector->getSlug()
     );
     $this->addBreadcrumb($this->__('Collections'), '@collections');
-    $this->addBreadcrumb(
-      $collection->getName(), null,
-      array(
-        'id' => 'collection_'.$collection->getId().'_name',
-        'class' => $editable ? 'editable_h1' : null
-      )
-    );
+
+    if ($collection instanceof CollectionDropbox)
+    {
+      if ($collector->isOwnerOf($collection))
+      {
+        $this->addBreadcrumb('Your Dropbox', null);
+      }
+      else
+      {
+        $this->addBreadcrumb('The Dropbox of '. $collector->getDisplayName(), null);
+      }
+    }
+    else
+    {
+      $this->addBreadcrumb(
+        $collection->getName(), null,
+        array(
+          'id' => 'collection_'. $collection->getId() .'_name',
+          'class' => $editable ? 'editable_h1' : null
+        )
+      );
+    }
 
     // Building the title
     $this->prependTitle($collector->getDisplayName());
@@ -76,9 +115,13 @@ class collectionActions extends cqActions
     {
       $c = new Criteria();
       $c->add(CollectionPeer::IS_PUBLIC, true);
-      $c->add(CollectionPeer::COLLECTION_CATEGORY_ID, $collection->getCollectionCategoryId());
+      if ($collection->getCollectionCategoryId())
+      {
+        $c->add(CollectionPeer::COLLECTION_CATEGORY_ID, $collection->getCollectionCategoryId());
+      }
       $c->add(CollectionPeer::NUM_ITEMS, 4, Criteria::GREATER_EQUAL);
       $c->addAscendingOrderByColumn(CollectionPeer::SCORE);
+      $c->addDescendingOrderByColumn(CollectionPeer::CREATED_AT);
       $c->setLimit(9);
 
       $this->collections = CollectionPeer::doSelect($c);
@@ -89,7 +132,7 @@ class collectionActions extends cqActions
     return sfView::SUCCESS;
   }
 
-  public function executeCollectible($request)
+  public function executeCollectible()
   {
     /** @var $collectible Collectible */
     $collectible = $this->getRoute()->getObject();
@@ -268,14 +311,14 @@ class collectionActions extends cqActions
     }
   }
 
-  public function executeRemoveItem(sfWebRequest $request)
+  public function executeRemoveItem()
 	{
     /* @var $collectible Collectible */
     $collectible = $this->getRoute()->getObject();
-    $this->forward404Unless($collectible);
+    $this->forward404Unless($collectible instanceof Collectible);
 
     $collectibleForSale = $collectible->getForSaleInformation();
-    $this->forward404Unless($collectibleForSale);
+    $this->forward404Unless($collectibleForSale instanceof CollectibleForSale);
 
     $collectibleForSale->delete();
 

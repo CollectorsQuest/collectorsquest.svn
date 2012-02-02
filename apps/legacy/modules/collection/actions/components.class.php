@@ -1,10 +1,20 @@
 <?php
 
-class collectionComponents extends sfComponents
+class collectionComponents extends cqComponents
 {
   public function executeSidebar()
   {
-    $this->collection = CollectionPeer::retrieveByPk($this->getRequestParameter('id'));
+    if ($id = $this->getRequestParameter('id'))
+    {
+      $this->collection = CollectionPeer::retrieveByPk($id);
+    }
+    else if ($id = $this->getRequestParameter('collector_id'))
+    {
+      if ($collector = CollectorPeer::retrieveByPK($id))
+      {
+        $this->collection = $collector->getCollectionDropbox();
+      }
+    }
 
     if ($this->collection)
     {
@@ -13,27 +23,33 @@ class collectionComponents extends sfComponents
 
     if ($this->getUser()->isOwnerOf($this->collection))
     {
-      $this->buttons = array(
-        0 => array(
+      $this->buttons = array();
+
+      if (!($this->collection instanceof CollectionDropbox))
+      {
+        $this->buttons[] = array(
           'text' => 'Edit Collection',
           'icon' => 'pencil',
           'route' => '@manage_collection_by_slug?id='. $this->collection->getId(). '&slug='. $this->collection->getSlug()
-        ),
-        1 => array(
-          'text' => 'Edit Collectibles',
-          'icon' => 'pencil',
-          'route' => '@manage_collectibles_by_slug?id='. $this->collection->getId() .'&slug='. $this->collection->getSlug()
-        ),
-        2 => array(
-          'text' => 'Add Collectibles',
-          'icon' => 'plus',
-          'route' => 'fancybox_collection_add_collectibles('. $this->getRequestParameter('id') .')'
-        ),
-        3 => array(
-          'text' => 'Re-Order Collectibles',
-          'icon' => 'refresh',
-          'route' => 'ajax_load("#contents", "'. url_for('@ajax_collection?section=component&page=collectiblesReorder') .'?id='. $this->getRequestParameter('id') .'")'
-        )
+        );
+      }
+
+      $this->buttons[] = array(
+        'text' => 'Edit Collectibles',
+        'icon' => 'pencil',
+        'route' => '@manage_collectibles_by_slug?id='. $this->collection->getId() .'&slug='. $this->collection->getSlug()
+      );
+
+      $this->buttons[] = array(
+        'text' => 'Add Collectibles',
+        'icon' => 'plus',
+        'route' => 'fancybox_collection_add_collectibles('. $this->collection->getId() .')'
+      );
+
+      $this->buttons[] = array(
+        'text' => 'Re-Order Collectibles',
+        'icon' => 'refresh',
+        'route' => 'ajax_load("#contents", "'. url_for('@ajax_collection?section=component&page=collectiblesReorder') .'?id='. $this->collection->getId() .'")'
       );
     }
     else
@@ -101,7 +117,24 @@ class collectionComponents extends sfComponents
 
   public function executeCollectiblesReorder()
   {
-    $this->collection = CollectionPeer::retrieveByPk($this->getRequestParameter('id'));
+    if ($id = $this->getRequestParameter('id'))
+    {
+      $this->collection = CollectionPeer::retrieveByPk($id);
+    }
+    else if ($id = $this->getRequestParameter('collector_id'))
+    {
+      if ($collector = CollectorPeer::retrieveByPK($id))
+      {
+        $this->collection = $collector->getCollectionDropbox();
+      }
+    }
+    else if ('0' === $id = $this->getRequestParameter('id'))
+    {
+      if ($collector = $this->getCollector())
+      {
+        $this->collection = $collector->getCollectionDropbox();
+      }
+    }
 
     if ($this->getUser()->isOwnerOf($this->collection))
     {

@@ -152,9 +152,9 @@ function route_for_collection(Collection $collection = null)
 {
   $route = null;
 
-  if ($collection instanceof CollectionDropbox)
+  if ($collection instanceof CollectionDropbox && ($collector = $collection->getCollector()))
   {
-    $route = '@manage_dropbox';
+    $route = '@collector_dropbox?collector_id='. $collector->getId() .'&collector_slug='. $collector->getSlug();
   }
   else if ($collection instanceof Collection)
   {

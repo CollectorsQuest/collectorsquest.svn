@@ -53,6 +53,11 @@ class CollectionDropbox extends Collection
     return 'Dropbox';
   }
 
+  public function getSlug()
+  {
+    return 'dropbox';
+  }
+
   /**
    * @param  string  $type Can be 'html' or 'markdown'
    * @return string
@@ -94,10 +99,25 @@ class CollectionDropbox extends Collection
   {
     $c = ($criteria instanceof Criteria) ? clone $criteria : new Criteria();
 
+    $c->add(CollectiblePeer::COLLECTOR_ID, $this->getCollectorId(), Criteria::EQUAL);
+    $c->add(CollectiblePeer::COLLECTION_ID, null, Criteria::ISNULL);
+
     $c->addAscendingOrderByColumn(CollectiblePeer::POSITION);
     $c->addDescendingOrderByColumn(CollectiblePeer::CREATED_AT);
 
-    return parent::getCollectibles($c, $con);
+    if (null === $this->collCollectibles)
+    {
+      $collCollectibles = CollectibleQuery::create(null, $c)->find($con);
+
+      if (null !== $criteria)
+      {
+        return $collCollectibles;
+      }
+
+      $this->collCollectibles = $collCollectibles;
+    }
+
+    return $this->collCollectibles;
   }
 
   public function getRandomCollectibles($limit = 10)

@@ -79,7 +79,7 @@ function image_tag_collection($collection, $which = '150x150', $options = array(
 {
   if (is_null($collection) || !($collection instanceof Collection))
   {
-    return image_tag('legacy/multimedia/Collection/'. $which .'.png');
+    return image_tag('legacy/multimedia/'. get_class($collection) .'/'. $which .'.png');
   }
 
   $options = array_merge(
@@ -92,7 +92,7 @@ function image_tag_collection($collection, $which = '150x150', $options = array(
 
   if (empty($image_tag))
   {
-    $image_tag = image_tag('legacy/multimedia/Collection/'. $which .'.png', $options);
+    $image_tag = image_tag('legacy/multimedia/'. get_class($collection) .'/'. $which .'.png', $options);
   }
 
   return $image_tag;

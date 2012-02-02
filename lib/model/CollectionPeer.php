@@ -4,7 +4,18 @@ class CollectionPeer extends BaseCollectionPeer
 {
   static public function getObjectForRoute($parameters)
   {
-    return self::retrieveByPk($parameters['id']);
+    $collection = null;
+
+    if (isset($parameters['collection_id']))
+    {
+      $collection = self::retrieveByPk($parameters['collection_id']);
+    }
+    else if (isset($parameters['id']))
+    {
+      $collection = self::retrieveByPk($parameters['id']);
+    }
+
+    return $collection;
   }
 
   public static function getPopularTags($limit = 50, Criteria $criteria = null)
