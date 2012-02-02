@@ -31,5 +31,5 @@ Vagrant::Config.run do |config|
   end
 
   config.package.name = "collectorsquest"
-  config.vm.boot_mode = :gui
+  # config.vm.boot_mode = :gui
 end
