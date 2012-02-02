@@ -8,6 +8,8 @@ class cqStatic extends IceStatic
   static private $_memcache_clients = array();
   static private $_memcache_cache   = null;
 
+  static private $_neo4j_client = null;
+
   /**
    * Get a Memcache() object
    *
@@ -106,7 +108,13 @@ class cqStatic extends IceStatic
    */
   static public function getNeo4jClient()
   {
-    return new Everyman\Neo4j\Client();
+    if (null === self::$_neo4j_client)
+    {
+      $port = sfConfig::get('sf_environment') == 'stg' ? '8484' : '7474';
+      self::$_neo4j_client = new Everyman\Neo4j\Client('localhost', $port);
+    }
+
+    return self::$_neo4j_client;
   }
 
   static public function linkify($text, $shorten = false)
