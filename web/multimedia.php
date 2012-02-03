@@ -57,11 +57,11 @@ if (in_array($type, array('image', 'video')))
           break;
       }
 
-      if (is_readable(dirname(__FILE__) . $path))
+      if (is_readable('/www/vhosts/collectorsquest.com/shared'. $path))
       {
         // Send Content-Type and the X-SendFile header
         header("Content-Type: ". $content_type);
-        header("X-SendFile: /www/vhosts/collectorsquest.com/shared/" . $path);
+        header("X-SendFile: /www/vhosts/collectorsquest.com/shared". $path);
 
         exit;
       }
@@ -71,7 +71,7 @@ if (in_array($type, array('image', 'video')))
 
         // Send Content-Type and the X-SendFile header
         header("Content-Type: image/png");
-        header("X-SendFile: " . dirname(__FILE__) . $path);
+        header("X-SendFile: ". __DIR__ . $path);
 
         exit;
       }

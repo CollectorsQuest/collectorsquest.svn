@@ -14,6 +14,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.composer" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/iceBackendPlugin/data/generator/sfPropelModule/bootstrap/skeleton" />
+      <excludeFolder url="file://$MODULE_DIR$/plugins/sfPropelORMPlugin/lib/vendor/propel/runtime/lib/parser/yaml" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/sfPropelORMPlugin/test" />
       <excludeFolder url="file://$MODULE_DIR$/plugins/sfTaskExtraPlugin/lib/task/generator/skeleton" />
       <excludeFolder url="file://$MODULE_DIR$/web/blog/wp-content/plugins/defensio-anti-spam/lib/defensio-php" />

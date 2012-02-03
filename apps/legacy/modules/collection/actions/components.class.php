@@ -51,6 +51,16 @@ class collectionComponents extends cqComponents
         'icon' => 'refresh',
         'route' => 'ajax_load("#contents", "'. url_for('@ajax_collection?section=component&page=collectiblesReorder') .'?id='. $this->collection->getId() .'")'
       );
+
+
+      if ($this->collection instanceof CollectionDropbox)
+      {
+        $this->buttons[] = array(
+          'text' => 'Empty Dropbox',
+          'icon' => 'trash',
+          'route' => '@manage_dropbox?cmd=empty'
+        );
+      }
     }
     else
     {

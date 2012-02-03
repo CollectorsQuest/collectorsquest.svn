@@ -517,31 +517,18 @@ class manageActions extends cqActions
   public function executeDropbox(sfWebRequest $request)
   {
     $collector = $this->getCollector();
+    $this->forward404Unless($collector instanceof Collector);
 
-    $c = new Criteria();
-    $c->add(CollectiblePeer::COLLECTOR_ID, $collector->getId());
-    $c->add(CollectiblePeer::COLLECTION_ID, null, Criteria::ISNULL);
-    $c->addOr(CollectiblePeer::COLLECTION_ID, '');
-    $c->addAscendingOrderByColumn(CollectiblePeer::POSITION);
-    $c->addAscendingOrderByColumn(CollectiblePeer::CREATED_AT);
+    // Get the collector's dropbox
+    $dropbox = $collector->getCollectionDropbox();
 
-    $per_page = ($request->getParameter('show') == 'all') ? 999 : sfConfig::get('app_pager_list_collectibles_max', 16);
+    switch ($request->getParameter('cmd'))
+    {
+      case 'empty':
 
-    $pager = new sfPropelPager('Collectible', $per_page);
-    $pager->setCriteria($c);
-    $pager->setPage($this->getRequestParameter('page', 1));
-    $pager->init();
+        break;
+    }
 
-    $this->pager    = $pager;
-    $this->display  = $this->getUser()->getAttribute('display', 'grid', 'collectibles');
-
-    // Building the breadcrumbs
-    $this->addBreadcrumb('Your Collections', '@manage_collections');
-    $this->addBreadcrumb('Dropbox', '@manage_dropbox');
-
-    // Building the title
-    $this->prependTitle('Dropbox');
-
-    return ($pager->getNbResults() == 0) ? 'NoCollectibles' : sfView::SUCCESS;
+    return $this->redirect('@collector_dropbox');
   }
 }

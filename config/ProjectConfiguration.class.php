@@ -27,5 +27,11 @@ class ProjectConfiguration extends IceProjectConfiguration
       'iceAssetsPlugin', 'iceBehaviorsPlugin', 'iceLibsPlugin', 'iceTaggablePlugin',
       'iceBackendPlugin', 'iceJobQueuePlugin', 'iceCrontabPlugin', 'iceSpamControlPlugin'
     );
+
+    sfConfig::add(array(
+      'sf_upload_dir' => '/www/vhosts/collectorsquest.com/shared/uploads',
+      'sf_upload_dir_name' => 'uploads',
+    ));
+
   }
 }

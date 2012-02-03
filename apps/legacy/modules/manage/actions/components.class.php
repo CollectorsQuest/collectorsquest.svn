@@ -179,26 +179,4 @@ class manageComponents extends cqComponents
     return sfView::SUCCESS;
   }
 
-  public function executeSidebarDropbox()
-  {
-    $this->buttons = array(
-      array(
-        'text' => 'Add Collectibles',
-        'icon' => 'plus',
-        'route' => 'fancybox_collection_add_collectibles(0)'
-      ),
-      array(
-        'text' => 'Edit Collectibles',
-        'icon' => 'pencil',
-        'route' => '@manage_collectibles'
-      ),
-      array(
-        'text' => 'View Collectibles',
-        'icon' => 'image',
-        'route' => '@collector_dropbox'
-      )
-    );
-
-    return sfView::SUCCESS;
-  }
 }
