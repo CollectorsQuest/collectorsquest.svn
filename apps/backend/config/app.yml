@@ -54,6 +54,12 @@ all:
             url: package_transaction
             image: theme/icons/backup.png
 
+      Blog:
+        items:
+          Posts:
+            url: wp_post
+            image: theme/icons/addedit.png
+
       Everything Else:
         items:
           Featured Weeks:

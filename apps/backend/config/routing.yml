@@ -1,3 +1,13 @@
+wp_post:
+  class: sfPropelORMRouteCollection
+  options:
+    model:                wpPost
+    module:               wpPost
+    prefix_path:          /wpPost
+    column:               id
+    with_wildcard_routes: true
+    #actions:              [list]
+
 featured_weeks:
   class: sfPropelORMRouteCollection
   options:
