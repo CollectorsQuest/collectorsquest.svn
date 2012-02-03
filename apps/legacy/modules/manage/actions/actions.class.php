@@ -399,6 +399,16 @@ class manageActions extends cqActions
     $criteria = new Criteria();
     $criteria->addAscendingOrderByColumn(CollectiblePeer::POSITION);
 
+    // We we have passed specific Collectibles to edit
+    if ($ids = $request->getParameter('ids', null))
+    {
+      $criteria->add(CollectiblePeer::ID, explode(';', $ids), Criteria::IN);
+    }
+    else if ($batch = $request->getParameter('batch', null))
+    {
+      $criteria->add(CollectiblePeer::BATCH_HASH, $batch, Criteria::EQUAL);
+    }
+
     if ($collection->getId())
     {
       $criteria->add(CollectiblePeer::COLLECTION_ID, $collection->getId(), Criteria::EQUAL);
@@ -468,7 +478,7 @@ class manageActions extends cqActions
               $collectibleForSale->save();
             }
 
-            if ($value['for_sale']['is_ready'])
+            if (isset($value['for_sale']) && $value['for_sale']['is_ready'])
             {
               $collector->setItemsAllowed($collector->getItemsAllowed() - 1);
               $collector->save();
@@ -484,7 +494,9 @@ class manageActions extends cqActions
 
         if ($pager->isLastPage())
         {
-          $this->redirect('collection_by_slug', $collection);
+          $this->loadHelpers('cqLinks');
+
+          $this->redirect(url_for_collection($collection));
         }
         else
         {
@@ -492,7 +504,9 @@ class manageActions extends cqActions
             'manage_collectibles_by_slug', array(
               'id' => $collection->getId(),
               'slug' => $collection->getSlug(),
-              'page' => $pager->getNextPage()
+              'page' => $pager->getNextPage(),
+              'batch' => $request->getParameter('batch'),
+              'ids' => $request->getParameter('ids')
             )
           );
         }
@@ -519,16 +533,19 @@ class manageActions extends cqActions
     $collector = $this->getCollector();
     $this->forward404Unless($collector instanceof Collector);
 
-    // Get the collector's dropbox
-    $dropbox = $collector->getCollectionDropbox();
-
     switch ($request->getParameter('cmd'))
     {
       case 'empty':
+        $q = CollectibleQuery::create()
+           ->filterByCollectorId($collector->getId())
+           ->filterByCollectionId(null, Criteria::ISNULL);
 
+        $q->delete();
+
+        $this->getUser()->setFlash('success', 'Your dropbox was emptied!', true);
         break;
     }
 
-    return $this->redirect('@collector_dropbox');
+    return $this->redirect('@manage_collections');
   }
 }

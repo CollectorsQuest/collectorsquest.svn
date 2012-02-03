@@ -90,6 +90,19 @@ class collectorActions extends cqActions
     return sfView::SUCCESS;
   }
 
+  public function executeDropbox(sfWebRequest $request)
+  {
+    if ($collector = $this->getCollector())
+    {
+      $id   = $collector->getId();
+      $slug = $collector->getSlug();
+
+      $this->redirect('@dropbox_by_slug?collector_id='. $id .'&collector_slug='. $slug);
+    }
+
+    $this->redirect('@login');
+  }
+
   public function executeMe(sfWebRequest $request)
   {
     if ($collector = $this->getCollector())

@@ -14,6 +14,7 @@
  * @method     CollectibleQuery orderBySlug($order = Criteria::ASC) Order by the slug column
  * @method     CollectibleQuery orderByDescription($order = Criteria::ASC) Order by the description column
  * @method     CollectibleQuery orderByNumComments($order = Criteria::ASC) Order by the num_comments column
+ * @method     CollectibleQuery orderByBatchHash($order = Criteria::ASC) Order by the batch_hash column
  * @method     CollectibleQuery orderByScore($order = Criteria::ASC) Order by the score column
  * @method     CollectibleQuery orderByPosition($order = Criteria::ASC) Order by the position column
  * @method     CollectibleQuery orderByIsNameAutomatic($order = Criteria::ASC) Order by the is_name_automatic column
@@ -29,6 +30,7 @@
  * @method     CollectibleQuery groupBySlug() Group by the slug column
  * @method     CollectibleQuery groupByDescription() Group by the description column
  * @method     CollectibleQuery groupByNumComments() Group by the num_comments column
+ * @method     CollectibleQuery groupByBatchHash() Group by the batch_hash column
  * @method     CollectibleQuery groupByScore() Group by the score column
  * @method     CollectibleQuery groupByPosition() Group by the position column
  * @method     CollectibleQuery groupByIsNameAutomatic() Group by the is_name_automatic column
@@ -75,6 +77,7 @@
  * @method     Collectible findOneBySlug(string $slug) Return the first Collectible filtered by the slug column
  * @method     Collectible findOneByDescription(string $description) Return the first Collectible filtered by the description column
  * @method     Collectible findOneByNumComments(int $num_comments) Return the first Collectible filtered by the num_comments column
+ * @method     Collectible findOneByBatchHash(string $batch_hash) Return the first Collectible filtered by the batch_hash column
  * @method     Collectible findOneByScore(int $score) Return the first Collectible filtered by the score column
  * @method     Collectible findOneByPosition(int $position) Return the first Collectible filtered by the position column
  * @method     Collectible findOneByIsNameAutomatic(boolean $is_name_automatic) Return the first Collectible filtered by the is_name_automatic column
@@ -90,6 +93,7 @@
  * @method     array findBySlug(string $slug) Return Collectible objects filtered by the slug column
  * @method     array findByDescription(string $description) Return Collectible objects filtered by the description column
  * @method     array findByNumComments(int $num_comments) Return Collectible objects filtered by the num_comments column
+ * @method     array findByBatchHash(string $batch_hash) Return Collectible objects filtered by the batch_hash column
  * @method     array findByScore(int $score) Return Collectible objects filtered by the score column
  * @method     array findByPosition(int $position) Return Collectible objects filtered by the position column
  * @method     array findByIsNameAutomatic(boolean $is_name_automatic) Return Collectible objects filtered by the is_name_automatic column
@@ -195,7 +199,7 @@ abstract class BaseCollectibleQuery extends ModelCriteria
    */
   protected function findPkSimple($key, $con)
   {
-    $sql = 'SELECT `ID`, `GRAPH_ID`, `COLLECTOR_ID`, `COLLECTION_ID`, `NAME`, `SLUG`, `DESCRIPTION`, `NUM_COMMENTS`, `SCORE`, `POSITION`, `IS_NAME_AUTOMATIC`, `EBLOB`, `CREATED_AT`, `UPDATED_AT` FROM `collectible` WHERE `ID` = :p0';
+    $sql = 'SELECT `ID`, `GRAPH_ID`, `COLLECTOR_ID`, `COLLECTION_ID`, `NAME`, `SLUG`, `DESCRIPTION`, `NUM_COMMENTS`, `BATCH_HASH`, `SCORE`, `POSITION`, `IS_NAME_AUTOMATIC`, `EBLOB`, `CREATED_AT`, `UPDATED_AT` FROM `collectible` WHERE `ID` = :p0';
     try
     {
       $stmt = $con->prepare($sql);
@@ -590,6 +594,38 @@ abstract class BaseCollectibleQuery extends ModelCriteria
       }
     }
     return $this->addUsingAlias(CollectiblePeer::NUM_COMMENTS, $numComments, $comparison);
+  }
+
+  /**
+   * Filter the query on the batch_hash column
+   *
+   * Example usage:
+   * <code>
+   * $query->filterByBatchHash('fooValue');   // WHERE batch_hash = 'fooValue'
+   * $query->filterByBatchHash('%fooValue%'); // WHERE batch_hash LIKE '%fooValue%'
+   * </code>
+   *
+   * @param     string $batchHash The value to use as filter.
+   *              Accepts wildcards (* and % trigger a LIKE)
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    CollectibleQuery The current query, for fluid interface
+   */
+  public function filterByBatchHash($batchHash = null, $comparison = null)
+  {
+    if (null === $comparison)
+    {
+      if (is_array($batchHash))
+      {
+        $comparison = Criteria::IN;
+      }
+      elseif (preg_match('/[\%\*]/', $batchHash))
+      {
+        $batchHash = str_replace('*', '%', $batchHash);
+        $comparison = Criteria::LIKE;
+      }
+    }
+    return $this->addUsingAlias(CollectiblePeer::BATCH_HASH, $batchHash, $comparison);
   }
 
   /**

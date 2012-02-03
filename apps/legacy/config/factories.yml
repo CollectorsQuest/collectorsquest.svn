@@ -3,7 +3,7 @@ all:
     class: cqWebResponse
 
   routing:
-    class: sfPatternRouting
+    class: cqPatternRouting
     param:
       generate_shortest_url: true
       extra_parameters_as_query_string: true

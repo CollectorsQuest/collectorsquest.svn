@@ -17,6 +17,14 @@ if ($pager->getPage() == 1)
   cq_button_set(
     array(
       array(
+        'value' => __('Empty Dropbox'),
+        'route' => '@manage_dropbox?cmd=empty&encrypt=1',
+        'options' => array(
+          'confirm' => __('Are you sure you want to empty your whole Dropbox?'),
+          'class' => 'cancel yellow', 'style' => 'float: right; margin-right: 5px;'
+        )
+      ),
+      array(
         'value' => __('Add Collectibles to Your Dropbox'), 'route' => 'fancybox_collection_add_collectibles(0)',
         'options' => array('class' => 'create yellow')
       ),
@@ -42,7 +50,7 @@ foreach ($collections as $i => $collection)
     array(
       array(
         'value' => __('Delete Collection'),
-        'route' => '@manage_collection_by_slug?id='. $collection->getId() .'&slug='. $collection->getSlug() .'&cmd=delete',
+        'route' => '@manage_collection_by_slug?id='. $collection->getId() .'&slug='. $collection->getSlug() .'&cmd=delete&encrypt=1',
         'options' => array(
           'confirm' => __('Are you sure you want to delete this collection?'),
           'class' => 'cancel yellow', 'style' => 'float: right; margin-right: 5px;'

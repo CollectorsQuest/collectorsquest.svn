@@ -77,7 +77,7 @@ class Collector extends BaseCollector
         $json = json_encode(array(
           'version' => $version, 'id' => $this->getId(),
           'created' => (int) $this->getCreatedAt('U'), 'time' => (int) $time
-          ));
+        ));
 
         $hash = sprintf(
           "%s;%d;%s;%d", $version, $this->getId(), hash_hmac('sha1', base64_encode($json), $this->getSalt()), $time

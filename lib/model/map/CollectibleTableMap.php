@@ -47,6 +47,7 @@ class CollectibleTableMap extends TableMap
     $this->addColumn('SLUG', 'Slug', 'VARCHAR', false, 128, null);
     $this->addColumn('DESCRIPTION', 'Description', 'LONGVARCHAR', true, null, null);
     $this->addColumn('NUM_COMMENTS', 'NumComments', 'INTEGER', false, null, 0);
+    $this->addColumn('BATCH_HASH', 'BatchHash', 'VARCHAR', false, 32, null);
     $this->addColumn('SCORE', 'Score', 'INTEGER', false, null, 0);
     $this->addColumn('POSITION', 'Position', 'INTEGER', false, null, 0);
     $this->addColumn('IS_NAME_AUTOMATIC', 'IsNameAutomatic', 'BOOLEAN', false, 1, false);

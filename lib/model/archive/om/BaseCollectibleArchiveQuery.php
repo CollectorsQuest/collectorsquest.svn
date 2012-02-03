@@ -14,6 +14,7 @@
  * @method     CollectibleArchiveQuery orderBySlug($order = Criteria::ASC) Order by the slug column
  * @method     CollectibleArchiveQuery orderByDescription($order = Criteria::ASC) Order by the description column
  * @method     CollectibleArchiveQuery orderByNumComments($order = Criteria::ASC) Order by the num_comments column
+ * @method     CollectibleArchiveQuery orderByBatchHash($order = Criteria::ASC) Order by the batch_hash column
  * @method     CollectibleArchiveQuery orderByScore($order = Criteria::ASC) Order by the score column
  * @method     CollectibleArchiveQuery orderByPosition($order = Criteria::ASC) Order by the position column
  * @method     CollectibleArchiveQuery orderByIsNameAutomatic($order = Criteria::ASC) Order by the is_name_automatic column
@@ -30,6 +31,7 @@
  * @method     CollectibleArchiveQuery groupBySlug() Group by the slug column
  * @method     CollectibleArchiveQuery groupByDescription() Group by the description column
  * @method     CollectibleArchiveQuery groupByNumComments() Group by the num_comments column
+ * @method     CollectibleArchiveQuery groupByBatchHash() Group by the batch_hash column
  * @method     CollectibleArchiveQuery groupByScore() Group by the score column
  * @method     CollectibleArchiveQuery groupByPosition() Group by the position column
  * @method     CollectibleArchiveQuery groupByIsNameAutomatic() Group by the is_name_automatic column
@@ -53,6 +55,7 @@
  * @method     CollectibleArchive findOneBySlug(string $slug) Return the first CollectibleArchive filtered by the slug column
  * @method     CollectibleArchive findOneByDescription(string $description) Return the first CollectibleArchive filtered by the description column
  * @method     CollectibleArchive findOneByNumComments(int $num_comments) Return the first CollectibleArchive filtered by the num_comments column
+ * @method     CollectibleArchive findOneByBatchHash(string $batch_hash) Return the first CollectibleArchive filtered by the batch_hash column
  * @method     CollectibleArchive findOneByScore(int $score) Return the first CollectibleArchive filtered by the score column
  * @method     CollectibleArchive findOneByPosition(int $position) Return the first CollectibleArchive filtered by the position column
  * @method     CollectibleArchive findOneByIsNameAutomatic(boolean $is_name_automatic) Return the first CollectibleArchive filtered by the is_name_automatic column
@@ -69,6 +72,7 @@
  * @method     array findBySlug(string $slug) Return CollectibleArchive objects filtered by the slug column
  * @method     array findByDescription(string $description) Return CollectibleArchive objects filtered by the description column
  * @method     array findByNumComments(int $num_comments) Return CollectibleArchive objects filtered by the num_comments column
+ * @method     array findByBatchHash(string $batch_hash) Return CollectibleArchive objects filtered by the batch_hash column
  * @method     array findByScore(int $score) Return CollectibleArchive objects filtered by the score column
  * @method     array findByPosition(int $position) Return CollectibleArchive objects filtered by the position column
  * @method     array findByIsNameAutomatic(boolean $is_name_automatic) Return CollectibleArchive objects filtered by the is_name_automatic column
@@ -172,7 +176,7 @@ abstract class BaseCollectibleArchiveQuery extends ModelCriteria
    */
   protected function findPkSimple($key, $con)
   {
-    $sql = 'SELECT `ID`, `GRAPH_ID`, `COLLECTOR_ID`, `COLLECTION_ID`, `NAME`, `SLUG`, `DESCRIPTION`, `NUM_COMMENTS`, `SCORE`, `POSITION`, `IS_NAME_AUTOMATIC`, `EBLOB`, `UPDATED_AT`, `CREATED_AT`, `ARCHIVED_AT` FROM `collectible_archive` WHERE `ID` = :p0';
+    $sql = 'SELECT `ID`, `GRAPH_ID`, `COLLECTOR_ID`, `COLLECTION_ID`, `NAME`, `SLUG`, `DESCRIPTION`, `NUM_COMMENTS`, `BATCH_HASH`, `SCORE`, `POSITION`, `IS_NAME_AUTOMATIC`, `EBLOB`, `UPDATED_AT`, `CREATED_AT`, `ARCHIVED_AT` FROM `collectible_archive` WHERE `ID` = :p0';
     try
     {
       $stmt = $con->prepare($sql);
@@ -563,6 +567,38 @@ abstract class BaseCollectibleArchiveQuery extends ModelCriteria
       }
     }
     return $this->addUsingAlias(CollectibleArchivePeer::NUM_COMMENTS, $numComments, $comparison);
+  }
+
+  /**
+   * Filter the query on the batch_hash column
+   *
+   * Example usage:
+   * <code>
+   * $query->filterByBatchHash('fooValue');   // WHERE batch_hash = 'fooValue'
+   * $query->filterByBatchHash('%fooValue%'); // WHERE batch_hash LIKE '%fooValue%'
+   * </code>
+   *
+   * @param     string $batchHash The value to use as filter.
+   *              Accepts wildcards (* and % trigger a LIKE)
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    CollectibleArchiveQuery The current query, for fluid interface
+   */
+  public function filterByBatchHash($batchHash = null, $comparison = null)
+  {
+    if (null === $comparison)
+    {
+      if (is_array($batchHash))
+      {
+        $comparison = Criteria::IN;
+      }
+      elseif (preg_match('/[\%\*]/', $batchHash))
+      {
+        $batchHash = str_replace('*', '%', $batchHash);
+        $comparison = Criteria::LIKE;
+      }
+    }
+    return $this->addUsingAlias(CollectibleArchivePeer::BATCH_HASH, $batchHash, $comparison);
   }
 
   /**

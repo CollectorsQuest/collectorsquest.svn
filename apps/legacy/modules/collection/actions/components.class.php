@@ -58,7 +58,7 @@ class collectionComponents extends cqComponents
         $this->buttons[] = array(
           'text' => 'Empty Dropbox',
           'icon' => 'trash',
-          'route' => '@manage_dropbox?cmd=empty'
+          'route' => '@manage_dropbox?cmd=empty&encrypt=1'
         );
       }
     }
@@ -108,7 +108,7 @@ class collectionComponents extends cqComponents
       $this->buttons[] = array(
         'text' => 'Delete Collectible',
         'icon' => 'trash',
-        'route' => '@manage_collectible_by_slug?id='. $this->collectible->getId() .'&slug='. $this->collectible->getSlug() .'&cmd=delete'
+        'route' => '@manage_collectible_by_slug?id='. $this->collectible->getId() .'&slug='. $this->collectible->getSlug() .'&cmd=delete&encrypt=1'
       );
     }
     else

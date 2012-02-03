@@ -179,6 +179,7 @@ CREATE TABLE `collectible_archive`
 	`slug` VARCHAR(128),
 	`description` TEXT NOT NULL,
 	`num_comments` INTEGER DEFAULT 0,
+	`batch_hash` VARCHAR(32),
 	`score` INTEGER DEFAULT 0,
 	`position` INTEGER DEFAULT 0,
 	`is_name_automatic` TINYINT(1) DEFAULT 0,
@@ -191,7 +192,8 @@ CREATE TABLE `collectible_archive`
 	INDEX `collectible_archive_I_2` (`graph_id`),
 	INDEX `collectible_archive_I_3` (`collector_id`),
 	INDEX `collectible_archive_I_4` (`collection_id`),
-	INDEX `collectible_archive_I_5` (`slug`)
+	INDEX `collectible_archive_I_5` (`slug`),
+	INDEX `collectible_archive_I_6` (`batch_hash`)
 ) ENGINE=InnoDB;
 
 -- ---------------------------------------------------------------------

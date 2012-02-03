@@ -1,3 +1,5 @@
+<?php $batch = cqStatic::getUniqueId(32); ?>
+
 <div class="span-10" style="text-align: center; margin: auto;">
   <input type="file" id="uploader">
 </div>
@@ -7,7 +9,7 @@ $(document).ready(function()
 {
   $('#uploader').uploadify(
   {
-    'script':  '<?= url_for('@ajax_collection?section=upload&page=collectibles&id=' . (isset($collection) ? $collection->getId() : 0)); ?>',
+    'script':  '<?= urlencode(url_for('@ajax_collection?section=upload&page=collectibles&id=' . (isset($collection) ? $collection->getId() : 0) .'&batch='. $batch)); ?>',
     'scriptData': {'_session_id': $.cookie('legacy')},
     'uploader':  '/swf/uploadify.swf', 'expressInstall' : '/swf/install.swf',
     'folder':  '/uploads',
@@ -24,7 +26,11 @@ $(document).ready(function()
     },
     onAllComplete: function()
     {
-      document.location.replace('<?= url_for_collection($collection); ?>');
+      <?php if ($collection instanceof Collection): ?>
+        document.location.replace('<?= url_for('@manage_collectibles_by_slug?id='. $collection->getId() .'&slug='. $collection->getSlug() .'&batch='. $batch); ?>');
+      <?php else: ?>
+        document.location.replace('<?= url_for('@manage_collectibles?batch='. $batch); ?>');
+      <?php endif; ?>
 
       return true;
     }

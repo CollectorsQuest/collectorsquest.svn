@@ -97,7 +97,7 @@ class manageComponents extends cqComponents
         2 => array(
           'text' => 'Delete Collectible',
           'icon' => 'trash',
-          'route' => '@manage_collectible_by_slug?id='. $collectible->getId() .'&slug='. $collectible->getSlug() .'&cmd=delete'
+          'route' => '@manage_collectible_by_slug?id='. $collectible->getId() .'&slug='. $collectible->getSlug() .'&cmd=delete&encrypt=1'
         )
       );
     }

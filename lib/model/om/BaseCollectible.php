@@ -80,6 +80,12 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   protected $num_comments;
 
   /**
+   * The value for the batch_hash field.
+   * @var        string
+   */
+  protected $batch_hash;
+
+  /**
    * The value for the score field.
    * Note: this column has a database default value of: 0
    * @var        int
@@ -291,6 +297,16 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   public function getNumComments()
   {
     return $this->num_comments;
+  }
+
+  /**
+   * Get the [batch_hash] column value.
+   * 
+   * @return     string
+   */
+  public function getBatchHash()
+  {
+    return $this->batch_hash;
   }
 
   /**
@@ -620,6 +636,28 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
   }
 
   /**
+   * Set the value of [batch_hash] column.
+   * 
+   * @param      string $v new value
+   * @return     Collectible The current object (for fluent API support)
+   */
+  public function setBatchHash($v)
+  {
+    if ($v !== null)
+    {
+      $v = (string) $v;
+    }
+
+    if ($this->batch_hash !== $v)
+    {
+      $this->batch_hash = $v;
+      $this->modifiedColumns[] = CollectiblePeer::BATCH_HASH;
+    }
+
+    return $this;
+  }
+
+  /**
    * Set the value of [score] column.
    * 
    * @param      int $v new value
@@ -827,12 +865,13 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
       $this->slug = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
       $this->description = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
       $this->num_comments = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
-      $this->score = ($row[$startcol + 8] !== null) ? (int) $row[$startcol + 8] : null;
-      $this->position = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
-      $this->is_name_automatic = ($row[$startcol + 10] !== null) ? (boolean) $row[$startcol + 10] : null;
-      $this->eblob = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-      $this->created_at = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
-      $this->updated_at = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+      $this->batch_hash = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+      $this->score = ($row[$startcol + 9] !== null) ? (int) $row[$startcol + 9] : null;
+      $this->position = ($row[$startcol + 10] !== null) ? (int) $row[$startcol + 10] : null;
+      $this->is_name_automatic = ($row[$startcol + 11] !== null) ? (boolean) $row[$startcol + 11] : null;
+      $this->eblob = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+      $this->created_at = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+      $this->updated_at = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -842,7 +881,7 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 14; // 14 = CollectiblePeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 15; // 15 = CollectiblePeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -1301,6 +1340,10 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     {
       $modifiedColumns[':p' . $index++]  = '`NUM_COMMENTS`';
     }
+    if ($this->isColumnModified(CollectiblePeer::BATCH_HASH))
+    {
+      $modifiedColumns[':p' . $index++]  = '`BATCH_HASH`';
+    }
     if ($this->isColumnModified(CollectiblePeer::SCORE))
     {
       $modifiedColumns[':p' . $index++]  = '`SCORE`';
@@ -1362,6 +1405,9 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
             break;
           case '`NUM_COMMENTS`':
             $stmt->bindValue($identifier, $this->num_comments, PDO::PARAM_INT);
+            break;
+          case '`BATCH_HASH`':
+            $stmt->bindValue($identifier, $this->batch_hash, PDO::PARAM_STR);
             break;
           case '`SCORE`':
             $stmt->bindValue($identifier, $this->score, PDO::PARAM_INT);
@@ -1613,21 +1659,24 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
         return $this->getNumComments();
         break;
       case 8:
-        return $this->getScore();
+        return $this->getBatchHash();
         break;
       case 9:
-        return $this->getPosition();
+        return $this->getScore();
         break;
       case 10:
-        return $this->getIsNameAutomatic();
+        return $this->getPosition();
         break;
       case 11:
-        return $this->getEblob();
+        return $this->getIsNameAutomatic();
         break;
       case 12:
-        return $this->getCreatedAt();
+        return $this->getEblob();
         break;
       case 13:
+        return $this->getCreatedAt();
+        break;
+      case 14:
         return $this->getUpdatedAt();
         break;
       default:
@@ -1668,12 +1717,13 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
       $keys[5] => $this->getSlug(),
       $keys[6] => $this->getDescription(),
       $keys[7] => $this->getNumComments(),
-      $keys[8] => $this->getScore(),
-      $keys[9] => $this->getPosition(),
-      $keys[10] => $this->getIsNameAutomatic(),
-      $keys[11] => $this->getEblob(),
-      $keys[12] => $this->getCreatedAt(),
-      $keys[13] => $this->getUpdatedAt(),
+      $keys[8] => $this->getBatchHash(),
+      $keys[9] => $this->getScore(),
+      $keys[10] => $this->getPosition(),
+      $keys[11] => $this->getIsNameAutomatic(),
+      $keys[12] => $this->getEblob(),
+      $keys[13] => $this->getCreatedAt(),
+      $keys[14] => $this->getUpdatedAt(),
     );
     if ($includeForeignObjects)
     {
@@ -1758,21 +1808,24 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
         $this->setNumComments($value);
         break;
       case 8:
-        $this->setScore($value);
+        $this->setBatchHash($value);
         break;
       case 9:
-        $this->setPosition($value);
+        $this->setScore($value);
         break;
       case 10:
-        $this->setIsNameAutomatic($value);
+        $this->setPosition($value);
         break;
       case 11:
-        $this->setEblob($value);
+        $this->setIsNameAutomatic($value);
         break;
       case 12:
-        $this->setCreatedAt($value);
+        $this->setEblob($value);
         break;
       case 13:
+        $this->setCreatedAt($value);
+        break;
+      case 14:
         $this->setUpdatedAt($value);
         break;
     }
@@ -1807,12 +1860,13 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     if (array_key_exists($keys[5], $arr)) $this->setSlug($arr[$keys[5]]);
     if (array_key_exists($keys[6], $arr)) $this->setDescription($arr[$keys[6]]);
     if (array_key_exists($keys[7], $arr)) $this->setNumComments($arr[$keys[7]]);
-    if (array_key_exists($keys[8], $arr)) $this->setScore($arr[$keys[8]]);
-    if (array_key_exists($keys[9], $arr)) $this->setPosition($arr[$keys[9]]);
-    if (array_key_exists($keys[10], $arr)) $this->setIsNameAutomatic($arr[$keys[10]]);
-    if (array_key_exists($keys[11], $arr)) $this->setEblob($arr[$keys[11]]);
-    if (array_key_exists($keys[12], $arr)) $this->setCreatedAt($arr[$keys[12]]);
-    if (array_key_exists($keys[13], $arr)) $this->setUpdatedAt($arr[$keys[13]]);
+    if (array_key_exists($keys[8], $arr)) $this->setBatchHash($arr[$keys[8]]);
+    if (array_key_exists($keys[9], $arr)) $this->setScore($arr[$keys[9]]);
+    if (array_key_exists($keys[10], $arr)) $this->setPosition($arr[$keys[10]]);
+    if (array_key_exists($keys[11], $arr)) $this->setIsNameAutomatic($arr[$keys[11]]);
+    if (array_key_exists($keys[12], $arr)) $this->setEblob($arr[$keys[12]]);
+    if (array_key_exists($keys[13], $arr)) $this->setCreatedAt($arr[$keys[13]]);
+    if (array_key_exists($keys[14], $arr)) $this->setUpdatedAt($arr[$keys[14]]);
   }
 
   /**
@@ -1832,6 +1886,7 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     if ($this->isColumnModified(CollectiblePeer::SLUG)) $criteria->add(CollectiblePeer::SLUG, $this->slug);
     if ($this->isColumnModified(CollectiblePeer::DESCRIPTION)) $criteria->add(CollectiblePeer::DESCRIPTION, $this->description);
     if ($this->isColumnModified(CollectiblePeer::NUM_COMMENTS)) $criteria->add(CollectiblePeer::NUM_COMMENTS, $this->num_comments);
+    if ($this->isColumnModified(CollectiblePeer::BATCH_HASH)) $criteria->add(CollectiblePeer::BATCH_HASH, $this->batch_hash);
     if ($this->isColumnModified(CollectiblePeer::SCORE)) $criteria->add(CollectiblePeer::SCORE, $this->score);
     if ($this->isColumnModified(CollectiblePeer::POSITION)) $criteria->add(CollectiblePeer::POSITION, $this->position);
     if ($this->isColumnModified(CollectiblePeer::IS_NAME_AUTOMATIC)) $criteria->add(CollectiblePeer::IS_NAME_AUTOMATIC, $this->is_name_automatic);
@@ -1907,6 +1962,7 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     $copyObj->setSlug($this->getSlug());
     $copyObj->setDescription($this->getDescription());
     $copyObj->setNumComments($this->getNumComments());
+    $copyObj->setBatchHash($this->getBatchHash());
     $copyObj->setScore($this->getScore());
     $copyObj->setPosition($this->getPosition());
     $copyObj->setIsNameAutomatic($this->getIsNameAutomatic());
@@ -2931,6 +2987,7 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     $this->slug = null;
     $this->description = null;
     $this->num_comments = null;
+    $this->batch_hash = null;
     $this->score = null;
     $this->position = null;
     $this->is_name_automatic = null;
@@ -3112,6 +3169,7 @@ abstract class BaseCollectible extends BaseObject  implements Persistent
     $this->setSlug($archive->getSlug());
     $this->setDescription($archive->getDescription());
     $this->setNumComments($archive->getNumComments());
+    $this->setBatchHash($archive->getBatchHash());
     $this->setScore($archive->getScore());
     $this->setPosition($archive->getPosition());
     $this->setIsNameAutomatic($archive->getIsNameAutomatic());

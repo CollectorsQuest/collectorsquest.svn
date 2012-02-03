@@ -74,6 +74,7 @@ class collectionAction extends cqAjaxAction
         $collectible->setCollector($collector);
         $collectible->setCollection($this->collection);
         $collectible->setName($name, true);
+        $collectible->setBatchHash($request->getParameter('batch', null));
         $collectible->save();
 
         // Add the image

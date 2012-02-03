@@ -332,6 +332,7 @@ CREATE TABLE `collectible`
 	`slug` VARCHAR(128),
 	`description` TEXT NOT NULL,
 	`num_comments` INTEGER DEFAULT 0,
+	`batch_hash` VARCHAR(32),
 	`score` INTEGER DEFAULT 0,
 	`position` INTEGER DEFAULT 0,
 	`is_name_automatic` TINYINT(1) DEFAULT 0,
@@ -341,6 +342,7 @@ CREATE TABLE `collectible`
 	PRIMARY KEY (`id`),
 	UNIQUE INDEX `collectible_U_1` (`graph_id`),
 	UNIQUE INDEX `collectible_U_2` (`slug`),
+	INDEX `collectible_I_1` (`batch_hash`),
 	INDEX `collectible_FI_1` (`collector_id`),
 	INDEX `collectible_FI_2` (`collection_id`),
 	CONSTRAINT `collectible_FK_1`
