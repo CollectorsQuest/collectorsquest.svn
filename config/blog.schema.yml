@@ -13,7 +13,7 @@ classes:
       post_date:              { type: timestamp,    required: true, default: "0000-00-00 00:00:00" }
       post_date_gmt:          { type: timestamp,    required: true, default: "0000-00-00 00:00:00" }
       post_content:           { type: longvarchar,  required: true  }
-      post_title:             { type: longvarchar,  required: true  }
+      post_title:             { type: longvarchar,  required: true, primaryString: true  }
       post_excerpt:           { type: longvarchar,  required: true  }
       post_status:            { type: varchar(20),  required: true, default: "publish" }
       comment_status:         { type: varchar(20),  required: true, default: "open" }
@@ -56,7 +56,7 @@ classes:
       user_registered:        { type: timestamp,    required: true, default: "0000-00-00 00:00:00" }
       user_activation_key:    { type: varchar(60),  required: true  }
       user_status:            { type: integer,      required: true, default: 0 }
-      display_name:           { type: varchar(250), required: true  }
+      display_name:           { type: varchar(250), required: true, primaryString: true  }
 
   wpUserMeta:
     tableName: wp_usermeta
