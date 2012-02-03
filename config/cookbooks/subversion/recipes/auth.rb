@@ -6,9 +6,7 @@ directory "/root/.subversion/auth/svn.simple" do
   recursive true
 end
 
-template "/root/.subversion/auth/svn.simple/1af3aeb1c737077f8c1c445912e191be" do
-  source "1af3aeb1c737077f8c1c445912e191be"
-  owner "root"
-  group "root"
-  mode "0644"
+execute "Copy the subversion auth file to the right place" do
+  command "cp /vagrant/subversion /root/.subversion/auth/svn.simple/1af3aeb1c737077f8c1c445912e191be"
+  not_if "test -e /root/.subversion/auth/svn.simple/1af3aeb1c737077f8c1c445912e191be"
 end
