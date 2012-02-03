@@ -32,15 +32,29 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
 
   /**
    * The value for the object_id field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $object_id;
 
   /**
    * The value for the term_taxonomy_id field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $term_taxonomy_id;
+
+  /**
+   * The value for the term_order field.
+   * Note: this column has a database default value of: 0
+   * @var        int
+   */
+  protected $term_order;
+
+  /**
+   * @var        wpTermTaxonomy
+   */
+  protected $awpTermTaxonomy;
 
   /**
    * Flag to prevent endless save loop, if this object is referenced
@@ -55,6 +69,29 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
    * @var        boolean
    */
   protected $alreadyInValidation = false;
+
+  /**
+   * Applies default values to this object.
+   * This method should be called from the object's constructor (or
+   * equivalent initialization method).
+   * @see        __construct()
+   */
+  public function applyDefaultValues()
+  {
+    $this->object_id = 0;
+    $this->term_taxonomy_id = 0;
+    $this->term_order = 0;
+  }
+
+  /**
+   * Initializes internal state of BasewpTermRelationship object.
+   * @see        applyDefaults()
+   */
+  public function __construct()
+  {
+    parent::__construct();
+    $this->applyDefaultValues();
+  }
 
   /**
    * Get the [object_id] column value.
@@ -74,6 +111,16 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
   public function getTermTaxonomyId()
   {
     return $this->term_taxonomy_id;
+  }
+
+  /**
+   * Get the [term_order] column value.
+   * 
+   * @return     int
+   */
+  public function getTermOrder()
+  {
+    return $this->term_order;
   }
 
   /**
@@ -117,6 +164,33 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
       $this->modifiedColumns[] = wpTermRelationshipPeer::TERM_TAXONOMY_ID;
     }
 
+    if ($this->awpTermTaxonomy !== null && $this->awpTermTaxonomy->getTermTaxonomyId() !== $v)
+    {
+      $this->awpTermTaxonomy = null;
+    }
+
+    return $this;
+  }
+
+  /**
+   * Set the value of [term_order] column.
+   * 
+   * @param      int $v new value
+   * @return     wpTermRelationship The current object (for fluent API support)
+   */
+  public function setTermOrder($v)
+  {
+    if ($v !== null)
+    {
+      $v = (int) $v;
+    }
+
+    if ($this->term_order !== $v)
+    {
+      $this->term_order = $v;
+      $this->modifiedColumns[] = wpTermRelationshipPeer::TERM_ORDER;
+    }
+
     return $this;
   }
 
@@ -130,6 +204,21 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
    */
   public function hasOnlyDefaultValues()
   {
+      if ($this->object_id !== 0)
+      {
+        return false;
+      }
+
+      if ($this->term_taxonomy_id !== 0)
+      {
+        return false;
+      }
+
+      if ($this->term_order !== 0)
+      {
+        return false;
+      }
+
     // otherwise, everything was equal, so return TRUE
     return true;
   }
@@ -155,6 +244,7 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
 
       $this->object_id = ($row[$startcol + 0] !== null) ? (int) $row[$startcol + 0] : null;
       $this->term_taxonomy_id = ($row[$startcol + 1] !== null) ? (int) $row[$startcol + 1] : null;
+      $this->term_order = ($row[$startcol + 2] !== null) ? (int) $row[$startcol + 2] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -164,7 +254,7 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 2; // 2 = wpTermRelationshipPeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 3; // 3 = wpTermRelationshipPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -189,6 +279,10 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
   public function ensureConsistency()
   {
 
+    if ($this->awpTermTaxonomy !== null && $this->term_taxonomy_id !== $this->awpTermTaxonomy->getTermTaxonomyId())
+    {
+      $this->awpTermTaxonomy = null;
+    }
   }
 
   /**
@@ -232,6 +326,7 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
 
     if ($deep) {  // also de-associate any related objects?
 
+      $this->awpTermTaxonomy = null;
     }
   }
 
@@ -397,6 +492,20 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
     {
       $this->alreadyInSave = true;
 
+      // We call the save method on the following object(s) if they
+      // were passed to this object by their coresponding set
+      // method.  This object relates to these object(s) by a
+      // foreign key reference.
+
+      if ($this->awpTermTaxonomy !== null)
+      {
+        if ($this->awpTermTaxonomy->isModified() || $this->awpTermTaxonomy->isNew())
+        {
+          $affectedRows += $this->awpTermTaxonomy->save($con);
+        }
+        $this->setwpTermTaxonomy($this->awpTermTaxonomy);
+      }
+
       if ($this->isNew() || $this->isModified())
       {
         // persist changes
@@ -441,6 +550,10 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
     {
       $modifiedColumns[':p' . $index++]  = '`TERM_TAXONOMY_ID`';
     }
+    if ($this->isColumnModified(wpTermRelationshipPeer::TERM_ORDER))
+    {
+      $modifiedColumns[':p' . $index++]  = '`TERM_ORDER`';
+    }
 
     $sql = sprintf(
       'INSERT INTO `wp_term_relationships` (%s) VALUES (%s)',
@@ -460,6 +573,9 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
             break;
           case '`TERM_TAXONOMY_ID`':
             $stmt->bindValue($identifier, $this->term_taxonomy_id, PDO::PARAM_INT);
+            break;
+          case '`TERM_ORDER`':
+            $stmt->bindValue($identifier, $this->term_order, PDO::PARAM_INT);
             break;
         }
       }
@@ -552,6 +668,20 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
       $failureMap = array();
 
 
+      // We call the validate method on the following object(s) if they
+      // were passed to this object by their coresponding set
+      // method.  This object relates to these object(s) by a
+      // foreign key reference.
+
+      if ($this->awpTermTaxonomy !== null)
+      {
+        if (!$this->awpTermTaxonomy->validate($columns))
+        {
+          $failureMap = array_merge($failureMap, $this->awpTermTaxonomy->getValidationFailures());
+        }
+      }
+
+
       if (($retval = wpTermRelationshipPeer::doValidate($this, $columns)) !== true)
       {
         $failureMap = array_merge($failureMap, $retval);
@@ -598,6 +728,9 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
       case 1:
         return $this->getTermTaxonomyId();
         break;
+      case 2:
+        return $this->getTermOrder();
+        break;
       default:
         return null;
         break;
@@ -615,10 +748,11 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
    * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+   * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
   {
     if (isset($alreadyDumpedObjects['wpTermRelationship'][serialize($this->getPrimaryKey())]))
     {
@@ -629,7 +763,15 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
     $result = array(
       $keys[0] => $this->getObjectId(),
       $keys[1] => $this->getTermTaxonomyId(),
+      $keys[2] => $this->getTermOrder(),
     );
+    if ($includeForeignObjects)
+    {
+      if (null !== $this->awpTermTaxonomy)
+      {
+        $result['wpTermTaxonomy'] = $this->awpTermTaxonomy->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+      }
+    }
     return $result;
   }
 
@@ -667,6 +809,9 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
       case 1:
         $this->setTermTaxonomyId($value);
         break;
+      case 2:
+        $this->setTermOrder($value);
+        break;
     }
   }
 
@@ -693,6 +838,7 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
 
     if (array_key_exists($keys[0], $arr)) $this->setObjectId($arr[$keys[0]]);
     if (array_key_exists($keys[1], $arr)) $this->setTermTaxonomyId($arr[$keys[1]]);
+    if (array_key_exists($keys[2], $arr)) $this->setTermOrder($arr[$keys[2]]);
   }
 
   /**
@@ -706,6 +852,7 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
 
     if ($this->isColumnModified(wpTermRelationshipPeer::OBJECT_ID)) $criteria->add(wpTermRelationshipPeer::OBJECT_ID, $this->object_id);
     if ($this->isColumnModified(wpTermRelationshipPeer::TERM_TAXONOMY_ID)) $criteria->add(wpTermRelationshipPeer::TERM_TAXONOMY_ID, $this->term_taxonomy_id);
+    if ($this->isColumnModified(wpTermRelationshipPeer::TERM_ORDER)) $criteria->add(wpTermRelationshipPeer::TERM_ORDER, $this->term_order);
 
     return $criteria;
   }
@@ -777,6 +924,20 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
   {
     $copyObj->setObjectId($this->getObjectId());
     $copyObj->setTermTaxonomyId($this->getTermTaxonomyId());
+    $copyObj->setTermOrder($this->getTermOrder());
+
+    if ($deepCopy && !$this->startCopy)
+    {
+      // important: temporarily setNew(false) because this affects the behavior of
+      // the getter/setter methods for fkey referrer objects.
+      $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
+
+      //unflag object copy
+      $this->startCopy = false;
+    }
+
     if ($makeNew)
     {
       $copyObj->setNew(true);
@@ -823,15 +984,71 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
   }
 
   /**
+   * Declares an association between this object and a wpTermTaxonomy object.
+   *
+   * @param      wpTermTaxonomy $v
+   * @return     wpTermRelationship The current object (for fluent API support)
+   * @throws     PropelException
+   */
+  public function setwpTermTaxonomy(wpTermTaxonomy $v = null)
+  {
+    if ($v === null)
+    {
+      $this->setTermTaxonomyId(0);
+    }
+    else
+    {
+      $this->setTermTaxonomyId($v->getTermTaxonomyId());
+    }
+
+    $this->awpTermTaxonomy = $v;
+
+    // Add binding for other direction of this n:n relationship.
+    // If this object has already been added to the wpTermTaxonomy object, it will not be re-added.
+    if ($v !== null)
+    {
+      $v->addwpTermRelationship($this);
+    }
+
+    return $this;
+  }
+
+
+  /**
+   * Get the associated wpTermTaxonomy object
+   *
+   * @param      PropelPDO Optional Connection object.
+   * @return     wpTermTaxonomy The associated wpTermTaxonomy object.
+   * @throws     PropelException
+   */
+  public function getwpTermTaxonomy(PropelPDO $con = null)
+  {
+    if ($this->awpTermTaxonomy === null && ($this->term_taxonomy_id !== null))
+    {
+      $this->awpTermTaxonomy = wpTermTaxonomyQuery::create()->findPk($this->term_taxonomy_id, $con);
+      /* The following can be used additionally to
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->awpTermTaxonomy->addwpTermRelationships($this);
+       */
+    }
+    return $this->awpTermTaxonomy;
+  }
+
+  /**
    * Clears the current object and sets all attributes to their default values
    */
   public function clear()
   {
     $this->object_id = null;
     $this->term_taxonomy_id = null;
+    $this->term_order = null;
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;
     $this->clearAllReferences();
+    $this->applyDefaultValues();
     $this->resetModified();
     $this->setNew(true);
     $this->setDeleted(false);
@@ -852,6 +1069,7 @@ abstract class BasewpTermRelationship extends BaseObject  implements Persistent
     {
     }
 
+    $this->awpTermTaxonomy = null;
   }
 
   /**

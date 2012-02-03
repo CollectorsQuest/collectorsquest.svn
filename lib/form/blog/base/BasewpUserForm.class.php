@@ -28,15 +28,15 @@ abstract class BasewpUserForm extends BaseFormPropel
 
     $this->setValidators(array(
       'id'                  => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
-      'user_login'          => new sfValidatorString(array('max_length' => 60, 'required' => false)),
-      'user_pass'           => new sfValidatorString(array('max_length' => 64, 'required' => false)),
-      'user_nicename'       => new sfValidatorString(array('max_length' => 50, 'required' => false)),
-      'user_email'          => new sfValidatorString(array('max_length' => 100, 'required' => false)),
-      'user_url'            => new sfValidatorString(array('max_length' => 100, 'required' => false)),
-      'user_registered'     => new sfValidatorDateTime(array('required' => false)),
-      'user_activation_key' => new sfValidatorString(array('max_length' => 60, 'required' => false)),
-      'user_status'         => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
-      'display_name'        => new sfValidatorString(array('max_length' => 255, 'required' => false)),
+      'user_login'          => new sfValidatorString(array('max_length' => 60)),
+      'user_pass'           => new sfValidatorString(array('max_length' => 64)),
+      'user_nicename'       => new sfValidatorString(array('max_length' => 50)),
+      'user_email'          => new sfValidatorString(array('max_length' => 100)),
+      'user_url'            => new sfValidatorString(array('max_length' => 100)),
+      'user_registered'     => new sfValidatorDateTime(),
+      'user_activation_key' => new sfValidatorString(array('max_length' => 60)),
+      'user_status'         => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),
+      'display_name'        => new sfValidatorString(array('max_length' => 250)),
     ));
 
     $this->widgetSchema->setNameFormat('wp_user[%s]');

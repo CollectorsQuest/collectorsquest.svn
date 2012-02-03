@@ -20,6 +20,10 @@
  * @method     wpTermQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     wpTermQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     wpTermQuery leftJoinwpTermTaxonomy($relationAlias = null) Adds a LEFT JOIN clause to the query using the wpTermTaxonomy relation
+ * @method     wpTermQuery rightJoinwpTermTaxonomy($relationAlias = null) Adds a RIGHT JOIN clause to the query using the wpTermTaxonomy relation
+ * @method     wpTermQuery innerJoinwpTermTaxonomy($relationAlias = null) Adds a INNER JOIN clause to the query using the wpTermTaxonomy relation
+ *
  * @method     wpTerm findOne(PropelPDO $con = null) Return the first wpTerm matching the query
  * @method     wpTerm findOneOrCreate(PropelPDO $con = null) Return the first wpTerm matching the query, or a new wpTerm object populated from the query conditions when no match is found
  *
@@ -352,6 +356,88 @@ abstract class BasewpTermQuery extends ModelCriteria
       }
     }
     return $this->addUsingAlias(wpTermPeer::TERM_GROUP, $termGroup, $comparison);
+  }
+
+  /**
+   * Filter the query by a related wpTermTaxonomy object
+   *
+   * @param     wpTermTaxonomy $wpTermTaxonomy  the related object to use as filter
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpTermQuery The current query, for fluid interface
+   */
+  public function filterBywpTermTaxonomy($wpTermTaxonomy, $comparison = null)
+  {
+    if ($wpTermTaxonomy instanceof wpTermTaxonomy)
+    {
+      return $this
+        ->addUsingAlias(wpTermPeer::TERM_ID, $wpTermTaxonomy->getTermId(), $comparison);
+    }
+    elseif ($wpTermTaxonomy instanceof PropelCollection)
+    {
+      return $this
+        ->usewpTermTaxonomyQuery()
+        ->filterByPrimaryKeys($wpTermTaxonomy->getPrimaryKeys())
+        ->endUse();
+    }
+    else
+    {
+      throw new PropelException('filterBywpTermTaxonomy() only accepts arguments of type wpTermTaxonomy or PropelCollection');
+    }
+  }
+
+  /**
+   * Adds a JOIN clause to the query using the wpTermTaxonomy relation
+   *
+   * @param     string $relationAlias optional alias for the relation
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpTermQuery The current query, for fluid interface
+   */
+  public function joinwpTermTaxonomy($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    $tableMap = $this->getTableMap();
+    $relationMap = $tableMap->getRelation('wpTermTaxonomy');
+
+    // create a ModelJoin object for this join
+    $join = new ModelJoin();
+    $join->setJoinType($joinType);
+    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+    if ($previousJoin = $this->getPreviousJoin())
+    {
+      $join->setPreviousJoin($previousJoin);
+    }
+
+    // add the ModelJoin to the current object
+    if($relationAlias)
+    {
+      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+      $this->addJoinObject($join, $relationAlias);
+    }
+    else
+    {
+      $this->addJoinObject($join, 'wpTermTaxonomy');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Use the wpTermTaxonomy relation wpTermTaxonomy object
+   *
+   * @see       useQuery()
+   *
+   * @param     string $relationAlias optional alias for the relation,
+   *                                   to be used as main alias in the secondary query
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpTermTaxonomyQuery A secondary query class using the current class as primary query
+   */
+  public function usewpTermTaxonomyQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    return $this
+      ->joinwpTermTaxonomy($relationAlias, $joinType)
+      ->useQuery($relationAlias ? $relationAlias : 'wpTermTaxonomy', 'wpTermTaxonomyQuery');
   }
 
   /**

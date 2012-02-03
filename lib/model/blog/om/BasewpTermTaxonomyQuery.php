@@ -24,6 +24,14 @@
  * @method     wpTermTaxonomyQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     wpTermTaxonomyQuery innerJoin($relation) Adds a INNER JOIN clause to the query
  *
+ * @method     wpTermTaxonomyQuery leftJoinwpTerm($relationAlias = null) Adds a LEFT JOIN clause to the query using the wpTerm relation
+ * @method     wpTermTaxonomyQuery rightJoinwpTerm($relationAlias = null) Adds a RIGHT JOIN clause to the query using the wpTerm relation
+ * @method     wpTermTaxonomyQuery innerJoinwpTerm($relationAlias = null) Adds a INNER JOIN clause to the query using the wpTerm relation
+ *
+ * @method     wpTermTaxonomyQuery leftJoinwpTermRelationship($relationAlias = null) Adds a LEFT JOIN clause to the query using the wpTermRelationship relation
+ * @method     wpTermTaxonomyQuery rightJoinwpTermRelationship($relationAlias = null) Adds a RIGHT JOIN clause to the query using the wpTermRelationship relation
+ * @method     wpTermTaxonomyQuery innerJoinwpTermRelationship($relationAlias = null) Adds a INNER JOIN clause to the query using the wpTermRelationship relation
+ *
  * @method     wpTermTaxonomy findOne(PropelPDO $con = null) Return the first wpTermTaxonomy matching the query
  * @method     wpTermTaxonomy findOneOrCreate(PropelPDO $con = null) Return the first wpTermTaxonomy matching the query, or a new wpTermTaxonomy object populated from the query conditions when no match is found
  *
@@ -263,6 +271,8 @@ abstract class BasewpTermTaxonomyQuery extends ModelCriteria
    * $query->filterByTermId(array('min' => 12)); // WHERE term_id > 12
    * </code>
    *
+   * @see       filterBywpTerm()
+   *
    * @param     mixed $termId The value to use as filter.
    *              Use scalar values for equality.
    *              Use array values for in_array() equivalent.
@@ -450,6 +460,172 @@ abstract class BasewpTermTaxonomyQuery extends ModelCriteria
       }
     }
     return $this->addUsingAlias(wpTermTaxonomyPeer::COUNT, $count, $comparison);
+  }
+
+  /**
+   * Filter the query by a related wpTerm object
+   *
+   * @param     wpTerm|PropelCollection $wpTerm The related object(s) to use as filter
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpTermTaxonomyQuery The current query, for fluid interface
+   */
+  public function filterBywpTerm($wpTerm, $comparison = null)
+  {
+    if ($wpTerm instanceof wpTerm)
+    {
+      return $this
+        ->addUsingAlias(wpTermTaxonomyPeer::TERM_ID, $wpTerm->getTermId(), $comparison);
+    }
+    elseif ($wpTerm instanceof PropelCollection)
+    {
+      if (null === $comparison)
+      {
+        $comparison = Criteria::IN;
+      }
+      return $this
+        ->addUsingAlias(wpTermTaxonomyPeer::TERM_ID, $wpTerm->toKeyValue('PrimaryKey', 'TermId'), $comparison);
+    }
+    else
+    {
+      throw new PropelException('filterBywpTerm() only accepts arguments of type wpTerm or PropelCollection');
+    }
+  }
+
+  /**
+   * Adds a JOIN clause to the query using the wpTerm relation
+   *
+   * @param     string $relationAlias optional alias for the relation
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpTermTaxonomyQuery The current query, for fluid interface
+   */
+  public function joinwpTerm($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    $tableMap = $this->getTableMap();
+    $relationMap = $tableMap->getRelation('wpTerm');
+
+    // create a ModelJoin object for this join
+    $join = new ModelJoin();
+    $join->setJoinType($joinType);
+    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+    if ($previousJoin = $this->getPreviousJoin())
+    {
+      $join->setPreviousJoin($previousJoin);
+    }
+
+    // add the ModelJoin to the current object
+    if($relationAlias)
+    {
+      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+      $this->addJoinObject($join, $relationAlias);
+    }
+    else
+    {
+      $this->addJoinObject($join, 'wpTerm');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Use the wpTerm relation wpTerm object
+   *
+   * @see       useQuery()
+   *
+   * @param     string $relationAlias optional alias for the relation,
+   *                                   to be used as main alias in the secondary query
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpTermQuery A secondary query class using the current class as primary query
+   */
+  public function usewpTermQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    return $this
+      ->joinwpTerm($relationAlias, $joinType)
+      ->useQuery($relationAlias ? $relationAlias : 'wpTerm', 'wpTermQuery');
+  }
+
+  /**
+   * Filter the query by a related wpTermRelationship object
+   *
+   * @param     wpTermRelationship $wpTermRelationship  the related object to use as filter
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpTermTaxonomyQuery The current query, for fluid interface
+   */
+  public function filterBywpTermRelationship($wpTermRelationship, $comparison = null)
+  {
+    if ($wpTermRelationship instanceof wpTermRelationship)
+    {
+      return $this
+        ->addUsingAlias(wpTermTaxonomyPeer::TERM_TAXONOMY_ID, $wpTermRelationship->getTermTaxonomyId(), $comparison);
+    }
+    elseif ($wpTermRelationship instanceof PropelCollection)
+    {
+      return $this
+        ->usewpTermRelationshipQuery()
+        ->filterByPrimaryKeys($wpTermRelationship->getPrimaryKeys())
+        ->endUse();
+    }
+    else
+    {
+      throw new PropelException('filterBywpTermRelationship() only accepts arguments of type wpTermRelationship or PropelCollection');
+    }
+  }
+
+  /**
+   * Adds a JOIN clause to the query using the wpTermRelationship relation
+   *
+   * @param     string $relationAlias optional alias for the relation
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpTermTaxonomyQuery The current query, for fluid interface
+   */
+  public function joinwpTermRelationship($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    $tableMap = $this->getTableMap();
+    $relationMap = $tableMap->getRelation('wpTermRelationship');
+
+    // create a ModelJoin object for this join
+    $join = new ModelJoin();
+    $join->setJoinType($joinType);
+    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+    if ($previousJoin = $this->getPreviousJoin())
+    {
+      $join->setPreviousJoin($previousJoin);
+    }
+
+    // add the ModelJoin to the current object
+    if($relationAlias)
+    {
+      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+      $this->addJoinObject($join, $relationAlias);
+    }
+    else
+    {
+      $this->addJoinObject($join, 'wpTermRelationship');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Use the wpTermRelationship relation wpTermRelationship object
+   *
+   * @see       useQuery()
+   *
+   * @param     string $relationAlias optional alias for the relation,
+   *                                   to be used as main alias in the secondary query
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpTermRelationshipQuery A secondary query class using the current class as primary query
+   */
+  public function usewpTermRelationshipQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    return $this
+      ->joinwpTermRelationship($relationAlias, $joinType)
+      ->useQuery($relationAlias ? $relationAlias : 'wpTermRelationship', 'wpTermRelationshipQuery');
   }
 
   /**

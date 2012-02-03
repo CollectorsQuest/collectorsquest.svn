@@ -12,15 +12,15 @@ abstract class BasewpUserFormFilter extends BaseFormFilterPropel
   public function setup()
   {
     $this->setWidgets(array(
-      'user_login'          => new sfWidgetFormFilterInput(),
-      'user_pass'           => new sfWidgetFormFilterInput(),
-      'user_nicename'       => new sfWidgetFormFilterInput(),
-      'user_email'          => new sfWidgetFormFilterInput(),
-      'user_url'            => new sfWidgetFormFilterInput(),
-      'user_registered'     => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate())),
-      'user_activation_key' => new sfWidgetFormFilterInput(),
-      'user_status'         => new sfWidgetFormFilterInput(),
-      'display_name'        => new sfWidgetFormFilterInput(),
+      'user_login'          => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'user_pass'           => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'user_nicename'       => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'user_email'          => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'user_url'            => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'user_registered'     => new sfWidgetFormFilterDate(array('from_date' => new sfWidgetFormDate(), 'to_date' => new sfWidgetFormDate(), 'with_empty' => false)),
+      'user_activation_key' => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'user_status'         => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'display_name'        => new sfWidgetFormFilterInput(array('with_empty' => false)),
     ));
 
     $this->setValidators(array(

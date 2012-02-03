@@ -13,7 +13,6 @@
  * @method     wpPostQuery orderByPostContent($order = Criteria::ASC) Order by the post_content column
  * @method     wpPostQuery orderByPostTitle($order = Criteria::ASC) Order by the post_title column
  * @method     wpPostQuery orderByPostExcerpt($order = Criteria::ASC) Order by the post_excerpt column
- * @method     wpPostQuery orderByPostCategory($order = Criteria::ASC) Order by the post_category column
  * @method     wpPostQuery orderByPostStatus($order = Criteria::ASC) Order by the post_status column
  * @method     wpPostQuery orderByCommentStatus($order = Criteria::ASC) Order by the comment_status column
  * @method     wpPostQuery orderByPingStatus($order = Criteria::ASC) Order by the ping_status column
@@ -38,7 +37,6 @@
  * @method     wpPostQuery groupByPostContent() Group by the post_content column
  * @method     wpPostQuery groupByPostTitle() Group by the post_title column
  * @method     wpPostQuery groupByPostExcerpt() Group by the post_excerpt column
- * @method     wpPostQuery groupByPostCategory() Group by the post_category column
  * @method     wpPostQuery groupByPostStatus() Group by the post_status column
  * @method     wpPostQuery groupByCommentStatus() Group by the comment_status column
  * @method     wpPostQuery groupByPingStatus() Group by the ping_status column
@@ -64,9 +62,21 @@
  * @method     wpPostQuery rightJoinwpUser($relationAlias = null) Adds a RIGHT JOIN clause to the query using the wpUser relation
  * @method     wpPostQuery innerJoinwpUser($relationAlias = null) Adds a INNER JOIN clause to the query using the wpUser relation
  *
+ * @method     wpPostQuery leftJoinwpPostRelatedByPostParent($relationAlias = null) Adds a LEFT JOIN clause to the query using the wpPostRelatedByPostParent relation
+ * @method     wpPostQuery rightJoinwpPostRelatedByPostParent($relationAlias = null) Adds a RIGHT JOIN clause to the query using the wpPostRelatedByPostParent relation
+ * @method     wpPostQuery innerJoinwpPostRelatedByPostParent($relationAlias = null) Adds a INNER JOIN clause to the query using the wpPostRelatedByPostParent relation
+ *
+ * @method     wpPostQuery leftJoinwpPostRelatedById($relationAlias = null) Adds a LEFT JOIN clause to the query using the wpPostRelatedById relation
+ * @method     wpPostQuery rightJoinwpPostRelatedById($relationAlias = null) Adds a RIGHT JOIN clause to the query using the wpPostRelatedById relation
+ * @method     wpPostQuery innerJoinwpPostRelatedById($relationAlias = null) Adds a INNER JOIN clause to the query using the wpPostRelatedById relation
+ *
  * @method     wpPostQuery leftJoinwpPostMeta($relationAlias = null) Adds a LEFT JOIN clause to the query using the wpPostMeta relation
  * @method     wpPostQuery rightJoinwpPostMeta($relationAlias = null) Adds a RIGHT JOIN clause to the query using the wpPostMeta relation
  * @method     wpPostQuery innerJoinwpPostMeta($relationAlias = null) Adds a INNER JOIN clause to the query using the wpPostMeta relation
+ *
+ * @method     wpPostQuery leftJoinwpComment($relationAlias = null) Adds a LEFT JOIN clause to the query using the wpComment relation
+ * @method     wpPostQuery rightJoinwpComment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the wpComment relation
+ * @method     wpPostQuery innerJoinwpComment($relationAlias = null) Adds a INNER JOIN clause to the query using the wpComment relation
  *
  * @method     wpPost findOne(PropelPDO $con = null) Return the first wpPost matching the query
  * @method     wpPost findOneOrCreate(PropelPDO $con = null) Return the first wpPost matching the query, or a new wpPost object populated from the query conditions when no match is found
@@ -78,7 +88,6 @@
  * @method     wpPost findOneByPostContent(string $post_content) Return the first wpPost filtered by the post_content column
  * @method     wpPost findOneByPostTitle(string $post_title) Return the first wpPost filtered by the post_title column
  * @method     wpPost findOneByPostExcerpt(string $post_excerpt) Return the first wpPost filtered by the post_excerpt column
- * @method     wpPost findOneByPostCategory(int $post_category) Return the first wpPost filtered by the post_category column
  * @method     wpPost findOneByPostStatus(string $post_status) Return the first wpPost filtered by the post_status column
  * @method     wpPost findOneByCommentStatus(string $comment_status) Return the first wpPost filtered by the comment_status column
  * @method     wpPost findOneByPingStatus(string $ping_status) Return the first wpPost filtered by the ping_status column
@@ -103,7 +112,6 @@
  * @method     array findByPostContent(string $post_content) Return wpPost objects filtered by the post_content column
  * @method     array findByPostTitle(string $post_title) Return wpPost objects filtered by the post_title column
  * @method     array findByPostExcerpt(string $post_excerpt) Return wpPost objects filtered by the post_excerpt column
- * @method     array findByPostCategory(int $post_category) Return wpPost objects filtered by the post_category column
  * @method     array findByPostStatus(string $post_status) Return wpPost objects filtered by the post_status column
  * @method     array findByCommentStatus(string $comment_status) Return wpPost objects filtered by the comment_status column
  * @method     array findByPingStatus(string $ping_status) Return wpPost objects filtered by the ping_status column
@@ -216,7 +224,7 @@ abstract class BasewpPostQuery extends ModelCriteria
    */
   protected function findPkSimple($key, $con)
   {
-    $sql = 'SELECT `ID`, `POST_AUTHOR`, `POST_DATE`, `POST_DATE_GMT`, `POST_CONTENT`, `POST_TITLE`, `POST_EXCERPT`, `POST_CATEGORY`, `POST_STATUS`, `COMMENT_STATUS`, `PING_STATUS`, `POST_PASSWORD`, `POST_NAME`, `TO_PING`, `PINGED`, `POST_MODIFIED`, `POST_MODIFIED_GMT`, `POST_CONTENT_FILTERED`, `POST_PARENT`, `GUID`, `MENU_ORDER`, `POST_TYPE`, `POST_MIME_TYPE`, `COMMENT_COUNT` FROM `wp_posts` WHERE `ID` = :p0';
+    $sql = 'SELECT `ID`, `POST_AUTHOR`, `POST_DATE`, `POST_DATE_GMT`, `POST_CONTENT`, `POST_TITLE`, `POST_EXCERPT`, `POST_STATUS`, `COMMENT_STATUS`, `PING_STATUS`, `POST_PASSWORD`, `POST_NAME`, `TO_PING`, `PINGED`, `POST_MODIFIED`, `POST_MODIFIED_GMT`, `POST_CONTENT_FILTERED`, `POST_PARENT`, `GUID`, `MENU_ORDER`, `POST_TYPE`, `POST_MIME_TYPE`, `COMMENT_COUNT` FROM `wp_posts` WHERE `ID` = :p0';
     try
     {
       $stmt = $con->prepare($sql);
@@ -568,51 +576,6 @@ abstract class BasewpPostQuery extends ModelCriteria
       }
     }
     return $this->addUsingAlias(wpPostPeer::POST_EXCERPT, $postExcerpt, $comparison);
-  }
-
-  /**
-   * Filter the query on the post_category column
-   *
-   * Example usage:
-   * <code>
-   * $query->filterByPostCategory(1234); // WHERE post_category = 1234
-   * $query->filterByPostCategory(array(12, 34)); // WHERE post_category IN (12, 34)
-   * $query->filterByPostCategory(array('min' => 12)); // WHERE post_category > 12
-   * </code>
-   *
-   * @param     mixed $postCategory The value to use as filter.
-   *              Use scalar values for equality.
-   *              Use array values for in_array() equivalent.
-   *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
-   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
-   *
-   * @return    wpPostQuery The current query, for fluid interface
-   */
-  public function filterByPostCategory($postCategory = null, $comparison = null)
-  {
-    if (is_array($postCategory))
-    {
-      $useMinMax = false;
-      if (isset($postCategory['min']))
-      {
-        $this->addUsingAlias(wpPostPeer::POST_CATEGORY, $postCategory['min'], Criteria::GREATER_EQUAL);
-        $useMinMax = true;
-      }
-      if (isset($postCategory['max']))
-      {
-        $this->addUsingAlias(wpPostPeer::POST_CATEGORY, $postCategory['max'], Criteria::LESS_EQUAL);
-        $useMinMax = true;
-      }
-      if ($useMinMax)
-      {
-        return $this;
-      }
-      if (null === $comparison)
-      {
-        $comparison = Criteria::IN;
-      }
-    }
-    return $this->addUsingAlias(wpPostPeer::POST_CATEGORY, $postCategory, $comparison);
   }
 
   /**
@@ -975,6 +938,8 @@ abstract class BasewpPostQuery extends ModelCriteria
    * $query->filterByPostParent(array('min' => 12)); // WHERE post_parent > 12
    * </code>
    *
+   * @see       filterBywpPostRelatedByPostParent()
+   *
    * @param     mixed $postParent The value to use as filter.
    *              Use scalar values for equality.
    *              Use array values for in_array() equivalent.
@@ -1281,6 +1246,172 @@ abstract class BasewpPostQuery extends ModelCriteria
   }
 
   /**
+   * Filter the query by a related wpPost object
+   *
+   * @param     wpPost|PropelCollection $wpPost The related object(s) to use as filter
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpPostQuery The current query, for fluid interface
+   */
+  public function filterBywpPostRelatedByPostParent($wpPost, $comparison = null)
+  {
+    if ($wpPost instanceof wpPost)
+    {
+      return $this
+        ->addUsingAlias(wpPostPeer::POST_PARENT, $wpPost->getId(), $comparison);
+    }
+    elseif ($wpPost instanceof PropelCollection)
+    {
+      if (null === $comparison)
+      {
+        $comparison = Criteria::IN;
+      }
+      return $this
+        ->addUsingAlias(wpPostPeer::POST_PARENT, $wpPost->toKeyValue('PrimaryKey', 'Id'), $comparison);
+    }
+    else
+    {
+      throw new PropelException('filterBywpPostRelatedByPostParent() only accepts arguments of type wpPost or PropelCollection');
+    }
+  }
+
+  /**
+   * Adds a JOIN clause to the query using the wpPostRelatedByPostParent relation
+   *
+   * @param     string $relationAlias optional alias for the relation
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpPostQuery The current query, for fluid interface
+   */
+  public function joinwpPostRelatedByPostParent($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+  {
+    $tableMap = $this->getTableMap();
+    $relationMap = $tableMap->getRelation('wpPostRelatedByPostParent');
+
+    // create a ModelJoin object for this join
+    $join = new ModelJoin();
+    $join->setJoinType($joinType);
+    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+    if ($previousJoin = $this->getPreviousJoin())
+    {
+      $join->setPreviousJoin($previousJoin);
+    }
+
+    // add the ModelJoin to the current object
+    if($relationAlias)
+    {
+      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+      $this->addJoinObject($join, $relationAlias);
+    }
+    else
+    {
+      $this->addJoinObject($join, 'wpPostRelatedByPostParent');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Use the wpPostRelatedByPostParent relation wpPost object
+   *
+   * @see       useQuery()
+   *
+   * @param     string $relationAlias optional alias for the relation,
+   *                                   to be used as main alias in the secondary query
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpPostQuery A secondary query class using the current class as primary query
+   */
+  public function usewpPostRelatedByPostParentQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+  {
+    return $this
+      ->joinwpPostRelatedByPostParent($relationAlias, $joinType)
+      ->useQuery($relationAlias ? $relationAlias : 'wpPostRelatedByPostParent', 'wpPostQuery');
+  }
+
+  /**
+   * Filter the query by a related wpPost object
+   *
+   * @param     wpPost $wpPost  the related object to use as filter
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpPostQuery The current query, for fluid interface
+   */
+  public function filterBywpPostRelatedById($wpPost, $comparison = null)
+  {
+    if ($wpPost instanceof wpPost)
+    {
+      return $this
+        ->addUsingAlias(wpPostPeer::ID, $wpPost->getPostParent(), $comparison);
+    }
+    elseif ($wpPost instanceof PropelCollection)
+    {
+      return $this
+        ->usewpPostRelatedByIdQuery()
+        ->filterByPrimaryKeys($wpPost->getPrimaryKeys())
+        ->endUse();
+    }
+    else
+    {
+      throw new PropelException('filterBywpPostRelatedById() only accepts arguments of type wpPost or PropelCollection');
+    }
+  }
+
+  /**
+   * Adds a JOIN clause to the query using the wpPostRelatedById relation
+   *
+   * @param     string $relationAlias optional alias for the relation
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpPostQuery The current query, for fluid interface
+   */
+  public function joinwpPostRelatedById($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+  {
+    $tableMap = $this->getTableMap();
+    $relationMap = $tableMap->getRelation('wpPostRelatedById');
+
+    // create a ModelJoin object for this join
+    $join = new ModelJoin();
+    $join->setJoinType($joinType);
+    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+    if ($previousJoin = $this->getPreviousJoin())
+    {
+      $join->setPreviousJoin($previousJoin);
+    }
+
+    // add the ModelJoin to the current object
+    if($relationAlias)
+    {
+      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+      $this->addJoinObject($join, $relationAlias);
+    }
+    else
+    {
+      $this->addJoinObject($join, 'wpPostRelatedById');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Use the wpPostRelatedById relation wpPost object
+   *
+   * @see       useQuery()
+   *
+   * @param     string $relationAlias optional alias for the relation,
+   *                                   to be used as main alias in the secondary query
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpPostQuery A secondary query class using the current class as primary query
+   */
+  public function usewpPostRelatedByIdQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+  {
+    return $this
+      ->joinwpPostRelatedById($relationAlias, $joinType)
+      ->useQuery($relationAlias ? $relationAlias : 'wpPostRelatedById', 'wpPostQuery');
+  }
+
+  /**
    * Filter the query by a related wpPostMeta object
    *
    * @param     wpPostMeta $wpPostMeta  the related object to use as filter
@@ -1360,6 +1491,88 @@ abstract class BasewpPostQuery extends ModelCriteria
     return $this
       ->joinwpPostMeta($relationAlias, $joinType)
       ->useQuery($relationAlias ? $relationAlias : 'wpPostMeta', 'wpPostMetaQuery');
+  }
+
+  /**
+   * Filter the query by a related wpComment object
+   *
+   * @param     wpComment $wpComment  the related object to use as filter
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpPostQuery The current query, for fluid interface
+   */
+  public function filterBywpComment($wpComment, $comparison = null)
+  {
+    if ($wpComment instanceof wpComment)
+    {
+      return $this
+        ->addUsingAlias(wpPostPeer::ID, $wpComment->getCommentPostId(), $comparison);
+    }
+    elseif ($wpComment instanceof PropelCollection)
+    {
+      return $this
+        ->usewpCommentQuery()
+        ->filterByPrimaryKeys($wpComment->getPrimaryKeys())
+        ->endUse();
+    }
+    else
+    {
+      throw new PropelException('filterBywpComment() only accepts arguments of type wpComment or PropelCollection');
+    }
+  }
+
+  /**
+   * Adds a JOIN clause to the query using the wpComment relation
+   *
+   * @param     string $relationAlias optional alias for the relation
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpPostQuery The current query, for fluid interface
+   */
+  public function joinwpComment($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    $tableMap = $this->getTableMap();
+    $relationMap = $tableMap->getRelation('wpComment');
+
+    // create a ModelJoin object for this join
+    $join = new ModelJoin();
+    $join->setJoinType($joinType);
+    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+    if ($previousJoin = $this->getPreviousJoin())
+    {
+      $join->setPreviousJoin($previousJoin);
+    }
+
+    // add the ModelJoin to the current object
+    if($relationAlias)
+    {
+      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+      $this->addJoinObject($join, $relationAlias);
+    }
+    else
+    {
+      $this->addJoinObject($join, 'wpComment');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Use the wpComment relation wpComment object
+   *
+   * @see       useQuery()
+   *
+   * @param     string $relationAlias optional alias for the relation,
+   *                                   to be used as main alias in the secondary query
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpCommentQuery A secondary query class using the current class as primary query
+   */
+  public function usewpCommentQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    return $this
+      ->joinwpComment($relationAlias, $joinType)
+      ->useQuery($relationAlias ? $relationAlias : 'wpComment', 'wpCommentQuery');
   }
 
   /**

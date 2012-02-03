@@ -39,7 +39,7 @@ class wpPostMetaTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('META_ID', 'MetaId', 'INTEGER', true, null, null);
-    $this->addForeignKey('POST_ID', 'PostId', 'INTEGER', 'wp_posts', 'ID', true, null, null);
+    $this->addForeignKey('POST_ID', 'PostId', 'INTEGER', 'wp_posts', 'ID', true, null, 0);
     $this->addColumn('META_KEY', 'MetaKey', 'VARCHAR', false, 255, null);
     $this->addColumn('META_VALUE', 'MetaValue', 'LONGVARCHAR', false, null, null);
     // validators

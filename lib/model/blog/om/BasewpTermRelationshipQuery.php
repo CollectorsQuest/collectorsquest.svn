@@ -8,22 +8,30 @@
  *
  * @method     wpTermRelationshipQuery orderByObjectId($order = Criteria::ASC) Order by the object_id column
  * @method     wpTermRelationshipQuery orderByTermTaxonomyId($order = Criteria::ASC) Order by the term_taxonomy_id column
+ * @method     wpTermRelationshipQuery orderByTermOrder($order = Criteria::ASC) Order by the term_order column
  *
  * @method     wpTermRelationshipQuery groupByObjectId() Group by the object_id column
  * @method     wpTermRelationshipQuery groupByTermTaxonomyId() Group by the term_taxonomy_id column
+ * @method     wpTermRelationshipQuery groupByTermOrder() Group by the term_order column
  *
  * @method     wpTermRelationshipQuery leftJoin($relation) Adds a LEFT JOIN clause to the query
  * @method     wpTermRelationshipQuery rightJoin($relation) Adds a RIGHT JOIN clause to the query
  * @method     wpTermRelationshipQuery innerJoin($relation) Adds a INNER JOIN clause to the query
+ *
+ * @method     wpTermRelationshipQuery leftJoinwpTermTaxonomy($relationAlias = null) Adds a LEFT JOIN clause to the query using the wpTermTaxonomy relation
+ * @method     wpTermRelationshipQuery rightJoinwpTermTaxonomy($relationAlias = null) Adds a RIGHT JOIN clause to the query using the wpTermTaxonomy relation
+ * @method     wpTermRelationshipQuery innerJoinwpTermTaxonomy($relationAlias = null) Adds a INNER JOIN clause to the query using the wpTermTaxonomy relation
  *
  * @method     wpTermRelationship findOne(PropelPDO $con = null) Return the first wpTermRelationship matching the query
  * @method     wpTermRelationship findOneOrCreate(PropelPDO $con = null) Return the first wpTermRelationship matching the query, or a new wpTermRelationship object populated from the query conditions when no match is found
  *
  * @method     wpTermRelationship findOneByObjectId(int $object_id) Return the first wpTermRelationship filtered by the object_id column
  * @method     wpTermRelationship findOneByTermTaxonomyId(int $term_taxonomy_id) Return the first wpTermRelationship filtered by the term_taxonomy_id column
+ * @method     wpTermRelationship findOneByTermOrder(int $term_order) Return the first wpTermRelationship filtered by the term_order column
  *
  * @method     array findByObjectId(int $object_id) Return wpTermRelationship objects filtered by the object_id column
  * @method     array findByTermTaxonomyId(int $term_taxonomy_id) Return wpTermRelationship objects filtered by the term_taxonomy_id column
+ * @method     array findByTermOrder(int $term_order) Return wpTermRelationship objects filtered by the term_order column
  *
  * @package    propel.generator.lib.model.blog.om
  */
@@ -120,7 +128,7 @@ abstract class BasewpTermRelationshipQuery extends ModelCriteria
    */
   protected function findPkSimple($key, $con)
   {
-    $sql = 'SELECT `OBJECT_ID`, `TERM_TAXONOMY_ID` FROM `wp_term_relationships` WHERE `OBJECT_ID` = :p0 AND `TERM_TAXONOMY_ID` = :p1';
+    $sql = 'SELECT `OBJECT_ID`, `TERM_TAXONOMY_ID`, `TERM_ORDER` FROM `wp_term_relationships` WHERE `OBJECT_ID` = :p0 AND `TERM_TAXONOMY_ID` = :p1';
     try
     {
       $stmt = $con->prepare($sql);
@@ -263,6 +271,8 @@ abstract class BasewpTermRelationshipQuery extends ModelCriteria
    * $query->filterByTermTaxonomyId(array('min' => 12)); // WHERE term_taxonomy_id > 12
    * </code>
    *
+   * @see       filterBywpTermTaxonomy()
+   *
    * @param     mixed $termTaxonomyId The value to use as filter.
    *              Use scalar values for equality.
    *              Use array values for in_array() equivalent.
@@ -278,6 +288,135 @@ abstract class BasewpTermRelationshipQuery extends ModelCriteria
       $comparison = Criteria::IN;
     }
     return $this->addUsingAlias(wpTermRelationshipPeer::TERM_TAXONOMY_ID, $termTaxonomyId, $comparison);
+  }
+
+  /**
+   * Filter the query on the term_order column
+   *
+   * Example usage:
+   * <code>
+   * $query->filterByTermOrder(1234); // WHERE term_order = 1234
+   * $query->filterByTermOrder(array(12, 34)); // WHERE term_order IN (12, 34)
+   * $query->filterByTermOrder(array('min' => 12)); // WHERE term_order > 12
+   * </code>
+   *
+   * @param     mixed $termOrder The value to use as filter.
+   *              Use scalar values for equality.
+   *              Use array values for in_array() equivalent.
+   *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpTermRelationshipQuery The current query, for fluid interface
+   */
+  public function filterByTermOrder($termOrder = null, $comparison = null)
+  {
+    if (is_array($termOrder))
+    {
+      $useMinMax = false;
+      if (isset($termOrder['min']))
+      {
+        $this->addUsingAlias(wpTermRelationshipPeer::TERM_ORDER, $termOrder['min'], Criteria::GREATER_EQUAL);
+        $useMinMax = true;
+      }
+      if (isset($termOrder['max']))
+      {
+        $this->addUsingAlias(wpTermRelationshipPeer::TERM_ORDER, $termOrder['max'], Criteria::LESS_EQUAL);
+        $useMinMax = true;
+      }
+      if ($useMinMax)
+      {
+        return $this;
+      }
+      if (null === $comparison)
+      {
+        $comparison = Criteria::IN;
+      }
+    }
+    return $this->addUsingAlias(wpTermRelationshipPeer::TERM_ORDER, $termOrder, $comparison);
+  }
+
+  /**
+   * Filter the query by a related wpTermTaxonomy object
+   *
+   * @param     wpTermTaxonomy|PropelCollection $wpTermTaxonomy The related object(s) to use as filter
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpTermRelationshipQuery The current query, for fluid interface
+   */
+  public function filterBywpTermTaxonomy($wpTermTaxonomy, $comparison = null)
+  {
+    if ($wpTermTaxonomy instanceof wpTermTaxonomy)
+    {
+      return $this
+        ->addUsingAlias(wpTermRelationshipPeer::TERM_TAXONOMY_ID, $wpTermTaxonomy->getTermTaxonomyId(), $comparison);
+    }
+    elseif ($wpTermTaxonomy instanceof PropelCollection)
+    {
+      if (null === $comparison)
+      {
+        $comparison = Criteria::IN;
+      }
+      return $this
+        ->addUsingAlias(wpTermRelationshipPeer::TERM_TAXONOMY_ID, $wpTermTaxonomy->toKeyValue('PrimaryKey', 'TermTaxonomyId'), $comparison);
+    }
+    else
+    {
+      throw new PropelException('filterBywpTermTaxonomy() only accepts arguments of type wpTermTaxonomy or PropelCollection');
+    }
+  }
+
+  /**
+   * Adds a JOIN clause to the query using the wpTermTaxonomy relation
+   *
+   * @param     string $relationAlias optional alias for the relation
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpTermRelationshipQuery The current query, for fluid interface
+   */
+  public function joinwpTermTaxonomy($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    $tableMap = $this->getTableMap();
+    $relationMap = $tableMap->getRelation('wpTermTaxonomy');
+
+    // create a ModelJoin object for this join
+    $join = new ModelJoin();
+    $join->setJoinType($joinType);
+    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+    if ($previousJoin = $this->getPreviousJoin())
+    {
+      $join->setPreviousJoin($previousJoin);
+    }
+
+    // add the ModelJoin to the current object
+    if($relationAlias)
+    {
+      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+      $this->addJoinObject($join, $relationAlias);
+    }
+    else
+    {
+      $this->addJoinObject($join, 'wpTermTaxonomy');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Use the wpTermTaxonomy relation wpTermTaxonomy object
+   *
+   * @see       useQuery()
+   *
+   * @param     string $relationAlias optional alias for the relation,
+   *                                   to be used as main alias in the secondary query
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpTermTaxonomyQuery A secondary query class using the current class as primary query
+   */
+  public function usewpTermTaxonomyQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    return $this
+      ->joinwpTermTaxonomy($relationAlias, $joinType)
+      ->useQuery($relationAlias ? $relationAlias : 'wpTermTaxonomy', 'wpTermTaxonomyQuery');
   }
 
   /**

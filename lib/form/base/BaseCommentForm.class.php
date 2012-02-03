@@ -7,7 +7,7 @@
  *
  * @package    CollectorsQuest
  * @subpackage form
- * @author     Kiril Angov
+ * @author     Collectors
  */
 abstract class BaseCommentForm extends BaseFormPropel
 {
@@ -30,7 +30,7 @@ abstract class BaseCommentForm extends BaseFormPropel
     ));
 
     $this->setValidators(array(
-      'id'             => new sfValidatorPropelChoice(array('model' => 'Comment', 'column' => 'id', 'required' => false)),
+      'id'             => new sfValidatorChoice(array('choices' => array($this->getObject()->getId()), 'empty_value' => $this->getObject()->getId(), 'required' => false)),
       'disqus_id'      => new sfValidatorString(array('max_length' => 10, 'required' => false)),
       'parent_id'      => new sfValidatorString(array('max_length' => 10, 'required' => false)),
       'collection_id'  => new sfValidatorPropelChoice(array('model' => 'Collection', 'column' => 'id')),

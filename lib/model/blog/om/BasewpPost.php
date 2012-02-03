@@ -38,18 +38,21 @@ abstract class BasewpPost extends BaseObject  implements Persistent
 
   /**
    * The value for the post_author field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $post_author;
 
   /**
    * The value for the post_date field.
+   * Note: this column has a database default value of: NULL
    * @var        string
    */
   protected $post_date;
 
   /**
    * The value for the post_date_gmt field.
+   * Note: this column has a database default value of: NULL
    * @var        string
    */
   protected $post_date_gmt;
@@ -73,25 +76,22 @@ abstract class BasewpPost extends BaseObject  implements Persistent
   protected $post_excerpt;
 
   /**
-   * The value for the post_category field.
-   * @var        int
-   */
-  protected $post_category;
-
-  /**
    * The value for the post_status field.
+   * Note: this column has a database default value of: 'publish'
    * @var        string
    */
   protected $post_status;
 
   /**
    * The value for the comment_status field.
+   * Note: this column has a database default value of: 'open'
    * @var        string
    */
   protected $comment_status;
 
   /**
    * The value for the ping_status field.
+   * Note: this column has a database default value of: 'open'
    * @var        string
    */
   protected $ping_status;
@@ -122,12 +122,14 @@ abstract class BasewpPost extends BaseObject  implements Persistent
 
   /**
    * The value for the post_modified field.
+   * Note: this column has a database default value of: NULL
    * @var        string
    */
   protected $post_modified;
 
   /**
    * The value for the post_modified_gmt field.
+   * Note: this column has a database default value of: NULL
    * @var        string
    */
   protected $post_modified_gmt;
@@ -140,6 +142,7 @@ abstract class BasewpPost extends BaseObject  implements Persistent
 
   /**
    * The value for the post_parent field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $post_parent;
@@ -152,12 +155,14 @@ abstract class BasewpPost extends BaseObject  implements Persistent
 
   /**
    * The value for the menu_order field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $menu_order;
 
   /**
    * The value for the post_type field.
+   * Note: this column has a database default value of: 'post'
    * @var        string
    */
   protected $post_type;
@@ -170,6 +175,7 @@ abstract class BasewpPost extends BaseObject  implements Persistent
 
   /**
    * The value for the comment_count field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $comment_count;
@@ -180,9 +186,24 @@ abstract class BasewpPost extends BaseObject  implements Persistent
   protected $awpUser;
 
   /**
+   * @var        wpPost
+   */
+  protected $awpPostRelatedByPostParent;
+
+  /**
+   * @var        array wpPost[] Collection to store aggregation of wpPost objects.
+   */
+  protected $collwpPostsRelatedById;
+
+  /**
    * @var        array wpPostMeta[] Collection to store aggregation of wpPostMeta objects.
    */
   protected $collwpPostMetas;
+
+  /**
+   * @var        array wpComment[] Collection to store aggregation of wpComment objects.
+   */
+  protected $collwpComments;
 
   /**
    * Flag to prevent endless save loop, if this object is referenced
@@ -202,7 +223,51 @@ abstract class BasewpPost extends BaseObject  implements Persistent
    * An array of objects scheduled for deletion.
    * @var    array
    */
+  protected $wpPostsRelatedByIdScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
   protected $wpPostMetasScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $wpCommentsScheduledForDeletion = null;
+
+  /**
+   * Applies default values to this object.
+   * This method should be called from the object's constructor (or
+   * equivalent initialization method).
+   * @see        __construct()
+   */
+  public function applyDefaultValues()
+  {
+    $this->post_author = 0;
+    $this->post_date = NULL;
+    $this->post_date_gmt = NULL;
+    $this->post_status = 'publish';
+    $this->comment_status = 'open';
+    $this->ping_status = 'open';
+    $this->post_modified = NULL;
+    $this->post_modified_gmt = NULL;
+    $this->post_parent = 0;
+    $this->menu_order = 0;
+    $this->post_type = 'post';
+    $this->comment_count = 0;
+  }
+
+  /**
+   * Initializes internal state of BasewpPost object.
+   * @see        applyDefaults()
+   */
+  public function __construct()
+  {
+    parent::__construct();
+    $this->applyDefaultValues();
+  }
 
   /**
    * Get the [id] column value.
@@ -352,16 +417,6 @@ abstract class BasewpPost extends BaseObject  implements Persistent
   public function getPostExcerpt()
   {
     return $this->post_excerpt;
-  }
-
-  /**
-   * Get the [post_category] column value.
-   * 
-   * @return     int
-   */
-  public function getPostCategory()
-  {
-    return $this->post_category;
   }
 
   /**
@@ -667,8 +722,9 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     {
       $currentDateAsString = ($this->post_date !== null && $tmpDt = new DateTime($this->post_date)) ? $tmpDt->format('Y-m-d H:i:s') : null;
       $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
+      if ( ($currentDateAsString !== $newDateAsString) // normalized values don't match
+        || ($dt->format('Y-m-d H:i:s') === NULL) // or the entered value matches the default
+         ) {
         $this->post_date = $newDateAsString;
         $this->modifiedColumns[] = wpPostPeer::POST_DATE;
       }
@@ -691,8 +747,9 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     {
       $currentDateAsString = ($this->post_date_gmt !== null && $tmpDt = new DateTime($this->post_date_gmt)) ? $tmpDt->format('Y-m-d H:i:s') : null;
       $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
+      if ( ($currentDateAsString !== $newDateAsString) // normalized values don't match
+        || ($dt->format('Y-m-d H:i:s') === NULL) // or the entered value matches the default
+         ) {
         $this->post_date_gmt = $newDateAsString;
         $this->modifiedColumns[] = wpPostPeer::POST_DATE_GMT;
       }
@@ -762,28 +819,6 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     {
       $this->post_excerpt = $v;
       $this->modifiedColumns[] = wpPostPeer::POST_EXCERPT;
-    }
-
-    return $this;
-  }
-
-  /**
-   * Set the value of [post_category] column.
-   * 
-   * @param      int $v new value
-   * @return     wpPost The current object (for fluent API support)
-   */
-  public function setPostCategory($v)
-  {
-    if ($v !== null)
-    {
-      $v = (int) $v;
-    }
-
-    if ($this->post_category !== $v)
-    {
-      $this->post_category = $v;
-      $this->modifiedColumns[] = wpPostPeer::POST_CATEGORY;
     }
 
     return $this;
@@ -957,8 +992,9 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     {
       $currentDateAsString = ($this->post_modified !== null && $tmpDt = new DateTime($this->post_modified)) ? $tmpDt->format('Y-m-d H:i:s') : null;
       $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
+      if ( ($currentDateAsString !== $newDateAsString) // normalized values don't match
+        || ($dt->format('Y-m-d H:i:s') === NULL) // or the entered value matches the default
+         ) {
         $this->post_modified = $newDateAsString;
         $this->modifiedColumns[] = wpPostPeer::POST_MODIFIED;
       }
@@ -981,8 +1017,9 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     {
       $currentDateAsString = ($this->post_modified_gmt !== null && $tmpDt = new DateTime($this->post_modified_gmt)) ? $tmpDt->format('Y-m-d H:i:s') : null;
       $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
+      if ( ($currentDateAsString !== $newDateAsString) // normalized values don't match
+        || ($dt->format('Y-m-d H:i:s') === NULL) // or the entered value matches the default
+         ) {
         $this->post_modified_gmt = $newDateAsString;
         $this->modifiedColumns[] = wpPostPeer::POST_MODIFIED_GMT;
       }
@@ -1030,6 +1067,11 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     {
       $this->post_parent = $v;
       $this->modifiedColumns[] = wpPostPeer::POST_PARENT;
+    }
+
+    if ($this->awpPostRelatedByPostParent !== null && $this->awpPostRelatedByPostParent->getId() !== $v)
+    {
+      $this->awpPostRelatedByPostParent = null;
     }
 
     return $this;
@@ -1155,6 +1197,66 @@ abstract class BasewpPost extends BaseObject  implements Persistent
    */
   public function hasOnlyDefaultValues()
   {
+      if ($this->post_author !== 0)
+      {
+        return false;
+      }
+
+      if ($this->post_date !== NULL)
+      {
+        return false;
+      }
+
+      if ($this->post_date_gmt !== NULL)
+      {
+        return false;
+      }
+
+      if ($this->post_status !== 'publish')
+      {
+        return false;
+      }
+
+      if ($this->comment_status !== 'open')
+      {
+        return false;
+      }
+
+      if ($this->ping_status !== 'open')
+      {
+        return false;
+      }
+
+      if ($this->post_modified !== NULL)
+      {
+        return false;
+      }
+
+      if ($this->post_modified_gmt !== NULL)
+      {
+        return false;
+      }
+
+      if ($this->post_parent !== 0)
+      {
+        return false;
+      }
+
+      if ($this->menu_order !== 0)
+      {
+        return false;
+      }
+
+      if ($this->post_type !== 'post')
+      {
+        return false;
+      }
+
+      if ($this->comment_count !== 0)
+      {
+        return false;
+      }
+
     // otherwise, everything was equal, so return TRUE
     return true;
   }
@@ -1185,23 +1287,22 @@ abstract class BasewpPost extends BaseObject  implements Persistent
       $this->post_content = ($row[$startcol + 4] !== null) ? (string) $row[$startcol + 4] : null;
       $this->post_title = ($row[$startcol + 5] !== null) ? (string) $row[$startcol + 5] : null;
       $this->post_excerpt = ($row[$startcol + 6] !== null) ? (string) $row[$startcol + 6] : null;
-      $this->post_category = ($row[$startcol + 7] !== null) ? (int) $row[$startcol + 7] : null;
-      $this->post_status = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
-      $this->comment_status = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
-      $this->ping_status = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
-      $this->post_password = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
-      $this->post_name = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
-      $this->to_ping = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
-      $this->pinged = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
-      $this->post_modified = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
-      $this->post_modified_gmt = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
-      $this->post_content_filtered = ($row[$startcol + 17] !== null) ? (string) $row[$startcol + 17] : null;
-      $this->post_parent = ($row[$startcol + 18] !== null) ? (int) $row[$startcol + 18] : null;
-      $this->guid = ($row[$startcol + 19] !== null) ? (string) $row[$startcol + 19] : null;
-      $this->menu_order = ($row[$startcol + 20] !== null) ? (int) $row[$startcol + 20] : null;
-      $this->post_type = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
-      $this->post_mime_type = ($row[$startcol + 22] !== null) ? (string) $row[$startcol + 22] : null;
-      $this->comment_count = ($row[$startcol + 23] !== null) ? (int) $row[$startcol + 23] : null;
+      $this->post_status = ($row[$startcol + 7] !== null) ? (string) $row[$startcol + 7] : null;
+      $this->comment_status = ($row[$startcol + 8] !== null) ? (string) $row[$startcol + 8] : null;
+      $this->ping_status = ($row[$startcol + 9] !== null) ? (string) $row[$startcol + 9] : null;
+      $this->post_password = ($row[$startcol + 10] !== null) ? (string) $row[$startcol + 10] : null;
+      $this->post_name = ($row[$startcol + 11] !== null) ? (string) $row[$startcol + 11] : null;
+      $this->to_ping = ($row[$startcol + 12] !== null) ? (string) $row[$startcol + 12] : null;
+      $this->pinged = ($row[$startcol + 13] !== null) ? (string) $row[$startcol + 13] : null;
+      $this->post_modified = ($row[$startcol + 14] !== null) ? (string) $row[$startcol + 14] : null;
+      $this->post_modified_gmt = ($row[$startcol + 15] !== null) ? (string) $row[$startcol + 15] : null;
+      $this->post_content_filtered = ($row[$startcol + 16] !== null) ? (string) $row[$startcol + 16] : null;
+      $this->post_parent = ($row[$startcol + 17] !== null) ? (int) $row[$startcol + 17] : null;
+      $this->guid = ($row[$startcol + 18] !== null) ? (string) $row[$startcol + 18] : null;
+      $this->menu_order = ($row[$startcol + 19] !== null) ? (int) $row[$startcol + 19] : null;
+      $this->post_type = ($row[$startcol + 20] !== null) ? (string) $row[$startcol + 20] : null;
+      $this->post_mime_type = ($row[$startcol + 21] !== null) ? (string) $row[$startcol + 21] : null;
+      $this->comment_count = ($row[$startcol + 22] !== null) ? (int) $row[$startcol + 22] : null;
       $this->resetModified();
 
       $this->setNew(false);
@@ -1211,7 +1312,7 @@ abstract class BasewpPost extends BaseObject  implements Persistent
         $this->ensureConsistency();
       }
 
-      return $startcol + 24; // 24 = wpPostPeer::NUM_HYDRATE_COLUMNS.
+      return $startcol + 23; // 23 = wpPostPeer::NUM_HYDRATE_COLUMNS.
 
     }
     catch (Exception $e)
@@ -1239,6 +1340,10 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     if ($this->awpUser !== null && $this->post_author !== $this->awpUser->getId())
     {
       $this->awpUser = null;
+    }
+    if ($this->awpPostRelatedByPostParent !== null && $this->post_parent !== $this->awpPostRelatedByPostParent->getId())
+    {
+      $this->awpPostRelatedByPostParent = null;
     }
   }
 
@@ -1284,7 +1389,12 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     if ($deep) {  // also de-associate any related objects?
 
       $this->awpUser = null;
+      $this->awpPostRelatedByPostParent = null;
+      $this->collwpPostsRelatedById = null;
+
       $this->collwpPostMetas = null;
+
+      $this->collwpComments = null;
 
     }
   }
@@ -1465,6 +1575,15 @@ abstract class BasewpPost extends BaseObject  implements Persistent
         $this->setwpUser($this->awpUser);
       }
 
+      if ($this->awpPostRelatedByPostParent !== null)
+      {
+        if ($this->awpPostRelatedByPostParent->isModified() || $this->awpPostRelatedByPostParent->isNew())
+        {
+          $affectedRows += $this->awpPostRelatedByPostParent->save($con);
+        }
+        $this->setwpPostRelatedByPostParent($this->awpPostRelatedByPostParent);
+      }
+
       if ($this->isNew() || $this->isModified())
       {
         // persist changes
@@ -1478,6 +1597,28 @@ abstract class BasewpPost extends BaseObject  implements Persistent
         }
         $affectedRows += 1;
         $this->resetModified();
+      }
+
+      if ($this->wpPostsRelatedByIdScheduledForDeletion !== null)
+      {
+        if (!$this->wpPostsRelatedByIdScheduledForDeletion->isEmpty())
+        {
+          wpPostQuery::create()
+            ->filterByPrimaryKeys($this->wpPostsRelatedByIdScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->wpPostsRelatedByIdScheduledForDeletion = null;
+        }
+      }
+
+      if ($this->collwpPostsRelatedById !== null)
+      {
+        foreach ($this->collwpPostsRelatedById as $referrerFK)
+        {
+          if (!$referrerFK->isDeleted())
+          {
+            $affectedRows += $referrerFK->save($con);
+          }
+        }
       }
 
       if ($this->wpPostMetasScheduledForDeletion !== null)
@@ -1494,6 +1635,28 @@ abstract class BasewpPost extends BaseObject  implements Persistent
       if ($this->collwpPostMetas !== null)
       {
         foreach ($this->collwpPostMetas as $referrerFK)
+        {
+          if (!$referrerFK->isDeleted())
+          {
+            $affectedRows += $referrerFK->save($con);
+          }
+        }
+      }
+
+      if ($this->wpCommentsScheduledForDeletion !== null)
+      {
+        if (!$this->wpCommentsScheduledForDeletion->isEmpty())
+        {
+          wpCommentQuery::create()
+            ->filterByPrimaryKeys($this->wpCommentsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->wpCommentsScheduledForDeletion = null;
+        }
+      }
+
+      if ($this->collwpComments !== null)
+      {
+        foreach ($this->collwpComments as $referrerFK)
         {
           if (!$referrerFK->isDeleted())
           {
@@ -1555,10 +1718,6 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     if ($this->isColumnModified(wpPostPeer::POST_EXCERPT))
     {
       $modifiedColumns[':p' . $index++]  = '`POST_EXCERPT`';
-    }
-    if ($this->isColumnModified(wpPostPeer::POST_CATEGORY))
-    {
-      $modifiedColumns[':p' . $index++]  = '`POST_CATEGORY`';
     }
     if ($this->isColumnModified(wpPostPeer::POST_STATUS))
     {
@@ -1658,9 +1817,6 @@ abstract class BasewpPost extends BaseObject  implements Persistent
             break;
           case '`POST_EXCERPT`':
             $stmt->bindValue($identifier, $this->post_excerpt, PDO::PARAM_STR);
-            break;
-          case '`POST_CATEGORY`':
-            $stmt->bindValue($identifier, $this->post_category, PDO::PARAM_INT);
             break;
           case '`POST_STATUS`':
             $stmt->bindValue($identifier, $this->post_status, PDO::PARAM_STR);
@@ -1824,6 +1980,14 @@ abstract class BasewpPost extends BaseObject  implements Persistent
         }
       }
 
+      if ($this->awpPostRelatedByPostParent !== null)
+      {
+        if (!$this->awpPostRelatedByPostParent->validate($columns))
+        {
+          $failureMap = array_merge($failureMap, $this->awpPostRelatedByPostParent->getValidationFailures());
+        }
+      }
+
 
       if (($retval = wpPostPeer::doValidate($this, $columns)) !== true)
       {
@@ -1831,9 +1995,31 @@ abstract class BasewpPost extends BaseObject  implements Persistent
       }
 
 
+        if ($this->collwpPostsRelatedById !== null)
+        {
+          foreach ($this->collwpPostsRelatedById as $referrerFK)
+          {
+            if (!$referrerFK->validate($columns))
+            {
+              $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+            }
+          }
+        }
+
         if ($this->collwpPostMetas !== null)
         {
           foreach ($this->collwpPostMetas as $referrerFK)
+          {
+            if (!$referrerFK->validate($columns))
+            {
+              $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+            }
+          }
+        }
+
+        if ($this->collwpComments !== null)
+        {
+          foreach ($this->collwpComments as $referrerFK)
           {
             if (!$referrerFK->validate($columns))
             {
@@ -1898,54 +2084,51 @@ abstract class BasewpPost extends BaseObject  implements Persistent
         return $this->getPostExcerpt();
         break;
       case 7:
-        return $this->getPostCategory();
-        break;
-      case 8:
         return $this->getPostStatus();
         break;
-      case 9:
+      case 8:
         return $this->getCommentStatus();
         break;
-      case 10:
+      case 9:
         return $this->getPingStatus();
         break;
-      case 11:
+      case 10:
         return $this->getPostPassword();
         break;
-      case 12:
+      case 11:
         return $this->getPostName();
         break;
-      case 13:
+      case 12:
         return $this->getToPing();
         break;
-      case 14:
+      case 13:
         return $this->getPinged();
         break;
-      case 15:
+      case 14:
         return $this->getPostModified();
         break;
-      case 16:
+      case 15:
         return $this->getPostModifiedGmt();
         break;
-      case 17:
+      case 16:
         return $this->getPostContentFiltered();
         break;
-      case 18:
+      case 17:
         return $this->getPostParent();
         break;
-      case 19:
+      case 18:
         return $this->getGuid();
         break;
-      case 20:
+      case 19:
         return $this->getMenuOrder();
         break;
-      case 21:
+      case 20:
         return $this->getPostType();
         break;
-      case 22:
+      case 21:
         return $this->getPostMimeType();
         break;
-      case 23:
+      case 22:
         return $this->getCommentCount();
         break;
       default:
@@ -1985,23 +2168,22 @@ abstract class BasewpPost extends BaseObject  implements Persistent
       $keys[4] => $this->getPostContent(),
       $keys[5] => $this->getPostTitle(),
       $keys[6] => $this->getPostExcerpt(),
-      $keys[7] => $this->getPostCategory(),
-      $keys[8] => $this->getPostStatus(),
-      $keys[9] => $this->getCommentStatus(),
-      $keys[10] => $this->getPingStatus(),
-      $keys[11] => $this->getPostPassword(),
-      $keys[12] => $this->getPostName(),
-      $keys[13] => $this->getToPing(),
-      $keys[14] => $this->getPinged(),
-      $keys[15] => $this->getPostModified(),
-      $keys[16] => $this->getPostModifiedGmt(),
-      $keys[17] => $this->getPostContentFiltered(),
-      $keys[18] => $this->getPostParent(),
-      $keys[19] => $this->getGuid(),
-      $keys[20] => $this->getMenuOrder(),
-      $keys[21] => $this->getPostType(),
-      $keys[22] => $this->getPostMimeType(),
-      $keys[23] => $this->getCommentCount(),
+      $keys[7] => $this->getPostStatus(),
+      $keys[8] => $this->getCommentStatus(),
+      $keys[9] => $this->getPingStatus(),
+      $keys[10] => $this->getPostPassword(),
+      $keys[11] => $this->getPostName(),
+      $keys[12] => $this->getToPing(),
+      $keys[13] => $this->getPinged(),
+      $keys[14] => $this->getPostModified(),
+      $keys[15] => $this->getPostModifiedGmt(),
+      $keys[16] => $this->getPostContentFiltered(),
+      $keys[17] => $this->getPostParent(),
+      $keys[18] => $this->getGuid(),
+      $keys[19] => $this->getMenuOrder(),
+      $keys[20] => $this->getPostType(),
+      $keys[21] => $this->getPostMimeType(),
+      $keys[22] => $this->getCommentCount(),
     );
     if ($includeForeignObjects)
     {
@@ -2009,9 +2191,21 @@ abstract class BasewpPost extends BaseObject  implements Persistent
       {
         $result['wpUser'] = $this->awpUser->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
       }
+      if (null !== $this->awpPostRelatedByPostParent)
+      {
+        $result['wpPostRelatedByPostParent'] = $this->awpPostRelatedByPostParent->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+      }
+      if (null !== $this->collwpPostsRelatedById)
+      {
+        $result['wpPostsRelatedById'] = $this->collwpPostsRelatedById->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
       if (null !== $this->collwpPostMetas)
       {
         $result['wpPostMetas'] = $this->collwpPostMetas->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+      if (null !== $this->collwpComments)
+      {
+        $result['wpComments'] = $this->collwpComments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
       }
     }
     return $result;
@@ -2067,54 +2261,51 @@ abstract class BasewpPost extends BaseObject  implements Persistent
         $this->setPostExcerpt($value);
         break;
       case 7:
-        $this->setPostCategory($value);
-        break;
-      case 8:
         $this->setPostStatus($value);
         break;
-      case 9:
+      case 8:
         $this->setCommentStatus($value);
         break;
-      case 10:
+      case 9:
         $this->setPingStatus($value);
         break;
-      case 11:
+      case 10:
         $this->setPostPassword($value);
         break;
-      case 12:
+      case 11:
         $this->setPostName($value);
         break;
-      case 13:
+      case 12:
         $this->setToPing($value);
         break;
-      case 14:
+      case 13:
         $this->setPinged($value);
         break;
-      case 15:
+      case 14:
         $this->setPostModified($value);
         break;
-      case 16:
+      case 15:
         $this->setPostModifiedGmt($value);
         break;
-      case 17:
+      case 16:
         $this->setPostContentFiltered($value);
         break;
-      case 18:
+      case 17:
         $this->setPostParent($value);
         break;
-      case 19:
+      case 18:
         $this->setGuid($value);
         break;
-      case 20:
+      case 19:
         $this->setMenuOrder($value);
         break;
-      case 21:
+      case 20:
         $this->setPostType($value);
         break;
-      case 22:
+      case 21:
         $this->setPostMimeType($value);
         break;
-      case 23:
+      case 22:
         $this->setCommentCount($value);
         break;
     }
@@ -2148,23 +2339,22 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     if (array_key_exists($keys[4], $arr)) $this->setPostContent($arr[$keys[4]]);
     if (array_key_exists($keys[5], $arr)) $this->setPostTitle($arr[$keys[5]]);
     if (array_key_exists($keys[6], $arr)) $this->setPostExcerpt($arr[$keys[6]]);
-    if (array_key_exists($keys[7], $arr)) $this->setPostCategory($arr[$keys[7]]);
-    if (array_key_exists($keys[8], $arr)) $this->setPostStatus($arr[$keys[8]]);
-    if (array_key_exists($keys[9], $arr)) $this->setCommentStatus($arr[$keys[9]]);
-    if (array_key_exists($keys[10], $arr)) $this->setPingStatus($arr[$keys[10]]);
-    if (array_key_exists($keys[11], $arr)) $this->setPostPassword($arr[$keys[11]]);
-    if (array_key_exists($keys[12], $arr)) $this->setPostName($arr[$keys[12]]);
-    if (array_key_exists($keys[13], $arr)) $this->setToPing($arr[$keys[13]]);
-    if (array_key_exists($keys[14], $arr)) $this->setPinged($arr[$keys[14]]);
-    if (array_key_exists($keys[15], $arr)) $this->setPostModified($arr[$keys[15]]);
-    if (array_key_exists($keys[16], $arr)) $this->setPostModifiedGmt($arr[$keys[16]]);
-    if (array_key_exists($keys[17], $arr)) $this->setPostContentFiltered($arr[$keys[17]]);
-    if (array_key_exists($keys[18], $arr)) $this->setPostParent($arr[$keys[18]]);
-    if (array_key_exists($keys[19], $arr)) $this->setGuid($arr[$keys[19]]);
-    if (array_key_exists($keys[20], $arr)) $this->setMenuOrder($arr[$keys[20]]);
-    if (array_key_exists($keys[21], $arr)) $this->setPostType($arr[$keys[21]]);
-    if (array_key_exists($keys[22], $arr)) $this->setPostMimeType($arr[$keys[22]]);
-    if (array_key_exists($keys[23], $arr)) $this->setCommentCount($arr[$keys[23]]);
+    if (array_key_exists($keys[7], $arr)) $this->setPostStatus($arr[$keys[7]]);
+    if (array_key_exists($keys[8], $arr)) $this->setCommentStatus($arr[$keys[8]]);
+    if (array_key_exists($keys[9], $arr)) $this->setPingStatus($arr[$keys[9]]);
+    if (array_key_exists($keys[10], $arr)) $this->setPostPassword($arr[$keys[10]]);
+    if (array_key_exists($keys[11], $arr)) $this->setPostName($arr[$keys[11]]);
+    if (array_key_exists($keys[12], $arr)) $this->setToPing($arr[$keys[12]]);
+    if (array_key_exists($keys[13], $arr)) $this->setPinged($arr[$keys[13]]);
+    if (array_key_exists($keys[14], $arr)) $this->setPostModified($arr[$keys[14]]);
+    if (array_key_exists($keys[15], $arr)) $this->setPostModifiedGmt($arr[$keys[15]]);
+    if (array_key_exists($keys[16], $arr)) $this->setPostContentFiltered($arr[$keys[16]]);
+    if (array_key_exists($keys[17], $arr)) $this->setPostParent($arr[$keys[17]]);
+    if (array_key_exists($keys[18], $arr)) $this->setGuid($arr[$keys[18]]);
+    if (array_key_exists($keys[19], $arr)) $this->setMenuOrder($arr[$keys[19]]);
+    if (array_key_exists($keys[20], $arr)) $this->setPostType($arr[$keys[20]]);
+    if (array_key_exists($keys[21], $arr)) $this->setPostMimeType($arr[$keys[21]]);
+    if (array_key_exists($keys[22], $arr)) $this->setCommentCount($arr[$keys[22]]);
   }
 
   /**
@@ -2183,7 +2373,6 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     if ($this->isColumnModified(wpPostPeer::POST_CONTENT)) $criteria->add(wpPostPeer::POST_CONTENT, $this->post_content);
     if ($this->isColumnModified(wpPostPeer::POST_TITLE)) $criteria->add(wpPostPeer::POST_TITLE, $this->post_title);
     if ($this->isColumnModified(wpPostPeer::POST_EXCERPT)) $criteria->add(wpPostPeer::POST_EXCERPT, $this->post_excerpt);
-    if ($this->isColumnModified(wpPostPeer::POST_CATEGORY)) $criteria->add(wpPostPeer::POST_CATEGORY, $this->post_category);
     if ($this->isColumnModified(wpPostPeer::POST_STATUS)) $criteria->add(wpPostPeer::POST_STATUS, $this->post_status);
     if ($this->isColumnModified(wpPostPeer::COMMENT_STATUS)) $criteria->add(wpPostPeer::COMMENT_STATUS, $this->comment_status);
     if ($this->isColumnModified(wpPostPeer::PING_STATUS)) $criteria->add(wpPostPeer::PING_STATUS, $this->ping_status);
@@ -2268,7 +2457,6 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     $copyObj->setPostContent($this->getPostContent());
     $copyObj->setPostTitle($this->getPostTitle());
     $copyObj->setPostExcerpt($this->getPostExcerpt());
-    $copyObj->setPostCategory($this->getPostCategory());
     $copyObj->setPostStatus($this->getPostStatus());
     $copyObj->setCommentStatus($this->getCommentStatus());
     $copyObj->setPingStatus($this->getPingStatus());
@@ -2294,10 +2482,24 @@ abstract class BasewpPost extends BaseObject  implements Persistent
       // store object hash to prevent cycle
       $this->startCopy = true;
 
+      foreach ($this->getwpPostsRelatedById() as $relObj)
+      {
+        if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+          $copyObj->addwpPostRelatedById($relObj->copy($deepCopy));
+        }
+      }
+
       foreach ($this->getwpPostMetas() as $relObj)
       {
         if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
           $copyObj->addwpPostMeta($relObj->copy($deepCopy));
+        }
+      }
+
+      foreach ($this->getwpComments() as $relObj)
+      {
+        if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+          $copyObj->addwpComment($relObj->copy($deepCopy));
         }
       }
 
@@ -2362,7 +2564,7 @@ abstract class BasewpPost extends BaseObject  implements Persistent
   {
     if ($v === null)
     {
-      $this->setPostAuthor(NULL);
+      $this->setPostAuthor(0);
     }
     else
     {
@@ -2405,6 +2607,60 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     return $this->awpUser;
   }
 
+  /**
+   * Declares an association between this object and a wpPost object.
+   *
+   * @param      wpPost $v
+   * @return     wpPost The current object (for fluent API support)
+   * @throws     PropelException
+   */
+  public function setwpPostRelatedByPostParent(wpPost $v = null)
+  {
+    if ($v === null)
+    {
+      $this->setPostParent(0);
+    }
+    else
+    {
+      $this->setPostParent($v->getId());
+    }
+
+    $this->awpPostRelatedByPostParent = $v;
+
+    // Add binding for other direction of this n:n relationship.
+    // If this object has already been added to the wpPost object, it will not be re-added.
+    if ($v !== null)
+    {
+      $v->addwpPostRelatedById($this);
+    }
+
+    return $this;
+  }
+
+
+  /**
+   * Get the associated wpPost object
+   *
+   * @param      PropelPDO Optional Connection object.
+   * @return     wpPost The associated wpPost object.
+   * @throws     PropelException
+   */
+  public function getwpPostRelatedByPostParent(PropelPDO $con = null)
+  {
+    if ($this->awpPostRelatedByPostParent === null && ($this->post_parent !== null))
+    {
+      $this->awpPostRelatedByPostParent = wpPostQuery::create()->findPk($this->post_parent, $con);
+      /* The following can be used additionally to
+        guarantee the related object contains a reference
+        to this object.  This level of coupling may, however, be
+        undesirable since it could result in an only partially populated collection
+        in the referenced object.
+        $this->awpPostRelatedByPostParent->addwpPostsRelatedById($this);
+       */
+    }
+    return $this->awpPostRelatedByPostParent;
+  }
+
 
   /**
    * Initializes a collection based on the name of a relation.
@@ -2416,10 +2672,207 @@ abstract class BasewpPost extends BaseObject  implements Persistent
    */
   public function initRelation($relationName)
   {
+    if ('wpPostRelatedById' == $relationName)
+    {
+      return $this->initwpPostsRelatedById();
+    }
     if ('wpPostMeta' == $relationName)
     {
       return $this->initwpPostMetas();
     }
+    if ('wpComment' == $relationName)
+    {
+      return $this->initwpComments();
+    }
+  }
+
+  /**
+   * Clears out the collwpPostsRelatedById collection
+   *
+   * This does not modify the database; however, it will remove any associated objects, causing
+   * them to be refetched by subsequent calls to accessor method.
+   *
+   * @return     void
+   * @see        addwpPostsRelatedById()
+   */
+  public function clearwpPostsRelatedById()
+  {
+    $this->collwpPostsRelatedById = null; // important to set this to NULL since that means it is uninitialized
+  }
+
+  /**
+   * Initializes the collwpPostsRelatedById collection.
+   *
+   * By default this just sets the collwpPostsRelatedById collection to an empty array (like clearcollwpPostsRelatedById());
+   * however, you may wish to override this method in your stub class to provide setting appropriate
+   * to your application -- for example, setting the initial array to the values stored in database.
+   *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
+   * @return     void
+   */
+  public function initwpPostsRelatedById($overrideExisting = true)
+  {
+    if (null !== $this->collwpPostsRelatedById && !$overrideExisting)
+    {
+      return;
+    }
+    $this->collwpPostsRelatedById = new PropelObjectCollection();
+    $this->collwpPostsRelatedById->setModel('wpPost');
+  }
+
+  /**
+   * Gets an array of wpPost objects which contain a foreign key that references this object.
+   *
+   * If the $criteria is not null, it is used to always fetch the results from the database.
+   * Otherwise the results are fetched from the database the first time, then cached.
+   * Next time the same method is called without $criteria, the cached collection is returned.
+   * If this wpPost is new, it will return
+   * an empty collection or the current collection; the criteria is ignored on a new object.
+   *
+   * @param      Criteria $criteria optional Criteria object to narrow the query
+   * @param      PropelPDO $con optional connection object
+   * @return     PropelCollection|array wpPost[] List of wpPost objects
+   * @throws     PropelException
+   */
+  public function getwpPostsRelatedById($criteria = null, PropelPDO $con = null)
+  {
+    if(null === $this->collwpPostsRelatedById || null !== $criteria)
+    {
+      if ($this->isNew() && null === $this->collwpPostsRelatedById)
+      {
+        // return empty collection
+        $this->initwpPostsRelatedById();
+      }
+      else
+      {
+        $collwpPostsRelatedById = wpPostQuery::create(null, $criteria)
+          ->filterBywpPostRelatedByPostParent($this)
+          ->find($con);
+        if (null !== $criteria)
+        {
+          return $collwpPostsRelatedById;
+        }
+        $this->collwpPostsRelatedById = $collwpPostsRelatedById;
+      }
+    }
+    return $this->collwpPostsRelatedById;
+  }
+
+  /**
+   * Sets a collection of wpPostRelatedById objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $wpPostsRelatedById A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setwpPostsRelatedById(PropelCollection $wpPostsRelatedById, PropelPDO $con = null)
+  {
+    $this->wpPostsRelatedByIdScheduledForDeletion = $this->getwpPostsRelatedById(new Criteria(), $con)->diff($wpPostsRelatedById);
+
+    foreach ($wpPostsRelatedById as $wpPostRelatedById)
+    {
+      // Fix issue with collection modified by reference
+      if ($wpPostRelatedById->isNew())
+      {
+        $wpPostRelatedById->setwpPostRelatedByPostParent($this);
+      }
+      $this->addwpPostRelatedById($wpPostRelatedById);
+    }
+
+    $this->collwpPostsRelatedById = $wpPostsRelatedById;
+  }
+
+  /**
+   * Returns the number of related wpPost objects.
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct
+   * @param      PropelPDO $con
+   * @return     int Count of related wpPost objects.
+   * @throws     PropelException
+   */
+  public function countwpPostsRelatedById(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+  {
+    if(null === $this->collwpPostsRelatedById || null !== $criteria)
+    {
+      if ($this->isNew() && null === $this->collwpPostsRelatedById)
+      {
+        return 0;
+      }
+      else
+      {
+        $query = wpPostQuery::create(null, $criteria);
+        if($distinct)
+        {
+          $query->distinct();
+        }
+        return $query
+          ->filterBywpPostRelatedByPostParent($this)
+          ->count($con);
+      }
+    }
+    else
+    {
+      return count($this->collwpPostsRelatedById);
+    }
+  }
+
+  /**
+   * Method called to associate a wpPost object to this object
+   * through the wpPost foreign key attribute.
+   *
+   * @param      wpPost $l wpPost
+   * @return     wpPost The current object (for fluent API support)
+   */
+  public function addwpPostRelatedById(wpPost $l)
+  {
+    if ($this->collwpPostsRelatedById === null)
+    {
+      $this->initwpPostsRelatedById();
+    }
+    if (!$this->collwpPostsRelatedById->contains($l)) { // only add it if the **same** object is not already associated
+      $this->doAddwpPostRelatedById($l);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param  wpPostRelatedById $wpPostRelatedById The wpPostRelatedById object to add.
+   */
+  protected function doAddwpPostRelatedById($wpPostRelatedById)
+  {
+    $this->collwpPostsRelatedById[]= $wpPostRelatedById;
+    $wpPostRelatedById->setwpPostRelatedByPostParent($this);
+  }
+
+
+  /**
+   * If this collection has already been initialized with
+   * an identical criteria, it returns the collection.
+   * Otherwise if this wpPost is new, it will return
+   * an empty collection; or if this wpPost has previously
+   * been saved, it will retrieve related wpPostsRelatedById from storage.
+   *
+   * This method is protected by default in order to keep the public
+   * api reasonable.  You can provide public methods for those you
+   * actually need in wpPost.
+   *
+   * @param      Criteria $criteria optional Criteria object to narrow the query
+   * @param      PropelPDO $con optional connection object
+   * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+   * @return     PropelCollection|array wpPost[] List of wpPost objects
+   */
+  public function getwpPostsRelatedByIdJoinwpUser($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $query = wpPostQuery::create(null, $criteria);
+    $query->joinWith('wpUser', $join_behavior);
+
+    return $this->getwpPostsRelatedById($query, $con);
   }
 
   /**
@@ -2587,6 +3040,220 @@ abstract class BasewpPost extends BaseObject  implements Persistent
   }
 
   /**
+   * Clears out the collwpComments collection
+   *
+   * This does not modify the database; however, it will remove any associated objects, causing
+   * them to be refetched by subsequent calls to accessor method.
+   *
+   * @return     void
+   * @see        addwpComments()
+   */
+  public function clearwpComments()
+  {
+    $this->collwpComments = null; // important to set this to NULL since that means it is uninitialized
+  }
+
+  /**
+   * Initializes the collwpComments collection.
+   *
+   * By default this just sets the collwpComments collection to an empty array (like clearcollwpComments());
+   * however, you may wish to override this method in your stub class to provide setting appropriate
+   * to your application -- for example, setting the initial array to the values stored in database.
+   *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
+   * @return     void
+   */
+  public function initwpComments($overrideExisting = true)
+  {
+    if (null !== $this->collwpComments && !$overrideExisting)
+    {
+      return;
+    }
+    $this->collwpComments = new PropelObjectCollection();
+    $this->collwpComments->setModel('wpComment');
+  }
+
+  /**
+   * Gets an array of wpComment objects which contain a foreign key that references this object.
+   *
+   * If the $criteria is not null, it is used to always fetch the results from the database.
+   * Otherwise the results are fetched from the database the first time, then cached.
+   * Next time the same method is called without $criteria, the cached collection is returned.
+   * If this wpPost is new, it will return
+   * an empty collection or the current collection; the criteria is ignored on a new object.
+   *
+   * @param      Criteria $criteria optional Criteria object to narrow the query
+   * @param      PropelPDO $con optional connection object
+   * @return     PropelCollection|array wpComment[] List of wpComment objects
+   * @throws     PropelException
+   */
+  public function getwpComments($criteria = null, PropelPDO $con = null)
+  {
+    if(null === $this->collwpComments || null !== $criteria)
+    {
+      if ($this->isNew() && null === $this->collwpComments)
+      {
+        // return empty collection
+        $this->initwpComments();
+      }
+      else
+      {
+        $collwpComments = wpCommentQuery::create(null, $criteria)
+          ->filterBywpPost($this)
+          ->find($con);
+        if (null !== $criteria)
+        {
+          return $collwpComments;
+        }
+        $this->collwpComments = $collwpComments;
+      }
+    }
+    return $this->collwpComments;
+  }
+
+  /**
+   * Sets a collection of wpComment objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $wpComments A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setwpComments(PropelCollection $wpComments, PropelPDO $con = null)
+  {
+    $this->wpCommentsScheduledForDeletion = $this->getwpComments(new Criteria(), $con)->diff($wpComments);
+
+    foreach ($wpComments as $wpComment)
+    {
+      // Fix issue with collection modified by reference
+      if ($wpComment->isNew())
+      {
+        $wpComment->setwpPost($this);
+      }
+      $this->addwpComment($wpComment);
+    }
+
+    $this->collwpComments = $wpComments;
+  }
+
+  /**
+   * Returns the number of related wpComment objects.
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct
+   * @param      PropelPDO $con
+   * @return     int Count of related wpComment objects.
+   * @throws     PropelException
+   */
+  public function countwpComments(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+  {
+    if(null === $this->collwpComments || null !== $criteria)
+    {
+      if ($this->isNew() && null === $this->collwpComments)
+      {
+        return 0;
+      }
+      else
+      {
+        $query = wpCommentQuery::create(null, $criteria);
+        if($distinct)
+        {
+          $query->distinct();
+        }
+        return $query
+          ->filterBywpPost($this)
+          ->count($con);
+      }
+    }
+    else
+    {
+      return count($this->collwpComments);
+    }
+  }
+
+  /**
+   * Method called to associate a wpComment object to this object
+   * through the wpComment foreign key attribute.
+   *
+   * @param      wpComment $l wpComment
+   * @return     wpPost The current object (for fluent API support)
+   */
+  public function addwpComment(wpComment $l)
+  {
+    if ($this->collwpComments === null)
+    {
+      $this->initwpComments();
+    }
+    if (!$this->collwpComments->contains($l)) { // only add it if the **same** object is not already associated
+      $this->doAddwpComment($l);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param  wpComment $wpComment The wpComment object to add.
+   */
+  protected function doAddwpComment($wpComment)
+  {
+    $this->collwpComments[]= $wpComment;
+    $wpComment->setwpPost($this);
+  }
+
+
+  /**
+   * If this collection has already been initialized with
+   * an identical criteria, it returns the collection.
+   * Otherwise if this wpPost is new, it will return
+   * an empty collection; or if this wpPost has previously
+   * been saved, it will retrieve related wpComments from storage.
+   *
+   * This method is protected by default in order to keep the public
+   * api reasonable.  You can provide public methods for those you
+   * actually need in wpPost.
+   *
+   * @param      Criteria $criteria optional Criteria object to narrow the query
+   * @param      PropelPDO $con optional connection object
+   * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+   * @return     PropelCollection|array wpComment[] List of wpComment objects
+   */
+  public function getwpCommentsJoinwpCommentRelatedByCommentParent($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $query = wpCommentQuery::create(null, $criteria);
+    $query->joinWith('wpCommentRelatedByCommentParent', $join_behavior);
+
+    return $this->getwpComments($query, $con);
+  }
+
+
+  /**
+   * If this collection has already been initialized with
+   * an identical criteria, it returns the collection.
+   * Otherwise if this wpPost is new, it will return
+   * an empty collection; or if this wpPost has previously
+   * been saved, it will retrieve related wpComments from storage.
+   *
+   * This method is protected by default in order to keep the public
+   * api reasonable.  You can provide public methods for those you
+   * actually need in wpPost.
+   *
+   * @param      Criteria $criteria optional Criteria object to narrow the query
+   * @param      PropelPDO $con optional connection object
+   * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+   * @return     PropelCollection|array wpComment[] List of wpComment objects
+   */
+  public function getwpCommentsJoinwpUser($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $query = wpCommentQuery::create(null, $criteria);
+    $query->joinWith('wpUser', $join_behavior);
+
+    return $this->getwpComments($query, $con);
+  }
+
+  /**
    * Clears the current object and sets all attributes to their default values
    */
   public function clear()
@@ -2598,7 +3265,6 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     $this->post_content = null;
     $this->post_title = null;
     $this->post_excerpt = null;
-    $this->post_category = null;
     $this->post_status = null;
     $this->comment_status = null;
     $this->ping_status = null;
@@ -2618,6 +3284,7 @@ abstract class BasewpPost extends BaseObject  implements Persistent
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;
     $this->clearAllReferences();
+    $this->applyDefaultValues();
     $this->resetModified();
     $this->setNew(true);
     $this->setDeleted(false);
@@ -2636,6 +3303,13 @@ abstract class BasewpPost extends BaseObject  implements Persistent
   {
     if ($deep)
     {
+      if ($this->collwpPostsRelatedById)
+      {
+        foreach ($this->collwpPostsRelatedById as $o)
+        {
+          $o->clearAllReferences($deep);
+        }
+      }
       if ($this->collwpPostMetas)
       {
         foreach ($this->collwpPostMetas as $o)
@@ -2643,24 +3317,42 @@ abstract class BasewpPost extends BaseObject  implements Persistent
           $o->clearAllReferences($deep);
         }
       }
+      if ($this->collwpComments)
+      {
+        foreach ($this->collwpComments as $o)
+        {
+          $o->clearAllReferences($deep);
+        }
+      }
     }
 
+    if ($this->collwpPostsRelatedById instanceof PropelCollection)
+    {
+      $this->collwpPostsRelatedById->clearIterator();
+    }
+    $this->collwpPostsRelatedById = null;
     if ($this->collwpPostMetas instanceof PropelCollection)
     {
       $this->collwpPostMetas->clearIterator();
     }
     $this->collwpPostMetas = null;
+    if ($this->collwpComments instanceof PropelCollection)
+    {
+      $this->collwpComments->clearIterator();
+    }
+    $this->collwpComments = null;
     $this->awpUser = null;
+    $this->awpPostRelatedByPostParent = null;
   }
 
   /**
    * Return the string representation of this object
    *
-   * @return string
+   * @return string The value of the 'post_title' column
    */
   public function __toString()
   {
-    return (string) $this->exportTo(wpPostPeer::DEFAULT_STRING_FORMAT);
+    return (string) $this->getPostTitle();
   }
 
   /**

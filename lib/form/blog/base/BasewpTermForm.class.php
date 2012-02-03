@@ -22,10 +22,14 @@ abstract class BasewpTermForm extends BaseFormPropel
 
     $this->setValidators(array(
       'term_id'    => new sfValidatorChoice(array('choices' => array($this->getObject()->getTermId()), 'empty_value' => $this->getObject()->getTermId(), 'required' => false)),
-      'name'       => new sfValidatorString(array('max_length' => 55, 'required' => false)),
-      'slug'       => new sfValidatorString(array('max_length' => 200, 'required' => false)),
-      'term_group' => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
+      'name'       => new sfValidatorString(array('max_length' => 55)),
+      'slug'       => new sfValidatorString(array('max_length' => 200)),
+      'term_group' => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),
     ));
+
+    $this->validatorSchema->setPostValidator(
+      new sfValidatorPropelUnique(array('model' => 'wpTerm', 'column' => array('slug')))
+    );
 
     $this->widgetSchema->setNameFormat('wp_term[%s]');
 

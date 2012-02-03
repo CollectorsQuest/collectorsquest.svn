@@ -16,11 +16,13 @@ abstract class BasewpTermRelationshipForm extends BaseFormPropel
     $this->setWidgets(array(
       'object_id'        => new sfWidgetFormInputHidden(),
       'term_taxonomy_id' => new sfWidgetFormInputHidden(),
+      'term_order'       => new sfWidgetFormInputText(),
     ));
 
     $this->setValidators(array(
       'object_id'        => new sfValidatorChoice(array('choices' => array($this->getObject()->getObjectId()), 'empty_value' => $this->getObject()->getObjectId(), 'required' => false)),
-      'term_taxonomy_id' => new sfValidatorChoice(array('choices' => array($this->getObject()->getTermTaxonomyId()), 'empty_value' => $this->getObject()->getTermTaxonomyId(), 'required' => false)),
+      'term_taxonomy_id' => new sfValidatorPropelChoice(array('model' => 'wpTermTaxonomy', 'column' => 'term_taxonomy_id', 'required' => false)),
+      'term_order'       => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),
     ));
 
     $this->widgetSchema->setNameFormat('wp_term_relationship[%s]');

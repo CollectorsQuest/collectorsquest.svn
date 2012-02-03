@@ -68,6 +68,7 @@ abstract class BasewpUser extends BaseObject  implements Persistent
 
   /**
    * The value for the user_registered field.
+   * Note: this column has a database default value of: NULL
    * @var        string
    */
   protected $user_registered;
@@ -80,6 +81,7 @@ abstract class BasewpUser extends BaseObject  implements Persistent
 
   /**
    * The value for the user_status field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $user_status;
@@ -94,6 +96,16 @@ abstract class BasewpUser extends BaseObject  implements Persistent
    * @var        array wpPost[] Collection to store aggregation of wpPost objects.
    */
   protected $collwpPosts;
+
+  /**
+   * @var        array wpUserMeta[] Collection to store aggregation of wpUserMeta objects.
+   */
+  protected $collwpUserMetas;
+
+  /**
+   * @var        array wpComment[] Collection to store aggregation of wpComment objects.
+   */
+  protected $collwpComments;
 
   /**
    * Flag to prevent endless save loop, if this object is referenced
@@ -114,6 +126,40 @@ abstract class BasewpUser extends BaseObject  implements Persistent
    * @var    array
    */
   protected $wpPostsScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $wpUserMetasScheduledForDeletion = null;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $wpCommentsScheduledForDeletion = null;
+
+  /**
+   * Applies default values to this object.
+   * This method should be called from the object's constructor (or
+   * equivalent initialization method).
+   * @see        __construct()
+   */
+  public function applyDefaultValues()
+  {
+    $this->user_registered = NULL;
+    $this->user_status = 0;
+  }
+
+  /**
+   * Initializes internal state of BasewpUser object.
+   * @see        applyDefaults()
+   */
+  public function __construct()
+  {
+    parent::__construct();
+    $this->applyDefaultValues();
+  }
 
   /**
    * Get the [id] column value.
@@ -401,8 +447,9 @@ abstract class BasewpUser extends BaseObject  implements Persistent
     {
       $currentDateAsString = ($this->user_registered !== null && $tmpDt = new DateTime($this->user_registered)) ? $tmpDt->format('Y-m-d H:i:s') : null;
       $newDateAsString = $dt ? $dt->format('Y-m-d H:i:s') : null;
-      if ($currentDateAsString !== $newDateAsString)
-      {
+      if ( ($currentDateAsString !== $newDateAsString) // normalized values don't match
+        || ($dt->format('Y-m-d H:i:s') === NULL) // or the entered value matches the default
+         ) {
         $this->user_registered = $newDateAsString;
         $this->modifiedColumns[] = wpUserPeer::USER_REGISTERED;
       }
@@ -487,6 +534,16 @@ abstract class BasewpUser extends BaseObject  implements Persistent
    */
   public function hasOnlyDefaultValues()
   {
+      if ($this->user_registered !== NULL)
+      {
+        return false;
+      }
+
+      if ($this->user_status !== 0)
+      {
+        return false;
+      }
+
     // otherwise, everything was equal, so return TRUE
     return true;
   }
@@ -598,6 +655,10 @@ abstract class BasewpUser extends BaseObject  implements Persistent
     if ($deep) {  // also de-associate any related objects?
 
       $this->collwpPosts = null;
+
+      $this->collwpUserMetas = null;
+
+      $this->collwpComments = null;
 
     }
   }
@@ -793,6 +854,50 @@ abstract class BasewpUser extends BaseObject  implements Persistent
       if ($this->collwpPosts !== null)
       {
         foreach ($this->collwpPosts as $referrerFK)
+        {
+          if (!$referrerFK->isDeleted())
+          {
+            $affectedRows += $referrerFK->save($con);
+          }
+        }
+      }
+
+      if ($this->wpUserMetasScheduledForDeletion !== null)
+      {
+        if (!$this->wpUserMetasScheduledForDeletion->isEmpty())
+        {
+          wpUserMetaQuery::create()
+            ->filterByPrimaryKeys($this->wpUserMetasScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->wpUserMetasScheduledForDeletion = null;
+        }
+      }
+
+      if ($this->collwpUserMetas !== null)
+      {
+        foreach ($this->collwpUserMetas as $referrerFK)
+        {
+          if (!$referrerFK->isDeleted())
+          {
+            $affectedRows += $referrerFK->save($con);
+          }
+        }
+      }
+
+      if ($this->wpCommentsScheduledForDeletion !== null)
+      {
+        if (!$this->wpCommentsScheduledForDeletion->isEmpty())
+        {
+          wpCommentQuery::create()
+            ->filterByPrimaryKeys($this->wpCommentsScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->wpCommentsScheduledForDeletion = null;
+        }
+      }
+
+      if ($this->collwpComments !== null)
+      {
+        foreach ($this->collwpComments as $referrerFK)
         {
           if (!$referrerFK->isDeleted())
           {
@@ -1029,6 +1134,28 @@ abstract class BasewpUser extends BaseObject  implements Persistent
           }
         }
 
+        if ($this->collwpUserMetas !== null)
+        {
+          foreach ($this->collwpUserMetas as $referrerFK)
+          {
+            if (!$referrerFK->validate($columns))
+            {
+              $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+            }
+          }
+        }
+
+        if ($this->collwpComments !== null)
+        {
+          foreach ($this->collwpComments as $referrerFK)
+          {
+            if (!$referrerFK->validate($columns))
+            {
+              $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+            }
+          }
+        }
+
 
       $this->alreadyInValidation = false;
     }
@@ -1139,6 +1266,14 @@ abstract class BasewpUser extends BaseObject  implements Persistent
       if (null !== $this->collwpPosts)
       {
         $result['wpPosts'] = $this->collwpPosts->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+      if (null !== $this->collwpUserMetas)
+      {
+        $result['wpUserMetas'] = $this->collwpUserMetas->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+      if (null !== $this->collwpComments)
+      {
+        $result['wpComments'] = $this->collwpComments->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
       }
     }
     return $result;
@@ -1344,6 +1479,20 @@ abstract class BasewpUser extends BaseObject  implements Persistent
         }
       }
 
+      foreach ($this->getwpUserMetas() as $relObj)
+      {
+        if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+          $copyObj->addwpUserMeta($relObj->copy($deepCopy));
+        }
+      }
+
+      foreach ($this->getwpComments() as $relObj)
+      {
+        if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+          $copyObj->addwpComment($relObj->copy($deepCopy));
+        }
+      }
+
       //unflag object copy
       $this->startCopy = false;
     }
@@ -1408,6 +1557,14 @@ abstract class BasewpUser extends BaseObject  implements Persistent
     if ('wpPost' == $relationName)
     {
       return $this->initwpPosts();
+    }
+    if ('wpUserMeta' == $relationName)
+    {
+      return $this->initwpUserMetas();
+    }
+    if ('wpComment' == $relationName)
+    {
+      return $this->initwpComments();
     }
   }
 
@@ -1575,6 +1732,409 @@ abstract class BasewpUser extends BaseObject  implements Persistent
     $wpPost->setwpUser($this);
   }
 
+
+  /**
+   * If this collection has already been initialized with
+   * an identical criteria, it returns the collection.
+   * Otherwise if this wpUser is new, it will return
+   * an empty collection; or if this wpUser has previously
+   * been saved, it will retrieve related wpPosts from storage.
+   *
+   * This method is protected by default in order to keep the public
+   * api reasonable.  You can provide public methods for those you
+   * actually need in wpUser.
+   *
+   * @param      Criteria $criteria optional Criteria object to narrow the query
+   * @param      PropelPDO $con optional connection object
+   * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+   * @return     PropelCollection|array wpPost[] List of wpPost objects
+   */
+  public function getwpPostsJoinwpPostRelatedByPostParent($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $query = wpPostQuery::create(null, $criteria);
+    $query->joinWith('wpPostRelatedByPostParent', $join_behavior);
+
+    return $this->getwpPosts($query, $con);
+  }
+
+  /**
+   * Clears out the collwpUserMetas collection
+   *
+   * This does not modify the database; however, it will remove any associated objects, causing
+   * them to be refetched by subsequent calls to accessor method.
+   *
+   * @return     void
+   * @see        addwpUserMetas()
+   */
+  public function clearwpUserMetas()
+  {
+    $this->collwpUserMetas = null; // important to set this to NULL since that means it is uninitialized
+  }
+
+  /**
+   * Initializes the collwpUserMetas collection.
+   *
+   * By default this just sets the collwpUserMetas collection to an empty array (like clearcollwpUserMetas());
+   * however, you may wish to override this method in your stub class to provide setting appropriate
+   * to your application -- for example, setting the initial array to the values stored in database.
+   *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
+   * @return     void
+   */
+  public function initwpUserMetas($overrideExisting = true)
+  {
+    if (null !== $this->collwpUserMetas && !$overrideExisting)
+    {
+      return;
+    }
+    $this->collwpUserMetas = new PropelObjectCollection();
+    $this->collwpUserMetas->setModel('wpUserMeta');
+  }
+
+  /**
+   * Gets an array of wpUserMeta objects which contain a foreign key that references this object.
+   *
+   * If the $criteria is not null, it is used to always fetch the results from the database.
+   * Otherwise the results are fetched from the database the first time, then cached.
+   * Next time the same method is called without $criteria, the cached collection is returned.
+   * If this wpUser is new, it will return
+   * an empty collection or the current collection; the criteria is ignored on a new object.
+   *
+   * @param      Criteria $criteria optional Criteria object to narrow the query
+   * @param      PropelPDO $con optional connection object
+   * @return     PropelCollection|array wpUserMeta[] List of wpUserMeta objects
+   * @throws     PropelException
+   */
+  public function getwpUserMetas($criteria = null, PropelPDO $con = null)
+  {
+    if(null === $this->collwpUserMetas || null !== $criteria)
+    {
+      if ($this->isNew() && null === $this->collwpUserMetas)
+      {
+        // return empty collection
+        $this->initwpUserMetas();
+      }
+      else
+      {
+        $collwpUserMetas = wpUserMetaQuery::create(null, $criteria)
+          ->filterBywpUser($this)
+          ->find($con);
+        if (null !== $criteria)
+        {
+          return $collwpUserMetas;
+        }
+        $this->collwpUserMetas = $collwpUserMetas;
+      }
+    }
+    return $this->collwpUserMetas;
+  }
+
+  /**
+   * Sets a collection of wpUserMeta objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $wpUserMetas A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setwpUserMetas(PropelCollection $wpUserMetas, PropelPDO $con = null)
+  {
+    $this->wpUserMetasScheduledForDeletion = $this->getwpUserMetas(new Criteria(), $con)->diff($wpUserMetas);
+
+    foreach ($wpUserMetas as $wpUserMeta)
+    {
+      // Fix issue with collection modified by reference
+      if ($wpUserMeta->isNew())
+      {
+        $wpUserMeta->setwpUser($this);
+      }
+      $this->addwpUserMeta($wpUserMeta);
+    }
+
+    $this->collwpUserMetas = $wpUserMetas;
+  }
+
+  /**
+   * Returns the number of related wpUserMeta objects.
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct
+   * @param      PropelPDO $con
+   * @return     int Count of related wpUserMeta objects.
+   * @throws     PropelException
+   */
+  public function countwpUserMetas(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+  {
+    if(null === $this->collwpUserMetas || null !== $criteria)
+    {
+      if ($this->isNew() && null === $this->collwpUserMetas)
+      {
+        return 0;
+      }
+      else
+      {
+        $query = wpUserMetaQuery::create(null, $criteria);
+        if($distinct)
+        {
+          $query->distinct();
+        }
+        return $query
+          ->filterBywpUser($this)
+          ->count($con);
+      }
+    }
+    else
+    {
+      return count($this->collwpUserMetas);
+    }
+  }
+
+  /**
+   * Method called to associate a wpUserMeta object to this object
+   * through the wpUserMeta foreign key attribute.
+   *
+   * @param      wpUserMeta $l wpUserMeta
+   * @return     wpUser The current object (for fluent API support)
+   */
+  public function addwpUserMeta(wpUserMeta $l)
+  {
+    if ($this->collwpUserMetas === null)
+    {
+      $this->initwpUserMetas();
+    }
+    if (!$this->collwpUserMetas->contains($l)) { // only add it if the **same** object is not already associated
+      $this->doAddwpUserMeta($l);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param  wpUserMeta $wpUserMeta The wpUserMeta object to add.
+   */
+  protected function doAddwpUserMeta($wpUserMeta)
+  {
+    $this->collwpUserMetas[]= $wpUserMeta;
+    $wpUserMeta->setwpUser($this);
+  }
+
+  /**
+   * Clears out the collwpComments collection
+   *
+   * This does not modify the database; however, it will remove any associated objects, causing
+   * them to be refetched by subsequent calls to accessor method.
+   *
+   * @return     void
+   * @see        addwpComments()
+   */
+  public function clearwpComments()
+  {
+    $this->collwpComments = null; // important to set this to NULL since that means it is uninitialized
+  }
+
+  /**
+   * Initializes the collwpComments collection.
+   *
+   * By default this just sets the collwpComments collection to an empty array (like clearcollwpComments());
+   * however, you may wish to override this method in your stub class to provide setting appropriate
+   * to your application -- for example, setting the initial array to the values stored in database.
+   *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
+   * @return     void
+   */
+  public function initwpComments($overrideExisting = true)
+  {
+    if (null !== $this->collwpComments && !$overrideExisting)
+    {
+      return;
+    }
+    $this->collwpComments = new PropelObjectCollection();
+    $this->collwpComments->setModel('wpComment');
+  }
+
+  /**
+   * Gets an array of wpComment objects which contain a foreign key that references this object.
+   *
+   * If the $criteria is not null, it is used to always fetch the results from the database.
+   * Otherwise the results are fetched from the database the first time, then cached.
+   * Next time the same method is called without $criteria, the cached collection is returned.
+   * If this wpUser is new, it will return
+   * an empty collection or the current collection; the criteria is ignored on a new object.
+   *
+   * @param      Criteria $criteria optional Criteria object to narrow the query
+   * @param      PropelPDO $con optional connection object
+   * @return     PropelCollection|array wpComment[] List of wpComment objects
+   * @throws     PropelException
+   */
+  public function getwpComments($criteria = null, PropelPDO $con = null)
+  {
+    if(null === $this->collwpComments || null !== $criteria)
+    {
+      if ($this->isNew() && null === $this->collwpComments)
+      {
+        // return empty collection
+        $this->initwpComments();
+      }
+      else
+      {
+        $collwpComments = wpCommentQuery::create(null, $criteria)
+          ->filterBywpUser($this)
+          ->find($con);
+        if (null !== $criteria)
+        {
+          return $collwpComments;
+        }
+        $this->collwpComments = $collwpComments;
+      }
+    }
+    return $this->collwpComments;
+  }
+
+  /**
+   * Sets a collection of wpComment objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $wpComments A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setwpComments(PropelCollection $wpComments, PropelPDO $con = null)
+  {
+    $this->wpCommentsScheduledForDeletion = $this->getwpComments(new Criteria(), $con)->diff($wpComments);
+
+    foreach ($wpComments as $wpComment)
+    {
+      // Fix issue with collection modified by reference
+      if ($wpComment->isNew())
+      {
+        $wpComment->setwpUser($this);
+      }
+      $this->addwpComment($wpComment);
+    }
+
+    $this->collwpComments = $wpComments;
+  }
+
+  /**
+   * Returns the number of related wpComment objects.
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct
+   * @param      PropelPDO $con
+   * @return     int Count of related wpComment objects.
+   * @throws     PropelException
+   */
+  public function countwpComments(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+  {
+    if(null === $this->collwpComments || null !== $criteria)
+    {
+      if ($this->isNew() && null === $this->collwpComments)
+      {
+        return 0;
+      }
+      else
+      {
+        $query = wpCommentQuery::create(null, $criteria);
+        if($distinct)
+        {
+          $query->distinct();
+        }
+        return $query
+          ->filterBywpUser($this)
+          ->count($con);
+      }
+    }
+    else
+    {
+      return count($this->collwpComments);
+    }
+  }
+
+  /**
+   * Method called to associate a wpComment object to this object
+   * through the wpComment foreign key attribute.
+   *
+   * @param      wpComment $l wpComment
+   * @return     wpUser The current object (for fluent API support)
+   */
+  public function addwpComment(wpComment $l)
+  {
+    if ($this->collwpComments === null)
+    {
+      $this->initwpComments();
+    }
+    if (!$this->collwpComments->contains($l)) { // only add it if the **same** object is not already associated
+      $this->doAddwpComment($l);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param  wpComment $wpComment The wpComment object to add.
+   */
+  protected function doAddwpComment($wpComment)
+  {
+    $this->collwpComments[]= $wpComment;
+    $wpComment->setwpUser($this);
+  }
+
+
+  /**
+   * If this collection has already been initialized with
+   * an identical criteria, it returns the collection.
+   * Otherwise if this wpUser is new, it will return
+   * an empty collection; or if this wpUser has previously
+   * been saved, it will retrieve related wpComments from storage.
+   *
+   * This method is protected by default in order to keep the public
+   * api reasonable.  You can provide public methods for those you
+   * actually need in wpUser.
+   *
+   * @param      Criteria $criteria optional Criteria object to narrow the query
+   * @param      PropelPDO $con optional connection object
+   * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+   * @return     PropelCollection|array wpComment[] List of wpComment objects
+   */
+  public function getwpCommentsJoinwpPost($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $query = wpCommentQuery::create(null, $criteria);
+    $query->joinWith('wpPost', $join_behavior);
+
+    return $this->getwpComments($query, $con);
+  }
+
+
+  /**
+   * If this collection has already been initialized with
+   * an identical criteria, it returns the collection.
+   * Otherwise if this wpUser is new, it will return
+   * an empty collection; or if this wpUser has previously
+   * been saved, it will retrieve related wpComments from storage.
+   *
+   * This method is protected by default in order to keep the public
+   * api reasonable.  You can provide public methods for those you
+   * actually need in wpUser.
+   *
+   * @param      Criteria $criteria optional Criteria object to narrow the query
+   * @param      PropelPDO $con optional connection object
+   * @param      string $join_behavior optional join type to use (defaults to Criteria::LEFT_JOIN)
+   * @return     PropelCollection|array wpComment[] List of wpComment objects
+   */
+  public function getwpCommentsJoinwpCommentRelatedByCommentParent($criteria = null, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $query = wpCommentQuery::create(null, $criteria);
+    $query->joinWith('wpCommentRelatedByCommentParent', $join_behavior);
+
+    return $this->getwpComments($query, $con);
+  }
+
   /**
    * Clears the current object and sets all attributes to their default values
    */
@@ -1593,6 +2153,7 @@ abstract class BasewpUser extends BaseObject  implements Persistent
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;
     $this->clearAllReferences();
+    $this->applyDefaultValues();
     $this->resetModified();
     $this->setNew(true);
     $this->setDeleted(false);
@@ -1618,6 +2179,20 @@ abstract class BasewpUser extends BaseObject  implements Persistent
           $o->clearAllReferences($deep);
         }
       }
+      if ($this->collwpUserMetas)
+      {
+        foreach ($this->collwpUserMetas as $o)
+        {
+          $o->clearAllReferences($deep);
+        }
+      }
+      if ($this->collwpComments)
+      {
+        foreach ($this->collwpComments as $o)
+        {
+          $o->clearAllReferences($deep);
+        }
+      }
     }
 
     if ($this->collwpPosts instanceof PropelCollection)
@@ -1625,16 +2200,26 @@ abstract class BasewpUser extends BaseObject  implements Persistent
       $this->collwpPosts->clearIterator();
     }
     $this->collwpPosts = null;
+    if ($this->collwpUserMetas instanceof PropelCollection)
+    {
+      $this->collwpUserMetas->clearIterator();
+    }
+    $this->collwpUserMetas = null;
+    if ($this->collwpComments instanceof PropelCollection)
+    {
+      $this->collwpComments->clearIterator();
+    }
+    $this->collwpComments = null;
   }
 
   /**
    * Return the string representation of this object
    *
-   * @return string
+   * @return string The value of the 'display_name' column
    */
   public function __toString()
   {
-    return (string) $this->exportTo(wpUserPeer::DEFAULT_STRING_FORMAT);
+    return (string) $this->getDisplayName();
   }
 
   /**

@@ -27,13 +27,13 @@ abstract class BasewpPostPeer
   const TM_CLASS = 'wpPostTableMap';
 
   /** The total number of columns. */
-  const NUM_COLUMNS = 24;
+  const NUM_COLUMNS = 23;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
   /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-  const NUM_HYDRATE_COLUMNS = 24;
+  const NUM_HYDRATE_COLUMNS = 23;
 
   /** the column name for the ID field */
   const ID = 'wp_posts.ID';
@@ -55,9 +55,6 @@ abstract class BasewpPostPeer
 
   /** the column name for the POST_EXCERPT field */
   const POST_EXCERPT = 'wp_posts.POST_EXCERPT';
-
-  /** the column name for the POST_CATEGORY field */
-  const POST_CATEGORY = 'wp_posts.POST_CATEGORY';
 
   /** the column name for the POST_STATUS field */
   const POST_STATUS = 'wp_posts.POST_STATUS';
@@ -126,12 +123,12 @@ abstract class BasewpPostPeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('Id', 'PostAuthor', 'PostDate', 'PostDateGmt', 'PostContent', 'PostTitle', 'PostExcerpt', 'PostCategory', 'PostStatus', 'CommentStatus', 'PingStatus', 'PostPassword', 'PostName', 'ToPing', 'Pinged', 'PostModified', 'PostModifiedGmt', 'PostContentFiltered', 'PostParent', 'Guid', 'MenuOrder', 'PostType', 'PostMimeType', 'CommentCount', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'postAuthor', 'postDate', 'postDateGmt', 'postContent', 'postTitle', 'postExcerpt', 'postCategory', 'postStatus', 'commentStatus', 'pingStatus', 'postPassword', 'postName', 'toPing', 'pinged', 'postModified', 'postModifiedGmt', 'postContentFiltered', 'postParent', 'guid', 'menuOrder', 'postType', 'postMimeType', 'commentCount', ),
-    BasePeer::TYPE_COLNAME => array (self::ID, self::POST_AUTHOR, self::POST_DATE, self::POST_DATE_GMT, self::POST_CONTENT, self::POST_TITLE, self::POST_EXCERPT, self::POST_CATEGORY, self::POST_STATUS, self::COMMENT_STATUS, self::PING_STATUS, self::POST_PASSWORD, self::POST_NAME, self::TO_PING, self::PINGED, self::POST_MODIFIED, self::POST_MODIFIED_GMT, self::POST_CONTENT_FILTERED, self::POST_PARENT, self::GUID, self::MENU_ORDER, self::POST_TYPE, self::POST_MIME_TYPE, self::COMMENT_COUNT, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'POST_AUTHOR', 'POST_DATE', 'POST_DATE_GMT', 'POST_CONTENT', 'POST_TITLE', 'POST_EXCERPT', 'POST_CATEGORY', 'POST_STATUS', 'COMMENT_STATUS', 'PING_STATUS', 'POST_PASSWORD', 'POST_NAME', 'TO_PING', 'PINGED', 'POST_MODIFIED', 'POST_MODIFIED_GMT', 'POST_CONTENT_FILTERED', 'POST_PARENT', 'GUID', 'MENU_ORDER', 'POST_TYPE', 'POST_MIME_TYPE', 'COMMENT_COUNT', ),
-    BasePeer::TYPE_FIELDNAME => array ('id', 'post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_category', 'post_status', 'comment_status', 'ping_status', 'post_password', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'post_parent', 'guid', 'menu_order', 'post_type', 'post_mime_type', 'comment_count', ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
+    BasePeer::TYPE_PHPNAME => array ('Id', 'PostAuthor', 'PostDate', 'PostDateGmt', 'PostContent', 'PostTitle', 'PostExcerpt', 'PostStatus', 'CommentStatus', 'PingStatus', 'PostPassword', 'PostName', 'ToPing', 'Pinged', 'PostModified', 'PostModifiedGmt', 'PostContentFiltered', 'PostParent', 'Guid', 'MenuOrder', 'PostType', 'PostMimeType', 'CommentCount', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id', 'postAuthor', 'postDate', 'postDateGmt', 'postContent', 'postTitle', 'postExcerpt', 'postStatus', 'commentStatus', 'pingStatus', 'postPassword', 'postName', 'toPing', 'pinged', 'postModified', 'postModifiedGmt', 'postContentFiltered', 'postParent', 'guid', 'menuOrder', 'postType', 'postMimeType', 'commentCount', ),
+    BasePeer::TYPE_COLNAME => array (self::ID, self::POST_AUTHOR, self::POST_DATE, self::POST_DATE_GMT, self::POST_CONTENT, self::POST_TITLE, self::POST_EXCERPT, self::POST_STATUS, self::COMMENT_STATUS, self::PING_STATUS, self::POST_PASSWORD, self::POST_NAME, self::TO_PING, self::PINGED, self::POST_MODIFIED, self::POST_MODIFIED_GMT, self::POST_CONTENT_FILTERED, self::POST_PARENT, self::GUID, self::MENU_ORDER, self::POST_TYPE, self::POST_MIME_TYPE, self::COMMENT_COUNT, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID', 'POST_AUTHOR', 'POST_DATE', 'POST_DATE_GMT', 'POST_CONTENT', 'POST_TITLE', 'POST_EXCERPT', 'POST_STATUS', 'COMMENT_STATUS', 'PING_STATUS', 'POST_PASSWORD', 'POST_NAME', 'TO_PING', 'PINGED', 'POST_MODIFIED', 'POST_MODIFIED_GMT', 'POST_CONTENT_FILTERED', 'POST_PARENT', 'GUID', 'MENU_ORDER', 'POST_TYPE', 'POST_MIME_TYPE', 'COMMENT_COUNT', ),
+    BasePeer::TYPE_FIELDNAME => array ('id', 'post_author', 'post_date', 'post_date_gmt', 'post_content', 'post_title', 'post_excerpt', 'post_status', 'comment_status', 'ping_status', 'post_password', 'post_name', 'to_ping', 'pinged', 'post_modified', 'post_modified_gmt', 'post_content_filtered', 'post_parent', 'guid', 'menu_order', 'post_type', 'post_mime_type', 'comment_count', ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, )
   );
 
   /**
@@ -141,12 +138,12 @@ abstract class BasewpPostPeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PostAuthor' => 1, 'PostDate' => 2, 'PostDateGmt' => 3, 'PostContent' => 4, 'PostTitle' => 5, 'PostExcerpt' => 6, 'PostCategory' => 7, 'PostStatus' => 8, 'CommentStatus' => 9, 'PingStatus' => 10, 'PostPassword' => 11, 'PostName' => 12, 'ToPing' => 13, 'Pinged' => 14, 'PostModified' => 15, 'PostModifiedGmt' => 16, 'PostContentFiltered' => 17, 'PostParent' => 18, 'Guid' => 19, 'MenuOrder' => 20, 'PostType' => 21, 'PostMimeType' => 22, 'CommentCount' => 23, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'postAuthor' => 1, 'postDate' => 2, 'postDateGmt' => 3, 'postContent' => 4, 'postTitle' => 5, 'postExcerpt' => 6, 'postCategory' => 7, 'postStatus' => 8, 'commentStatus' => 9, 'pingStatus' => 10, 'postPassword' => 11, 'postName' => 12, 'toPing' => 13, 'pinged' => 14, 'postModified' => 15, 'postModifiedGmt' => 16, 'postContentFiltered' => 17, 'postParent' => 18, 'guid' => 19, 'menuOrder' => 20, 'postType' => 21, 'postMimeType' => 22, 'commentCount' => 23, ),
-    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::POST_AUTHOR => 1, self::POST_DATE => 2, self::POST_DATE_GMT => 3, self::POST_CONTENT => 4, self::POST_TITLE => 5, self::POST_EXCERPT => 6, self::POST_CATEGORY => 7, self::POST_STATUS => 8, self::COMMENT_STATUS => 9, self::PING_STATUS => 10, self::POST_PASSWORD => 11, self::POST_NAME => 12, self::TO_PING => 13, self::PINGED => 14, self::POST_MODIFIED => 15, self::POST_MODIFIED_GMT => 16, self::POST_CONTENT_FILTERED => 17, self::POST_PARENT => 18, self::GUID => 19, self::MENU_ORDER => 20, self::POST_TYPE => 21, self::POST_MIME_TYPE => 22, self::COMMENT_COUNT => 23, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'POST_AUTHOR' => 1, 'POST_DATE' => 2, 'POST_DATE_GMT' => 3, 'POST_CONTENT' => 4, 'POST_TITLE' => 5, 'POST_EXCERPT' => 6, 'POST_CATEGORY' => 7, 'POST_STATUS' => 8, 'COMMENT_STATUS' => 9, 'PING_STATUS' => 10, 'POST_PASSWORD' => 11, 'POST_NAME' => 12, 'TO_PING' => 13, 'PINGED' => 14, 'POST_MODIFIED' => 15, 'POST_MODIFIED_GMT' => 16, 'POST_CONTENT_FILTERED' => 17, 'POST_PARENT' => 18, 'GUID' => 19, 'MENU_ORDER' => 20, 'POST_TYPE' => 21, 'POST_MIME_TYPE' => 22, 'COMMENT_COUNT' => 23, ),
-    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'post_author' => 1, 'post_date' => 2, 'post_date_gmt' => 3, 'post_content' => 4, 'post_title' => 5, 'post_excerpt' => 6, 'post_category' => 7, 'post_status' => 8, 'comment_status' => 9, 'ping_status' => 10, 'post_password' => 11, 'post_name' => 12, 'to_ping' => 13, 'pinged' => 14, 'post_modified' => 15, 'post_modified_gmt' => 16, 'post_content_filtered' => 17, 'post_parent' => 18, 'guid' => 19, 'menu_order' => 20, 'post_type' => 21, 'post_mime_type' => 22, 'comment_count' => 23, ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, )
+    BasePeer::TYPE_PHPNAME => array ('Id' => 0, 'PostAuthor' => 1, 'PostDate' => 2, 'PostDateGmt' => 3, 'PostContent' => 4, 'PostTitle' => 5, 'PostExcerpt' => 6, 'PostStatus' => 7, 'CommentStatus' => 8, 'PingStatus' => 9, 'PostPassword' => 10, 'PostName' => 11, 'ToPing' => 12, 'Pinged' => 13, 'PostModified' => 14, 'PostModifiedGmt' => 15, 'PostContentFiltered' => 16, 'PostParent' => 17, 'Guid' => 18, 'MenuOrder' => 19, 'PostType' => 20, 'PostMimeType' => 21, 'CommentCount' => 22, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('id' => 0, 'postAuthor' => 1, 'postDate' => 2, 'postDateGmt' => 3, 'postContent' => 4, 'postTitle' => 5, 'postExcerpt' => 6, 'postStatus' => 7, 'commentStatus' => 8, 'pingStatus' => 9, 'postPassword' => 10, 'postName' => 11, 'toPing' => 12, 'pinged' => 13, 'postModified' => 14, 'postModifiedGmt' => 15, 'postContentFiltered' => 16, 'postParent' => 17, 'guid' => 18, 'menuOrder' => 19, 'postType' => 20, 'postMimeType' => 21, 'commentCount' => 22, ),
+    BasePeer::TYPE_COLNAME => array (self::ID => 0, self::POST_AUTHOR => 1, self::POST_DATE => 2, self::POST_DATE_GMT => 3, self::POST_CONTENT => 4, self::POST_TITLE => 5, self::POST_EXCERPT => 6, self::POST_STATUS => 7, self::COMMENT_STATUS => 8, self::PING_STATUS => 9, self::POST_PASSWORD => 10, self::POST_NAME => 11, self::TO_PING => 12, self::PINGED => 13, self::POST_MODIFIED => 14, self::POST_MODIFIED_GMT => 15, self::POST_CONTENT_FILTERED => 16, self::POST_PARENT => 17, self::GUID => 18, self::MENU_ORDER => 19, self::POST_TYPE => 20, self::POST_MIME_TYPE => 21, self::COMMENT_COUNT => 22, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('ID' => 0, 'POST_AUTHOR' => 1, 'POST_DATE' => 2, 'POST_DATE_GMT' => 3, 'POST_CONTENT' => 4, 'POST_TITLE' => 5, 'POST_EXCERPT' => 6, 'POST_STATUS' => 7, 'COMMENT_STATUS' => 8, 'PING_STATUS' => 9, 'POST_PASSWORD' => 10, 'POST_NAME' => 11, 'TO_PING' => 12, 'PINGED' => 13, 'POST_MODIFIED' => 14, 'POST_MODIFIED_GMT' => 15, 'POST_CONTENT_FILTERED' => 16, 'POST_PARENT' => 17, 'GUID' => 18, 'MENU_ORDER' => 19, 'POST_TYPE' => 20, 'POST_MIME_TYPE' => 21, 'COMMENT_COUNT' => 22, ),
+    BasePeer::TYPE_FIELDNAME => array ('id' => 0, 'post_author' => 1, 'post_date' => 2, 'post_date_gmt' => 3, 'post_content' => 4, 'post_title' => 5, 'post_excerpt' => 6, 'post_status' => 7, 'comment_status' => 8, 'ping_status' => 9, 'post_password' => 10, 'post_name' => 11, 'to_ping' => 12, 'pinged' => 13, 'post_modified' => 14, 'post_modified_gmt' => 15, 'post_content_filtered' => 16, 'post_parent' => 17, 'guid' => 18, 'menu_order' => 19, 'post_type' => 20, 'post_mime_type' => 21, 'comment_count' => 22, ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, )
   );
 
   /**
@@ -228,7 +225,6 @@ abstract class BasewpPostPeer
       $criteria->addSelectColumn(wpPostPeer::POST_CONTENT);
       $criteria->addSelectColumn(wpPostPeer::POST_TITLE);
       $criteria->addSelectColumn(wpPostPeer::POST_EXCERPT);
-      $criteria->addSelectColumn(wpPostPeer::POST_CATEGORY);
       $criteria->addSelectColumn(wpPostPeer::POST_STATUS);
       $criteria->addSelectColumn(wpPostPeer::COMMENT_STATUS);
       $criteria->addSelectColumn(wpPostPeer::PING_STATUS);
@@ -255,7 +251,6 @@ abstract class BasewpPostPeer
       $criteria->addSelectColumn($alias . '.POST_CONTENT');
       $criteria->addSelectColumn($alias . '.POST_TITLE');
       $criteria->addSelectColumn($alias . '.POST_EXCERPT');
-      $criteria->addSelectColumn($alias . '.POST_CATEGORY');
       $criteria->addSelectColumn($alias . '.POST_STATUS');
       $criteria->addSelectColumn($alias . '.COMMENT_STATUS');
       $criteria->addSelectColumn($alias . '.PING_STATUS');
@@ -872,6 +867,274 @@ abstract class BasewpPostPeer
 
         // Add the $obj1 (wpPost) to the collection in $obj2 (wpUser)
         $obj2->addwpPost($obj1);
+      }
+
+      $results[] = $obj1;
+    }
+    $stmt->closeCursor();
+    return $results;
+  }
+
+
+  /**
+   * Returns the number of rows matching criteria, joining the related wpUser table
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     int Number of matching rows.
+   */
+  public static function doCountJoinAllExceptwpUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    // we're going to modify criteria, so copy it first
+    $criteria = clone $criteria;
+
+    // We need to set the primary table name, since in the case that there are no WHERE columns
+    // it will be impossible for the BasePeer::createSelectSql() method to determine which
+    // tables go into the FROM clause.
+    $criteria->setPrimaryTableName(wpPostPeer::TABLE_NAME);
+
+    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
+    {
+      $criteria->setDistinct();
+    }
+
+    if (!$criteria->hasSelectClause())
+    {
+      wpPostPeer::addSelectColumns($criteria);
+    }
+
+    $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+    // Set the correct dbName
+    $criteria->setDbName(self::DATABASE_NAME);
+
+    if ($con === null)
+    {
+      $con = Propel::getConnection(wpPostPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+    }
+  
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpPostPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doCount($criteria, $con);
+
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $count = (int) $row[0];
+    }
+    else
+    {
+      $count = 0; // no rows returned; we infer that means 0 matches.
+    }
+    $stmt->closeCursor();
+    return $count;
+  }
+
+
+  /**
+   * Returns the number of rows matching criteria, joining the related wpPostRelatedByPostParent table
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     int Number of matching rows.
+   */
+  public static function doCountJoinAllExceptwpPostRelatedByPostParent(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    // we're going to modify criteria, so copy it first
+    $criteria = clone $criteria;
+
+    // We need to set the primary table name, since in the case that there are no WHERE columns
+    // it will be impossible for the BasePeer::createSelectSql() method to determine which
+    // tables go into the FROM clause.
+    $criteria->setPrimaryTableName(wpPostPeer::TABLE_NAME);
+
+    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
+    {
+      $criteria->setDistinct();
+    }
+
+    if (!$criteria->hasSelectClause())
+    {
+      wpPostPeer::addSelectColumns($criteria);
+    }
+
+    $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+    // Set the correct dbName
+    $criteria->setDbName(self::DATABASE_NAME);
+
+    if ($con === null)
+    {
+      $con = Propel::getConnection(wpPostPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+    }
+  
+    $criteria->addJoin(wpPostPeer::POST_AUTHOR, wpUserPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpPostPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doCount($criteria, $con);
+
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $count = (int) $row[0];
+    }
+    else
+    {
+      $count = 0; // no rows returned; we infer that means 0 matches.
+    }
+    $stmt->closeCursor();
+    return $count;
+  }
+
+
+  /**
+   * Selects a collection of wpPost objects pre-filled with all related objects except wpUser.
+   *
+   * @param      Criteria  $criteria
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     array Array of wpPost objects.
+   * @throws     PropelException Any exceptions caught during processing will be
+   *     rethrown wrapped into a PropelException.
+   */
+  public static function doSelectJoinAllExceptwpUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $criteria = clone $criteria;
+
+    // Set the correct dbName if it has not been overridden
+    // $criteria->getDbName() will return the same object if not set to another value
+    // so == check is okay and faster
+    if ($criteria->getDbName() == Propel::getDefaultDB())
+    {
+      $criteria->setDbName(self::DATABASE_NAME);
+    }
+
+    wpPostPeer::addSelectColumns($criteria);
+    $startcol2 = wpPostPeer::NUM_HYDRATE_COLUMNS;
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpPostPeer', $criteria, $con);
+    }
+
+
+    $stmt = BasePeer::doSelect($criteria, $con);
+    $results = array();
+
+    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $key1 = wpPostPeer::getPrimaryKeyHashFromRow($row, 0);
+      if (null !== ($obj1 = wpPostPeer::getInstanceFromPool($key1)))
+      {
+        // We no longer rehydrate the object, since this can cause data loss.
+        // See http://www.propelorm.org/ticket/509
+        // $obj1->hydrate($row, 0, true); // rehydrate
+      }
+      else
+      {
+        $cls = wpPostPeer::getOMClass(false);
+
+        $obj1 = new $cls();
+        $obj1->hydrate($row);
+        wpPostPeer::addInstanceToPool($obj1, $key1);
+      }
+
+      $results[] = $obj1;
+    }
+    $stmt->closeCursor();
+    return $results;
+  }
+
+
+  /**
+   * Selects a collection of wpPost objects pre-filled with all related objects except wpPostRelatedByPostParent.
+   *
+   * @param      Criteria  $criteria
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     array Array of wpPost objects.
+   * @throws     PropelException Any exceptions caught during processing will be
+   *     rethrown wrapped into a PropelException.
+   */
+  public static function doSelectJoinAllExceptwpPostRelatedByPostParent(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $criteria = clone $criteria;
+
+    // Set the correct dbName if it has not been overridden
+    // $criteria->getDbName() will return the same object if not set to another value
+    // so == check is okay and faster
+    if ($criteria->getDbName() == Propel::getDefaultDB())
+    {
+      $criteria->setDbName(self::DATABASE_NAME);
+    }
+
+    wpPostPeer::addSelectColumns($criteria);
+    $startcol2 = wpPostPeer::NUM_HYDRATE_COLUMNS;
+
+    wpUserPeer::addSelectColumns($criteria);
+    $startcol3 = $startcol2 + wpUserPeer::NUM_HYDRATE_COLUMNS;
+
+    $criteria->addJoin(wpPostPeer::POST_AUTHOR, wpUserPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpPostPeer', $criteria, $con);
+    }
+
+
+    $stmt = BasePeer::doSelect($criteria, $con);
+    $results = array();
+
+    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $key1 = wpPostPeer::getPrimaryKeyHashFromRow($row, 0);
+      if (null !== ($obj1 = wpPostPeer::getInstanceFromPool($key1)))
+      {
+        // We no longer rehydrate the object, since this can cause data loss.
+        // See http://www.propelorm.org/ticket/509
+        // $obj1->hydrate($row, 0, true); // rehydrate
+      }
+      else
+      {
+        $cls = wpPostPeer::getOMClass(false);
+
+        $obj1 = new $cls();
+        $obj1->hydrate($row);
+        wpPostPeer::addInstanceToPool($obj1, $key1);
+      }
+
+        // Add objects for joined wpUser rows
+
+        $key2 = wpUserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+        if ($key2 !== null)
+        {
+          $obj2 = wpUserPeer::getInstanceFromPool($key2);
+          if (!$obj2)
+          {
+  
+            $cls = wpUserPeer::getOMClass(false);
+
+          $obj2 = new $cls();
+          $obj2->hydrate($row, $startcol2);
+          wpUserPeer::addInstanceToPool($obj2, $key2);
+        }
+
+        // Add the $obj1 (wpPost) to the collection in $obj2 (wpUser)
+        $obj2->addwpPost($obj1);
+
       }
 
       $results[] = $obj1;

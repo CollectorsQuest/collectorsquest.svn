@@ -39,15 +39,16 @@ class wpUserTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-    $this->addColumn('USER_LOGIN', 'UserLogin', 'VARCHAR', false, 60, null);
-    $this->addColumn('USER_PASS', 'UserPass', 'VARCHAR', false, 64, null);
-    $this->addColumn('USER_NICENAME', 'UserNicename', 'VARCHAR', false, 50, null);
-    $this->addColumn('USER_EMAIL', 'UserEmail', 'VARCHAR', false, 100, null);
-    $this->addColumn('USER_URL', 'UserUrl', 'VARCHAR', false, 100, null);
-    $this->addColumn('USER_REGISTERED', 'UserRegistered', 'TIMESTAMP', false, null, null);
-    $this->addColumn('USER_ACTIVATION_KEY', 'UserActivationKey', 'VARCHAR', false, 60, null);
-    $this->addColumn('USER_STATUS', 'UserStatus', 'INTEGER', false, null, null);
-    $this->addColumn('DISPLAY_NAME', 'DisplayName', 'VARCHAR', false, 255, null);
+    $this->addColumn('USER_LOGIN', 'UserLogin', 'VARCHAR', true, 60, null);
+    $this->addColumn('USER_PASS', 'UserPass', 'VARCHAR', true, 64, null);
+    $this->addColumn('USER_NICENAME', 'UserNicename', 'VARCHAR', true, 50, null);
+    $this->addColumn('USER_EMAIL', 'UserEmail', 'VARCHAR', true, 100, null);
+    $this->addColumn('USER_URL', 'UserUrl', 'VARCHAR', true, 100, null);
+    $this->addColumn('USER_REGISTERED', 'UserRegistered', 'TIMESTAMP', true, null, '0000-00-00 00:00:00');
+    $this->addColumn('USER_ACTIVATION_KEY', 'UserActivationKey', 'VARCHAR', true, 60, null);
+    $this->addColumn('USER_STATUS', 'UserStatus', 'INTEGER', true, null, 0);
+    $this->addColumn('DISPLAY_NAME', 'DisplayName', 'VARCHAR', true, 250, null);
+    $this->getColumn('DISPLAY_NAME', false)->setPrimaryString(true);
     // validators
   }
 
@@ -57,6 +58,8 @@ class wpUserTableMap extends TableMap
   public function buildRelations()
   {
     $this->addRelation('wpPost', 'wpPost', RelationMap::ONE_TO_MANY, array('id' => 'post_author', ), null, null, 'wpPosts');
+    $this->addRelation('wpUserMeta', 'wpUserMeta', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), null, null, 'wpUserMetas');
+    $this->addRelation('wpComment', 'wpComment', RelationMap::ONE_TO_MANY, array('id' => 'user_id', ), null, null, 'wpComments');
   }
 
   /**

@@ -27,16 +27,19 @@ abstract class BasewpCommentPeer
   const TM_CLASS = 'wpCommentTableMap';
 
   /** The total number of columns. */
-  const NUM_COLUMNS = 4;
+  const NUM_COLUMNS = 15;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
   /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-  const NUM_HYDRATE_COLUMNS = 4;
+  const NUM_HYDRATE_COLUMNS = 15;
 
   /** the column name for the COMMENT_ID field */
   const COMMENT_ID = 'wp_comments.COMMENT_ID';
+
+  /** the column name for the COMMENT_POST_ID field */
+  const COMMENT_POST_ID = 'wp_comments.COMMENT_POST_ID';
 
   /** the column name for the COMMENT_AUTHOR field */
   const COMMENT_AUTHOR = 'wp_comments.COMMENT_AUTHOR';
@@ -44,8 +47,38 @@ abstract class BasewpCommentPeer
   /** the column name for the COMMENT_AUTHOR_EMAIL field */
   const COMMENT_AUTHOR_EMAIL = 'wp_comments.COMMENT_AUTHOR_EMAIL';
 
+  /** the column name for the COMMENT_AUTHOR_URL field */
+  const COMMENT_AUTHOR_URL = 'wp_comments.COMMENT_AUTHOR_URL';
+
+  /** the column name for the COMMENT_AUTHOR_IP field */
+  const COMMENT_AUTHOR_IP = 'wp_comments.COMMENT_AUTHOR_IP';
+
   /** the column name for the COMMENT_DATE field */
   const COMMENT_DATE = 'wp_comments.COMMENT_DATE';
+
+  /** the column name for the COMMENT_DATE_GMT field */
+  const COMMENT_DATE_GMT = 'wp_comments.COMMENT_DATE_GMT';
+
+  /** the column name for the COMMENT_CONTENT field */
+  const COMMENT_CONTENT = 'wp_comments.COMMENT_CONTENT';
+
+  /** the column name for the COMMENT_KARMA field */
+  const COMMENT_KARMA = 'wp_comments.COMMENT_KARMA';
+
+  /** the column name for the COMMENT_APPROVED field */
+  const COMMENT_APPROVED = 'wp_comments.COMMENT_APPROVED';
+
+  /** the column name for the COMMENT_AGENT field */
+  const COMMENT_AGENT = 'wp_comments.COMMENT_AGENT';
+
+  /** the column name for the COMMENT_TYPE field */
+  const COMMENT_TYPE = 'wp_comments.COMMENT_TYPE';
+
+  /** the column name for the COMMENT_PARENT field */
+  const COMMENT_PARENT = 'wp_comments.COMMENT_PARENT';
+
+  /** the column name for the USER_ID field */
+  const USER_ID = 'wp_comments.USER_ID';
 
   /** The default string format for model objects of the related table **/
   const DEFAULT_STRING_FORMAT = 'YAML';
@@ -66,12 +99,12 @@ abstract class BasewpCommentPeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('CommentId', 'CommentAuthor', 'CommentAuthorEmail', 'CommentDate', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('commentId', 'commentAuthor', 'commentAuthorEmail', 'commentDate', ),
-    BasePeer::TYPE_COLNAME => array (self::COMMENT_ID, self::COMMENT_AUTHOR, self::COMMENT_AUTHOR_EMAIL, self::COMMENT_DATE, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('COMMENT_ID', 'COMMENT_AUTHOR', 'COMMENT_AUTHOR_EMAIL', 'COMMENT_DATE', ),
-    BasePeer::TYPE_FIELDNAME => array ('comment_id', 'comment_author', 'comment_author_email', 'comment_date', ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+    BasePeer::TYPE_PHPNAME => array ('CommentId', 'CommentPostId', 'CommentAuthor', 'CommentAuthorEmail', 'CommentAuthorUrl', 'CommentAuthorIp', 'CommentDate', 'CommentDateGmt', 'CommentContent', 'CommentKarma', 'CommentApproved', 'CommentAgent', 'CommentType', 'CommentParent', 'UserId', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('commentId', 'commentPostId', 'commentAuthor', 'commentAuthorEmail', 'commentAuthorUrl', 'commentAuthorIp', 'commentDate', 'commentDateGmt', 'commentContent', 'commentKarma', 'commentApproved', 'commentAgent', 'commentType', 'commentParent', 'userId', ),
+    BasePeer::TYPE_COLNAME => array (self::COMMENT_ID, self::COMMENT_POST_ID, self::COMMENT_AUTHOR, self::COMMENT_AUTHOR_EMAIL, self::COMMENT_AUTHOR_URL, self::COMMENT_AUTHOR_IP, self::COMMENT_DATE, self::COMMENT_DATE_GMT, self::COMMENT_CONTENT, self::COMMENT_KARMA, self::COMMENT_APPROVED, self::COMMENT_AGENT, self::COMMENT_TYPE, self::COMMENT_PARENT, self::USER_ID, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('COMMENT_ID', 'COMMENT_POST_ID', 'COMMENT_AUTHOR', 'COMMENT_AUTHOR_EMAIL', 'COMMENT_AUTHOR_URL', 'COMMENT_AUTHOR_IP', 'COMMENT_DATE', 'COMMENT_DATE_GMT', 'COMMENT_CONTENT', 'COMMENT_KARMA', 'COMMENT_APPROVED', 'COMMENT_AGENT', 'COMMENT_TYPE', 'COMMENT_PARENT', 'USER_ID', ),
+    BasePeer::TYPE_FIELDNAME => array ('comment_id', 'comment_post_id', 'comment_author', 'comment_author_email', 'comment_author_url', 'comment_author_IP', 'comment_date', 'comment_date_gmt', 'comment_content', 'comment_karma', 'comment_approved', 'comment_agent', 'comment_type', 'comment_parent', 'user_id', ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
   );
 
   /**
@@ -81,12 +114,12 @@ abstract class BasewpCommentPeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('CommentId' => 0, 'CommentAuthor' => 1, 'CommentAuthorEmail' => 2, 'CommentDate' => 3, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('commentId' => 0, 'commentAuthor' => 1, 'commentAuthorEmail' => 2, 'commentDate' => 3, ),
-    BasePeer::TYPE_COLNAME => array (self::COMMENT_ID => 0, self::COMMENT_AUTHOR => 1, self::COMMENT_AUTHOR_EMAIL => 2, self::COMMENT_DATE => 3, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('COMMENT_ID' => 0, 'COMMENT_AUTHOR' => 1, 'COMMENT_AUTHOR_EMAIL' => 2, 'COMMENT_DATE' => 3, ),
-    BasePeer::TYPE_FIELDNAME => array ('comment_id' => 0, 'comment_author' => 1, 'comment_author_email' => 2, 'comment_date' => 3, ),
-    BasePeer::TYPE_NUM => array (0, 1, 2, 3, )
+    BasePeer::TYPE_PHPNAME => array ('CommentId' => 0, 'CommentPostId' => 1, 'CommentAuthor' => 2, 'CommentAuthorEmail' => 3, 'CommentAuthorUrl' => 4, 'CommentAuthorIp' => 5, 'CommentDate' => 6, 'CommentDateGmt' => 7, 'CommentContent' => 8, 'CommentKarma' => 9, 'CommentApproved' => 10, 'CommentAgent' => 11, 'CommentType' => 12, 'CommentParent' => 13, 'UserId' => 14, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('commentId' => 0, 'commentPostId' => 1, 'commentAuthor' => 2, 'commentAuthorEmail' => 3, 'commentAuthorUrl' => 4, 'commentAuthorIp' => 5, 'commentDate' => 6, 'commentDateGmt' => 7, 'commentContent' => 8, 'commentKarma' => 9, 'commentApproved' => 10, 'commentAgent' => 11, 'commentType' => 12, 'commentParent' => 13, 'userId' => 14, ),
+    BasePeer::TYPE_COLNAME => array (self::COMMENT_ID => 0, self::COMMENT_POST_ID => 1, self::COMMENT_AUTHOR => 2, self::COMMENT_AUTHOR_EMAIL => 3, self::COMMENT_AUTHOR_URL => 4, self::COMMENT_AUTHOR_IP => 5, self::COMMENT_DATE => 6, self::COMMENT_DATE_GMT => 7, self::COMMENT_CONTENT => 8, self::COMMENT_KARMA => 9, self::COMMENT_APPROVED => 10, self::COMMENT_AGENT => 11, self::COMMENT_TYPE => 12, self::COMMENT_PARENT => 13, self::USER_ID => 14, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('COMMENT_ID' => 0, 'COMMENT_POST_ID' => 1, 'COMMENT_AUTHOR' => 2, 'COMMENT_AUTHOR_EMAIL' => 3, 'COMMENT_AUTHOR_URL' => 4, 'COMMENT_AUTHOR_IP' => 5, 'COMMENT_DATE' => 6, 'COMMENT_DATE_GMT' => 7, 'COMMENT_CONTENT' => 8, 'COMMENT_KARMA' => 9, 'COMMENT_APPROVED' => 10, 'COMMENT_AGENT' => 11, 'COMMENT_TYPE' => 12, 'COMMENT_PARENT' => 13, 'USER_ID' => 14, ),
+    BasePeer::TYPE_FIELDNAME => array ('comment_id' => 0, 'comment_post_id' => 1, 'comment_author' => 2, 'comment_author_email' => 3, 'comment_author_url' => 4, 'comment_author_IP' => 5, 'comment_date' => 6, 'comment_date_gmt' => 7, 'comment_content' => 8, 'comment_karma' => 9, 'comment_approved' => 10, 'comment_agent' => 11, 'comment_type' => 12, 'comment_parent' => 13, 'user_id' => 14, ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, )
   );
 
   /**
@@ -162,16 +195,38 @@ abstract class BasewpCommentPeer
     if (null === $alias)
     {
       $criteria->addSelectColumn(wpCommentPeer::COMMENT_ID);
+      $criteria->addSelectColumn(wpCommentPeer::COMMENT_POST_ID);
       $criteria->addSelectColumn(wpCommentPeer::COMMENT_AUTHOR);
       $criteria->addSelectColumn(wpCommentPeer::COMMENT_AUTHOR_EMAIL);
+      $criteria->addSelectColumn(wpCommentPeer::COMMENT_AUTHOR_URL);
+      $criteria->addSelectColumn(wpCommentPeer::COMMENT_AUTHOR_IP);
       $criteria->addSelectColumn(wpCommentPeer::COMMENT_DATE);
+      $criteria->addSelectColumn(wpCommentPeer::COMMENT_DATE_GMT);
+      $criteria->addSelectColumn(wpCommentPeer::COMMENT_CONTENT);
+      $criteria->addSelectColumn(wpCommentPeer::COMMENT_KARMA);
+      $criteria->addSelectColumn(wpCommentPeer::COMMENT_APPROVED);
+      $criteria->addSelectColumn(wpCommentPeer::COMMENT_AGENT);
+      $criteria->addSelectColumn(wpCommentPeer::COMMENT_TYPE);
+      $criteria->addSelectColumn(wpCommentPeer::COMMENT_PARENT);
+      $criteria->addSelectColumn(wpCommentPeer::USER_ID);
     }
     else
     {
       $criteria->addSelectColumn($alias . '.COMMENT_ID');
+      $criteria->addSelectColumn($alias . '.COMMENT_POST_ID');
       $criteria->addSelectColumn($alias . '.COMMENT_AUTHOR');
       $criteria->addSelectColumn($alias . '.COMMENT_AUTHOR_EMAIL');
+      $criteria->addSelectColumn($alias . '.COMMENT_AUTHOR_URL');
+      $criteria->addSelectColumn($alias . '.COMMENT_AUTHOR_IP');
       $criteria->addSelectColumn($alias . '.COMMENT_DATE');
+      $criteria->addSelectColumn($alias . '.COMMENT_DATE_GMT');
+      $criteria->addSelectColumn($alias . '.COMMENT_CONTENT');
+      $criteria->addSelectColumn($alias . '.COMMENT_KARMA');
+      $criteria->addSelectColumn($alias . '.COMMENT_APPROVED');
+      $criteria->addSelectColumn($alias . '.COMMENT_AGENT');
+      $criteria->addSelectColumn($alias . '.COMMENT_TYPE');
+      $criteria->addSelectColumn($alias . '.COMMENT_PARENT');
+      $criteria->addSelectColumn($alias . '.USER_ID');
     }
   }
 
@@ -494,6 +549,930 @@ abstract class BasewpCommentPeer
       wpCommentPeer::addInstanceToPool($obj, $key);
     }
     return array($obj, $col);
+  }
+
+
+  /**
+   * Returns the number of rows matching criteria, joining the related wpPost table
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     int Number of matching rows.
+   */
+  public static function doCountJoinwpPost(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    // we're going to modify criteria, so copy it first
+    $criteria = clone $criteria;
+
+    // We need to set the primary table name, since in the case that there are no WHERE columns
+    // it will be impossible for the BasePeer::createSelectSql() method to determine which
+    // tables go into the FROM clause.
+    $criteria->setPrimaryTableName(wpCommentPeer::TABLE_NAME);
+
+    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
+    {
+      $criteria->setDistinct();
+    }
+
+    if (!$criteria->hasSelectClause())
+    {
+      wpCommentPeer::addSelectColumns($criteria);
+    }
+
+    $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+    // Set the correct dbName
+    $criteria->setDbName(self::DATABASE_NAME);
+
+    if ($con === null)
+    {
+      $con = Propel::getConnection(wpCommentPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+    }
+
+    $criteria->addJoin(wpCommentPeer::COMMENT_POST_ID, wpPostPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpCommentPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doCount($criteria, $con);
+
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $count = (int) $row[0];
+    }
+    else
+    {
+      $count = 0; // no rows returned; we infer that means 0 matches.
+    }
+    $stmt->closeCursor();
+    return $count;
+  }
+
+
+  /**
+   * Returns the number of rows matching criteria, joining the related wpUser table
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     int Number of matching rows.
+   */
+  public static function doCountJoinwpUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    // we're going to modify criteria, so copy it first
+    $criteria = clone $criteria;
+
+    // We need to set the primary table name, since in the case that there are no WHERE columns
+    // it will be impossible for the BasePeer::createSelectSql() method to determine which
+    // tables go into the FROM clause.
+    $criteria->setPrimaryTableName(wpCommentPeer::TABLE_NAME);
+
+    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
+    {
+      $criteria->setDistinct();
+    }
+
+    if (!$criteria->hasSelectClause())
+    {
+      wpCommentPeer::addSelectColumns($criteria);
+    }
+
+    $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+    // Set the correct dbName
+    $criteria->setDbName(self::DATABASE_NAME);
+
+    if ($con === null)
+    {
+      $con = Propel::getConnection(wpCommentPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+    }
+
+    $criteria->addJoin(wpCommentPeer::USER_ID, wpUserPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpCommentPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doCount($criteria, $con);
+
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $count = (int) $row[0];
+    }
+    else
+    {
+      $count = 0; // no rows returned; we infer that means 0 matches.
+    }
+    $stmt->closeCursor();
+    return $count;
+  }
+
+
+  /**
+   * Selects a collection of wpComment objects pre-filled with their wpPost objects.
+   * @param      Criteria  $criteria
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     array Array of wpComment objects.
+   * @throws     PropelException Any exceptions caught during processing will be
+   *     rethrown wrapped into a PropelException.
+   */
+  public static function doSelectJoinwpPost(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $criteria = clone $criteria;
+
+    // Set the correct dbName if it has not been overridden
+    if ($criteria->getDbName() == Propel::getDefaultDB())
+    {
+      $criteria->setDbName(self::DATABASE_NAME);
+    }
+
+    wpCommentPeer::addSelectColumns($criteria);
+    $startcol = wpCommentPeer::NUM_HYDRATE_COLUMNS;
+    wpPostPeer::addSelectColumns($criteria);
+
+    $criteria->addJoin(wpCommentPeer::COMMENT_POST_ID, wpPostPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpCommentPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doSelect($criteria, $con);
+    $results = array();
+
+    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $key1 = wpCommentPeer::getPrimaryKeyHashFromRow($row, 0);
+      if (null !== ($obj1 = wpCommentPeer::getInstanceFromPool($key1)))
+      {
+        // We no longer rehydrate the object, since this can cause data loss.
+        // See http://www.propelorm.org/ticket/509
+        // $obj1->hydrate($row, 0, true); // rehydrate
+      }
+      else
+      {
+
+        $cls = wpCommentPeer::getOMClass(false);
+
+        $obj1 = new $cls();
+        $obj1->hydrate($row);
+        wpCommentPeer::addInstanceToPool($obj1, $key1);
+      }
+
+      $key2 = wpPostPeer::getPrimaryKeyHashFromRow($row, $startcol);
+      if ($key2 !== null)
+      {
+        $obj2 = wpPostPeer::getInstanceFromPool($key2);
+        if (!$obj2)
+        {
+
+          $cls = wpPostPeer::getOMClass(false);
+
+          $obj2 = new $cls();
+          $obj2->hydrate($row, $startcol);
+          wpPostPeer::addInstanceToPool($obj2, $key2);
+        }
+
+        // Add the $obj1 (wpComment) to $obj2 (wpPost)
+        $obj2->addwpComment($obj1);
+
+      }
+
+      $results[] = $obj1;
+    }
+    $stmt->closeCursor();
+    return $results;
+  }
+
+
+  /**
+   * Selects a collection of wpComment objects pre-filled with their wpUser objects.
+   * @param      Criteria  $criteria
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     array Array of wpComment objects.
+   * @throws     PropelException Any exceptions caught during processing will be
+   *     rethrown wrapped into a PropelException.
+   */
+  public static function doSelectJoinwpUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $criteria = clone $criteria;
+
+    // Set the correct dbName if it has not been overridden
+    if ($criteria->getDbName() == Propel::getDefaultDB())
+    {
+      $criteria->setDbName(self::DATABASE_NAME);
+    }
+
+    wpCommentPeer::addSelectColumns($criteria);
+    $startcol = wpCommentPeer::NUM_HYDRATE_COLUMNS;
+    wpUserPeer::addSelectColumns($criteria);
+
+    $criteria->addJoin(wpCommentPeer::USER_ID, wpUserPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpCommentPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doSelect($criteria, $con);
+    $results = array();
+
+    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $key1 = wpCommentPeer::getPrimaryKeyHashFromRow($row, 0);
+      if (null !== ($obj1 = wpCommentPeer::getInstanceFromPool($key1)))
+      {
+        // We no longer rehydrate the object, since this can cause data loss.
+        // See http://www.propelorm.org/ticket/509
+        // $obj1->hydrate($row, 0, true); // rehydrate
+      }
+      else
+      {
+
+        $cls = wpCommentPeer::getOMClass(false);
+
+        $obj1 = new $cls();
+        $obj1->hydrate($row);
+        wpCommentPeer::addInstanceToPool($obj1, $key1);
+      }
+
+      $key2 = wpUserPeer::getPrimaryKeyHashFromRow($row, $startcol);
+      if ($key2 !== null)
+      {
+        $obj2 = wpUserPeer::getInstanceFromPool($key2);
+        if (!$obj2)
+        {
+
+          $cls = wpUserPeer::getOMClass(false);
+
+          $obj2 = new $cls();
+          $obj2->hydrate($row, $startcol);
+          wpUserPeer::addInstanceToPool($obj2, $key2);
+        }
+
+        // Add the $obj1 (wpComment) to $obj2 (wpUser)
+        $obj2->addwpComment($obj1);
+
+      }
+
+      $results[] = $obj1;
+    }
+    $stmt->closeCursor();
+    return $results;
+  }
+
+
+  /**
+   * Returns the number of rows matching criteria, joining all related tables
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     int Number of matching rows.
+   */
+  public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    // we're going to modify criteria, so copy it first
+    $criteria = clone $criteria;
+
+    // We need to set the primary table name, since in the case that there are no WHERE columns
+    // it will be impossible for the BasePeer::createSelectSql() method to determine which
+    // tables go into the FROM clause.
+    $criteria->setPrimaryTableName(wpCommentPeer::TABLE_NAME);
+
+    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
+    {
+      $criteria->setDistinct();
+    }
+
+    if (!$criteria->hasSelectClause())
+    {
+      wpCommentPeer::addSelectColumns($criteria);
+    }
+
+    $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+    // Set the correct dbName
+    $criteria->setDbName(self::DATABASE_NAME);
+
+    if ($con === null)
+    {
+      $con = Propel::getConnection(wpCommentPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+    }
+
+    $criteria->addJoin(wpCommentPeer::COMMENT_POST_ID, wpPostPeer::ID, $join_behavior);
+
+    $criteria->addJoin(wpCommentPeer::USER_ID, wpUserPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpCommentPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doCount($criteria, $con);
+
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $count = (int) $row[0];
+    }
+    else
+    {
+      $count = 0; // no rows returned; we infer that means 0 matches.
+    }
+    $stmt->closeCursor();
+    return $count;
+  }
+
+  /**
+   * Selects a collection of wpComment objects pre-filled with all related objects.
+   *
+   * @param      Criteria  $criteria
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     array Array of wpComment objects.
+   * @throws     PropelException Any exceptions caught during processing will be
+   *     rethrown wrapped into a PropelException.
+   */
+  public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $criteria = clone $criteria;
+
+    // Set the correct dbName if it has not been overridden
+    if ($criteria->getDbName() == Propel::getDefaultDB())
+    {
+      $criteria->setDbName(self::DATABASE_NAME);
+    }
+
+    wpCommentPeer::addSelectColumns($criteria);
+    $startcol2 = wpCommentPeer::NUM_HYDRATE_COLUMNS;
+
+    wpPostPeer::addSelectColumns($criteria);
+    $startcol3 = $startcol2 + wpPostPeer::NUM_HYDRATE_COLUMNS;
+
+    wpUserPeer::addSelectColumns($criteria);
+    $startcol4 = $startcol3 + wpUserPeer::NUM_HYDRATE_COLUMNS;
+
+    $criteria->addJoin(wpCommentPeer::COMMENT_POST_ID, wpPostPeer::ID, $join_behavior);
+
+    $criteria->addJoin(wpCommentPeer::USER_ID, wpUserPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpCommentPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doSelect($criteria, $con);
+    $results = array();
+
+    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $key1 = wpCommentPeer::getPrimaryKeyHashFromRow($row, 0);
+      if (null !== ($obj1 = wpCommentPeer::getInstanceFromPool($key1)))
+      {
+        // We no longer rehydrate the object, since this can cause data loss.
+        // See http://www.propelorm.org/ticket/509
+        // $obj1->hydrate($row, 0, true); // rehydrate
+      }
+      else
+      {
+        $cls = wpCommentPeer::getOMClass(false);
+
+        $obj1 = new $cls();
+        $obj1->hydrate($row);
+        wpCommentPeer::addInstanceToPool($obj1, $key1);
+      }
+
+      // Add objects for joined wpPost rows
+
+      $key2 = wpPostPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+      if ($key2 !== null)
+      {
+        $obj2 = wpPostPeer::getInstanceFromPool($key2);
+        if (!$obj2)
+        {
+
+          $cls = wpPostPeer::getOMClass(false);
+
+          $obj2 = new $cls();
+          $obj2->hydrate($row, $startcol2);
+          wpPostPeer::addInstanceToPool($obj2, $key2);
+        }
+
+        // Add the $obj1 (wpComment) to the collection in $obj2 (wpPost)
+        $obj2->addwpComment($obj1);
+      }
+
+      // Add objects for joined wpUser rows
+
+      $key3 = wpUserPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+      if ($key3 !== null)
+      {
+        $obj3 = wpUserPeer::getInstanceFromPool($key3);
+        if (!$obj3)
+        {
+
+          $cls = wpUserPeer::getOMClass(false);
+
+          $obj3 = new $cls();
+          $obj3->hydrate($row, $startcol3);
+          wpUserPeer::addInstanceToPool($obj3, $key3);
+        }
+
+        // Add the $obj1 (wpComment) to the collection in $obj3 (wpUser)
+        $obj3->addwpComment($obj1);
+      }
+
+      $results[] = $obj1;
+    }
+    $stmt->closeCursor();
+    return $results;
+  }
+
+
+  /**
+   * Returns the number of rows matching criteria, joining the related wpPost table
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     int Number of matching rows.
+   */
+  public static function doCountJoinAllExceptwpPost(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    // we're going to modify criteria, so copy it first
+    $criteria = clone $criteria;
+
+    // We need to set the primary table name, since in the case that there are no WHERE columns
+    // it will be impossible for the BasePeer::createSelectSql() method to determine which
+    // tables go into the FROM clause.
+    $criteria->setPrimaryTableName(wpCommentPeer::TABLE_NAME);
+
+    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
+    {
+      $criteria->setDistinct();
+    }
+
+    if (!$criteria->hasSelectClause())
+    {
+      wpCommentPeer::addSelectColumns($criteria);
+    }
+
+    $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+    // Set the correct dbName
+    $criteria->setDbName(self::DATABASE_NAME);
+
+    if ($con === null)
+    {
+      $con = Propel::getConnection(wpCommentPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+    }
+  
+    $criteria->addJoin(wpCommentPeer::USER_ID, wpUserPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpCommentPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doCount($criteria, $con);
+
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $count = (int) $row[0];
+    }
+    else
+    {
+      $count = 0; // no rows returned; we infer that means 0 matches.
+    }
+    $stmt->closeCursor();
+    return $count;
+  }
+
+
+  /**
+   * Returns the number of rows matching criteria, joining the related wpCommentRelatedByCommentParent table
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     int Number of matching rows.
+   */
+  public static function doCountJoinAllExceptwpCommentRelatedByCommentParent(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    // we're going to modify criteria, so copy it first
+    $criteria = clone $criteria;
+
+    // We need to set the primary table name, since in the case that there are no WHERE columns
+    // it will be impossible for the BasePeer::createSelectSql() method to determine which
+    // tables go into the FROM clause.
+    $criteria->setPrimaryTableName(wpCommentPeer::TABLE_NAME);
+
+    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
+    {
+      $criteria->setDistinct();
+    }
+
+    if (!$criteria->hasSelectClause())
+    {
+      wpCommentPeer::addSelectColumns($criteria);
+    }
+
+    $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+    // Set the correct dbName
+    $criteria->setDbName(self::DATABASE_NAME);
+
+    if ($con === null)
+    {
+      $con = Propel::getConnection(wpCommentPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+    }
+  
+    $criteria->addJoin(wpCommentPeer::COMMENT_POST_ID, wpPostPeer::ID, $join_behavior);
+
+    $criteria->addJoin(wpCommentPeer::USER_ID, wpUserPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpCommentPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doCount($criteria, $con);
+
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $count = (int) $row[0];
+    }
+    else
+    {
+      $count = 0; // no rows returned; we infer that means 0 matches.
+    }
+    $stmt->closeCursor();
+    return $count;
+  }
+
+
+  /**
+   * Returns the number of rows matching criteria, joining the related wpUser table
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     int Number of matching rows.
+   */
+  public static function doCountJoinAllExceptwpUser(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    // we're going to modify criteria, so copy it first
+    $criteria = clone $criteria;
+
+    // We need to set the primary table name, since in the case that there are no WHERE columns
+    // it will be impossible for the BasePeer::createSelectSql() method to determine which
+    // tables go into the FROM clause.
+    $criteria->setPrimaryTableName(wpCommentPeer::TABLE_NAME);
+
+    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
+    {
+      $criteria->setDistinct();
+    }
+
+    if (!$criteria->hasSelectClause())
+    {
+      wpCommentPeer::addSelectColumns($criteria);
+    }
+
+    $criteria->clearOrderByColumns(); // ORDER BY should not affect count
+
+    // Set the correct dbName
+    $criteria->setDbName(self::DATABASE_NAME);
+
+    if ($con === null)
+    {
+      $con = Propel::getConnection(wpCommentPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+    }
+  
+    $criteria->addJoin(wpCommentPeer::COMMENT_POST_ID, wpPostPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpCommentPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doCount($criteria, $con);
+
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $count = (int) $row[0];
+    }
+    else
+    {
+      $count = 0; // no rows returned; we infer that means 0 matches.
+    }
+    $stmt->closeCursor();
+    return $count;
+  }
+
+
+  /**
+   * Selects a collection of wpComment objects pre-filled with all related objects except wpPost.
+   *
+   * @param      Criteria  $criteria
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     array Array of wpComment objects.
+   * @throws     PropelException Any exceptions caught during processing will be
+   *     rethrown wrapped into a PropelException.
+   */
+  public static function doSelectJoinAllExceptwpPost(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $criteria = clone $criteria;
+
+    // Set the correct dbName if it has not been overridden
+    // $criteria->getDbName() will return the same object if not set to another value
+    // so == check is okay and faster
+    if ($criteria->getDbName() == Propel::getDefaultDB())
+    {
+      $criteria->setDbName(self::DATABASE_NAME);
+    }
+
+    wpCommentPeer::addSelectColumns($criteria);
+    $startcol2 = wpCommentPeer::NUM_HYDRATE_COLUMNS;
+
+    wpUserPeer::addSelectColumns($criteria);
+    $startcol3 = $startcol2 + wpUserPeer::NUM_HYDRATE_COLUMNS;
+
+    $criteria->addJoin(wpCommentPeer::USER_ID, wpUserPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpCommentPeer', $criteria, $con);
+    }
+
+
+    $stmt = BasePeer::doSelect($criteria, $con);
+    $results = array();
+
+    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $key1 = wpCommentPeer::getPrimaryKeyHashFromRow($row, 0);
+      if (null !== ($obj1 = wpCommentPeer::getInstanceFromPool($key1)))
+      {
+        // We no longer rehydrate the object, since this can cause data loss.
+        // See http://www.propelorm.org/ticket/509
+        // $obj1->hydrate($row, 0, true); // rehydrate
+      }
+      else
+      {
+        $cls = wpCommentPeer::getOMClass(false);
+
+        $obj1 = new $cls();
+        $obj1->hydrate($row);
+        wpCommentPeer::addInstanceToPool($obj1, $key1);
+      }
+
+        // Add objects for joined wpUser rows
+
+        $key2 = wpUserPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+        if ($key2 !== null)
+        {
+          $obj2 = wpUserPeer::getInstanceFromPool($key2);
+          if (!$obj2)
+          {
+  
+            $cls = wpUserPeer::getOMClass(false);
+
+          $obj2 = new $cls();
+          $obj2->hydrate($row, $startcol2);
+          wpUserPeer::addInstanceToPool($obj2, $key2);
+        }
+
+        // Add the $obj1 (wpComment) to the collection in $obj2 (wpUser)
+        $obj2->addwpComment($obj1);
+
+      }
+
+      $results[] = $obj1;
+    }
+    $stmt->closeCursor();
+    return $results;
+  }
+
+
+  /**
+   * Selects a collection of wpComment objects pre-filled with all related objects except wpCommentRelatedByCommentParent.
+   *
+   * @param      Criteria  $criteria
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     array Array of wpComment objects.
+   * @throws     PropelException Any exceptions caught during processing will be
+   *     rethrown wrapped into a PropelException.
+   */
+  public static function doSelectJoinAllExceptwpCommentRelatedByCommentParent(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $criteria = clone $criteria;
+
+    // Set the correct dbName if it has not been overridden
+    // $criteria->getDbName() will return the same object if not set to another value
+    // so == check is okay and faster
+    if ($criteria->getDbName() == Propel::getDefaultDB())
+    {
+      $criteria->setDbName(self::DATABASE_NAME);
+    }
+
+    wpCommentPeer::addSelectColumns($criteria);
+    $startcol2 = wpCommentPeer::NUM_HYDRATE_COLUMNS;
+
+    wpPostPeer::addSelectColumns($criteria);
+    $startcol3 = $startcol2 + wpPostPeer::NUM_HYDRATE_COLUMNS;
+
+    wpUserPeer::addSelectColumns($criteria);
+    $startcol4 = $startcol3 + wpUserPeer::NUM_HYDRATE_COLUMNS;
+
+    $criteria->addJoin(wpCommentPeer::COMMENT_POST_ID, wpPostPeer::ID, $join_behavior);
+
+    $criteria->addJoin(wpCommentPeer::USER_ID, wpUserPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpCommentPeer', $criteria, $con);
+    }
+
+
+    $stmt = BasePeer::doSelect($criteria, $con);
+    $results = array();
+
+    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $key1 = wpCommentPeer::getPrimaryKeyHashFromRow($row, 0);
+      if (null !== ($obj1 = wpCommentPeer::getInstanceFromPool($key1)))
+      {
+        // We no longer rehydrate the object, since this can cause data loss.
+        // See http://www.propelorm.org/ticket/509
+        // $obj1->hydrate($row, 0, true); // rehydrate
+      }
+      else
+      {
+        $cls = wpCommentPeer::getOMClass(false);
+
+        $obj1 = new $cls();
+        $obj1->hydrate($row);
+        wpCommentPeer::addInstanceToPool($obj1, $key1);
+      }
+
+        // Add objects for joined wpPost rows
+
+        $key2 = wpPostPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+        if ($key2 !== null)
+        {
+          $obj2 = wpPostPeer::getInstanceFromPool($key2);
+          if (!$obj2)
+          {
+  
+            $cls = wpPostPeer::getOMClass(false);
+
+          $obj2 = new $cls();
+          $obj2->hydrate($row, $startcol2);
+          wpPostPeer::addInstanceToPool($obj2, $key2);
+        }
+
+        // Add the $obj1 (wpComment) to the collection in $obj2 (wpPost)
+        $obj2->addwpComment($obj1);
+
+      }
+
+        // Add objects for joined wpUser rows
+
+        $key3 = wpUserPeer::getPrimaryKeyHashFromRow($row, $startcol3);
+        if ($key3 !== null)
+        {
+          $obj3 = wpUserPeer::getInstanceFromPool($key3);
+          if (!$obj3)
+          {
+  
+            $cls = wpUserPeer::getOMClass(false);
+
+          $obj3 = new $cls();
+          $obj3->hydrate($row, $startcol3);
+          wpUserPeer::addInstanceToPool($obj3, $key3);
+        }
+
+        // Add the $obj1 (wpComment) to the collection in $obj3 (wpUser)
+        $obj3->addwpComment($obj1);
+
+      }
+
+      $results[] = $obj1;
+    }
+    $stmt->closeCursor();
+    return $results;
+  }
+
+
+  /**
+   * Selects a collection of wpComment objects pre-filled with all related objects except wpUser.
+   *
+   * @param      Criteria  $criteria
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     array Array of wpComment objects.
+   * @throws     PropelException Any exceptions caught during processing will be
+   *     rethrown wrapped into a PropelException.
+   */
+  public static function doSelectJoinAllExceptwpUser(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $criteria = clone $criteria;
+
+    // Set the correct dbName if it has not been overridden
+    // $criteria->getDbName() will return the same object if not set to another value
+    // so == check is okay and faster
+    if ($criteria->getDbName() == Propel::getDefaultDB())
+    {
+      $criteria->setDbName(self::DATABASE_NAME);
+    }
+
+    wpCommentPeer::addSelectColumns($criteria);
+    $startcol2 = wpCommentPeer::NUM_HYDRATE_COLUMNS;
+
+    wpPostPeer::addSelectColumns($criteria);
+    $startcol3 = $startcol2 + wpPostPeer::NUM_HYDRATE_COLUMNS;
+
+    $criteria->addJoin(wpCommentPeer::COMMENT_POST_ID, wpPostPeer::ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpCommentPeer', $criteria, $con);
+    }
+
+
+    $stmt = BasePeer::doSelect($criteria, $con);
+    $results = array();
+
+    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $key1 = wpCommentPeer::getPrimaryKeyHashFromRow($row, 0);
+      if (null !== ($obj1 = wpCommentPeer::getInstanceFromPool($key1)))
+      {
+        // We no longer rehydrate the object, since this can cause data loss.
+        // See http://www.propelorm.org/ticket/509
+        // $obj1->hydrate($row, 0, true); // rehydrate
+      }
+      else
+      {
+        $cls = wpCommentPeer::getOMClass(false);
+
+        $obj1 = new $cls();
+        $obj1->hydrate($row);
+        wpCommentPeer::addInstanceToPool($obj1, $key1);
+      }
+
+        // Add objects for joined wpPost rows
+
+        $key2 = wpPostPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+        if ($key2 !== null)
+        {
+          $obj2 = wpPostPeer::getInstanceFromPool($key2);
+          if (!$obj2)
+          {
+  
+            $cls = wpPostPeer::getOMClass(false);
+
+          $obj2 = new $cls();
+          $obj2->hydrate($row, $startcol2);
+          wpPostPeer::addInstanceToPool($obj2, $key2);
+        }
+
+        // Add the $obj1 (wpComment) to the collection in $obj2 (wpPost)
+        $obj2->addwpComment($obj1);
+
+      }
+
+      $results[] = $obj1;
+    }
+    $stmt->closeCursor();
+    return $results;
   }
 
   /**

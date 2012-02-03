@@ -12,15 +12,15 @@ abstract class BasewpTermTaxonomyFormFilter extends BaseFormFilterPropel
   public function setup()
   {
     $this->setWidgets(array(
-      'term_id'          => new sfWidgetFormFilterInput(),
-      'taxonomy'         => new sfWidgetFormFilterInput(),
-      'description'      => new sfWidgetFormFilterInput(),
-      'parent'           => new sfWidgetFormFilterInput(),
-      'count'            => new sfWidgetFormFilterInput(),
+      'term_id'          => new sfWidgetFormPropelChoice(array('model' => 'wpTerm', 'add_empty' => true)),
+      'taxonomy'         => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'description'      => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'parent'           => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'count'            => new sfWidgetFormFilterInput(array('with_empty' => false)),
     ));
 
     $this->setValidators(array(
-      'term_id'          => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
+      'term_id'          => new sfValidatorPropelChoice(array('required' => false, 'model' => 'wpTerm', 'column' => 'term_id')),
       'taxonomy'         => new sfValidatorPass(array('required' => false)),
       'description'      => new sfValidatorPass(array('required' => false)),
       'parent'           => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
@@ -43,7 +43,7 @@ abstract class BasewpTermTaxonomyFormFilter extends BaseFormFilterPropel
   {
     return array(
       'term_taxonomy_id' => 'Number',
-      'term_id'          => 'Number',
+      'term_id'          => 'ForeignKey',
       'taxonomy'         => 'Text',
       'description'      => 'Text',
       'parent'           => 'Number',

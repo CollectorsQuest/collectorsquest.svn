@@ -36,6 +36,14 @@
  * @method     wpUserQuery rightJoinwpPost($relationAlias = null) Adds a RIGHT JOIN clause to the query using the wpPost relation
  * @method     wpUserQuery innerJoinwpPost($relationAlias = null) Adds a INNER JOIN clause to the query using the wpPost relation
  *
+ * @method     wpUserQuery leftJoinwpUserMeta($relationAlias = null) Adds a LEFT JOIN clause to the query using the wpUserMeta relation
+ * @method     wpUserQuery rightJoinwpUserMeta($relationAlias = null) Adds a RIGHT JOIN clause to the query using the wpUserMeta relation
+ * @method     wpUserQuery innerJoinwpUserMeta($relationAlias = null) Adds a INNER JOIN clause to the query using the wpUserMeta relation
+ *
+ * @method     wpUserQuery leftJoinwpComment($relationAlias = null) Adds a LEFT JOIN clause to the query using the wpComment relation
+ * @method     wpUserQuery rightJoinwpComment($relationAlias = null) Adds a RIGHT JOIN clause to the query using the wpComment relation
+ * @method     wpUserQuery innerJoinwpComment($relationAlias = null) Adds a INNER JOIN clause to the query using the wpComment relation
+ *
  * @method     wpUser findOne(PropelPDO $con = null) Return the first wpUser matching the query
  * @method     wpUser findOneOrCreate(PropelPDO $con = null) Return the first wpUser matching the query, or a new wpUser object populated from the query conditions when no match is found
  *
@@ -669,6 +677,170 @@ abstract class BasewpUserQuery extends ModelCriteria
     return $this
       ->joinwpPost($relationAlias, $joinType)
       ->useQuery($relationAlias ? $relationAlias : 'wpPost', 'wpPostQuery');
+  }
+
+  /**
+   * Filter the query by a related wpUserMeta object
+   *
+   * @param     wpUserMeta $wpUserMeta  the related object to use as filter
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpUserQuery The current query, for fluid interface
+   */
+  public function filterBywpUserMeta($wpUserMeta, $comparison = null)
+  {
+    if ($wpUserMeta instanceof wpUserMeta)
+    {
+      return $this
+        ->addUsingAlias(wpUserPeer::ID, $wpUserMeta->getUserId(), $comparison);
+    }
+    elseif ($wpUserMeta instanceof PropelCollection)
+    {
+      return $this
+        ->usewpUserMetaQuery()
+        ->filterByPrimaryKeys($wpUserMeta->getPrimaryKeys())
+        ->endUse();
+    }
+    else
+    {
+      throw new PropelException('filterBywpUserMeta() only accepts arguments of type wpUserMeta or PropelCollection');
+    }
+  }
+
+  /**
+   * Adds a JOIN clause to the query using the wpUserMeta relation
+   *
+   * @param     string $relationAlias optional alias for the relation
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpUserQuery The current query, for fluid interface
+   */
+  public function joinwpUserMeta($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    $tableMap = $this->getTableMap();
+    $relationMap = $tableMap->getRelation('wpUserMeta');
+
+    // create a ModelJoin object for this join
+    $join = new ModelJoin();
+    $join->setJoinType($joinType);
+    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+    if ($previousJoin = $this->getPreviousJoin())
+    {
+      $join->setPreviousJoin($previousJoin);
+    }
+
+    // add the ModelJoin to the current object
+    if($relationAlias)
+    {
+      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+      $this->addJoinObject($join, $relationAlias);
+    }
+    else
+    {
+      $this->addJoinObject($join, 'wpUserMeta');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Use the wpUserMeta relation wpUserMeta object
+   *
+   * @see       useQuery()
+   *
+   * @param     string $relationAlias optional alias for the relation,
+   *                                   to be used as main alias in the secondary query
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpUserMetaQuery A secondary query class using the current class as primary query
+   */
+  public function usewpUserMetaQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    return $this
+      ->joinwpUserMeta($relationAlias, $joinType)
+      ->useQuery($relationAlias ? $relationAlias : 'wpUserMeta', 'wpUserMetaQuery');
+  }
+
+  /**
+   * Filter the query by a related wpComment object
+   *
+   * @param     wpComment $wpComment  the related object to use as filter
+   * @param     string $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+   *
+   * @return    wpUserQuery The current query, for fluid interface
+   */
+  public function filterBywpComment($wpComment, $comparison = null)
+  {
+    if ($wpComment instanceof wpComment)
+    {
+      return $this
+        ->addUsingAlias(wpUserPeer::ID, $wpComment->getUserId(), $comparison);
+    }
+    elseif ($wpComment instanceof PropelCollection)
+    {
+      return $this
+        ->usewpCommentQuery()
+        ->filterByPrimaryKeys($wpComment->getPrimaryKeys())
+        ->endUse();
+    }
+    else
+    {
+      throw new PropelException('filterBywpComment() only accepts arguments of type wpComment or PropelCollection');
+    }
+  }
+
+  /**
+   * Adds a JOIN clause to the query using the wpComment relation
+   *
+   * @param     string $relationAlias optional alias for the relation
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpUserQuery The current query, for fluid interface
+   */
+  public function joinwpComment($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    $tableMap = $this->getTableMap();
+    $relationMap = $tableMap->getRelation('wpComment');
+
+    // create a ModelJoin object for this join
+    $join = new ModelJoin();
+    $join->setJoinType($joinType);
+    $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+    if ($previousJoin = $this->getPreviousJoin())
+    {
+      $join->setPreviousJoin($previousJoin);
+    }
+
+    // add the ModelJoin to the current object
+    if($relationAlias)
+    {
+      $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+      $this->addJoinObject($join, $relationAlias);
+    }
+    else
+    {
+      $this->addJoinObject($join, 'wpComment');
+    }
+
+    return $this;
+  }
+
+  /**
+   * Use the wpComment relation wpComment object
+   *
+   * @see       useQuery()
+   *
+   * @param     string $relationAlias optional alias for the relation,
+   *                                   to be used as main alias in the secondary query
+   * @param     string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+   *
+   * @return    wpCommentQuery A secondary query class using the current class as primary query
+   */
+  public function usewpCommentQuery($relationAlias = null, $joinType = Criteria::INNER_JOIN)
+  {
+    return $this
+      ->joinwpComment($relationAlias, $joinType)
+      ->useQuery($relationAlias ? $relationAlias : 'wpComment', 'wpCommentQuery');
   }
 
   /**

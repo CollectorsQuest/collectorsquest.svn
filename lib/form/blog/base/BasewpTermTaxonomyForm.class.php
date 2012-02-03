@@ -15,7 +15,7 @@ abstract class BasewpTermTaxonomyForm extends BaseFormPropel
   {
     $this->setWidgets(array(
       'term_taxonomy_id' => new sfWidgetFormInputHidden(),
-      'term_id'          => new sfWidgetFormInputText(),
+      'term_id'          => new sfWidgetFormPropelChoice(array('model' => 'wpTerm', 'add_empty' => false)),
       'taxonomy'         => new sfWidgetFormInputText(),
       'description'      => new sfWidgetFormTextarea(),
       'parent'           => new sfWidgetFormInputText(),
@@ -24,12 +24,16 @@ abstract class BasewpTermTaxonomyForm extends BaseFormPropel
 
     $this->setValidators(array(
       'term_taxonomy_id' => new sfValidatorChoice(array('choices' => array($this->getObject()->getTermTaxonomyId()), 'empty_value' => $this->getObject()->getTermTaxonomyId(), 'required' => false)),
-      'term_id'          => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
-      'taxonomy'         => new sfValidatorString(array('max_length' => 32, 'required' => false)),
-      'description'      => new sfValidatorString(array('required' => false)),
-      'parent'           => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
-      'count'            => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647, 'required' => false)),
+      'term_id'          => new sfValidatorPropelChoice(array('model' => 'wpTerm', 'column' => 'term_id')),
+      'taxonomy'         => new sfValidatorString(array('max_length' => 32)),
+      'description'      => new sfValidatorString(),
+      'parent'           => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),
+      'count'            => new sfValidatorInteger(array('min' => -2147483648, 'max' => 2147483647)),
     ));
+
+    $this->validatorSchema->setPostValidator(
+      new sfValidatorPropelUnique(array('model' => 'wpTermTaxonomy', 'column' => array('term_id', 'taxonomy')))
+    );
 
     $this->widgetSchema->setNameFormat('wp_term_taxonomy[%s]');
 

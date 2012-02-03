@@ -39,11 +39,11 @@ class wpTermTaxonomyTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('TERM_TAXONOMY_ID', 'TermTaxonomyId', 'INTEGER', true, null, null);
-    $this->addColumn('TERM_ID', 'TermId', 'INTEGER', false, null, null);
-    $this->addColumn('TAXONOMY', 'Taxonomy', 'VARCHAR', false, 32, null);
-    $this->addColumn('DESCRIPTION', 'Description', 'LONGVARCHAR', false, null, null);
-    $this->addColumn('PARENT', 'Parent', 'INTEGER', false, null, null);
-    $this->addColumn('COUNT', 'Count', 'INTEGER', false, null, null);
+    $this->addForeignKey('TERM_ID', 'TermId', 'INTEGER', 'wp_terms', 'TERM_ID', true, null, null);
+    $this->addColumn('TAXONOMY', 'Taxonomy', 'VARCHAR', true, 32, null);
+    $this->addColumn('DESCRIPTION', 'Description', 'LONGVARCHAR', true, null, null);
+    $this->addColumn('PARENT', 'Parent', 'INTEGER', true, null, 0);
+    $this->addColumn('COUNT', 'Count', 'INTEGER', true, null, 0);
     // validators
   }
 
@@ -52,6 +52,8 @@ class wpTermTaxonomyTableMap extends TableMap
    */
   public function buildRelations()
   {
+    $this->addRelation('wpTerm', 'wpTerm', RelationMap::MANY_TO_ONE, array('term_id' => 'term_id', ), null, null);
+    $this->addRelation('wpTermRelationship', 'wpTermRelationship', RelationMap::ONE_TO_MANY, array('term_taxonomy_id' => 'term_taxonomy_id', ), null, null, 'wpTermRelationships');
   }
 
   /**

@@ -39,29 +39,29 @@ class wpPostTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('ID', 'Id', 'INTEGER', true, null, null);
-    $this->addForeignKey('POST_AUTHOR', 'PostAuthor', 'INTEGER', 'wp_users', 'ID', true, null, null);
-    $this->addColumn('POST_DATE', 'PostDate', 'TIMESTAMP', true, null, null);
-    $this->addColumn('POST_DATE_GMT', 'PostDateGmt', 'TIMESTAMP', true, null, null);
-    $this->addColumn('POST_CONTENT', 'PostContent', 'LONGVARCHAR', false, null, null);
-    $this->addColumn('POST_TITLE', 'PostTitle', 'LONGVARCHAR', false, null, null);
-    $this->addColumn('POST_EXCERPT', 'PostExcerpt', 'LONGVARCHAR', false, null, null);
-    $this->addColumn('POST_CATEGORY', 'PostCategory', 'TINYINT', false, null, null);
-    $this->addColumn('POST_STATUS', 'PostStatus', 'VARCHAR', false, 50, null);
-    $this->addColumn('COMMENT_STATUS', 'CommentStatus', 'VARCHAR', false, 50, null);
-    $this->addColumn('PING_STATUS', 'PingStatus', 'VARCHAR', false, 50, null);
-    $this->addColumn('POST_PASSWORD', 'PostPassword', 'VARCHAR', false, 20, null);
-    $this->addColumn('POST_NAME', 'PostName', 'VARCHAR', false, 200, null);
-    $this->addColumn('TO_PING', 'ToPing', 'LONGVARCHAR', false, null, null);
-    $this->addColumn('PINGED', 'Pinged', 'LONGVARCHAR', false, null, null);
-    $this->addColumn('POST_MODIFIED', 'PostModified', 'TIMESTAMP', false, null, null);
-    $this->addColumn('POST_MODIFIED_GMT', 'PostModifiedGmt', 'TIMESTAMP', false, null, null);
-    $this->addColumn('POST_CONTENT_FILTERED', 'PostContentFiltered', 'LONGVARCHAR', false, null, null);
-    $this->addColumn('POST_PARENT', 'PostParent', 'INTEGER', false, null, null);
-    $this->addColumn('GUID', 'Guid', 'VARCHAR', false, 255, null);
-    $this->addColumn('MENU_ORDER', 'MenuOrder', 'INTEGER', false, null, null);
-    $this->addColumn('POST_TYPE', 'PostType', 'VARCHAR', false, 100, null);
-    $this->addColumn('POST_MIME_TYPE', 'PostMimeType', 'VARCHAR', false, 100, null);
-    $this->addColumn('COMMENT_COUNT', 'CommentCount', 'INTEGER', false, null, null);
+    $this->addForeignKey('POST_AUTHOR', 'PostAuthor', 'INTEGER', 'wp_users', 'ID', true, null, 0);
+    $this->addColumn('POST_DATE', 'PostDate', 'TIMESTAMP', true, null, '0000-00-00 00:00:00');
+    $this->addColumn('POST_DATE_GMT', 'PostDateGmt', 'TIMESTAMP', true, null, '0000-00-00 00:00:00');
+    $this->addColumn('POST_CONTENT', 'PostContent', 'LONGVARCHAR', true, null, null);
+    $this->addColumn('POST_TITLE', 'PostTitle', 'LONGVARCHAR', true, null, null);
+    $this->getColumn('POST_TITLE', false)->setPrimaryString(true);
+    $this->addColumn('POST_EXCERPT', 'PostExcerpt', 'LONGVARCHAR', true, null, null);
+    $this->addColumn('POST_STATUS', 'PostStatus', 'VARCHAR', true, 20, 'publish');
+    $this->addColumn('COMMENT_STATUS', 'CommentStatus', 'VARCHAR', true, 20, 'open');
+    $this->addColumn('PING_STATUS', 'PingStatus', 'VARCHAR', true, 20, 'open');
+    $this->addColumn('POST_PASSWORD', 'PostPassword', 'VARCHAR', true, 20, null);
+    $this->addColumn('POST_NAME', 'PostName', 'VARCHAR', true, 200, null);
+    $this->addColumn('TO_PING', 'ToPing', 'LONGVARCHAR', true, null, null);
+    $this->addColumn('PINGED', 'Pinged', 'LONGVARCHAR', true, null, null);
+    $this->addColumn('POST_MODIFIED', 'PostModified', 'TIMESTAMP', true, null, '0000-00-00 00:00:00');
+    $this->addColumn('POST_MODIFIED_GMT', 'PostModifiedGmt', 'TIMESTAMP', true, null, '0000-00-00 00:00:00');
+    $this->addColumn('POST_CONTENT_FILTERED', 'PostContentFiltered', 'LONGVARCHAR', true, null, null);
+    $this->addForeignKey('POST_PARENT', 'PostParent', 'INTEGER', 'wp_posts', 'ID', false, null, 0);
+    $this->addColumn('GUID', 'Guid', 'VARCHAR', true, 255, null);
+    $this->addColumn('MENU_ORDER', 'MenuOrder', 'INTEGER', true, null, 0);
+    $this->addColumn('POST_TYPE', 'PostType', 'VARCHAR', true, 100, 'post');
+    $this->addColumn('POST_MIME_TYPE', 'PostMimeType', 'VARCHAR', true, 100, null);
+    $this->addColumn('COMMENT_COUNT', 'CommentCount', 'INTEGER', true, null, 0);
     // validators
   }
 
@@ -71,7 +71,10 @@ class wpPostTableMap extends TableMap
   public function buildRelations()
   {
     $this->addRelation('wpUser', 'wpUser', RelationMap::MANY_TO_ONE, array('post_author' => 'id', ), null, null);
+    $this->addRelation('wpPostRelatedByPostParent', 'wpPost', RelationMap::MANY_TO_ONE, array('post_parent' => 'id', ), null, null);
+    $this->addRelation('wpPostRelatedById', 'wpPost', RelationMap::ONE_TO_MANY, array('id' => 'post_parent', ), null, null, 'wpPostsRelatedById');
     $this->addRelation('wpPostMeta', 'wpPostMeta', RelationMap::ONE_TO_MANY, array('id' => 'post_id', ), null, null, 'wpPostMetas');
+    $this->addRelation('wpComment', 'wpComment', RelationMap::ONE_TO_MANY, array('id' => 'comment_post_id', ), null, null, 'wpComments');
   }
 
   /**

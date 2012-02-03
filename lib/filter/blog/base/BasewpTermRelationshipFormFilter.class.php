@@ -12,9 +12,11 @@ abstract class BasewpTermRelationshipFormFilter extends BaseFormFilterPropel
   public function setup()
   {
     $this->setWidgets(array(
+      'term_order'       => new sfWidgetFormFilterInput(array('with_empty' => false)),
     ));
 
     $this->setValidators(array(
+      'term_order'       => new sfValidatorSchemaFilter('text', new sfValidatorInteger(array('required' => false))),
     ));
 
     $this->widgetSchema->setNameFormat('wp_term_relationship_filters[%s]');
@@ -33,7 +35,8 @@ abstract class BasewpTermRelationshipFormFilter extends BaseFormFilterPropel
   {
     return array(
       'object_id'        => 'Number',
-      'term_taxonomy_id' => 'Number',
+      'term_taxonomy_id' => 'ForeignKey',
+      'term_order'       => 'Number',
     );
   }
 }

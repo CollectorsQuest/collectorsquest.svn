@@ -39,9 +39,9 @@ class wpTermTableMap extends TableMap
     $this->setUseIdGenerator(true);
     // columns
     $this->addPrimaryKey('TERM_ID', 'TermId', 'INTEGER', true, null, null);
-    $this->addColumn('NAME', 'Name', 'VARCHAR', false, 55, null);
-    $this->addColumn('SLUG', 'Slug', 'VARCHAR', false, 200, null);
-    $this->addColumn('TERM_GROUP', 'TermGroup', 'INTEGER', false, null, null);
+    $this->addColumn('NAME', 'Name', 'VARCHAR', true, 55, null);
+    $this->addColumn('SLUG', 'Slug', 'VARCHAR', true, 200, null);
+    $this->addColumn('TERM_GROUP', 'TermGroup', 'INTEGER', true, null, 0);
     // validators
   }
 
@@ -50,6 +50,7 @@ class wpTermTableMap extends TableMap
    */
   public function buildRelations()
   {
+    $this->addRelation('wpTermTaxonomy', 'wpTermTaxonomy', RelationMap::ONE_TO_MANY, array('term_id' => 'term_id', ), null, null, 'wpTermTaxonomys');
   }
 
   /**

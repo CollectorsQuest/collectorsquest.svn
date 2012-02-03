@@ -50,9 +50,15 @@ abstract class BasewpTerm extends BaseObject  implements Persistent
 
   /**
    * The value for the term_group field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $term_group;
+
+  /**
+   * @var        array wpTermTaxonomy[] Collection to store aggregation of wpTermTaxonomy objects.
+   */
+  protected $collwpTermTaxonomys;
 
   /**
    * Flag to prevent endless save loop, if this object is referenced
@@ -67,6 +73,33 @@ abstract class BasewpTerm extends BaseObject  implements Persistent
    * @var        boolean
    */
   protected $alreadyInValidation = false;
+
+  /**
+   * An array of objects scheduled for deletion.
+   * @var    array
+   */
+  protected $wpTermTaxonomysScheduledForDeletion = null;
+
+  /**
+   * Applies default values to this object.
+   * This method should be called from the object's constructor (or
+   * equivalent initialization method).
+   * @see        __construct()
+   */
+  public function applyDefaultValues()
+  {
+    $this->term_group = 0;
+  }
+
+  /**
+   * Initializes internal state of BasewpTerm object.
+   * @see        applyDefaults()
+   */
+  public function __construct()
+  {
+    parent::__construct();
+    $this->applyDefaultValues();
+  }
 
   /**
    * Get the [term_id] column value.
@@ -206,6 +239,11 @@ abstract class BasewpTerm extends BaseObject  implements Persistent
    */
   public function hasOnlyDefaultValues()
   {
+      if ($this->term_group !== 0)
+      {
+        return false;
+      }
+
     // otherwise, everything was equal, so return TRUE
     return true;
   }
@@ -309,6 +347,8 @@ abstract class BasewpTerm extends BaseObject  implements Persistent
     $this->hydrate($row, 0, true); // rehydrate
 
     if ($deep) {  // also de-associate any related objects?
+
+      $this->collwpTermTaxonomys = null;
 
     }
   }
@@ -490,6 +530,28 @@ abstract class BasewpTerm extends BaseObject  implements Persistent
         $this->resetModified();
       }
 
+      if ($this->wpTermTaxonomysScheduledForDeletion !== null)
+      {
+        if (!$this->wpTermTaxonomysScheduledForDeletion->isEmpty())
+        {
+          wpTermTaxonomyQuery::create()
+            ->filterByPrimaryKeys($this->wpTermTaxonomysScheduledForDeletion->getPrimaryKeys(false))
+            ->delete($con);
+          $this->wpTermTaxonomysScheduledForDeletion = null;
+        }
+      }
+
+      if ($this->collwpTermTaxonomys !== null)
+      {
+        foreach ($this->collwpTermTaxonomys as $referrerFK)
+        {
+          if (!$referrerFK->isDeleted())
+          {
+            $affectedRows += $referrerFK->save($con);
+          }
+        }
+      }
+
       $this->alreadyInSave = false;
 
     }
@@ -665,6 +727,17 @@ abstract class BasewpTerm extends BaseObject  implements Persistent
       }
 
 
+        if ($this->collwpTermTaxonomys !== null)
+        {
+          foreach ($this->collwpTermTaxonomys as $referrerFK)
+          {
+            if (!$referrerFK->validate($columns))
+            {
+              $failureMap = array_merge($failureMap, $referrerFK->getValidationFailures());
+            }
+          }
+        }
+
 
       $this->alreadyInValidation = false;
     }
@@ -728,10 +801,11 @@ abstract class BasewpTerm extends BaseObject  implements Persistent
    *                    Defaults to BasePeer::TYPE_PHPNAME.
    * @param     boolean $includeLazyLoadColumns (optional) Whether to include lazy loaded columns. Defaults to TRUE.
    * @param     array $alreadyDumpedObjects List of objects to skip to avoid recursion
+   * @param     boolean $includeForeignObjects (optional) Whether to include hydrated related objects. Default to FALSE.
    *
    * @return    array an associative array containing the field names (as keys) and field values
    */
-  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array())
+  public function toArray($keyType = BasePeer::TYPE_PHPNAME, $includeLazyLoadColumns = true, $alreadyDumpedObjects = array(), $includeForeignObjects = false)
   {
     if (isset($alreadyDumpedObjects['wpTerm'][$this->getPrimaryKey()]))
     {
@@ -745,6 +819,13 @@ abstract class BasewpTerm extends BaseObject  implements Persistent
       $keys[2] => $this->getSlug(),
       $keys[3] => $this->getTermGroup(),
     );
+    if ($includeForeignObjects)
+    {
+      if (null !== $this->collwpTermTaxonomys)
+      {
+        $result['wpTermTaxonomys'] = $this->collwpTermTaxonomys->toArray(null, true, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
+      }
+    }
     return $result;
   }
 
@@ -896,6 +977,26 @@ abstract class BasewpTerm extends BaseObject  implements Persistent
     $copyObj->setName($this->getName());
     $copyObj->setSlug($this->getSlug());
     $copyObj->setTermGroup($this->getTermGroup());
+
+    if ($deepCopy && !$this->startCopy)
+    {
+      // important: temporarily setNew(false) because this affects the behavior of
+      // the getter/setter methods for fkey referrer objects.
+      $copyObj->setNew(false);
+      // store object hash to prevent cycle
+      $this->startCopy = true;
+
+      foreach ($this->getwpTermTaxonomys() as $relObj)
+      {
+        if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+          $copyObj->addwpTermTaxonomy($relObj->copy($deepCopy));
+        }
+      }
+
+      //unflag object copy
+      $this->startCopy = false;
+    }
+
     if ($makeNew)
     {
       $copyObj->setNew(true);
@@ -942,6 +1043,187 @@ abstract class BasewpTerm extends BaseObject  implements Persistent
     return self::$peer;
   }
 
+
+  /**
+   * Initializes a collection based on the name of a relation.
+   * Avoids crafting an 'init[$relationName]s' method name
+   * that wouldn't work when StandardEnglishPluralizer is used.
+   *
+   * @param      string $relationName The name of the relation to initialize
+   * @return     void
+   */
+  public function initRelation($relationName)
+  {
+    if ('wpTermTaxonomy' == $relationName)
+    {
+      return $this->initwpTermTaxonomys();
+    }
+  }
+
+  /**
+   * Clears out the collwpTermTaxonomys collection
+   *
+   * This does not modify the database; however, it will remove any associated objects, causing
+   * them to be refetched by subsequent calls to accessor method.
+   *
+   * @return     void
+   * @see        addwpTermTaxonomys()
+   */
+  public function clearwpTermTaxonomys()
+  {
+    $this->collwpTermTaxonomys = null; // important to set this to NULL since that means it is uninitialized
+  }
+
+  /**
+   * Initializes the collwpTermTaxonomys collection.
+   *
+   * By default this just sets the collwpTermTaxonomys collection to an empty array (like clearcollwpTermTaxonomys());
+   * however, you may wish to override this method in your stub class to provide setting appropriate
+   * to your application -- for example, setting the initial array to the values stored in database.
+   *
+   * @param      boolean $overrideExisting If set to true, the method call initializes
+   *                                        the collection even if it is not empty
+   *
+   * @return     void
+   */
+  public function initwpTermTaxonomys($overrideExisting = true)
+  {
+    if (null !== $this->collwpTermTaxonomys && !$overrideExisting)
+    {
+      return;
+    }
+    $this->collwpTermTaxonomys = new PropelObjectCollection();
+    $this->collwpTermTaxonomys->setModel('wpTermTaxonomy');
+  }
+
+  /**
+   * Gets an array of wpTermTaxonomy objects which contain a foreign key that references this object.
+   *
+   * If the $criteria is not null, it is used to always fetch the results from the database.
+   * Otherwise the results are fetched from the database the first time, then cached.
+   * Next time the same method is called without $criteria, the cached collection is returned.
+   * If this wpTerm is new, it will return
+   * an empty collection or the current collection; the criteria is ignored on a new object.
+   *
+   * @param      Criteria $criteria optional Criteria object to narrow the query
+   * @param      PropelPDO $con optional connection object
+   * @return     PropelCollection|array wpTermTaxonomy[] List of wpTermTaxonomy objects
+   * @throws     PropelException
+   */
+  public function getwpTermTaxonomys($criteria = null, PropelPDO $con = null)
+  {
+    if(null === $this->collwpTermTaxonomys || null !== $criteria)
+    {
+      if ($this->isNew() && null === $this->collwpTermTaxonomys)
+      {
+        // return empty collection
+        $this->initwpTermTaxonomys();
+      }
+      else
+      {
+        $collwpTermTaxonomys = wpTermTaxonomyQuery::create(null, $criteria)
+          ->filterBywpTerm($this)
+          ->find($con);
+        if (null !== $criteria)
+        {
+          return $collwpTermTaxonomys;
+        }
+        $this->collwpTermTaxonomys = $collwpTermTaxonomys;
+      }
+    }
+    return $this->collwpTermTaxonomys;
+  }
+
+  /**
+   * Sets a collection of wpTermTaxonomy objects related by a one-to-many relationship
+   * to the current object.
+   * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+   * and new objects from the given Propel collection.
+   *
+   * @param      PropelCollection $wpTermTaxonomys A Propel collection.
+   * @param      PropelPDO $con Optional connection object
+   */
+  public function setwpTermTaxonomys(PropelCollection $wpTermTaxonomys, PropelPDO $con = null)
+  {
+    $this->wpTermTaxonomysScheduledForDeletion = $this->getwpTermTaxonomys(new Criteria(), $con)->diff($wpTermTaxonomys);
+
+    foreach ($wpTermTaxonomys as $wpTermTaxonomy)
+    {
+      // Fix issue with collection modified by reference
+      if ($wpTermTaxonomy->isNew())
+      {
+        $wpTermTaxonomy->setwpTerm($this);
+      }
+      $this->addwpTermTaxonomy($wpTermTaxonomy);
+    }
+
+    $this->collwpTermTaxonomys = $wpTermTaxonomys;
+  }
+
+  /**
+   * Returns the number of related wpTermTaxonomy objects.
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct
+   * @param      PropelPDO $con
+   * @return     int Count of related wpTermTaxonomy objects.
+   * @throws     PropelException
+   */
+  public function countwpTermTaxonomys(Criteria $criteria = null, $distinct = false, PropelPDO $con = null)
+  {
+    if(null === $this->collwpTermTaxonomys || null !== $criteria)
+    {
+      if ($this->isNew() && null === $this->collwpTermTaxonomys)
+      {
+        return 0;
+      }
+      else
+      {
+        $query = wpTermTaxonomyQuery::create(null, $criteria);
+        if($distinct)
+        {
+          $query->distinct();
+        }
+        return $query
+          ->filterBywpTerm($this)
+          ->count($con);
+      }
+    }
+    else
+    {
+      return count($this->collwpTermTaxonomys);
+    }
+  }
+
+  /**
+   * Method called to associate a wpTermTaxonomy object to this object
+   * through the wpTermTaxonomy foreign key attribute.
+   *
+   * @param      wpTermTaxonomy $l wpTermTaxonomy
+   * @return     wpTerm The current object (for fluent API support)
+   */
+  public function addwpTermTaxonomy(wpTermTaxonomy $l)
+  {
+    if ($this->collwpTermTaxonomys === null)
+    {
+      $this->initwpTermTaxonomys();
+    }
+    if (!$this->collwpTermTaxonomys->contains($l)) { // only add it if the **same** object is not already associated
+      $this->doAddwpTermTaxonomy($l);
+    }
+
+    return $this;
+  }
+
+  /**
+   * @param  wpTermTaxonomy $wpTermTaxonomy The wpTermTaxonomy object to add.
+   */
+  protected function doAddwpTermTaxonomy($wpTermTaxonomy)
+  {
+    $this->collwpTermTaxonomys[]= $wpTermTaxonomy;
+    $wpTermTaxonomy->setwpTerm($this);
+  }
+
   /**
    * Clears the current object and sets all attributes to their default values
    */
@@ -954,6 +1236,7 @@ abstract class BasewpTerm extends BaseObject  implements Persistent
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;
     $this->clearAllReferences();
+    $this->applyDefaultValues();
     $this->resetModified();
     $this->setNew(true);
     $this->setDeleted(false);
@@ -972,8 +1255,20 @@ abstract class BasewpTerm extends BaseObject  implements Persistent
   {
     if ($deep)
     {
+      if ($this->collwpTermTaxonomys)
+      {
+        foreach ($this->collwpTermTaxonomys as $o)
+        {
+          $o->clearAllReferences($deep);
+        }
+      }
     }
 
+    if ($this->collwpTermTaxonomys instanceof PropelCollection)
+    {
+      $this->collwpTermTaxonomys->clearIterator();
+    }
+    $this->collwpTermTaxonomys = null;
   }
 
   /**

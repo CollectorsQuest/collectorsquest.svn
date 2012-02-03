@@ -27,19 +27,22 @@ abstract class BasewpTermRelationshipPeer
   const TM_CLASS = 'wpTermRelationshipTableMap';
 
   /** The total number of columns. */
-  const NUM_COLUMNS = 2;
+  const NUM_COLUMNS = 3;
 
   /** The number of lazy-loaded columns. */
   const NUM_LAZY_LOAD_COLUMNS = 0;
 
   /** The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS) */
-  const NUM_HYDRATE_COLUMNS = 2;
+  const NUM_HYDRATE_COLUMNS = 3;
 
   /** the column name for the OBJECT_ID field */
   const OBJECT_ID = 'wp_term_relationships.OBJECT_ID';
 
   /** the column name for the TERM_TAXONOMY_ID field */
   const TERM_TAXONOMY_ID = 'wp_term_relationships.TERM_TAXONOMY_ID';
+
+  /** the column name for the TERM_ORDER field */
+  const TERM_ORDER = 'wp_term_relationships.TERM_ORDER';
 
   /** The default string format for model objects of the related table **/
   const DEFAULT_STRING_FORMAT = 'YAML';
@@ -60,12 +63,12 @@ abstract class BasewpTermRelationshipPeer
    * e.g. self::$fieldNames[self::TYPE_PHPNAME][0] = 'Id'
    */
   protected static $fieldNames = array (
-    BasePeer::TYPE_PHPNAME => array ('ObjectId', 'TermTaxonomyId', ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('objectId', 'termTaxonomyId', ),
-    BasePeer::TYPE_COLNAME => array (self::OBJECT_ID, self::TERM_TAXONOMY_ID, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('OBJECT_ID', 'TERM_TAXONOMY_ID', ),
-    BasePeer::TYPE_FIELDNAME => array ('object_id', 'term_taxonomy_id', ),
-    BasePeer::TYPE_NUM => array (0, 1, )
+    BasePeer::TYPE_PHPNAME => array ('ObjectId', 'TermTaxonomyId', 'TermOrder', ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('objectId', 'termTaxonomyId', 'termOrder', ),
+    BasePeer::TYPE_COLNAME => array (self::OBJECT_ID, self::TERM_TAXONOMY_ID, self::TERM_ORDER, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('OBJECT_ID', 'TERM_TAXONOMY_ID', 'TERM_ORDER', ),
+    BasePeer::TYPE_FIELDNAME => array ('object_id', 'term_taxonomy_id', 'term_order', ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, )
   );
 
   /**
@@ -75,12 +78,12 @@ abstract class BasewpTermRelationshipPeer
    * e.g. self::$fieldNames[BasePeer::TYPE_PHPNAME]['Id'] = 0
    */
   protected static $fieldKeys = array (
-    BasePeer::TYPE_PHPNAME => array ('ObjectId' => 0, 'TermTaxonomyId' => 1, ),
-    BasePeer::TYPE_STUDLYPHPNAME => array ('objectId' => 0, 'termTaxonomyId' => 1, ),
-    BasePeer::TYPE_COLNAME => array (self::OBJECT_ID => 0, self::TERM_TAXONOMY_ID => 1, ),
-    BasePeer::TYPE_RAW_COLNAME => array ('OBJECT_ID' => 0, 'TERM_TAXONOMY_ID' => 1, ),
-    BasePeer::TYPE_FIELDNAME => array ('object_id' => 0, 'term_taxonomy_id' => 1, ),
-    BasePeer::TYPE_NUM => array (0, 1, )
+    BasePeer::TYPE_PHPNAME => array ('ObjectId' => 0, 'TermTaxonomyId' => 1, 'TermOrder' => 2, ),
+    BasePeer::TYPE_STUDLYPHPNAME => array ('objectId' => 0, 'termTaxonomyId' => 1, 'termOrder' => 2, ),
+    BasePeer::TYPE_COLNAME => array (self::OBJECT_ID => 0, self::TERM_TAXONOMY_ID => 1, self::TERM_ORDER => 2, ),
+    BasePeer::TYPE_RAW_COLNAME => array ('OBJECT_ID' => 0, 'TERM_TAXONOMY_ID' => 1, 'TERM_ORDER' => 2, ),
+    BasePeer::TYPE_FIELDNAME => array ('object_id' => 0, 'term_taxonomy_id' => 1, 'term_order' => 2, ),
+    BasePeer::TYPE_NUM => array (0, 1, 2, )
   );
 
   /**
@@ -157,11 +160,13 @@ abstract class BasewpTermRelationshipPeer
     {
       $criteria->addSelectColumn(wpTermRelationshipPeer::OBJECT_ID);
       $criteria->addSelectColumn(wpTermRelationshipPeer::TERM_TAXONOMY_ID);
+      $criteria->addSelectColumn(wpTermRelationshipPeer::TERM_ORDER);
     }
     else
     {
       $criteria->addSelectColumn($alias . '.OBJECT_ID');
       $criteria->addSelectColumn($alias . '.TERM_TAXONOMY_ID');
+      $criteria->addSelectColumn($alias . '.TERM_ORDER');
     }
   }
 
@@ -484,6 +489,290 @@ abstract class BasewpTermRelationshipPeer
       wpTermRelationshipPeer::addInstanceToPool($obj, $key);
     }
     return array($obj, $col);
+  }
+
+
+  /**
+   * Returns the number of rows matching criteria, joining the related wpTermTaxonomy table
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     int Number of matching rows.
+   */
+  public static function doCountJoinwpTermTaxonomy(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    // we're going to modify criteria, so copy it first
+    $criteria = clone $criteria;
+
+    // We need to set the primary table name, since in the case that there are no WHERE columns
+    // it will be impossible for the BasePeer::createSelectSql() method to determine which
+    // tables go into the FROM clause.
+    $criteria->setPrimaryTableName(wpTermRelationshipPeer::TABLE_NAME);
+
+    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
+    {
+      $criteria->setDistinct();
+    }
+
+    if (!$criteria->hasSelectClause())
+    {
+      wpTermRelationshipPeer::addSelectColumns($criteria);
+    }
+
+    $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+    // Set the correct dbName
+    $criteria->setDbName(self::DATABASE_NAME);
+
+    if ($con === null)
+    {
+      $con = Propel::getConnection(wpTermRelationshipPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+    }
+
+    $criteria->addJoin(wpTermRelationshipPeer::TERM_TAXONOMY_ID, wpTermTaxonomyPeer::TERM_TAXONOMY_ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpTermRelationshipPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doCount($criteria, $con);
+
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $count = (int) $row[0];
+    }
+    else
+    {
+      $count = 0; // no rows returned; we infer that means 0 matches.
+    }
+    $stmt->closeCursor();
+    return $count;
+  }
+
+
+  /**
+   * Selects a collection of wpTermRelationship objects pre-filled with their wpTermTaxonomy objects.
+   * @param      Criteria  $criteria
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     array Array of wpTermRelationship objects.
+   * @throws     PropelException Any exceptions caught during processing will be
+   *     rethrown wrapped into a PropelException.
+   */
+  public static function doSelectJoinwpTermTaxonomy(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $criteria = clone $criteria;
+
+    // Set the correct dbName if it has not been overridden
+    if ($criteria->getDbName() == Propel::getDefaultDB())
+    {
+      $criteria->setDbName(self::DATABASE_NAME);
+    }
+
+    wpTermRelationshipPeer::addSelectColumns($criteria);
+    $startcol = wpTermRelationshipPeer::NUM_HYDRATE_COLUMNS;
+    wpTermTaxonomyPeer::addSelectColumns($criteria);
+
+    $criteria->addJoin(wpTermRelationshipPeer::TERM_TAXONOMY_ID, wpTermTaxonomyPeer::TERM_TAXONOMY_ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpTermRelationshipPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doSelect($criteria, $con);
+    $results = array();
+
+    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $key1 = wpTermRelationshipPeer::getPrimaryKeyHashFromRow($row, 0);
+      if (null !== ($obj1 = wpTermRelationshipPeer::getInstanceFromPool($key1)))
+      {
+        // We no longer rehydrate the object, since this can cause data loss.
+        // See http://www.propelorm.org/ticket/509
+        // $obj1->hydrate($row, 0, true); // rehydrate
+      }
+      else
+      {
+
+        $cls = wpTermRelationshipPeer::getOMClass(false);
+
+        $obj1 = new $cls();
+        $obj1->hydrate($row);
+        wpTermRelationshipPeer::addInstanceToPool($obj1, $key1);
+      }
+
+      $key2 = wpTermTaxonomyPeer::getPrimaryKeyHashFromRow($row, $startcol);
+      if ($key2 !== null)
+      {
+        $obj2 = wpTermTaxonomyPeer::getInstanceFromPool($key2);
+        if (!$obj2)
+        {
+
+          $cls = wpTermTaxonomyPeer::getOMClass(false);
+
+          $obj2 = new $cls();
+          $obj2->hydrate($row, $startcol);
+          wpTermTaxonomyPeer::addInstanceToPool($obj2, $key2);
+        }
+
+        // Add the $obj1 (wpTermRelationship) to $obj2 (wpTermTaxonomy)
+        $obj2->addwpTermRelationship($obj1);
+
+      }
+
+      $results[] = $obj1;
+    }
+    $stmt->closeCursor();
+    return $results;
+  }
+
+
+  /**
+   * Returns the number of rows matching criteria, joining all related tables
+   *
+   * @param      Criteria $criteria
+   * @param      boolean $distinct Whether to select only distinct columns; deprecated: use Criteria->setDistinct() instead.
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     int Number of matching rows.
+   */
+  public static function doCountJoinAll(Criteria $criteria, $distinct = false, PropelPDO $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    // we're going to modify criteria, so copy it first
+    $criteria = clone $criteria;
+
+    // We need to set the primary table name, since in the case that there are no WHERE columns
+    // it will be impossible for the BasePeer::createSelectSql() method to determine which
+    // tables go into the FROM clause.
+    $criteria->setPrimaryTableName(wpTermRelationshipPeer::TABLE_NAME);
+
+    if ($distinct && !in_array(Criteria::DISTINCT, $criteria->getSelectModifiers()))
+    {
+      $criteria->setDistinct();
+    }
+
+    if (!$criteria->hasSelectClause())
+    {
+      wpTermRelationshipPeer::addSelectColumns($criteria);
+    }
+
+    $criteria->clearOrderByColumns(); // ORDER BY won't ever affect the count
+
+    // Set the correct dbName
+    $criteria->setDbName(self::DATABASE_NAME);
+
+    if ($con === null)
+    {
+      $con = Propel::getConnection(wpTermRelationshipPeer::DATABASE_NAME, Propel::CONNECTION_READ);
+    }
+
+    $criteria->addJoin(wpTermRelationshipPeer::TERM_TAXONOMY_ID, wpTermTaxonomyPeer::TERM_TAXONOMY_ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpTermRelationshipPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doCount($criteria, $con);
+
+    if ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $count = (int) $row[0];
+    }
+    else
+    {
+      $count = 0; // no rows returned; we infer that means 0 matches.
+    }
+    $stmt->closeCursor();
+    return $count;
+  }
+
+  /**
+   * Selects a collection of wpTermRelationship objects pre-filled with all related objects.
+   *
+   * @param      Criteria  $criteria
+   * @param      PropelPDO $con
+   * @param      String    $join_behavior the type of joins to use, defaults to Criteria::LEFT_JOIN
+   * @return     array Array of wpTermRelationship objects.
+   * @throws     PropelException Any exceptions caught during processing will be
+   *     rethrown wrapped into a PropelException.
+   */
+  public static function doSelectJoinAll(Criteria $criteria, $con = null, $join_behavior = Criteria::LEFT_JOIN)
+  {
+    $criteria = clone $criteria;
+
+    // Set the correct dbName if it has not been overridden
+    if ($criteria->getDbName() == Propel::getDefaultDB())
+    {
+      $criteria->setDbName(self::DATABASE_NAME);
+    }
+
+    wpTermRelationshipPeer::addSelectColumns($criteria);
+    $startcol2 = wpTermRelationshipPeer::NUM_HYDRATE_COLUMNS;
+
+    wpTermTaxonomyPeer::addSelectColumns($criteria);
+    $startcol3 = $startcol2 + wpTermTaxonomyPeer::NUM_HYDRATE_COLUMNS;
+
+    $criteria->addJoin(wpTermRelationshipPeer::TERM_TAXONOMY_ID, wpTermTaxonomyPeer::TERM_TAXONOMY_ID, $join_behavior);
+
+    // symfony_behaviors behavior
+    foreach (sfMixer::getCallables(self::getMixerPreSelectHook(__FUNCTION__)) as $sf_hook)
+    {
+      call_user_func($sf_hook, 'BasewpTermRelationshipPeer', $criteria, $con);
+    }
+
+    $stmt = BasePeer::doSelect($criteria, $con);
+    $results = array();
+
+    while ($row = $stmt->fetch(PDO::FETCH_NUM))
+    {
+      $key1 = wpTermRelationshipPeer::getPrimaryKeyHashFromRow($row, 0);
+      if (null !== ($obj1 = wpTermRelationshipPeer::getInstanceFromPool($key1)))
+      {
+        // We no longer rehydrate the object, since this can cause data loss.
+        // See http://www.propelorm.org/ticket/509
+        // $obj1->hydrate($row, 0, true); // rehydrate
+      }
+      else
+      {
+        $cls = wpTermRelationshipPeer::getOMClass(false);
+
+        $obj1 = new $cls();
+        $obj1->hydrate($row);
+        wpTermRelationshipPeer::addInstanceToPool($obj1, $key1);
+      }
+
+      // Add objects for joined wpTermTaxonomy rows
+
+      $key2 = wpTermTaxonomyPeer::getPrimaryKeyHashFromRow($row, $startcol2);
+      if ($key2 !== null)
+      {
+        $obj2 = wpTermTaxonomyPeer::getInstanceFromPool($key2);
+        if (!$obj2)
+        {
+
+          $cls = wpTermTaxonomyPeer::getOMClass(false);
+
+          $obj2 = new $cls();
+          $obj2->hydrate($row, $startcol2);
+          wpTermTaxonomyPeer::addInstanceToPool($obj2, $key2);
+        }
+
+        // Add the $obj1 (wpTermRelationship) to the collection in $obj2 (wpTermTaxonomy)
+        $obj2->addwpTermRelationship($obj1);
+      }
+
+      $results[] = $obj1;
+    }
+    $stmt->closeCursor();
+    return $results;
   }
 
   /**

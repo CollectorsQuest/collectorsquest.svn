@@ -12,9 +12,9 @@ abstract class BasewpTermFormFilter extends BaseFormFilterPropel
   public function setup()
   {
     $this->setWidgets(array(
-      'name'       => new sfWidgetFormFilterInput(),
-      'slug'       => new sfWidgetFormFilterInput(),
-      'term_group' => new sfWidgetFormFilterInput(),
+      'name'       => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'slug'       => new sfWidgetFormFilterInput(array('with_empty' => false)),
+      'term_group' => new sfWidgetFormFilterInput(array('with_empty' => false)),
     ));
 
     $this->setValidators(array(

@@ -38,6 +38,7 @@ abstract class BasewpPostMeta extends BaseObject  implements Persistent
 
   /**
    * The value for the post_id field.
+   * Note: this column has a database default value of: 0
    * @var        int
    */
   protected $post_id;
@@ -72,6 +73,27 @@ abstract class BasewpPostMeta extends BaseObject  implements Persistent
    * @var        boolean
    */
   protected $alreadyInValidation = false;
+
+  /**
+   * Applies default values to this object.
+   * This method should be called from the object's constructor (or
+   * equivalent initialization method).
+   * @see        __construct()
+   */
+  public function applyDefaultValues()
+  {
+    $this->post_id = 0;
+  }
+
+  /**
+   * Initializes internal state of BasewpPostMeta object.
+   * @see        applyDefaults()
+   */
+  public function __construct()
+  {
+    parent::__construct();
+    $this->applyDefaultValues();
+  }
 
   /**
    * Get the [meta_id] column value.
@@ -216,6 +238,11 @@ abstract class BasewpPostMeta extends BaseObject  implements Persistent
    */
   public function hasOnlyDefaultValues()
   {
+      if ($this->post_id !== 0)
+      {
+        return false;
+      }
+
     // otherwise, everything was equal, so return TRUE
     return true;
   }
@@ -1017,7 +1044,7 @@ abstract class BasewpPostMeta extends BaseObject  implements Persistent
   {
     if ($v === null)
     {
-      $this->setPostId(NULL);
+      $this->setPostId(0);
     }
     else
     {
@@ -1072,6 +1099,7 @@ abstract class BasewpPostMeta extends BaseObject  implements Persistent
     $this->alreadyInSave = false;
     $this->alreadyInValidation = false;
     $this->clearAllReferences();
+    $this->applyDefaultValues();
     $this->resetModified();
     $this->setNew(true);
     $this->setDeleted(false);

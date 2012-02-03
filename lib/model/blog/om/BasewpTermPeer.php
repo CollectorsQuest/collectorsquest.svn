@@ -838,7 +838,7 @@ abstract class BasewpTermPeer
    */
   static public function getUniqueColumnNames()
   {
-    return array();
+    return array(array('slug'));
   }
 
   // symfony_behaviors behavior

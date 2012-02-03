@@ -38,8 +38,9 @@ class wpTermRelationshipTableMap extends TableMap
     $this->setPackage('lib.model.blog');
     $this->setUseIdGenerator(false);
     // columns
-    $this->addPrimaryKey('OBJECT_ID', 'ObjectId', 'INTEGER', true, null, null);
-    $this->addPrimaryKey('TERM_TAXONOMY_ID', 'TermTaxonomyId', 'INTEGER', true, null, null);
+    $this->addPrimaryKey('OBJECT_ID', 'ObjectId', 'INTEGER', true, null, 0);
+    $this->addForeignPrimaryKey('TERM_TAXONOMY_ID', 'TermTaxonomyId', 'INTEGER' , 'wp_term_taxonomy', 'TERM_TAXONOMY_ID', true, null, 0);
+    $this->addColumn('TERM_ORDER', 'TermOrder', 'INTEGER', true, null, 0);
     // validators
   }
 
@@ -48,6 +49,7 @@ class wpTermRelationshipTableMap extends TableMap
    */
   public function buildRelations()
   {
+    $this->addRelation('wpTermTaxonomy', 'wpTermTaxonomy', RelationMap::MANY_TO_ONE, array('term_taxonomy_id' => 'term_taxonomy_id', ), null, null);
   }
 
   /**
