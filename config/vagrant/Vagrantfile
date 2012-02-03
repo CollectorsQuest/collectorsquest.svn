@@ -11,9 +11,9 @@ Vagrant::Config.run do |config|
   platform = (File.exists? 'platform') ? File.read('platform').strip : :detect
 
   if platform == 'windows'
-    config.vm.forward_port("web", 80, 9458, :auto => true)
+    config.vm.forward_port(80, 9458)
     config.vm.share_folder("vhosts", "/mnt/vhosts", "../../../", :nfs => false, :owner => "apache", :group => "apache")
-    config.vm.share_folder("tmp", "/mnt/tmp", "c:/Windows/Temp", :nfs => false)
+    config.vm.share_folder("tmp", "/mnt/tmp", ENV['TEMP'], :nfs => false)
   elsif platform == 'darwin'
     config.vm.share_folder("tmp", "/mnt/tmp", "/Volumes/Storage/tmp", :nfs => true)
   end
