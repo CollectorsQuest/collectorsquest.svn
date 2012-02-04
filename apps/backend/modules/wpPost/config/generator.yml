@@ -20,7 +20,7 @@ generator:
 
       list:
         title: WP Posts
-        display: [wp_user, post_title, post_date]
+        display: [wp_user, post_title, post_date, _count_words, _count_chars]
         actions: {}
         batch_actions: {}
 
