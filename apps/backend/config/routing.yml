@@ -6,7 +6,7 @@ wp_post:
     prefix_path:          /wpPost
     column:               id
     with_wildcard_routes: true
-    #actions:              [list]
+    actions:              [list]
 
 featured_weeks:
   class: sfPropelORMRouteCollection
